@@ -1,47 +1,26 @@
 // react
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useMemo } from 'react';
 // next
 import Head from 'next/head';
-import {
-  Alert,
-  Box,
-  Container,
-  Stack,
-  Tab,
-  Table,
-  TableBody,
-  TablePagination,
-  Button,
-  Tabs,
-  Typography,
-} from '@mui/material';
-import TableHeadCustom from '../components/table/TableHeadCustom';
+import { Box, Container, Stack, Tab, Button, Tabs } from '@mui/material';
 // layouts
 import DashboardLayout from '../../../layouts/dashboard';
 // components
-import {
-  useTable,
-  emptyRows,
-  TableNoData,
-  getComparator,
-  TableEmptyRows,
-  TableLoadingData,
-} from 'src/components/table';
-import { PROJECT_DASHBOARD_TABS, ROLE_OPTIONS } from 'src/utils/constants';
-import { useAuthContext } from 'src/auth/useAuthContext';
+import { PROJECT_DASHBOARD_TABS } from 'src/utils/constants';
 import { useSettingsContext } from '../../../components/settings';
-import ProjectTableRow from '../components/table/ProjectTableRow';
-import ProjectTableToolbar from '../components/table/ProjectTableToolbar';
-import CircularProgressLoading from 'src/components/loading/CircularProgressLoading';
-import { useGetAllProjects } from 'src/hooks/useApi';
 import { useRouter } from 'next/router';
 import { PATH_APP } from 'src/routes/paths';
 import useTabs from 'src/hooks/useTabs';
 import { capitalCase } from 'change-case';
-import UnitList from './components/unitlist/UnitList';
 import CustomBreadcrumbs from 'src/components/custom-breadcrumbs';
 import Iconify from 'src/components/iconify';
+// import sub components
+import UnitList from './components/unitlist/UnitList';
 import ProjectDetail from './components/detail/ProjectDetail';
+import ProjectQuote from './components/quote/ProjectQuote';
+import ProjectSubmittal from './components/submittal/ProjectSubmittal';
+import ProjectStatus from './components/status/ProjectStatus';
+import ProjectNote from './components/note/ProjectNote';
 
 // ----------------------------------------------------------------------
 
@@ -74,23 +53,23 @@ export default function Project() {
       {
         value: PROJECT_DASHBOARD_TABS.QUOTE,
         title: 'Quote',
-        component: 'Comming Soon...',
+        component: <ProjectQuote />,
       },
       {
         value: PROJECT_DASHBOARD_TABS.SUBMITTAL,
         title: 'Submittal(internal)',
-        component: 'Comming Soon...',
+        component: <ProjectSubmittal />,
       },
 
       {
         value: PROJECT_DASHBOARD_TABS.STATUS,
         title: 'Status',
-        component: 'Comming Soon...',
+        component: <ProjectStatus />,
       },
       {
         value: PROJECT_DASHBOARD_TABS.NOTES,
         title: 'Notes',
-        component: 'Comming Soon...',
+        component: <ProjectNote />,
       },
     ],
     []

@@ -36,6 +36,7 @@ import { useRouter } from 'next/router';
 import { PATH_APP } from 'src/routes/paths';
 import Scrollbar from 'src/components/scrollbar/Scrollbar';
 import { useStore } from 'src/state/state';
+import NewProjectDialog from './components/newProjectDialog/NewProjectDialog';
 
 // ----------------------------------------------------------------------
 
@@ -62,19 +63,7 @@ export default function Project() {
   const [openSuccess, setOpenSuccess] = useState<boolean>(false);
   const [openFail, setOpenFail] = useState<boolean>(false);
 
-  const { setProjectInitInfo } = useStore((state) => ({
-    setProjectInitInfo: state.setProjectInitInfo,
-  }));
-
-  const { data: projects, isLoading: isLoadingProjects } = useGetAllProjects();
-
-  useEffect(() => {
-    if (projects?.jobInitInfo) {
-      setProjectInitInfo(projects.jobInitInfo);
-    }
-  }, [projects]);
-
-  console.log(projects);
+  const { data: projects, isLoading: isLoadingProjects, refetch } = useGetAllProjects();
 
   const {
     page,
@@ -233,8 +222,8 @@ export default function Project() {
                   />
                   <TableBody>
                     {dataFiltered
-                      .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                      .map((row: any) => (
+                      ?.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                      ?.map((row: any) => (
                         <ProjectTableRow
                           key={row.id}
                           row={row}
@@ -267,6 +256,16 @@ export default function Project() {
               />
             </Box>
           </Box>
+        )}
+        {projects?.jobInitInfo && (
+          <NewProjectDialog
+            open={newProjectDialogOpen}
+            onClose={() => setNewProjectDialog(false)}
+            setOpenSuccess={() => setOpenSuccess(true)}
+            setOpenFail={() => setOpenFail(true)}
+            initialInfo={projects?.jobInitInfo}
+            refetch={refetch}
+          />
         )}
       </Container>
     </>
