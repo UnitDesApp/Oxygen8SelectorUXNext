@@ -101,15 +101,30 @@ export function AuthProvider({ children }: AuthProviderProps) {
       if (accessToken && isValidToken(accessToken)) {
         setSession(accessToken);
 
-        const response = await axios.get('/api/account/my-account');
+        // const response = await axios.get('/api/account/my-account');
 
-        const { user } = response.data;
+        // const { user } = response.data;
 
         dispatch({
           type: Types.INITIAL,
           payload: {
             isAuthenticated: true,
-            user,
+            user: {
+              accessToken: localStorage.getItem('accessToken'),
+              userId: localStorage.getItem('userId'),
+              username: localStorage.getItem('username'),
+              firstname: localStorage.getItem('firstname'),
+              lastname: localStorage.getItem('lastname'),
+              initials: localStorage.getItem('initials'),
+              email: localStorage.getItem('email'),
+              title: localStorage.getItem('title'),
+              customerId: localStorage.getItem('customerId'),
+              access: localStorage.getItem('access'),
+              UAL: localStorage.getItem('UAL'),
+              accessPricing: localStorage.getItem('accessPricing'),
+              createdDate: localStorage.getItem('createdDate'),
+              verified: localStorage.getItem('verified'),
+            },
           },
         });
       } else {
@@ -231,6 +246,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
       loginWithTwitter: () => {},
       register,
       logout,
+      UAL: Number(localStorage.getItem('UAL')),
     }),
     [state.isAuthenticated, state.isInitialized, state.user, login, logout, register]
   );

@@ -102,7 +102,11 @@ export default function Project() {
               <Button variant="text" startIcon={<Iconify icon={'bxs:download'} />}>
                 Export report
               </Button>
-              <Button variant="contained" startIcon={<Iconify icon={'eva:plus-fill'} />}>
+              <Button
+                variant="contained"
+                startIcon={<Iconify icon={'eva:plus-fill'} />}
+                onClick={() => projectId && push(PATH_APP.newUnit(projectId?.toString()))}
+              >
                 Add new unit
               </Button>
             </Stack>
