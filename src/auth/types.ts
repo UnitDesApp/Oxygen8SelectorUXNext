@@ -22,6 +22,7 @@ export type AuthStateType = {
 // ----------------------------------------------------------------------
 
 export type JWTContextType = {
+  UAL: number;
   method: string;
   isAuthenticated: boolean;
   isInitialized: boolean;
