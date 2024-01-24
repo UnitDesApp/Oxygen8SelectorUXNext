@@ -106,7 +106,7 @@ export default function AddNewUnit() {
 
   const onClickNextStep = () => {
     if (currentStep < 2) setCurrentStep(currentStep + 1);
-    else if (currentStep === 2) push(`prject/${projectId?.toString}/unitlist`);
+    else if (currentStep === 2) push(`/project/${projectId?.toString()}/unitlist`);
   };
 
   const validateContinue = () => {

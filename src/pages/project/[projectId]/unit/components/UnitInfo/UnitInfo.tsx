@@ -87,7 +87,7 @@ export default function UnitInfo({
   return (
     <RootStyle>
       <Container>
-        <Box>
+        <Box sx={{ paddingBottom: '40px' }}>
           <UnitInfoForm
             projectId={projectId}
             unitTypeData={unitTypeData}
@@ -95,6 +95,8 @@ export default function UnitInfo({
             unitInfo={unitInfo}
             setIsAddedNewUnit={setIsAddedNewUnit}
             isAddedNewUnit={isAddedNewUnit}
+            onSuccess={() => setOpenSuccess(true)}
+            onError={() => setOpenError(true)}
           />
         </Box>
       </Container>
