@@ -60,12 +60,8 @@ import { useApiContext } from 'src/contexts/ApiContext';
 type UnitInfoFormProps = {
   projectId: number;
   unitId?: number;
-  unitTypeData: {
-    txbProductType: string;
-    txbUnitType: string;
-    intProductTypeID: number;
-    intUnitTypeID: number;
-  };
+  intProductTypeID: number;
+  intUnitTypeID: number;
   setIsAddedNewUnit: Function;
   isAddedNewUnit: boolean;
   setFunction?: Function;
@@ -74,12 +70,13 @@ type UnitInfoFormProps = {
   baseData?: any;
   onSuccess?: Function;
   onError?: Function;
+  txbProductType?: string;
+  txbUnitType?: string;
 };
 
 export default function UnitInfoForm({
   projectId,
   unitId,
-  unitTypeData,
   setIsAddedNewUnit,
   isAddedNewUnit,
   setFunction,
@@ -88,11 +85,14 @@ export default function UnitInfoForm({
   baseData,
   onSuccess,
   onError,
+  intProductTypeID,
+  intUnitTypeID,
+  txbProductType,
+  txbUnitType,
 }: UnitInfoFormProps) {
   const api = useApiContext();
   const [isLoading, setIsLoading] = useState(true);
   const [remainingOpeningsInfo, setRemainingOpeningsInfo] = useState<any>({});
-  const { intProductTypeID, intUnitTypeID } = unitTypeData;
   const isResetCalled = useRef(false);
   const user = useAuthContext();
 
@@ -243,7 +243,7 @@ export default function UnitInfoForm({
     try {
       const data = await api.project.saveUnitInfo(getAllFormData());
       onSuccess && onSuccess(true);
-      if (!edit) setIsAddedNewUnit(data.intUnitNo);
+      setIsAddedNewUnit(data.intUnitNo);
     } catch (e) {
       console.log(e);
       onError && onError(true);
@@ -439,11 +439,10 @@ export default function UnitInfoForm({
       Number(user?.UAL || 0)
     );
 
-    if (
-      unitModel.length > 0 &&
-      unitModel.filter((item: any) => item.id === Number(values.ddlUnitModelId)).length === 0
-    ) {
-      setValue('ddlUnitModelId', unitModel?.[0]?.id);
+    const filteredUnitModel = unitModel?.filter((item: any) => item.id) || [];
+
+    if (filteredUnitModel.length > 0) {
+      setValue('ddlUnitModelId', filteredUnitModel?.[0]?.id);
     }
 
     if (summerSupplyAirCFM && values.txbSummerSupplyAirCFM === summerSupplyAirCFM.toString()) {
@@ -875,7 +874,7 @@ export default function UnitInfoForm({
         ) : (
           <Stack direction="row" alignContent="center" justifyContent="center">
             <Typography variant="h3" color="primary.main">
-              {unitTypeData?.txbProductType || ''}/{unitTypeData?.txbUnitType || ''}
+              {txbProductType || ''}/{txbUnitType || ''}
             </Typography>
           </Stack>
         )}

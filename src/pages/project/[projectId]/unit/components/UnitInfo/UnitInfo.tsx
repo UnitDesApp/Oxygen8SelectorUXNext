@@ -38,37 +38,41 @@ const RootStyle = styled('div')(({ theme }) => ({
 type UnitInfoProps = {
   projectId: number;
   unitId?: number;
-  unitTypeData: {
-    txbProductType: string;
-    txbUnitType: string;
-    intProductTypeID: number;
-    intUnitTypeID: number;
-  };
   setIsAddedNewUnit: Function;
   isAddedNewUnit: boolean;
   setFunction?: Function;
+  intProductTypeID?: number;
+  intUnitTypeID?: number;
   edit?: boolean;
+  txbProductType?: string;
+  txbUnitType?: string;
 };
 
 export default function UnitInfo({
   projectId,
   unitId,
-  unitTypeData,
   setIsAddedNewUnit,
   isAddedNewUnit,
+  intProductTypeID,
+  intUnitTypeID,
   setFunction,
   edit = false,
+  txbProductType,
+  txbUnitType,
 }: UnitInfoProps) {
   const { data: baseData, isLoading: isLoadingBaseData } = useGetAllBaseData();
 
-  const { data: unitInfo, isLoading: isLoadingUnitInfo } = useGetUnitInfo({
-    intUserID: localStorage.getItem('userId'),
-    intUAL: localStorage.getItem('UAL'),
-    intProjectID: projectId,
-    intProductTypeID: unitTypeData.intProductTypeID,
-    intUnitTypeID: unitTypeData.intUnitTypeID,
-    intUnitNo: edit ? unitId : Number(-1),
-  });
+  const { data: unitData, isLoading: isLoadingUnitInfo } = useGetUnitInfo(
+    {
+      intUserID: typeof window !== 'undefined' && localStorage.getItem('userId'),
+      intUAL: typeof window !== 'undefined' && localStorage.getItem('UAL'),
+      intProjectID: projectId,
+      intUnitNo: edit ? unitId : Number(-1),
+    },
+    {
+      enabled: edit && typeof window !== 'undefined',
+    }
+  );
 
   // ----------------------- Success State and Handle Close ---------------------------
   const [openSuccess, setOpenSuccess] = useState(false);
@@ -84,17 +88,26 @@ export default function UnitInfo({
 
   if (isLoadingBaseData || isLoadingUnitInfo) return <CircularProgressLoading />;
 
+  const { unitInfo } = unitData || {};
+
   return (
     <RootStyle>
       <Container>
         <Box>
           <UnitInfoForm
             projectId={projectId}
-            unitTypeData={unitTypeData}
             baseData={baseData}
             unitInfo={unitInfo}
             setIsAddedNewUnit={setIsAddedNewUnit}
             isAddedNewUnit={isAddedNewUnit}
+            onSuccess={() => setOpenSuccess(true)}
+            onError={() => setOpenError(true)}
+            edit={edit}
+            intProductTypeID={intUnitTypeID || unitInfo.productTypeID || 0}
+            intUnitTypeID={intProductTypeID || unitInfo.unitTypeID || 0}
+            setFunction={setFunction}
+            txbProductType={txbProductType}
+            txbUnitType={txbUnitType}
           />
         </Box>
       </Container>

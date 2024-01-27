@@ -246,7 +246,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
       loginWithTwitter: () => {},
       register,
       logout,
-      UAL: Number(localStorage.getItem('UAL')),
+      UAL: typeof window !== 'undefined' ? Number(localStorage.getItem('UAL')) : 0,
     }),
     [state.isAuthenticated, state.isInitialized, state.user, login, logout, register]
   );

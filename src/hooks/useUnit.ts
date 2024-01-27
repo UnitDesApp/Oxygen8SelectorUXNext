@@ -85,7 +85,7 @@ export const useGetDefaultValue = (edit: boolean, unitInfo: any, data: any) => {
     ddlOutdoorAirOpeningText,
     ddlReturnAirOpeningId,
     ddlReturnAirOpeningText,
-  } = unitInfo;
+  } = unitInfo || {};
 
   const defaultValues = useMemo(
     () => ({
@@ -296,9 +296,9 @@ export const unitEditFormSchema = Yup.object().shape({
   ddlElecHeaterVoltageId: Yup.number().required('This field is required!'),
   ddlPreheatElecHeaterInstallationId: Yup.number().required('This field is required!'),
   ddlHeatElecHeaterInstallationId: Yup.number().required('This field is required!'),
-  ddlPreheatCoilHandingId: Yup.number().required('This field is required!'),
-  ddlCoolingCoilHandingId: Yup.number().required('This field is required!'),
-  ddlHeatingCoilHandingId: Yup.number().required('This field is required!'),
+  ddlPreheatCoilHandingId: Yup.number(),
+  ddlCoolingCoilHandingId: Yup.number(),
+  ddlHeatingCoilHandingId: Yup.number(),
   ddlValveTypeId: Yup.number().required('This field is required!'),
   txbPreheatHWC_Cap: Yup.number(),
   txbPreheatHWC_FlowRate: Yup.number(),

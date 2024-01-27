@@ -42,18 +42,44 @@ const RootStyle = styled('div')(({ theme }) => ({
 export default function ProjectDetail() {
   const { projectId } = useRouter().query;
 
+  const [openSuccess, setOpenSuccess] = useState<boolean>(false);
+  const [openError, setOpenError] = useState<boolean>(false);
+
   const { data: projectInitInfo, isLoading: isLoadingProjectInitInfo } = useGetProjectInitInfo();
   const { data: project, isLoading: isLoadingProject } = useGetProjectById({
     id: Number(projectId),
   });
+
+  const handleCloseSuccess = () => {
+    setOpenSuccess(false);
+  };
+
+  const handleCloseError = () => {
+    setOpenSuccess(false);
+  };
 
   return (
     <Box>
       {isLoadingProjectInitInfo || isLoadingProject ? (
         <CircularProgressLoading />
       ) : (
-        <ProjectDetailsForm project={project} projectInitInfo={projectInitInfo} />
+        <ProjectDetailsForm
+          project={project}
+          projectInitInfo={projectInitInfo}
+          onSuccess={() => setOpenSuccess(true)}
+          onFail={() => setOpenError(true)}
+        />
       )}
+      <Snackbar open={openSuccess} autoHideDuration={6000} onClose={handleCloseSuccess}>
+        <Alert onClose={handleCloseSuccess} severity="success" sx={{ width: '100%' }}>
+          Project was successfully updated!
+        </Alert>
+      </Snackbar>
+      <Snackbar open={openError} autoHideDuration={6000} onClose={handleCloseError}>
+        <Alert onClose={handleCloseError} severity="error" sx={{ width: '100%' }}>
+          Server Error!
+        </Alert>
+      </Snackbar>
     </Box>
   );
 }

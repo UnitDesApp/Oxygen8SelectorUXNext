@@ -84,3 +84,8 @@ export const useGetSelectionInfo = (params: any, config?: UseQueryOptions<any, a
     config
   );
 };
+
+export const useGetFileList = (config?: UseQueryOptions<any, any, any, any>) => {
+  const api = useApiContext();
+  return useQuery<any>([`get-file-list`], () => api.project.getFileList(), config);
+};

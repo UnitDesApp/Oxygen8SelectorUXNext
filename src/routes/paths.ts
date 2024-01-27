@@ -18,6 +18,8 @@ export const PATH_APP = {
   project: path(ROOTS_APP, 'project'),
   projectDashboard: (id: string, tab: string) => path(ROOTS_APP, `project/${id}/${tab}`),
   newUnit: (id: string) => path(ROOTS_APP, `project/${id}/unit/new`),
+  editUnit: (jobId: string, unitId: string) =>
+    path(ROOTS_APP, `project/${jobId}/unit/edit/${unitId}`),
   account: path(ROOTS_APP, 'account'),
   resource: path(ROOTS_APP, 'resource'),
   adminPanel: {

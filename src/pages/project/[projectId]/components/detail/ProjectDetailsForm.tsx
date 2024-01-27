@@ -51,9 +51,16 @@ type ProjectDetailsFormProps = {
     usersInfo: any;
     country: any;
   };
+  onSuccess?: Function;
+  onFail?: Function;
 };
 
-export default function ProjectDetailsForm({ project, projectInitInfo }: ProjectDetailsFormProps) {
+export default function ProjectDetailsForm({
+  project,
+  projectInitInfo,
+  onSuccess,
+  onFail,
+}: ProjectDetailsFormProps) {
   const api = useApiContext();
   const { projectId } = useRouter().query;
 
@@ -194,8 +201,6 @@ export default function ProjectDetailsForm({ project, projectInitInfo }: Project
       enabled: mounted,
     }
   );
-
-  console.log(project, projectInitInfo);
 
   useEffect(() => {
     if (mounted) {
@@ -430,15 +435,21 @@ export default function ProjectDetailsForm({ project, projectInitInfo }: Project
   // handle submit
   const onProjectInfoSubmit = useCallback(
     async (data: any) => {
-      const formData = {
-        ...data,
-        jobId: projectId,
-        createdUserId: project?.created_user_id,
-        revisedUserId: localStorage.getItem('userId'),
-        applicationOther: '',
-      };
+      try {
+        const formData = {
+          ...data,
+          jobId: projectId,
+          createdUserId: project?.created_user_id,
+          revisedUserId: localStorage.getItem('userId'),
+          applicationOther: '',
+        };
 
-      console.log(formData);
+        api.project.updateProject(formData);
+        onSuccess && onSuccess();
+      } catch (e) {
+        console.log(e);
+        onFail && onFail();
+      }
     },
     [projectId, project?.created_user_id]
   );

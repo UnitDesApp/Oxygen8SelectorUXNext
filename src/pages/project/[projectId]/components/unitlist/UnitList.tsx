@@ -29,6 +29,8 @@ import Iconify from 'src/components/iconify';
 import { useGetAllUnits } from 'src/hooks/useApi';
 import UnitTableRow from './UnitTableRow';
 import CircularProgressLoading from 'src/components/loading/CircularProgressLoading';
+import { PATH_APP } from 'src/routes/paths';
+import { useUnitTypeInfo } from 'src/state/state';
 
 const ROLE_OPTIONS = ['All', 'My Jobs', 'By Others'];
 
@@ -44,13 +46,12 @@ const TABLE_HEAD = [
 // ----------------------------------------------------------------------
 
 export default function UnitList() {
-  const { projectId } = useRouter().query;
+  const { query, push } = useRouter();
+  const { projectId } = query;
 
   const { data: units, isLoading: isLoadingUnits } = useGetAllUnits({
     jobId: Number(projectId),
   });
-
-  console.log(units);
 
   const {
     page,
@@ -77,6 +78,10 @@ export default function UnitList() {
   const [isOneConfirmDialog, setOneConfirmDialogState] = React.useState(false);
   const [isOpenMultiConfirmDialog, setMultiConfirmDialogState] = React.useState(false);
   const [deleteRowID, setDeleteRowID] = React.useState(-1);
+  const { setIntProductTypeID, setIntUnitTypeID } = useUnitTypeInfo((state) => ({
+    setIntProductTypeID: state.setIntProductTypeID,
+    setIntUnitTypeID: state.setIntUnitTypeID,
+  }));
 
   const handleOneConfirmDialogOpen = (id: number) => {
     setDeleteRowID(id);
@@ -120,9 +125,9 @@ export default function UnitList() {
   };
 
   const handleEditRow = (row: any) => {
-    // navigate(PATH_UNIT.edit(jobId, row.unit_no), {
-    //   state: { ...row, intUnitTypeID: row.unit_no, intProductTypeID: row.product_type_id },
-    // });
+    setIntProductTypeID(Number(row.product_type_id));
+    setIntUnitTypeID(Number(row.unit_type_id));
+    push(PATH_APP.editUnit(projectId?.toString() || '', row.unit_no));
   };
 
   const handleClickNewUnit = () => {
