@@ -8,3 +8,10 @@ export enum PROJECT_DASHBOARD_TABS {
   STATUS = 'status',
   NOTES = 'notes',
 }
+
+export const ResourceNames: { [key: string]: any } = {
+  nova: 'NOVA',
+  terra: 'TERRA',
+  ventum: 'VENTUM',
+  ventum_lite: 'VENTUM LITE',
+};

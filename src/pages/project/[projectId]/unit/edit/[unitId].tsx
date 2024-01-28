@@ -13,15 +13,16 @@ import {
   Typography,
   Box,
 } from '@mui/material';
-import { useGetAllBaseData } from 'src/hooks/useApi';
+import { useGetAllBaseData, useGetUnitInfo } from 'src/hooks/useApi';
 import { useRouter } from 'next/router';
 import CustomBreadcrumbs from 'src/components/custom-breadcrumbs';
 import { PATH_APP } from 'src/routes/paths';
 import Iconify from 'src/components/iconify';
-import SelectProductInfo from './components/SelectProductInfo/SelectProductInfo';
-import UnitInfo from './components/UnitInfo/UnitInfo';
-import Selection from './components/Selection/Selection';
 import Head from 'next/head';
+import SelectProductInfo from '../components/SelectProductInfo/SelectProductInfo';
+import UnitInfo from '../components/UnitInfo/UnitInfo';
+import Selection from '../components/Selection/Selection';
+import { useUnitTypeInfo } from 'src/state/state';
 
 // ----------------------------------------------------------------------
 
@@ -62,45 +63,37 @@ const DEFAULT_UNIT_DATA = {
 
 const STEP_PAGE_NAME = ['Select product type', 'Info', 'Selection'];
 
-export default function AddNewUnit() {
+export default function EditUnit() {
   // eslint-disable-next-line no-unused-vars
   const theme = useTheme();
   const { push, query } = useRouter();
-  const { projectId } = query;
-  const [currentStep, setCurrentStep] = useState(0);
+  const { projectId, unitId } = query;
+  const [currentStep, setCurrentStep] = useState(1);
   const [isAddedNewUnit, setIsAddedNewUnit] = useState(false);
-  const [unitTypeData, setUnitTypeData] = useState<{
-    intProductTypeID: number;
-    txbProductType: string;
-    intApplicationTypeID: number;
-    txbApplicationType: string;
-    intUnitTypeID: number;
-    txbUnitType: string;
-  }>(DEFAULT_UNIT_DATA);
   const [intUnitNo, setIntUnitNo] = useState(0);
   const [openRPDialog, setOpenRPDialog] = useState(false);
 
-  const { data, isLoading: isLoadingBaseData } = useGetAllBaseData();
+  const { data: unitData, isLoading: isLoadingUnitInfo } = useGetUnitInfo(
+    {
+      intUserID: typeof window !== 'undefined' && localStorage.getItem('userId'),
+      intUAL: typeof window !== 'undefined' && localStorage.getItem('UAL'),
+      intProjectID: projectId,
+      intUnitNo: intUnitNo,
+    },
+    {
+      enabled: intUnitNo !== 0 && typeof window !== 'undefined',
+    }
+  );
+
+  const { unitInfo } = unitData || {};
 
   const closeDialog = useCallback(() => {
     setOpenRPDialog(false);
   }, []);
 
-  const onSelectAppliaionItem = (value: number, txb: string) => {
-    setUnitTypeData({ ...unitTypeData, intApplicationTypeID: value, txbApplicationType: txb });
-  };
-
   const openDialog = useCallback(() => {
     setOpenRPDialog(true);
   }, []);
-
-  const onSelectProductTypeItem = (value: number, txb: string) => {
-    setUnitTypeData({ ...unitTypeData, intProductTypeID: value, txbProductType: txb });
-  };
-
-  const onSelectUnitTypeItem = (value: number, txb: string) => {
-    setUnitTypeData({ ...unitTypeData, intUnitTypeID: value, txbUnitType: txb });
-  };
 
   const onClickNextStep = () => {
     if (currentStep < 2) setCurrentStep(currentStep + 1);
@@ -108,16 +101,6 @@ export default function AddNewUnit() {
   };
 
   const validateContinue = () => {
-    if (currentStep === 0) {
-      if (
-        unitTypeData.intProductTypeID === -1 ||
-        unitTypeData.intUnitTypeID === -1 ||
-        unitTypeData.intApplicationTypeID === -1
-      )
-        return true;
-      return false;
-    }
-
     if (currentStep === 1 && isAddedNewUnit) return false;
     if (currentStep === 2 && intUnitNo !== 0) return false;
 
@@ -132,14 +115,14 @@ export default function AddNewUnit() {
       <RootStyle>
         <Container>
           <CustomBreadcrumbs
-            heading={`New: ${STEP_PAGE_NAME[currentStep]}`}
+            heading={`Edit: ${STEP_PAGE_NAME[currentStep]}`}
             links={[
               { name: 'My projects', href: PATH_APP.project },
               {
                 name: 'Dashboard',
                 href: PATH_APP.projectDashboard(projectId?.toString() || '', 'unitlist'),
               },
-              { name: 'New Unit' },
+              { name: 'Edit Unit' },
             ]}
             sx={{ paddingLeft: '24px', paddingTop: '24px' }}
             action={
@@ -155,29 +138,26 @@ export default function AddNewUnit() {
             }
           />
           <Box sx={{ my: 3, pb: 10 }}>
-            {currentStep === 0 && (
-              <SelectProductInfo
-                onSelectAppliaionItem={onSelectAppliaionItem}
-                onSelectProductTypeItem={onSelectProductTypeItem}
-                onSelectUnitTypeItem={onSelectUnitTypeItem}
-              />
-            )}
             {currentStep === 1 && (
               <UnitInfo
                 projectId={Number(projectId)}
+                unitId={Number(unitId)}
                 isAddedNewUnit={isAddedNewUnit}
-                intProductTypeID={unitTypeData.intProductTypeID}
-                intUnitTypeID={unitTypeData.intUnitTypeID}
                 setIsAddedNewUnit={(no: number) => {
                   setIntUnitNo(no);
                   setIsAddedNewUnit(true);
                 }}
-                txbProductType={unitTypeData.txbProductType}
-                txbUnitType={unitTypeData.txbUnitType}
+                edit
               />
             )}
             {currentStep === 2 && (
-              <Selection unitTypeData={unitTypeData} intUnitNo={Number(intUnitNo)} />
+              <Selection
+                unitTypeData={{
+                  intProductTypeID: unitInfo.productTypeID,
+                  intUnitTypeID: unitInfo.unitTypeID,
+                }}
+                intUnitNo={Number(intUnitNo)}
+              />
             )}
           </Box>
         </Container>

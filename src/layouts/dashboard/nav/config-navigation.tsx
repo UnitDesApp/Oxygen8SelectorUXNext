@@ -19,7 +19,7 @@ const navConfig = [
   // GENERAL
   // ----------------------------------------------------------------------
   {
-    subheader: 'general v4.3.0',
+    subheader: 'Main Menu',
     items: [
       { title: 'Project', path: PATH_APP.project, icon: ICONS.dashboard },
       { title: 'My Account', path: PATH_APP.account, icon: ICONS.user },

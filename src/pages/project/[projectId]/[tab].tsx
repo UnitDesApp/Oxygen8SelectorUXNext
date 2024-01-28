@@ -1,5 +1,5 @@
 // react
-import { useCallback, useMemo } from 'react';
+import { useCallback, useEffect, useMemo } from 'react';
 // next
 import Head from 'next/head';
 import { Box, Container, Stack, Tab, Button, Tabs } from '@mui/material';
@@ -35,7 +35,11 @@ export default function Project() {
   const { projectId, tab } = query;
 
   // useTab
-  const { currentTab, onChangeTab } = useTabs(tab?.toString());
+  const { currentTab, onChangeTab, setCurrentTab } = useTabs(tab?.toString());
+
+  useEffect(() => {
+    setCurrentTab(tab?.toString() || '');
+  }, [tab]);
 
   const TABS = useMemo(
     () => [
@@ -49,7 +53,6 @@ export default function Project() {
         title: 'Project Detail',
         component: <ProjectDetail />,
       },
-
       {
         value: PROJECT_DASHBOARD_TABS.QUOTE,
         title: 'Quote',
@@ -60,7 +63,6 @@ export default function Project() {
         title: 'Submittal(internal)',
         component: <ProjectSubmittal />,
       },
-
       {
         value: PROJECT_DASHBOARD_TABS.STATUS,
         title: 'Status',
@@ -95,8 +97,8 @@ export default function Project() {
 
       <Container maxWidth={themeStretch ? false : 'xl'}>
         <CustomBreadcrumbs
-          heading={tabData.title}
-          links={[{ name: 'Projects', href: PATH_APP.project }, { name: tabData.title }]}
+          heading={tabData?.title || ''}
+          links={[{ name: 'Projects', href: PATH_APP.project }, { name: tabData?.title || '' }]}
           action={
             <Stack spacing={2} direction="row" alignItems="flex-end" sx={{ mt: 3 }}>
               <Button variant="text" startIcon={<Iconify icon={'bxs:download'} />}>
@@ -123,7 +125,7 @@ export default function Project() {
             <Tab disableRipple key={tab.value} label={capitalCase(tab.title)} value={tab.value} />
           ))}
         </Tabs>
-        <Box sx={{ my: 3 }}>{tabData.component}</Box>
+        <Box sx={{ my: 3 }}>{tabData?.component || null}</Box>
       </Container>
     </>
   );

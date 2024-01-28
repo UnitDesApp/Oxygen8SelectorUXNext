@@ -1,3 +1,4 @@
+import { AxiosResponse } from 'axios';
 import AbstractApi from './AbstractApi';
 
 export default class ProjectApi extends AbstractApi {
@@ -20,6 +21,10 @@ export default class ProjectApi extends AbstractApi {
   getOutdoorInfo = async (params: any): Promise<any> => {
     return this.client.post(`/api/job/getoutdoorinfo`, params).then((res) => res.data);
   };
+
+  updateProject(data: any) {
+    return this.client.post(`/api/job/update`, data);
+  }
 
   getUnits = async (params: { jobId: number }): Promise<any> => {
     return this.client.post(`/api/job/getwithunit`, params).then((res) => res.data);
@@ -104,5 +109,13 @@ export default class ProjectApi extends AbstractApi {
 
   saveUnitInfo = (prarms: any): Promise<any> => {
     return this.client.post(`/api/units/Save`, prarms).then((res) => res.data);
+  };
+
+  getFileList = (): Promise<any> => {
+    return this.client.post('/api/resource/getFiles').then((res) => res.data);
+  };
+
+  downloadResource = (params: any, config: any): Promise<AxiosResponse<any, any>> => {
+    return this.client.post('/api/resource/getFiles', params, config);
   };
 }
