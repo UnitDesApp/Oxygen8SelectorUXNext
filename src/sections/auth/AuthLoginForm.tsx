@@ -32,8 +32,8 @@ export default function AuthLoginForm() {
   });
 
   const defaultValues = {
-    email: 'nadezda@unitdes.com',
-    password: 'welcome',
+    email: 'sumith.michaelpillai@unitdes.com',
+    password: 'ud3000_ud',
   };
 
   const methods = useForm<FormValuesProps>({
