@@ -20,6 +20,7 @@ enum Types {
   LOGIN = 'LOGIN',
   REGISTER = 'REGISTER',
   LOGOUT = 'LOGOUT',
+  UPDATE = 'UPDATE',
 }
 
 type Payload = {
@@ -31,6 +32,9 @@ type Payload = {
     user: AuthUserType;
   };
   [Types.REGISTER]: {
+    user: AuthUserType;
+  };
+  [Types.UPDATE]: {
     user: AuthUserType;
   };
   [Types.LOGOUT]: undefined;
@@ -47,6 +51,15 @@ const initialState: AuthStateType = {
 };
 
 const reducer = (state: AuthStateType, action: ActionsType) => {
+  if (action.type === Types.UPDATE) {
+    return {
+      ...state,
+      user: {
+        ...state.user,
+        ...action.payload.user,
+      },
+    };
+  }
   if (action.type === Types.INITIAL) {
     return {
       isInitialized: true,
@@ -234,6 +247,25 @@ export function AuthProvider({ children }: AuthProviderProps) {
     });
   }, []);
 
+  // UPDATE USER
+  const updateUser = useCallback(async (data: any) => {
+    dispatch({
+      type: Types.UPDATE,
+      payload: {
+        user: {
+          username: data.username,
+          firstname: data.first_name,
+          lastname: data.last_name,
+          email: data.email,
+          customerId: data.customer_id,
+          access: data.access,
+          UAL: data.accessLevel,
+          accessPricing: data.accessPricing,
+        },
+      },
+    });
+  }, []);
+
   const memoizedValue = useMemo(
     () => ({
       isInitialized: state.isInitialized,
@@ -246,6 +278,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
       loginWithTwitter: () => {},
       register,
       logout,
+      updateUser,
       UAL: typeof window !== 'undefined' ? Number(localStorage.getItem('UAL')) : 0,
     }),
     [state.isAuthenticated, state.isInitialized, state.user, login, logout, register]

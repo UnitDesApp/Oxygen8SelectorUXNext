@@ -24,7 +24,7 @@ export const PATH_APP = {
   resource: path(ROOTS_APP, 'resource'),
   adminPanel: {
     root: path(ROOTS_APP, 'admin-panel'),
-    customer: path(ROOTS_APP, 'admin-panel/customer'),
-    memeber: path(ROOTS_APP, 'admin-panel/member'),
+    customer: path(ROOTS_APP, 'admin-panel/customers'),
+    user: path(ROOTS_APP, 'admin-panel/users'),
   },
 };

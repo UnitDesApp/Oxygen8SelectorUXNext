@@ -32,6 +32,7 @@ type Props = {
   headLabel: any[];
   rowCount?: number;
   numSelected?: number;
+  isCheckbox?: boolean;
   onSort?: (id: string) => void;
   onSelectAllRows?: (checked: boolean) => void;
   sx?: SxProps<Theme>;
@@ -44,13 +45,14 @@ export default function TableHeadCustom({
   headLabel,
   numSelected = 0,
   onSort,
+  isCheckbox = true,
   onSelectAllRows,
   sx,
 }: Props) {
   return (
     <TableHead sx={sx}>
       <TableRow>
-        {onSelectAllRows && (
+        {onSelectAllRows && isCheckbox && (
           <TableCell padding="checkbox">
             <Checkbox
               indeterminate={numSelected > 0 && numSelected < rowCount}

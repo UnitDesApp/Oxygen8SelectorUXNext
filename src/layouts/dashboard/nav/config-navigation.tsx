@@ -38,7 +38,7 @@ const navConfig = [
         icon: ICONS.user,
         children: [
           { title: 'Customers', path: PATH_APP.adminPanel.customer },
-          { title: 'Members', path: PATH_APP.adminPanel.memeber },
+          { title: 'Users', path: PATH_APP.adminPanel.user },
         ],
       },
     ],

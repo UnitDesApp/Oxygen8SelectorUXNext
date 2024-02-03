@@ -296,6 +296,8 @@ const applySortFilter = ({
 
   tableData = stabilizedThis.map((el: any) => el[0]);
 
+  tableData.sort((a: any, b: any) => b.id - a.id);
+
   if (filterName) {
     tableData = tableData.filter(
       (item: {
