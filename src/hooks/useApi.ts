@@ -89,3 +89,8 @@ export const useGetFileList = (config?: UseQueryOptions<any, any, any, any>) => 
   const api = useApiContext();
   return useQuery<any>([`get-file-list`], () => api.project.getFileList(), config);
 };
+
+export const useGetAccountInfo = (config?: UseQueryOptions<any, any, any, any>) => {
+  const api = useApiContext();
+  return useQuery<any>([`get-account-info`], () => api.account.getAccountInfo(), config);
+};
