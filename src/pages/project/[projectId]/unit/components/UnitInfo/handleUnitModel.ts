@@ -2139,8 +2139,8 @@ export const getOrientation = (
 
 export const getLocation = (
   data: { prodTypeUnitTypeLocLink: any[]; generalLocation: any[] },
-  intProductTypeID: any,
-  intUnitTypeID: any
+  intProductTypeID: number,
+  intUnitTypeID: number
 ) => {
   const dtProdUnitLocLink = data.prodTypeUnitTypeLocLink.filter(
     (item: { product_type_id: any; unit_type_id: any }) =>

@@ -118,4 +118,46 @@ export default class ProjectApi extends AbstractApi {
   downloadResource = (params: any, config: any): Promise<AxiosResponse<any, any>> => {
     return this.client.post('/api/resource/getFiles', params, config);
   };
+
+  downloadAllSelection = (params: any, config?: any): Promise<AxiosResponse<any, any>> => {
+    return this.client.post('/api/units/DownloadAllSelection', params, {
+      responseType: 'blob',
+      ...(config || []),
+    });
+  };
+
+  downloadSelection = (params: any, config?: any): Promise<AxiosResponse<any, any>> => {
+    return this.client.post('/api/units/DownloadSelection', params, {
+      responseType: 'blob',
+      ...(config || []),
+    });
+  };
+
+  downloadSelectionWithExcel = (params: any, config?: any): Promise<AxiosResponse<any, any>> => {
+    return this.client.post('/api/units/downloadselectionwithexcel', params, {
+      responseType: 'blob',
+      ...(config || []),
+    });
+  };
+
+  submittalExportPDF = (params: any, config?: any): Promise<AxiosResponse<any, any>> => {
+    return this.client.post('/api/submittals/exportpdf', params, {
+      responseType: 'blob',
+      ...(config || []),
+    });
+  };
+
+  exportEpicor = (params: any, config?: any): Promise<AxiosResponse<any, any>> => {
+    return this.client.post('/api/submittals/exportepicor', params, {
+      responseType: 'blob',
+      ...(config || []),
+    });
+  };
+
+  quoteExportPDF = (params: any, config?: any): Promise<AxiosResponse<any, any>> => {
+    return this.client.post('/api/quote/exportPdf', params, {
+      responseType: 'blob',
+      ...(config || []),
+    });
+  };
 }

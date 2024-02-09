@@ -23,6 +23,8 @@ import SelectProductInfo from '../components/SelectProductInfo/SelectProductInfo
 import UnitInfo from '../components/UnitInfo/UnitInfo';
 import Selection from '../components/Selection/Selection';
 import { useUnitTypeInfo } from 'src/state/state';
+import ReportDialog from '../../components/dialog/ReportDialog';
+import SelectionReportDialog from '../../components/dialog/SelectionReportDialog';
 
 // ----------------------------------------------------------------------
 
@@ -84,6 +86,12 @@ export default function EditUnit() {
       enabled: intUnitNo !== 0 && typeof window !== 'undefined',
     }
   );
+
+  useEffect(() => {
+    if (unitId) {
+      setIntUnitNo(Number(unitId?.toString()));
+    }
+  }, [unitId]);
 
   const { unitInfo } = unitData || {};
 
@@ -209,7 +217,7 @@ export default function EditUnit() {
                 variant="contained"
                 color="primary"
                 onClick={onClickNextStep}
-                disabled={validateContinue()}
+                disabled={!validateContinue()}
               >
                 {currentStep !== 2 ? 'Continue' : 'Done'}
                 <Iconify icon={currentStep !== 2 ? 'akar-icons:arrow-right' : 'icons8:cancel-2'} />
@@ -224,6 +232,12 @@ export default function EditUnit() {
         intUnitNo={intUnitNo.toString()}
       /> */}
       </RootStyle>
+      <SelectionReportDialog
+        isOpen={openRPDialog}
+        onClose={() => setOpenRPDialog(false)}
+        intProjectID={projectId?.toString() || ''}
+        intUnitNo={unitId?.toString() || ''}
+      />
     </>
   );
 }

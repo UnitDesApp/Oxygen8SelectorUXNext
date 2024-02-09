@@ -103,8 +103,8 @@ export default function UnitInfo({
             onSuccess={() => setOpenSuccess(true)}
             onError={() => setOpenError(true)}
             edit={edit}
-            intProductTypeID={intUnitTypeID || unitInfo.productTypeID || 0}
-            intUnitTypeID={intProductTypeID || unitInfo.unitTypeID || 0}
+            intProductTypeID={intProductTypeID || unitInfo.productTypeID || 0}
+            intUnitTypeID={intUnitTypeID || unitInfo.unitTypeID || 0}
             setFunction={setFunction}
             txbProductType={txbProductType}
             txbUnitType={txbUnitType}

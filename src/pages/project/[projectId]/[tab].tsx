@@ -1,5 +1,5 @@
 // react
-import { useCallback, useEffect, useMemo } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 // next
 import Head from 'next/head';
 import { Box, Container, Stack, Tab, Button, Tabs } from '@mui/material';
@@ -21,6 +21,7 @@ import ProjectQuote from './components/quote/ProjectQuote';
 import ProjectSubmittal from './components/submittal/ProjectSubmittal';
 import ProjectStatus from './components/status/ProjectStatus';
 import ProjectNote from './components/note/ProjectNote';
+import ReportDialog from './components/dialog/ReportDialog';
 
 // ----------------------------------------------------------------------
 
@@ -36,6 +37,13 @@ export default function Project() {
 
   // useTab
   const { currentTab, onChangeTab, setCurrentTab } = useTabs(tab?.toString());
+
+  // useState
+  const [openExportDialog, setOpenExportDialog] = useState<boolean>(false);
+
+  const handleOpneExportDialog = () => {
+    setOpenExportDialog(true);
+  };
 
   useEffect(() => {
     setCurrentTab(tab?.toString() || '');
@@ -101,7 +109,11 @@ export default function Project() {
           links={[{ name: 'Projects', href: PATH_APP.project }, { name: tabData?.title || '' }]}
           action={
             <Stack spacing={2} direction="row" alignItems="flex-end" sx={{ mt: 3 }}>
-              <Button variant="text" startIcon={<Iconify icon={'bxs:download'} />}>
+              <Button
+                variant="text"
+                startIcon={<Iconify icon={'bxs:download'} />}
+                onClick={() => setOpenExportDialog(true)}
+              >
                 Export report
               </Button>
               <Button
@@ -127,6 +139,11 @@ export default function Project() {
         </Tabs>
         <Box sx={{ my: 3 }}>{tabData?.component || null}</Box>
       </Container>
+      <ReportDialog
+        isOpen={openExportDialog}
+        onClose={() => setOpenExportDialog(false)}
+        intProjectID={projectId?.toString() || ''}
+      />
     </>
   );
 }
