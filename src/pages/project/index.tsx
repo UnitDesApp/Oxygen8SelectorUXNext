@@ -216,7 +216,7 @@ export default function Project() {
                     onSelectAllRows={(checked: boolean) =>
                       onSelectAllRows(
                         checked,
-                        dataFiltered.map((row: any) => row.id)
+                        dataFiltered?.map((row: any) => row.id)
                       )
                     }
                   />
@@ -248,7 +248,7 @@ export default function Project() {
               <TablePagination
                 rowsPerPageOptions={[5, 10, 25]}
                 component="div"
-                count={dataFiltered.length}
+                count={dataFiltered?.length}
                 rowsPerPage={rowsPerPage}
                 page={page}
                 onPageChange={onChangePage}
