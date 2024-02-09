@@ -6,13 +6,13 @@ export default class AccountApi extends AbstractApi {
     super();
   }
 
-  getAccountInfo = async (): Promise<any> => {
-    return this.client
+  getAccountInfo = async (): Promise<any> => (
+     this.client
       .post(`/api/account/getAllInfo`, {
         intUAL: localStorage.getItem('UAL'),
       })
-      .then((res) => res.data);
-  };
+      .then((res) => res.data)
+  );
 
   updateProfile = async (data: any): Promise<any> => {
     return this.client.post(`/api/account/updateUser`, data).then((res) => res.data);
