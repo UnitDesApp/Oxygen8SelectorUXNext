@@ -6,7 +6,7 @@ export default class UserApi extends AbstractApi {
     super();
   }
 
-  login = async (params: { email: string; password: string }): Promise<AxiosResponse> => {
-    return this.client.post(`/api/auth/Login`, params);
-  };
+  login = async (params: { email: string; password: string }): Promise<AxiosResponse> => (
+     this.client.post(`/api/auth/Login`, params)
+  );
 }
