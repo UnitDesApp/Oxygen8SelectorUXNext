@@ -6,9 +6,9 @@ export default class ProjectApi extends AbstractApi {
     super();
   }
 
-  getProjects = async (): Promise<any> => {
-    return this.client.post(`/api/jobs/Get`).then((res) => JSON.parse(res.data));
-  };
+  getProjects = async (): Promise<any> => (
+     this.client.post(`/api/jobs/Get`).then((res) => JSON.parse(res.data))
+  );
 
   getProjectInitInfo = async (): Promise<any> => {
     return this.client.get(`/api/jobs/initinfo`).then((res) => JSON.parse(res.data));
