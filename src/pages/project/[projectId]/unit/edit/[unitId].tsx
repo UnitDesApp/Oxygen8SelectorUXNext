@@ -161,8 +161,8 @@ export default function EditUnit() {
             {currentStep === 2 && (
               <Selection
                 unitTypeData={{
-                  intProductTypeID: unitInfo.productTypeID,
-                  intUnitTypeID: unitInfo.unitTypeID,
+                  intProductTypeID: unitInfo?.productTypeID,
+                  intUnitTypeID: unitInfo?.unitTypeID,
                 }}
                 intUnitNo={Number(intUnitNo)}
               />

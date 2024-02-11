@@ -93,7 +93,7 @@ export default function UnitInfo({
   return (
     <RootStyle>
       <Container>
-        <Box>
+        <Box sx={{ paddingBottom: '40px' }}>
           <UnitInfoForm
             projectId={projectId}
             baseData={baseData}
