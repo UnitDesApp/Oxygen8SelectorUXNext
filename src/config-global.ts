@@ -4,8 +4,8 @@ import { PATH_APP } from './routes/paths';
 // API
 // ----------------------------------------------------------------------
 
-export const BACKEND_ENDPOINT = 'https://localhost:44307';
-//  export const BACKEND_ENDPOINT = 'https://oxygen8apitest.com';
+// export const BACKEND_ENDPOINT = 'https://localhost:44307';
+export const BACKEND_ENDPOINT = 'https://oxygen8apitest.com';
 // export const BACKEND_ENDPOINT = "https://oxygen8api.com";
 
 export const HOST_API_KEY = process.env.HOST_API_KEY || '';
