@@ -35,7 +35,9 @@ const Logo = forwardRef<HTMLDivElement, LogoProps>(
         }}
         {...other}
       >
+
         <img src="/logo/O8_Logo.png" alt="o8 logo" />
+
       </Box>
     );
 
