@@ -1,5 +1,4 @@
 import { useCallback, useMemo } from 'react';
-import PropTypes from 'prop-types';
 import * as Yup from 'yup';
 import {
   Box,
@@ -89,7 +88,7 @@ export default function NewUserDialog({ open, onClose, onSuccess, onFail }: NewU
         onFail();
       }
     },
-    [defaultValues, onClose, onFail, onSuccess, reset]
+    [defaultValues, onClose, onFail, onSuccess, reset, api.account]
   );
 
   return (

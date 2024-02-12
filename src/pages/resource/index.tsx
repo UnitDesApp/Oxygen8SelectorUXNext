@@ -1,16 +1,14 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 // @mui
-import { styled } from '@mui/material/styles';
-import { Box, Button, Container, Divider, LinearProgress, Alert } from '@mui/material';
+import { Box, Container, Divider, LinearProgress, Alert } from '@mui/material';
 import { useAuthContext } from 'src/auth/useAuthContext';
 import { useGetFileList } from 'src/hooks/useApi';
 import Head from 'next/head';
 import CustomBreadcrumbs from 'src/components/custom-breadcrumbs';
-import Iconify from 'src/components/iconify';
-import ResourceHeader from './components/ResourceHeader';
-import ResourceTable from './components/ResourceTable';
 import { ResourceNames } from 'src/utils/constants';
 import DashboardLayout from 'src/layouts/dashboard/DashboardLayout';
+import ResourceHeader from './components/ResourceHeader';
+import ResourceTable from './components/ResourceTable';
 
 Resources.getLayout = (page: React.ReactElement) => <DashboardLayout>{page}</DashboardLayout>;
 
@@ -46,8 +44,10 @@ export default function Resources() {
           />
           {user?.verified && !Number(user?.verified) ? (
             <Alert sx={{ width: '100%', mt: 3 }} severity="warning">
-              <b>You are not verified!</b> - Please check your email inbox, if you didn't receive
-              the message, <a href="">please resend verification link!</a>.
+              <b>You are not verified!</b> -{' '}
+              {`Please check your email inbox, if you didn't receive
+              the message`}
+              , <a href="">please resend verification link!</a>.
             </Alert>
           ) : (
             <>

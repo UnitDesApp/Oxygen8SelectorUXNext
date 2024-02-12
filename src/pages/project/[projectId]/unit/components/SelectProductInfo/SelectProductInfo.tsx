@@ -1,13 +1,12 @@
 // react
 import { useState, useCallback } from 'react';
 // prop-types
-import PropTypes from 'prop-types';
 // @mui
 import { Container, CardContent, Card, Box, Tabs, Tab } from '@mui/material';
 
 // components
-import { ProductTypes, Applications, SideDescription, UnitTypes } from './index';
 import { useGetAllBaseData } from 'src/hooks/useApi';
+import { ProductTypes, Applications, SideDescription, UnitTypes } from './index';
 
 const productInfomation = {
   image: '/assets/Images/img_nova_1.png',
@@ -74,7 +73,7 @@ export default function SelectProductInfo(props: SelectProductInfoProps) {
           value={value}
           onChange={handleChange}
           aria-label="basic tabs example"
-          centered={true}
+          centered
           variant="fullWidth"
         >
           <Tab label={applicationValue} />

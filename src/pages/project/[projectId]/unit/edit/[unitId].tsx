@@ -13,16 +13,15 @@ import {
   Typography,
   Box,
 } from '@mui/material';
-import { useGetAllBaseData, useGetUnitInfo } from 'src/hooks/useApi';
+import { useGetUnitInfo } from 'src/hooks/useApi';
 import { useRouter } from 'next/router';
 import CustomBreadcrumbs from 'src/components/custom-breadcrumbs';
 import { PATH_APP } from 'src/routes/paths';
 import Iconify from 'src/components/iconify';
 import Head from 'next/head';
-import SelectProductInfo from '../components/SelectProductInfo/SelectProductInfo';
 import UnitInfo from '../components/UnitInfo/UnitInfo';
 import Selection from '../components/Selection/Selection';
-import { useUnitTypeInfo } from 'src/state/state';
+import SelectionReportDialog from '../../components/dialog/SelectionReportDialog';
 
 // ----------------------------------------------------------------------
 
@@ -78,12 +77,18 @@ export default function EditUnit() {
       intUserID: typeof window !== 'undefined' && localStorage.getItem('userId'),
       intUAL: typeof window !== 'undefined' && localStorage.getItem('UAL'),
       intProjectID: projectId,
-      intUnitNo: intUnitNo,
+      intUnitNo,
     },
     {
       enabled: intUnitNo !== 0 && typeof window !== 'undefined',
     }
   );
+
+  useEffect(() => {
+    if (unitId) {
+      setIntUnitNo(Number(unitId?.toString()));
+    }
+  }, [unitId]);
 
   const { unitInfo } = unitData || {};
 
@@ -97,7 +102,8 @@ export default function EditUnit() {
 
   const onClickNextStep = () => {
     if (currentStep < 2) setCurrentStep(currentStep + 1);
-    else if (currentStep === 2) projectId && push(`/project/${projectId?.toString()}/unitlist`);
+    else if (currentStep === 2 && projectId)
+      push(`/project/${projectId?.toString() || '0'}/unitlist`);
   };
 
   const validateContinue = () => {
@@ -129,7 +135,7 @@ export default function EditUnit() {
               currentStep === 2 && (
                 <Button
                   variant="text"
-                  startIcon={<Iconify icon={'bxs:download'} />}
+                  startIcon={<Iconify icon="bxs:download" />}
                   onClick={openDialog}
                 >
                   Export report
@@ -209,7 +215,7 @@ export default function EditUnit() {
                 variant="contained"
                 color="primary"
                 onClick={onClickNextStep}
-                disabled={validateContinue()}
+                disabled={!validateContinue()}
               >
                 {currentStep !== 2 ? 'Continue' : 'Done'}
                 <Iconify icon={currentStep !== 2 ? 'akar-icons:arrow-right' : 'icons8:cancel-2'} />
@@ -224,6 +230,12 @@ export default function EditUnit() {
         intUnitNo={intUnitNo.toString()}
       /> */}
       </RootStyle>
+      <SelectionReportDialog
+        isOpen={openRPDialog}
+        onClose={() => setOpenRPDialog(false)}
+        intProjectID={projectId?.toString() || ''}
+        intUnitNo={unitId?.toString() || ''}
+      />
     </>
   );
 }

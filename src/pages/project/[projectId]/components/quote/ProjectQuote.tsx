@@ -82,8 +82,8 @@ export default function ProjectQuote() {
     isLoading: isLoadingQuoteInfo,
     refetch,
   } = useGetQuoteInfo({
-    intUserID: localStorage.getItem('userId'),
-    intUAL: localStorage.getItem('UAL'),
+    intUserID: typeof window !== 'undefined' && localStorage.getItem('userId'),
+    intUAL: typeof window !== 'undefined' && localStorage.getItem('UAL'),
     intJobID: Number(projectId),
     intUnitNo: 1,
   });
@@ -98,19 +98,17 @@ export default function ProjectQuote() {
     pricingShipping: gvPricingShipping,
     gvMisc,
     gvNotes,
-  } = quoteInfo
-    ? quoteInfo
-    : {
-        controlInfo: {},
-        initControlInfo: {},
-        pricingTotal: {},
-        pricingUnits: {},
-        pricingShipping: {},
-        pricingMisc: {},
-        gvMisc: {},
-        gvNotes: {},
-        pricingGeneral: {},
-      };
+  } = quoteInfo || {
+    controlInfo: {},
+    initControlInfo: {},
+    pricingTotal: {},
+    pricingUnits: {},
+    pricingShipping: {},
+    pricingMisc: {},
+    gvMisc: {},
+    gvNotes: {},
+    pricingGeneral: {},
+  };
 
   const handleGenerate = () => {
     setIsGenerate(true);

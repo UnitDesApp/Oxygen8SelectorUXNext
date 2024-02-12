@@ -1,8 +1,7 @@
+// components
+import Iconify from 'src/components/iconify/Iconify';
 // routes
 import { PATH_APP } from '../../../routes/paths';
-// components
-import SvgColor from '../../../components/svg-color';
-import Iconify from 'src/components/iconify/Iconify';
 
 // ----------------------------------------------------------------------
 

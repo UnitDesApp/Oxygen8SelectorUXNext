@@ -1,4 +1,3 @@
-import PropTypes from 'prop-types';
 import { useState, useCallback, SetStateAction, MouseEventHandler } from 'react';
 // @mui
 import { Checkbox, TableRow, TableCell, MenuItem, Stack, IconButton } from '@mui/material';
@@ -12,7 +11,7 @@ import TableMoreMenu from 'src/components/table/TableMoreMenu';
 
 const statusArr = ['draft', 'quoted', 'released', 'closed'];
 
-type ProjectTableRow = {
+type ProjectTableRowProps = {
   row: {
     job_name: string;
     reference_no: string;
@@ -37,7 +36,7 @@ export default function ProjectTableRow({
   onSelectRow,
   onDuplicate,
   onDeleteRow,
-}: ProjectTableRow) {
+}: ProjectTableRowProps) {
   const {
     job_name,
     reference_no,
@@ -47,7 +46,7 @@ export default function ProjectTableRow({
     created_date,
     revised_date,
     status,
-  } = row;
+  } = row || {};
 
   const { user } = useAuthContext();
 
@@ -122,12 +121,10 @@ export default function ProjectTableRow({
           onOpen={handleOpenMenu}
           onClose={handleCloseMenu}
           actions={
-            <>
-              <MenuItem sx={{ color: 'info.main' }} onClick={onEditRow}>
-                <Iconify icon={'akar-icons:eye'} />
-                View Project
-              </MenuItem>
-            </>
+            <MenuItem sx={{ color: 'info.main' }} onClick={onEditRow}>
+              <Iconify icon="akar-icons:eye" />
+              View Project
+            </MenuItem>
           }
         />
       </TableCell>

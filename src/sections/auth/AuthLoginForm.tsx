@@ -7,11 +7,11 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import { Link, Stack, Alert, IconButton, InputAdornment } from '@mui/material';
 import { LoadingButton } from '@mui/lab';
 // auth
+import { PATH_AUTH } from 'src/routes/paths';
 import { useAuthContext } from '../../auth/useAuthContext';
 // components
 import Iconify from '../../components/iconify';
 import FormProvider, { RHFTextField } from '../../components/hook-form';
-import { PATH_AUTH } from 'src/routes/paths';
 
 // ----------------------------------------------------------------------
 

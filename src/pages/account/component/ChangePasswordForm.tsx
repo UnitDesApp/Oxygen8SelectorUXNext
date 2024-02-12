@@ -62,7 +62,7 @@ export default function ChangePasswordForm() {
         console.log(e);
       }
     },
-    [setSuccess]
+    [setSuccess, api.account]
   );
 
   return (

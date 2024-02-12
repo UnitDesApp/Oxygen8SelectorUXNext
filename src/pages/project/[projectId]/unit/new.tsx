@@ -18,10 +18,10 @@ import { useRouter } from 'next/router';
 import CustomBreadcrumbs from 'src/components/custom-breadcrumbs';
 import { PATH_APP } from 'src/routes/paths';
 import Iconify from 'src/components/iconify';
+import Head from 'next/head';
 import SelectProductInfo from './components/SelectProductInfo/SelectProductInfo';
 import UnitInfo from './components/UnitInfo/UnitInfo';
 import Selection from './components/Selection/Selection';
-import Head from 'next/head';
 
 // ----------------------------------------------------------------------
 
@@ -104,7 +104,8 @@ export default function AddNewUnit() {
 
   const onClickNextStep = () => {
     if (currentStep < 2) setCurrentStep(currentStep + 1);
-    else if (currentStep === 2) projectId && push(`/project/${projectId?.toString()}/unitlist`);
+    else if (currentStep === 2 && projectId)
+      push(`/project/${projectId?.toString() || '0'}/unitlist`);
   };
 
   const validateContinue = () => {
@@ -146,7 +147,7 @@ export default function AddNewUnit() {
               currentStep === 2 && (
                 <Button
                   variant="text"
-                  startIcon={<Iconify icon={'bxs:download'} />}
+                  startIcon={<Iconify icon="bxs:download" />}
                   onClick={openDialog}
                 >
                   Export report

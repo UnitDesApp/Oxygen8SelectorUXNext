@@ -10,7 +10,7 @@ export default function Index() {
     if (router.pathname === '/') {
       router.push('/project');
     }
-  }, [router.pathname]);
+  }, [router, router.pathname, router.push]);
 
   return null;
 }

@@ -1,5 +1,5 @@
 import { useState, useCallback, useMemo, useEffect } from 'react';
-import PropTypes from 'prop-types';
+import { useRouter } from 'next/router';
 // @mui
 import {
   Box,
@@ -22,13 +22,12 @@ import {
 } from 'src/components/table';
 import { useApiContext } from 'src/contexts/ApiContext';
 import useTabs from 'src/hooks/useTabs';
-import UserTableToolbar from './component/UserTableToolbar';
 import Scrollbar from 'src/components/scrollbar/Scrollbar';
-import TableSelectedActions from '../customers/component/TableSelectedActions';
-import UserTableRow from './component/UserTableRow';
 import ConfirmDialog from 'src/components/dialog/ConfirmDialog';
 import DashboardLayout from 'src/layouts/dashboard/DashboardLayout';
-import { useRouter } from 'next/router';
+import UserTableToolbar from './component/UserTableToolbar';
+import TableSelectedActions from '../customers/component/TableSelectedActions';
+import UserTableRow from './component/UserTableRow';
 
 // ----------------------------------------------------------------------
 const TABLE_HEAD = [
@@ -104,7 +103,7 @@ export default function Users({ toolbar = true, checkbox = true }: UsersProps) {
     setTableData(data);
     setDeleteRowID(-1);
     handleOneConfirmDialogClose();
-  }, [deleteRowID, handleOneConfirmDialogClose]);
+  }, [api.account, deleteRowID, handleOneConfirmDialogClose]);
 
   const handleMultiConfirmDialogOpen = useCallback(() => {
     setMultiConfirmDialogState(true);
@@ -118,8 +117,8 @@ export default function Users({ toolbar = true, checkbox = true }: UsersProps) {
   const { currentTab: filterStatus, onChangeTab: onChangeFilterStatus } = useTabs('All');
 
   const handleFilterName = useCallback(
-    (filterName: string) => {
-      setFilterName(filterName);
+    (keyword: string) => {
+      setFilterName(keyword);
       setPage(0);
     },
     [setPage]
@@ -132,11 +131,14 @@ export default function Users({ toolbar = true, checkbox = true }: UsersProps) {
       setSelected([]);
       setMultiConfirmDialogState(false);
     }
-  }, [selected, setSelected]);
+  }, [api.account, selected, setSelected]);
 
-  const handleEditRow = useCallback((row: any) => {
-    push(`/admin-panel/users/${row.id}`);
-  }, []);
+  const handleEditRow = useCallback(
+    (row: any) => {
+      push(`/admin-panel/users/${row?.id || '0'}`);
+    },
+    [push]
+  );
 
   const filteredData = useMemo(
     () =>
@@ -161,8 +163,8 @@ export default function Users({ toolbar = true, checkbox = true }: UsersProps) {
     [filterName, filterRole, filterStatus, filteredData.length]
   );
 
-  const handleFilterByCustomerName = (customerType: number) => {
-    setCustomerType(customerType);
+  const handleFilterByCustomerName = (type: number) => {
+    setCustomerType(type);
   };
 
   return (
@@ -186,7 +188,7 @@ export default function Users({ toolbar = true, checkbox = true }: UsersProps) {
             />
           )}
 
-          <Table size={'medium'}>
+          <Table size="medium">
             <TableHeadCustom
               order={order}
               orderBy={orderBy}

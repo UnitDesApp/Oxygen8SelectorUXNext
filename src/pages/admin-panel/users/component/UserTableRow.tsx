@@ -1,4 +1,3 @@
-import PropTypes from 'prop-types';
 // @mui
 import { styled } from '@mui/material/styles';
 import { Checkbox, TableRow, TableCell, Stack, IconButton } from '@mui/material';
@@ -42,7 +41,7 @@ export default function UserTableRow({
     access_level,
     access_pricing,
     created_date,
-  } = row;
+  } = row || {};
 
   return (
     <TableRow hover sx={{ borderBottom: '1px solid #a7b1bc' }} selected={selected}>
@@ -82,10 +81,10 @@ export default function UserTableRow({
       <TableCell align="right">
         <Stack direction="row">
           <StyledIconButton onClick={() => onEditRow()}>
-            <Iconify icon={'fa-solid:pen'} />
+            <Iconify icon="fa-solid:pen" />
           </StyledIconButton>
           <StyledIconButton onClick={() => onDeleteRow()}>
-            <Iconify icon={'eva:trash-2-outline'} />
+            <Iconify icon="eva:trash-2-outline" />
           </StyledIconButton>
         </Stack>
       </TableCell>
