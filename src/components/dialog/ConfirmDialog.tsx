@@ -1,5 +1,4 @@
 import React, { useMemo } from 'react';
-import PropTypes from 'prop-types';
 // material
 import Button from '@mui/material/Button';
 import Dialog from '@mui/material/Dialog';

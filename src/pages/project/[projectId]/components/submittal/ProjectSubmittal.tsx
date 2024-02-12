@@ -1,34 +1,9 @@
-import { useEffect, useState, useMemo, useRef, useCallback } from 'react';
-import * as Yup from 'yup';
-import PropTypes from 'prop-types';
+import { useState, useRef } from 'react';
 // @mui
 import { styled } from '@mui/material/styles';
-import {
-  Container,
-  Box,
-  Grid,
-  Typography,
-  Stack,
-  Paper,
-  TableContainer,
-  Table,
-  TableHead,
-  TableBody,
-  TableRow,
-  TextField,
-  Button,
-  Snackbar,
-  Alert,
-  LinearProgress,
-  Accordion,
-  AccordionSummary,
-  AccordionDetails,
-} from '@mui/material';
+import { Box, Stack, LinearProgress } from '@mui/material';
 import TableCell from '@mui/material/TableCell';
-import { LoadingButton } from '@mui/lab';
 // hooks
-import { yupResolver } from '@hookform/resolvers/yup';
-import { useForm } from 'react-hook-form';
 import { useRouter } from 'next/router';
 import { useGetSubmittalInfo } from 'src/hooks/useApi';
 import ProjectSubmittalForm from './ProjectSubmittalForm';
@@ -73,15 +48,15 @@ export default function SubmittalInternal() {
   const isResetCalled = useRef(false);
 
   const { data: submittalInfo, isLoading: isLoadingSubmittalInfo } = useGetSubmittalInfo({
-    intUserID: localStorage.getItem('userId'),
-    intUAL: localStorage.getItem('UAL'),
+    intUserID: typeof window !== 'undefined' && localStorage.getItem('userId'),
+    intUAL: typeof window !== 'undefined' && localStorage.getItem('UAL'),
     intJobID: projectId,
   });
 
   if (isLoadingSubmittalInfo) return <LinearProgress color="info" />;
   if (!submittalInfo)
     return (
-      <Stack direction={'row'} alignItems={'center'} justifyContent={'center'} sx={{ pt: '30px' }}>
+      <Stack direction="row" alignItems="center" justifyContent="center" sx={{ pt: '30px' }}>
         <Box sx={{ fontSize: '30px' }}>Unable to lead submittal data due to NO UNIT!</Box>{' '}
       </Stack>
     );

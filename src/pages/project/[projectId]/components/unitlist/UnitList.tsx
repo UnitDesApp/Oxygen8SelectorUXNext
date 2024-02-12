@@ -27,10 +27,10 @@ import { useRouter } from 'next/router';
 import Scrollbar from 'src/components/scrollbar';
 import Iconify from 'src/components/iconify';
 import { useGetAllUnits } from 'src/hooks/useApi';
-import UnitTableRow from './UnitTableRow';
 import CircularProgressLoading from 'src/components/loading/CircularProgressLoading';
 import { PATH_APP } from 'src/routes/paths';
 import { useUnitTypeInfo } from 'src/state/state';
+import UnitTableRow from './UnitTableRow';
 
 const ROLE_OPTIONS = ['All', 'My Jobs', 'By Others'];
 
@@ -109,7 +109,7 @@ export default function UnitList() {
   // eslint-disable-next-line no-unused-vars
   const { currentTab: filterStatus, onChangeTab: onChangeFilterStatus } = useTabs('All');
 
-  const handleFilterName = (filterName: string) => {
+  const handleFilterName = (name: string) => {
     setFilterName(filterName);
     setPage(0);
   };
@@ -127,7 +127,7 @@ export default function UnitList() {
   const handleEditRow = (row: any) => {
     setIntProductTypeID(Number(row.product_type_id));
     setIntUnitTypeID(Number(row.unit_type_id));
-    push(PATH_APP.editUnit(projectId?.toString() || '', row.unit_no));
+    push(PATH_APP.editUnit(projectId?.toString() || '0', row.unit_no));
   };
 
   const handleClickNewUnit = () => {
@@ -143,7 +143,7 @@ export default function UnitList() {
         filterRole,
         filterStatus,
       }),
-    [units?.unitList, orderBy, filterName, filterRole, filterStatus]
+    [units?.unitList, order, orderBy, filterName, filterRole, filterStatus]
   );
 
   const denseHeight = dense ? 52 : 72;
@@ -178,7 +178,7 @@ export default function UnitList() {
               action={
                 <Tooltip title="Delete">
                   <IconButton color="primary" onClick={() => handleMultiConfirmDialogOpen()}>
-                    <Iconify icon={'eva:trash-2-outline'} />
+                    <Iconify icon="eva:trash-2-outline" />
                   </IconButton>
                 </Tooltip>
               }
@@ -212,9 +212,7 @@ export default function UnitList() {
                     onSelectRow={() => onSelectRow(row.unit_no)}
                     onDeleteRow={() => handleOneConfirmDialogOpen(row.unit_no)}
                     onEditRow={() => handleEditRow(row)}
-                    onDuplicate={function (): void {
-                      throw new Error('Function not implemented.');
-                    }}
+                    onDuplicate={() => {}}
                   />
                 ))}
 

@@ -139,42 +139,27 @@ export default function ProjectQuoteForm({
   // default values for form depend on redux
   const defaultValues = useMemo(
     () => ({
-      txbRevisionNo: quoteFormInfo.txbRevisionNo !== undefined ? quoteFormInfo.txbRevisionNo : '',
-      txbProjectName:
-        quoteFormInfo.txbProjectName !== undefined ? quoteFormInfo.txbProjectName : '',
-      txbQuoteNo: quoteFormInfo.txbQuoteNo !== undefined ? quoteFormInfo.txbQuoteNo : '',
-      txbTerms: quoteFormInfo.txbTerms !== undefined ? quoteFormInfo.txbTerms : '',
-      txbCreatedDate:
-        quoteFormInfo.txbCreatedDate !== undefined ? quoteFormInfo.txbCreatedDate : '',
-      txbRevisedDate:
-        quoteFormInfo.txbRevisedDate !== undefined ? quoteFormInfo.txbRevisedDate : '',
-      txbValidDate: quoteFormInfo.txbValidDate !== undefined ? quoteFormInfo.txbValidDate : '',
-      txbCurrencyRate:
-        quoteFormInfo.txbCurrencyRate !== undefined ? quoteFormInfo.txbCurrencyRate : '',
-      txbShippingFactor:
-        quoteFormInfo.txbShippingFactor !== undefined ? quoteFormInfo.txbShippingFactor : '',
-      txbPriceShipping:
-        quoteFormInfo.txbPriceShipping !== undefined ? quoteFormInfo.txbPriceShipping : '',
-      txbDiscountFactor:
-        quoteFormInfo.txbDiscountFactor !== undefined ? quoteFormInfo.txbDiscountFactor : '',
-      txbPriceDiscount:
-        quoteFormInfo.txbPriceDiscount !== undefined ? quoteFormInfo.txbPriceDiscount : '',
-      txbPriceAllUnits:
-        quoteFormInfo.txbPriceAllUnits !== undefined ? quoteFormInfo.txbPriceAllUnits : '',
-      txbPriceMisc: quoteFormInfo.txbPriceMisc !== undefined ? quoteFormInfo.txbPriceMisc : '',
-      txbPriceSubtotal:
-        quoteFormInfo.txbPriceSubtotal !== undefined ? quoteFormInfo.txbPriceSubtotal : '',
-      txbPriceFinalTotal:
-        quoteFormInfo.txbPriceFinalTotal !== undefined ? quoteFormInfo.txbPriceFinalTotal : '',
-      ddlQuoteStageVal:
-        quoteFormInfo.ddlQuoteStageVal !== undefined ? quoteFormInfo.ddlQuoteStageVal : '',
-      ddlFOB_PointVal:
-        quoteFormInfo.ddlFOB_PointVal !== undefined ? quoteFormInfo.ddlFOB_PointVal : '',
-      ddlCountryVal: quoteFormInfo.ddlCountryVal !== undefined ? quoteFormInfo.ddlCountryVal : '',
-      ddlShippingTypeVal:
-        quoteFormInfo.ddlShippingTypeVal !== undefined ? quoteFormInfo.ddlShippingTypeVal : '',
-      ddlDiscountTypeVal:
-        quoteFormInfo.ddlDiscountTypeVal !== undefined ? quoteFormInfo.ddlDiscountTypeVal : '',
+      txbRevisionNo: quoteFormInfo?.txbRevisionNo || '',
+      txbProjectName: quoteFormInfo?.txbProjectName || '',
+      txbQuoteNo: quoteFormInfo?.txbQuoteNo || '',
+      txbTerms: quoteFormInfo?.txbTerms || '',
+      txbCreatedDate: quoteFormInfo?.txbCreatedDate || '',
+      txbRevisedDate: quoteFormInfo?.txbRevisedDate || '',
+      txbValidDate: quoteFormInfo?.txbValidDate || '',
+      txbCurrencyRate: quoteFormInfo?.txbCurrencyRate || '',
+      txbShippingFactor: quoteFormInfo?.txbShippingFactor || '',
+      txbPriceShipping: quoteFormInfo?.txbPriceShipping || '',
+      txbDiscountFactor: quoteFormInfo?.txbDiscountFactor || '',
+      txbPriceDiscount: quoteFormInfo?.txbPriceDiscount || '',
+      txbPriceAllUnits: quoteFormInfo?.txbPriceAllUnits || '',
+      txbPriceMisc: quoteFormInfo?.txbPriceMisc || '',
+      txbPriceSubtotal: quoteFormInfo?.txbPriceSubtotal || '',
+      txbPriceFinalTotal: quoteFormInfo?.txbPriceFinalTotal || '',
+      ddlQuoteStageVal: quoteFormInfo?.ddlQuoteStageVal || '',
+      ddlFOB_PointVal: quoteFormInfo?.ddlFOB_PointVal || '',
+      ddlCountryVal: quoteFormInfo?.ddlCountryVal || '',
+      ddlShippingTypeVal: quoteFormInfo?.ddlShippingTypeVal || '',
+      ddlDiscountTypeVal: quoteFormInfo?.ddlDiscountTypeVal || '',
     }),
     [quoteFormInfo]
   );
@@ -203,7 +188,7 @@ export default function ProjectQuoteForm({
         const result = await api.project.saveQuoteInfo(quoteData);
         if (result.status === 'success') {
           setSuccess(true);
-          refetch && refetch();
+          if (refetch) refetch();
         } else {
           setFail(true);
         }
@@ -211,7 +196,7 @@ export default function ProjectQuoteForm({
         setFail(true);
       }
     },
-    [projectId, refetch]
+    [api.project, projectId, refetch]
   );
 
   // Event handler for addding misc
@@ -222,9 +207,9 @@ export default function ProjectQuoteForm({
         intJobID: projectId,
       };
       await api.project.addNewMisc(data);
-      refetch && refetch();
+      if (refetch) refetch();
     },
-    [projectId, refetch]
+    [api.project, projectId, refetch]
   );
 
   const updateMisc = useCallback(
@@ -235,9 +220,9 @@ export default function ProjectQuoteForm({
         miscNo,
       };
       await api.project.updateMisc(data);
-      refetch && refetch();
+      if (refetch) refetch();
     },
-    [projectId, refetch]
+    [api.project, projectId, refetch]
   );
 
   const deleteMisc = useCallback(
@@ -247,9 +232,9 @@ export default function ProjectQuoteForm({
         miscNo,
       };
       await api.project.deleteMisc(data);
-      refetch && refetch();
+      if (refetch) refetch();
     },
-    [projectId, refetch]
+    [api.project, projectId, refetch]
   );
 
   // Event handler for adding notes
@@ -260,9 +245,9 @@ export default function ProjectQuoteForm({
         txbNotes,
       };
       await api.project.addNewNotes(data);
-      refetch && refetch();
+      if (refetch) refetch();
     },
-    [projectId, refetch]
+    [api.project, projectId, refetch]
   );
 
   const updateNotes = useCallback(
@@ -273,9 +258,9 @@ export default function ProjectQuoteForm({
         notesNo,
       };
       await api.project.updateNotes(data);
-      refetch && refetch();
+      if (refetch) refetch();
     },
-    [projectId, refetch]
+    [api.project, projectId, refetch]
   );
 
   const deleteNotes = useCallback(
@@ -285,9 +270,9 @@ export default function ProjectQuoteForm({
         notesNo,
       };
       await api.project.deleteNotes(data);
-      refetch && refetch();
+      if (refetch) refetch();
     },
-    [projectId, refetch]
+    [api.project, projectId, refetch]
   );
 
   return (
@@ -297,7 +282,7 @@ export default function ProjectQuoteForm({
           <Grid item xs={12}>
             <Grid container spacing={3}>
               <Grid item xs={12} sm={6} md={4}>
-                <CustomGroupBox title={'Project Info'}>
+                <CustomGroupBox title="Project Info">
                   <Box sx={{ display: 'grid', rowGap: 1, columnGap: 1 }}>
                     <RHFTextField size="small" name="txbRevisionNo" label="Revision No" />
                     <RHFSelect
@@ -349,7 +334,7 @@ export default function ProjectQuoteForm({
                 </CustomGroupBox>
               </Grid>
               <Grid item xs={12} sm={6} md={4}>
-                <CustomGroupBox title={'Price Setting'}>
+                <CustomGroupBox title="Price Setting">
                   <Box sx={{ display: 'grid', rowGap: 1, columnGap: 1 }}>
                     <RHFSelect
                       native
@@ -398,7 +383,7 @@ export default function ProjectQuoteForm({
                 </CustomGroupBox>
               </Grid>
               <Grid item xs={12} sm={6} md={4}>
-                <CustomGroupBox title={'Final Pricing'}>
+                <CustomGroupBox title="Final Pricing">
                   <Box sx={{ display: 'grid', rowGap: 1, columnGap: 1 }}>
                     <RHFTextField
                       size="small"
@@ -416,7 +401,7 @@ export default function ProjectQuoteForm({
             </Grid>
           </Grid>
           <Grid item xs={12}>
-            <CustomGroupBox title={''}>
+            <CustomGroupBox title="">
               <TableContainer component={Paper}>
                 <Scrollbar>
                   <Table size="small">
@@ -581,10 +566,10 @@ export default function ProjectQuoteForm({
             </CustomGroupBox>
           </Grid>
           <Grid item xs={12}>
-            <Stack direction="row" justifyContent={'flex-end'}>
+            <Stack direction="row" justifyContent="flex-end">
               <LoadingButton
                 type="submit"
-                startIcon={<Iconify icon={'fluent:save-24-regular'} />}
+                startIcon={<Iconify icon="fluent:save-24-regular" />}
                 loading={isSubmitting}
                 sx={{ width: '150px' }}
               >

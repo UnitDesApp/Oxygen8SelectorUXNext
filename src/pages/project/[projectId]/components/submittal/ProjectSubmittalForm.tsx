@@ -122,19 +122,19 @@ export default function ProjectSubmittalForm({
   // default values for form depend on redux
   const defaultValues = useMemo(
     () => ({
-      txbJobName: submittalInfo.txbProjectNameText || '',
-      txbRepName: submittalInfo.txbRepNameText || '',
-      txbSalesEngineer: submittalInfo.txbSalesEngineerText || '',
-      txbLeadTime: submittalInfo.txbLeadTimeText || '',
-      txbRevisionNo: submittalInfo.txbRevisionNoText || '',
-      txbPONumber: submittalInfo.txbPO_NumberText || '',
-      txbShipName: submittalInfo.txbShippingNameText || '',
-      txbShippingStreetAddress: submittalInfo.txbShippingStreetAddressText || '',
-      txbShippingCity: submittalInfo.txbShippingCityText || '',
-      txbShippingProvince: submittalInfo.txbShippingProvinceText || '',
-      txbShippingPostalCode: submittalInfo.txbShippingPostalCodeText || '',
-      ddlCountry: submittalInfo.ddlShippingCountryValue || '',
-      ddlDockType: submittalInfo.intDockTypeID || '',
+      txbJobName: submittalInfo?.txbProjectNameText || '',
+      txbRepName: submittalInfo?.txbRepNameText || '',
+      txbSalesEngineer: submittalInfo?.txbSalesEngineerText || '',
+      txbLeadTime: submittalInfo?.txbLeadTimeText || '',
+      txbRevisionNo: submittalInfo?.txbRevisionNoText || '',
+      txbPONumber: submittalInfo?.txbPO_NumberText || '',
+      txbShipName: submittalInfo?.txbShippingNameText || '',
+      txbShippingStreetAddress: submittalInfo?.txbShippingStreetAddressText || '',
+      txbShippingCity: submittalInfo?.txbShippingCityText || '',
+      txbShippingProvince: submittalInfo?.txbShippingProvinceText || '',
+      txbShippingPostalCode: submittalInfo?.txbShippingPostalCodeText || '',
+      ddlCountry: submittalInfo?.ddlShippingCountryValue || '',
+      ddlDockType: submittalInfo?.intDockTypeID || '',
       ckbBACNetPointList: false,
       ckbBackdraftDamper: false,
       ckbBypassDefrost: false,
@@ -186,7 +186,7 @@ export default function ProjectSubmittalForm({
     };
     api.project.addNewShippingNote(data);
     setShippingNote('');
-  }, [projectId, shippingNote]);
+  }, [api.project, projectId, shippingNote]);
 
   // submmit function
   const onProjectInfoSubmit = useCallback(
@@ -208,7 +208,7 @@ export default function ProjectSubmittalForm({
         setFail(true);
       }
     },
-    [projectId]
+    [api.project, projectId]
   );
 
   return (
@@ -219,7 +219,7 @@ export default function ProjectSubmittalForm({
             <Stack direction="row" spacing={3} justifyContent="flex-end" alignItems="flex-end">
               <LoadingButton
                 type="submit"
-                startIcon={<Iconify icon={'fluent:save-24-regular'} />}
+                startIcon={<Iconify icon="fluent:save-24-regular" />}
                 loading={isSubmitting}
               >
                 Save Changes

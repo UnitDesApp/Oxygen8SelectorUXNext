@@ -1,5 +1,4 @@
 import { useMemo, useCallback } from 'react';
-import PropTypes from 'prop-types';
 import * as Yup from 'yup';
 // materials
 import {
@@ -84,7 +83,7 @@ export default function NewCustomerDialog({
         onFail();
       }
     },
-    [defaultValues, onClose, onFail, onSuccess, reset]
+    [defaultValues, onClose, onFail, onSuccess, reset, api.account]
   );
 
   return (

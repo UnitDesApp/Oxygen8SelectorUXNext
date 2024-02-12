@@ -1,5 +1,4 @@
 import { saveAs } from 'file-saver';
-import axios from '../utils/axios';
 import { useApiContext } from 'src/contexts/ApiContext';
 
 export const useExport = () => {

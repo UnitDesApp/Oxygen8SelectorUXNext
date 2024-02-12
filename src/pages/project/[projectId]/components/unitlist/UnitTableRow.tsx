@@ -1,4 +1,3 @@
-import PropTypes from 'prop-types';
 import { useState, useCallback, MouseEventHandler } from 'react';
 // @mui
 // import { useTheme } from '@mui/material/styles';
@@ -35,7 +34,7 @@ export default function UnitTableRow({
 }: UnitTableRowProps) {
   // const theme = useTheme();
 
-  const { tag, qty, unit_type, unit_model, cfm } = row;
+  const { tag, qty, unit_type, unit_model, cfm } = row || {};
 
   const [openMenu, setOpenMenuActions] = useState(null);
 
@@ -75,11 +74,11 @@ export default function UnitTableRow({
           actions={
             <>
               <MenuItem sx={{ color: 'info.main' }} onClick={onEditRow}>
-                <Iconify icon={'fa-solid:pen'} />
+                <Iconify icon="fa-solid:pen" />
                 Edit Unit
               </MenuItem>
               <MenuItem sx={{ color: 'info.main' }} onClick={onDuplicate}>
-                <Iconify icon={'codicon:copy'} />
+                <Iconify icon="codicon:copy" />
                 Duplicate
               </MenuItem>
               <Divider />
@@ -90,7 +89,7 @@ export default function UnitTableRow({
                 }}
                 sx={{ color: 'error.main' }}
               >
-                <Iconify icon={'eva:trash-2-outline'} />
+                <Iconify icon="eva:trash-2-outline" />
                 Delete
               </MenuItem>
             </>

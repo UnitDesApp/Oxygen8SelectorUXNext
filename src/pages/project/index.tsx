@@ -1,5 +1,6 @@
 // react
 import { useEffect, useMemo, useState } from 'react';
+import { useRouter } from 'next/router';
 // next
 import Head from 'next/head';
 import {
@@ -13,10 +14,6 @@ import {
   TablePagination,
   Typography,
 } from '@mui/material';
-import TableHeadCustom from './components/table/TableHeadCustom';
-// layouts
-import DashboardLayout from '../../layouts/dashboard';
-// components
 import {
   useTable,
   emptyRows,
@@ -27,15 +24,15 @@ import {
 } from 'src/components/table';
 import { ROLE_OPTIONS } from 'src/utils/constants';
 import { useAuthContext } from 'src/auth/useAuthContext';
-import { useSettingsContext } from '../../components/settings';
-import ProjectTableRow from './components/table/ProjectTableRow';
-import ProjectTableToolbar from './components/table/ProjectTableToolbar';
 import CircularProgressLoading from 'src/components/loading/CircularProgressLoading';
 import { useGetAllProjects } from 'src/hooks/useApi';
-import { useRouter } from 'next/router';
 import { PATH_APP } from 'src/routes/paths';
 import Scrollbar from 'src/components/scrollbar/Scrollbar';
-import { useStore } from 'src/state/state';
+import ProjectTableToolbar from './components/table/ProjectTableToolbar';
+import ProjectTableRow from './components/table/ProjectTableRow';
+import { useSettingsContext } from '../../components/settings';
+import DashboardLayout from '../../layouts/dashboard';
+import TableHeadCustom from './components/table/TableHeadCustom';
 import NewProjectDialog from './components/newProjectDialog/NewProjectDialog';
 
 // ----------------------------------------------------------------------
@@ -129,8 +126,8 @@ export default function Project() {
     setMultiConfirmDialogState(false);
   };
 
-  const handleFilterName = (filterName: string) => {
-    setFilterName(filterName);
+  const handleFilterName = (name: string) => {
+    setFilterName(name);
     setPage(0);
   };
 
@@ -162,7 +159,7 @@ export default function Project() {
         filterRole,
         filterStatus,
       }),
-    [filterName, filterRole, order, orderBy, projects]
+    [filterName, filterRole, order, orderBy, projects, filterStatus]
   );
 
   const isNotFound = useMemo(
@@ -206,7 +203,7 @@ export default function Project() {
             />
             <Scrollbar sx={{ overflow: 'hidden' }}>
               <TableContainer>
-                <Table size={'small'}>
+                <Table size="small">
                   <TableHeadCustom
                     order={order}
                     orderBy={orderBy}

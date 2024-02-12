@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo, useState } from 'react';
+import React, { useCallback, useState } from 'react';
 
 import {
   Button,
@@ -111,8 +111,6 @@ export default function ReportDialog({ isOpen, onClose, intProjectID }: ReportDi
     ExportSubmittal,
     intProjectID,
     ExportSubmittalEpicor,
-    openSuccessNotify,
-    openFailNotify,
     ExportAllSelectionPDF,
     ExportRevit,
     ExportQuote,
@@ -159,7 +157,7 @@ export default function ReportDialog({ isOpen, onClose, intProjectID }: ReportDi
                       inputProps={{ 'aria-labelledby': 'checkbox-list-label-selection' }}
                     />
                   </ListItemIcon>
-                  <ListItemText id={'checkbox-list-label-selection'} primary={label} />
+                  <ListItemText id="checkbox-list-label-selection" primary={label} />
                 </ListItemButton>
               </ListItem>
             ))}

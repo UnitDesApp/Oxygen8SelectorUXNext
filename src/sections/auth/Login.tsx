@@ -1,12 +1,12 @@
 // @mui
 import { Alert, Tooltip, Stack, Typography, Link, Box } from '@mui/material';
 // auth
+import Logo from 'src/components/logo';
 import { useAuthContext } from '../../auth/useAuthContext';
 // layouts
 import LoginLayout from '../../layouts/login';
 //
 import AuthLoginForm from './AuthLoginForm';
-import Logo from 'src/components/logo';
 
 // ----------------------------------------------------------------------
 
@@ -18,8 +18,8 @@ export default function Login() {
       <Box sx={{ backgroundColor: 'white', padding: '40px', borderRadius: '20px' }}>
         <Stack
           spacing={2}
-          justifyContent={'center'}
-          alignItems={'center'}
+          justifyContent="center"
+          alignItems="center"
           sx={{ mb: 5, position: 'relative' }}
         >
           <Logo sx={{ height: 'auto', width: '350px' }} />

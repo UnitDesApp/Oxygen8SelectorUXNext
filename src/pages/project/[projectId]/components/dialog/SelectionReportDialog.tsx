@@ -1,5 +1,4 @@
-import React, { useCallback, useMemo, useState } from 'react';
-import PropTypes from 'prop-types';
+import React, { useCallback, useState } from 'react';
 
 import {
   Button,
@@ -27,7 +26,7 @@ const EXPORT_METHODS = [
   { label: 'Revit files', id: 'revit_files' },
 ];
 
-interface SelectionReportDialog {
+interface SelectionReportDialogProps {
   isOpen: boolean;
   onClose: Function;
   intProjectID: string;
@@ -39,7 +38,7 @@ export default function SelectionReportDialog({
   onClose,
   intProjectID,
   intUnitNo,
-}: SelectionReportDialog) {
+}: SelectionReportDialogProps) {
   const [methods, setMethods] = useState<{ [name: string]: any }>({
     pdfSelection: false,
     excelSelection: false,
@@ -127,7 +126,7 @@ export default function SelectionReportDialog({
                       inputProps={{ 'aria-labelledby': 'checkbox-list-label-selection' }}
                     />
                   </ListItemIcon>
-                  <ListItemText id={'checkbox-list-label-selection'} primary={label} />
+                  <ListItemText id="checkbox-list-label-selection" primary={label} />
                 </ListItemButton>
               </ListItem>
             ))}

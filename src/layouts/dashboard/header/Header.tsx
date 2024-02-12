@@ -36,29 +36,27 @@ export default function Header({ onOpenNav, navBar }: Props) {
   const isOffset = useOffSetTop(HEADER.H_DASHBOARD_DESKTOP) && !isNavHorizontal;
 
   const renderContent = (
-    <>
-      <Stack flexGrow={1} direction="row" alignItems="center" justifyContent="space-between">
-        {isDesktop && isNavHorizontal && <Logo sx={{ mr: 2.5, height: '40px' }} />}
+    <Stack flexGrow={1} direction="row" alignItems="center" justifyContent="space-between">
+      {isDesktop && isNavHorizontal && <Logo sx={{ mr: 2.5, height: '40px' }} />}
 
-        {!isDesktop && (
-          <IconButton onClick={onOpenNav} sx={{ mr: 1, color: 'text.primary' }}>
-            <Iconify icon="eva:menu-2-fill" />
-          </IconButton>
-        )}
+      {!isDesktop && (
+        <IconButton onClick={onOpenNav} sx={{ mr: 1, color: 'text.primary' }}>
+          <Iconify icon="eva:menu-2-fill" />
+        </IconButton>
+      )}
 
-        {navBar && navBar}
+      {navBar && navBar}
 
-        <Stack
-          flexGrow={1}
-          direction="row"
-          alignItems="center"
-          justifyContent="flex-end"
-          spacing={{ xs: 0.5, sm: 1.5 }}
-        >
-          <AccountPopover />
-        </Stack>
+      <Stack
+        flexGrow={1}
+        direction="row"
+        alignItems="center"
+        justifyContent="flex-end"
+        spacing={{ xs: 0.5, sm: 1.5 }}
+      >
+        <AccountPopover />
       </Stack>
-    </>
+    </Stack>
   );
 
   return (

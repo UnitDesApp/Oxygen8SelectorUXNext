@@ -4,9 +4,9 @@ import { Container } from '@mui/material';
 import { useGetAccountInfo } from 'src/hooks/useApi';
 import Loading from 'src/components/loading';
 import CustomBreadcrumbs from 'src/components/custom-breadcrumbs/CustomBreadcrumbs';
-import AccountForm from './component/AccountForm';
 import Head from 'next/head';
 import DashboardLayout from 'src/layouts/dashboard/DashboardLayout';
+import AccountForm from './component/AccountForm';
 // ----------------------------------------------------------------------
 
 const RootStyle = styled('div')(({ theme }) => ({

@@ -1,6 +1,5 @@
-import PropTypes from 'prop-types';
 // @mui
-import { Container, CardContent, Card, Box } from '@mui/material';
+import { Container, Box } from '@mui/material';
 // components
 import ApplicationItem from './ApplicationItem';
 

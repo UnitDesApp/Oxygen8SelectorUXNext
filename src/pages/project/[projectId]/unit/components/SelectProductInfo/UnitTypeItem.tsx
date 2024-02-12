@@ -1,4 +1,3 @@
-import PropTypes from 'prop-types';
 // @mui
 import { styled } from '@mui/material/styles';
 import { Box, Typography, IconButton, Button, Divider, Stack } from '@mui/material';
@@ -24,7 +23,7 @@ type UnitTypeItemProps = {
 
 export default function UnitTypeItem({ label, onSelectItem, id, active }: UnitTypeItemProps) {
   return (
-    <Box textAlign={'center'}>
+    <Box textAlign="center">
       <BoxStyle
         id={id?.toString() || ''}
         onClick={() => onSelectItem(id)}
@@ -39,13 +38,13 @@ export default function UnitTypeItem({ label, onSelectItem, id, active }: UnitTy
           {label}
           <span>
             <IconButton aria-label="info" sx={{ padding: '5px', pt: 0 }}>
-              <Iconify icon={'ant-design:exclamation-circle-outlined'} />
+              <Iconify icon="ant-design:exclamation-circle-outlined" />
             </IconButton>
           </span>
         </Typography>
       </Box>
       <Divider />
-      <Stack textAlign={'center'} spacing={2} mt={1}>
+      <Stack textAlign="center" spacing={2} mt={1}>
         <Typography>ERV</Typography>
         <Typography>Indoor/Outdoor</Typography>
         <Typography>Standard Efficiency</Typography>

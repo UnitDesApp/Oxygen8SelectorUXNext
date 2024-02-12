@@ -1,5 +1,4 @@
 import React, { useCallback } from 'react';
-import PropTypes from 'prop-types';
 import {
   Stack,
   IconButton,
@@ -70,7 +69,7 @@ export default function ProjectTableToolbar({
           id="role"
           sx={{ fontSize: '16px' }}
           onClick={handleClick}
-          startIcon={<Iconify icon={'codicon:filter-filled'} />}
+          startIcon={<Iconify icon="codicon:filter-filled" />}
         >
           Filter
         </Button>
@@ -89,7 +88,7 @@ export default function ProjectTableToolbar({
             },
           }}
         >
-          {optionsRole.map((option, key) => (
+          {optionsRole?.map((option, key) => (
             <MenuItem
               key={key}
               value={option}
@@ -118,7 +117,7 @@ export default function ProjectTableToolbar({
             startAdornment: (
               <InputAdornment position="start">
                 <Iconify
-                  icon={'eva:search-fill'}
+                  icon="eva:search-fill"
                   sx={{ color: 'text.disabled', width: 20, height: 20 }}
                 />
               </InputAdornment>
@@ -129,7 +128,7 @@ export default function ProjectTableToolbar({
       <Item sx={{ width: { md: '20%', xs: '100%' } }}>
         <Button
           variant="contained"
-          startIcon={<Iconify icon={'eva:plus-fill'} />}
+          startIcon={<Iconify icon="eva:plus-fill" />}
           onClick={onOpneDialog}
         >
           Create New Project

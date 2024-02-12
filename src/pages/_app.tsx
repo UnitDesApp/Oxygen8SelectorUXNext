@@ -15,6 +15,8 @@ import { NextPage } from 'next';
 import Head from 'next/head';
 import { AppProps } from 'next/app';
 // utils
+import { ApiProvider } from 'src/contexts/ApiContext';
+import { QueryClient, QueryClientProvider } from 'react-query';
 import createEmotionCache from '../utils/createEmotionCache';
 // theme
 import ThemeProvider from '../theme';
@@ -26,8 +28,6 @@ import SnackbarProvider from '../components/snackbar';
 import { MotionLazyContainer } from '../components/animate';
 import { SettingsProvider } from '../components/settings';
 import { AuthProvider } from '../auth/JwtContext';
-import { ApiProvider } from 'src/contexts/ApiContext';
-import { QueryClient, QueryClientProvider } from 'react-query';
 
 // ----------------------------------------------------------------------
 

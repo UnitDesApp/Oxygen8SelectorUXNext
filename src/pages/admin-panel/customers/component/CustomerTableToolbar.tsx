@@ -1,5 +1,4 @@
 import * as React from 'react';
-import PropTypes from 'prop-types';
 import { useCallback, useState } from 'react';
 // materials
 import {
@@ -59,13 +58,12 @@ export default function CustomerTableToolbar({
 
   const handleClose = useCallback(
     (type: any) => {
-      console.log(type, 'Type');
       onFilterByCustomerName(type);
       onFilterName(type);
       setCustomerType(type);
       setAnchorEl(null);
     },
-    [onFilterByCustomerName]
+    [onFilterByCustomerName, onFilterName]
   );
 
   return (
@@ -82,7 +80,7 @@ export default function CustomerTableToolbar({
         <Stack direction="row" justifyContent="left" spacing={3}>
           <Button
             id="filter"
-            startIcon={<Iconify icon={'ic:outline-filter-alt'} />}
+            startIcon={<Iconify icon="ic:outline-filter-alt" />}
             onClick={(e: any) => handleClick && handleClick(e)}
           >
             {CustomerTypeOptions?.[customerType - 1]?.name || 'Customer Type'}
@@ -120,7 +118,7 @@ export default function CustomerTableToolbar({
             ))}
           </Menu>
           <Button
-            startIcon={<Iconify icon={'ic:outline-delete-outline'} />}
+            startIcon={<Iconify icon="ic:outline-delete-outline" />}
             onClick={() => onDeleteSelectedData && onDeleteSelectedData()}
           >
             Delete
@@ -138,7 +136,7 @@ export default function CustomerTableToolbar({
             startAdornment: (
               <InputAdornment position="start">
                 <Iconify
-                  icon={'eva:search-fill'}
+                  icon="eva:search-fill"
                   sx={{ color: 'text.disabled', width: 20, height: 20 }}
                 />
               </InputAdornment>

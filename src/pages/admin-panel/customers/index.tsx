@@ -1,17 +1,8 @@
 import { useState, useCallback, useMemo, useEffect } from 'react';
+import { useRouter } from 'next/router';
 // @mui
-import {
-  Box,
-  TableContainer,
-  Table,
-  TableBody,
-  TablePagination,
-  Tooltip,
-  IconButton,
-  Container,
-} from '@mui/material';
+import { Box, TableContainer, Table, TableBody, TablePagination, Container } from '@mui/material';
 // hooks
-import useTabs from '../../../hooks/useTabs';
 import { useGetAccountInfo } from 'src/hooks/useApi';
 import {
   TableEmptyRows,
@@ -22,14 +13,14 @@ import {
   useTable,
 } from 'src/components/table';
 import { useApiContext } from 'src/contexts/ApiContext';
-import CustomerTableToolbar from './component/CustomerTableToolbar';
 import Scrollbar from 'src/components/scrollbar/Scrollbar';
-import TableSelectedActions from './component/TableSelectedActions';
-import CustomerTableRow from './component/CustomerTableRow';
 import ConfirmDialog from 'src/components/dialog/ConfirmDialog';
 import Loading from 'src/components/loading';
 import DashboardLayout from 'src/layouts/dashboard/DashboardLayout';
-import { useRouter } from 'next/router';
+import CustomerTableRow from './component/CustomerTableRow';
+import TableSelectedActions from './component/TableSelectedActions';
+import CustomerTableToolbar from './component/CustomerTableToolbar';
+import useTabs from '../../../hooks/useTabs';
 // components
 
 // ----------------------------------------------------------------------
@@ -106,7 +97,7 @@ export default function Customers() {
     } catch (e) {
       console.log(e);
     }
-  }, [deleteRowID, handleOneConfirmDialogClose]);
+  }, [deleteRowID, handleOneConfirmDialogClose, api.account]);
 
   const handleMultiConfirmDialogOpen = useCallback(() => {
     setMultiConfirmDialogState(true);
@@ -120,8 +111,8 @@ export default function Customers() {
   const { currentTab: filterStatus, onChangeTab: onChangeFilterStatus } = useTabs('All');
 
   const handleFilterName = useCallback(
-    (filterName: string) => {
-      setFilterName(filterName);
+    (name: string) => {
+      setFilterName(name);
       setPage(0);
     },
     [setPage]
@@ -138,11 +129,14 @@ export default function Customers() {
       setSelected([]);
       setMultiConfirmDialogState(false);
     }
-  }, [selected, setSelected]);
+  }, [selected, setSelected, api.account]);
 
-  const handleEditRow = useCallback((row: any) => {
-    push(`/admin-panel/customers/${row.id}`);
-  }, []);
+  const handleEditRow = useCallback(
+    (row: any) => {
+      push(`/admin-panel/customers/${row?.id || '0'}`);
+    },
+    [push]
+  );
 
   const filteredData = useMemo(
     () =>
@@ -192,7 +186,7 @@ export default function Customers() {
             />
           )}
 
-          <Table size={'medium'}>
+          <Table size="medium">
             <TableHeadCustom
               order={order}
               orderBy={orderBy}

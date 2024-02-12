@@ -1,23 +1,26 @@
-import { createContext, useContext } from 'react';
+import { createContext, useContext, useMemo } from 'react';
 import AccountApi from 'src/api/AccountApi';
 
 import ProjectApi from 'src/api/ProjectApi';
 import UserApi from 'src/api/UserApi';
 
-export interface ApiContext {
+export interface ApiContextProps {
   project: ProjectApi;
   account: AccountApi;
   user: UserApi;
 }
 
-const ApiContext = createContext<ApiContext | undefined>(undefined);
+const ApiContext = createContext<ApiContextProps | undefined>(undefined);
 
 export const ApiProvider = ({ children }: any) => {
-  const context = {
-    project: new ProjectApi(),
-    account: new AccountApi(),
-    user: new UserApi(),
-  };
+  const context = useMemo(
+    () => ({
+      project: new ProjectApi(),
+      account: new AccountApi(),
+      user: new UserApi(),
+    }),
+    []
+  );
 
   return <ApiContext.Provider value={context}>{children}</ApiContext.Provider>;
 };

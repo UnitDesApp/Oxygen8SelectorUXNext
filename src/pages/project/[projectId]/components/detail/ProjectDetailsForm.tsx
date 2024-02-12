@@ -1,6 +1,5 @@
 import * as Yup from 'yup';
 import React, { useState, useEffect, useMemo, useCallback, SyntheticEvent } from 'react';
-import PropTypes from 'prop-types';
 
 // @mui
 import { styled } from '@mui/material/styles';
@@ -99,7 +98,7 @@ export default function ProjectDetailsForm({
     weatherData,
     usersInfo,
     country,
-  } = projectInitInfo;
+  } = projectInitInfo || {};
 
   const projectInfoSchema = Yup.object().shape({
     jobName: Yup.string().required('Please enter a Project Name'),
@@ -214,21 +213,24 @@ export default function ProjectDetailsForm({
     } else {
       setMounted(true);
     }
-  }, [outdoorInfo, setValue]);
+  }, [outdoorInfo, setValue, mounted]);
 
-  const get_RH_By_DBWB = (first: string, second: string, setValueId: any) => {
-    if (first === '' || second === '') return;
-    api.project
-      .getOutdoorInfo({
-        action: 'GET_RH_BY_DB_WB',
-        first,
-        second,
-        altitude: formState.altitude,
-      })
-      .then((data: any) => {
-        setValue(setValueId, data as never);
-      });
-  };
+  const get_RH_By_DBWB = useCallback(
+    (first: string, second: string, setValueId: any) => {
+      if (first === '' || second === '') return;
+      api.project
+        .getOutdoorInfo({
+          action: 'GET_RH_BY_DB_WB',
+          first,
+          second,
+          altitude: formState.altitude,
+        })
+        .then((data: any) => {
+          setValue(setValueId, data as never);
+        });
+    },
+    [api.project, formState.altitude, setValue]
+  );
 
   // get WB value from server
   const get_WB_By_DBRH = useCallback(
@@ -245,7 +247,7 @@ export default function ProjectDetailsForm({
           setValue(setValueId, data as never);
         });
     },
-    [setValue, formState.altitude]
+    [api.project, formState.altitude, setValue]
   );
 
   const handleChangeSummerOutdoorAirDBChanged = useCallback(
@@ -443,308 +445,309 @@ export default function ProjectDetailsForm({
           revisedUserId: localStorage.getItem('userId'),
           applicationOther: '',
         };
-
-        api.project.updateProject(formData);
-        onSuccess && onSuccess();
+        await api.project.updateProject(formData);
+        if (onSuccess) {
+          onSuccess();
+        }
       } catch (e) {
         console.log(e);
-        onFail && onFail();
+        if (onFail) {
+          onFail();
+        }
       }
     },
-    [projectId, project?.created_user_id]
+    [projectId, project?.created_user_id, api.project, onSuccess, onFail]
   );
 
   return (
-    <>
-      <RootStyle>
-        <Container>
-          <FormProvider methods={methods} onSubmit={handleSubmit(onProjectInfoSubmit)}>
-            <Stack spacing={2}>
-              <Accordion
-                expanded={expanded.panel1}
-                onChange={() => setExpanded({ ...expanded, panel1: !expanded.panel1 })}
+    <RootStyle>
+      <Container>
+        <FormProvider methods={methods} onSubmit={handleSubmit(onProjectInfoSubmit)}>
+          <Stack spacing={2}>
+            <Accordion
+              expanded={expanded.panel1}
+              onChange={() => setExpanded({ ...expanded, panel1: !expanded.panel1 })}
+            >
+              <AccordionSummary
+                expandIcon={<Iconify icon="il:arrow-down" />}
+                aria-controls="panel1a-content"
+                id="panel1a-header"
               >
-                <AccordionSummary
-                  expandIcon={<Iconify icon="il:arrow-down" />}
-                  aria-controls="panel1a-content"
-                  id="panel1a-header"
-                >
-                  <Typography>PROJECT INFO & LOCATION</Typography>
-                </AccordionSummary>
-                <AccordionDetails>
-                  <Grid container spacing={5}>
-                    <Grid item xs={4} md={4}>
-                      <Box sx={{ display: 'grid', rowGap: 1, columnGap: 1 }}>
-                        <RHFTextField size="small" name="jobName" label="Project Name" />
-                        <RHFSelect
-                          native
-                          size="small"
-                          name="application"
-                          label="Applicaton"
-                          placeholder=""
-                        >
-                          {applications?.map((info: any, index: number) => (
-                            <option key={index} value={info.id}>
-                              {info.items}
-                            </option>
-                          ))}
-                        </RHFSelect>
-                        <RHFSelect
-                          native
-                          size="small"
-                          name="basisOfDesign"
-                          label="Basis of Design"
-                          placeholder=""
-                        >
-                          {baseOfDesign?.map((info: any, index: number) => (
-                            <option key={index} value={info.id}>
-                              {info.items}
-                            </option>
-                          ))}
-                        </RHFSelect>
-                        <RHFSelect
-                          native
-                          size="small"
-                          name="companyNameId"
-                          label="Company Name"
-                          placeholder=""
-                          onChange={handleChangeCompanyName}
-                        >
-                          <option value="" />
-                          {companyInfo?.map((info: any, index: number) => (
-                            <option key={index} value={info.id}>
-                              {info.name}
-                            </option>
-                          ))}
-                        </RHFSelect>
-                        <RHFSelect
-                          native
-                          size="small"
-                          name="contactNameId"
-                          label="Contact Name"
-                          placeholder=""
-                          onChange={handleChangeContactName}
-                        >
-                          <option value="" />
-                          {usersInfo?.map(
-                            (info: any, index: number) =>
-                              info.id.toString() !== localStorage.getItem('userId') &&
-                              info.customer_id.toString() ===
-                                getValues('companyNameId').toString() && (
-                                <option key={index} value={info.id}>
-                                  {`${info.first_name} ${info.last_name}`}
-                                </option>
-                              )
-                          )}
-                        </RHFSelect>
-                      </Box>
-                    </Grid>
-                    <Grid item xs={4} md={4}>
-                      <Box sx={{ display: 'grid', rowGap: 1, columnGap: 1 }}>
-                        <RHFSelect native size="small" name="uom" label="UoM" placeholder="">
-                          <option value="" />
-                          {UoM?.map((info: any, index: number) => (
-                            <option key={index} value={info.id}>
-                              {info.items}
-                            </option>
-                          ))}
-                        </RHFSelect>
-                        <RHFTextField size="small" name="referenceNo" label="Reference no" />
-                        <RHFTextField size="small" name="revision" label="Revision no" />
-                        <RHFTextField size="small" name="createdDate" label="Date Created" />
-                        <RHFTextField size="small" name="revisedDate" label="Date Revised" />
-                      </Box>
-                    </Grid>
-                    <Grid item xs={4} md={4}>
-                      <Box sx={{ display: 'grid', rowGap: 1, columnGap: 1 }}>
-                        <RHFSelect
-                          native
-                          size="small"
-                          name="country"
-                          label="Country"
-                          placeholder=""
-                          onChange={handleChangeCountry}
-                        >
-                          <option value="" />
-                          {country?.map((info: any, index: number) => (
-                            <option key={index} value={info.value}>
-                              {info.items}
-                            </option>
-                          ))}
-                        </RHFSelect>
-                        <RHFSelect
-                          native
-                          size="small"
-                          name="state"
-                          label="Province / State"
-                          placeholder=""
-                          onChange={handleChangeProvState}
-                        >
-                          <option value="" />
-                          {provStateInfo?.map((info: any, index: number) => (
-                            <option key={index} value={info}>
-                              {info}
-                            </option>
-                          ))}
-                        </RHFSelect>
-                        <RHFSelect
-                          native
-                          size="small"
-                          name="city"
-                          label="City"
-                          placeholder=""
-                          onChange={handleChangeCity}
-                        >
-                          <option value="" />
-                          {cityInfo?.map((info: any, index: number) => (
-                            <option key={index} value={info.id}>
-                              {info.station}
-                            </option>
-                          ))}
-                        </RHFSelect>
-                        <RHFSelect
-                          native
-                          size="small"
-                          name="ashareDesignConditions"
-                          label="ASHRAE Design Conditions"
-                          placeholder=""
-                          onChange={handleChangeDesignCondition}
-                        >
-                          {designCondition?.map((info: any, index: number) => (
-                            <option key={index} value={info.id}>
-                              {info.items}
-                            </option>
-                          ))}
-                        </RHFSelect>
-                        <RHFTextField size="small" name="altitude" label="Altitude" />
-                      </Box>
-                    </Grid>
+                <Typography>PROJECT INFO & LOCATION</Typography>
+              </AccordionSummary>
+              <AccordionDetails>
+                <Grid container spacing={5}>
+                  <Grid item xs={4} md={4}>
+                    <Box sx={{ display: 'grid', rowGap: 1, columnGap: 1 }}>
+                      <RHFTextField size="small" name="jobName" label="Project Name" />
+                      <RHFSelect
+                        native
+                        size="small"
+                        name="application"
+                        label="Applicaton"
+                        placeholder=""
+                      >
+                        {applications?.map((info: any, index: number) => (
+                          <option key={index} value={info.id}>
+                            {info.items}
+                          </option>
+                        ))}
+                      </RHFSelect>
+                      <RHFSelect
+                        native
+                        size="small"
+                        name="basisOfDesign"
+                        label="Basis of Design"
+                        placeholder=""
+                      >
+                        {baseOfDesign?.map((info: any, index: number) => (
+                          <option key={index} value={info.id}>
+                            {info.items}
+                          </option>
+                        ))}
+                      </RHFSelect>
+                      <RHFSelect
+                        native
+                        size="small"
+                        name="companyNameId"
+                        label="Company Name"
+                        placeholder=""
+                        onChange={handleChangeCompanyName}
+                      >
+                        <option value="" />
+                        {companyInfo?.map((info: any, index: number) => (
+                          <option key={index} value={info.id}>
+                            {info.name}
+                          </option>
+                        ))}
+                      </RHFSelect>
+                      <RHFSelect
+                        native
+                        size="small"
+                        name="contactNameId"
+                        label="Contact Name"
+                        placeholder=""
+                        onChange={handleChangeContactName}
+                      >
+                        <option value="" />
+                        {usersInfo?.map(
+                          (info: any, index: number) =>
+                            info.id.toString() !== localStorage.getItem('userId') &&
+                            info.customer_id.toString() ===
+                              getValues('companyNameId').toString() && (
+                              <option key={index} value={info.id}>
+                                {`${info.first_name} ${info.last_name}`}
+                              </option>
+                            )
+                        )}
+                      </RHFSelect>
+                    </Box>
                   </Grid>
-                </AccordionDetails>
-              </Accordion>
-              <Accordion
-                expanded={expanded.panel2}
-                onChange={() => setExpanded({ ...expanded, panel2: !expanded.panel2 })}
+                  <Grid item xs={4} md={4}>
+                    <Box sx={{ display: 'grid', rowGap: 1, columnGap: 1 }}>
+                      <RHFSelect native size="small" name="uom" label="UoM" placeholder="">
+                        <option value="" />
+                        {UoM?.map((info: any, index: number) => (
+                          <option key={index} value={info.id}>
+                            {info.items}
+                          </option>
+                        ))}
+                      </RHFSelect>
+                      <RHFTextField size="small" name="referenceNo" label="Reference no" />
+                      <RHFTextField size="small" name="revision" label="Revision no" />
+                      <RHFTextField size="small" name="createdDate" label="Date Created" />
+                      <RHFTextField size="small" name="revisedDate" label="Date Revised" />
+                    </Box>
+                  </Grid>
+                  <Grid item xs={4} md={4}>
+                    <Box sx={{ display: 'grid', rowGap: 1, columnGap: 1 }}>
+                      <RHFSelect
+                        native
+                        size="small"
+                        name="country"
+                        label="Country"
+                        placeholder=""
+                        onChange={handleChangeCountry}
+                      >
+                        <option value="" />
+                        {country?.map((info: any, index: number) => (
+                          <option key={index} value={info.value}>
+                            {info.items}
+                          </option>
+                        ))}
+                      </RHFSelect>
+                      <RHFSelect
+                        native
+                        size="small"
+                        name="state"
+                        label="Province / State"
+                        placeholder=""
+                        onChange={handleChangeProvState}
+                      >
+                        <option value="" />
+                        {provStateInfo?.map((info: any, index: number) => (
+                          <option key={index} value={info}>
+                            {info}
+                          </option>
+                        ))}
+                      </RHFSelect>
+                      <RHFSelect
+                        native
+                        size="small"
+                        name="city"
+                        label="City"
+                        placeholder=""
+                        onChange={handleChangeCity}
+                      >
+                        <option value="" />
+                        {cityInfo?.map((info: any, index: number) => (
+                          <option key={index} value={info.id}>
+                            {info.station}
+                          </option>
+                        ))}
+                      </RHFSelect>
+                      <RHFSelect
+                        native
+                        size="small"
+                        name="ashareDesignConditions"
+                        label="ASHRAE Design Conditions"
+                        placeholder=""
+                        onChange={handleChangeDesignCondition}
+                      >
+                        {designCondition?.map((info: any, index: number) => (
+                          <option key={index} value={info.id}>
+                            {info.items}
+                          </option>
+                        ))}
+                      </RHFSelect>
+                      <RHFTextField size="small" name="altitude" label="Altitude" />
+                    </Box>
+                  </Grid>
+                </Grid>
+              </AccordionDetails>
+            </Accordion>
+            <Accordion
+              expanded={expanded.panel2}
+              onChange={() => setExpanded({ ...expanded, panel2: !expanded.panel2 })}
+            >
+              <AccordionSummary
+                expandIcon={<Iconify icon="il:arrow-down" />}
+                aria-controls="panel1a-content"
+                id="panel1a-header"
               >
-                <AccordionSummary
-                  expandIcon={<Iconify icon="il:arrow-down" />}
-                  aria-controls="panel1a-content"
-                  id="panel1a-header"
-                >
-                  <Typography>DESIGN CONDITIONS</Typography>
-                </AccordionSummary>
-                <AccordionDetails>
-                  <Grid container spacing={5}>
-                    <Grid item xs={6} md={6}>
-                      <Box sx={{ display: 'grid', rowGap: 1, columnGap: 1 }}>
-                        <RHFTextField
-                          size="small"
-                          name="summer_air_db"
-                          label="Summer Outdoor Air DB (F)"
-                          onBlur={handleChangeSummerOutdoorAirDBChanged}
-                        />
-                        <RHFTextField
-                          size="small"
-                          name="summer_air_wb"
-                          label="Summer Outdoor Air WB (F)"
-                          onBlur={handleChangeSummerOutdoorAirWBChanged}
-                        />
-                        <RHFTextField
-                          size="small"
-                          name="summer_air_rh"
-                          label="Summer Outdoor Air RH (%)"
-                          onBlur={handleChangeSummerOutdoorAirRHChanged}
-                        />
-                        <RHFTextField
-                          size="small"
-                          name="winter_air_db"
-                          label="Winter Outdoor Air DB"
-                          onBlur={handleChangeWinterOutdoorAirDBChanged}
-                        />
-                        <RHFTextField
-                          size="small"
-                          name="winter_air_wb"
-                          label="Winter Outdoor Air WB"
-                          onBlur={handleChangeWinterOutdoorAirWBChanged}
-                        />
-                        <RHFTextField
-                          size="small"
-                          name="winter_air_rh"
-                          label="Winter Outdoor Air RH"
-                          onBlur={handleChangeWinterOutdoorAirRHChanged}
-                        />
-                      </Box>
-                    </Grid>
-                    <Grid item xs={6} md={6}>
-                      <Box sx={{ display: 'grid', rowGap: 1, columnGap: 1 }}>
-                        <RHFTextField
-                          size="small"
-                          name="summer_return_db"
-                          label="Summer Return Air DB (F)"
-                          onBlur={handleChangeSummerReturnAirDBChanged}
-                        />
-                        <RHFTextField
-                          size="small"
-                          name="summer_return_wb"
-                          label="Summer Return Air WB (F)"
-                          onBlur={handleChangeSummerReturnAirWBChanged}
-                        />
-                        <RHFTextField
-                          size="small"
-                          name="summer_return_rh"
-                          label="Summer Return Air RH (%)"
-                          onBlur={handleChangeSummerReturnAirRHChanged}
-                        />
-                        <RHFTextField
-                          size="small"
-                          name="winter_return_db"
-                          label="Winter Return Air DB"
-                          onBlur={handleChangeWinterReturnAirDBChanged}
-                        />
-                        <RHFTextField
-                          size="small"
-                          name="winter_return_wb"
-                          label="Winter Return Air WB"
-                          onBlur={handleChangeWinterReturnAirWBChanged}
-                        />
-                        <RHFTextField
-                          size="small"
-                          name="winter_return_rh"
-                          label="Winter Return Air RH"
-                          onBlur={handleChangeWinterReturnAirRHChanged}
-                        />
-                      </Box>
-                    </Grid>
+                <Typography>DESIGN CONDITIONS</Typography>
+              </AccordionSummary>
+              <AccordionDetails>
+                <Grid container spacing={5}>
+                  <Grid item xs={6} md={6}>
+                    <Box sx={{ display: 'grid', rowGap: 1, columnGap: 1 }}>
+                      <RHFTextField
+                        size="small"
+                        name="summer_air_db"
+                        label="Summer Outdoor Air DB (F)"
+                        onBlur={handleChangeSummerOutdoorAirDBChanged}
+                      />
+                      <RHFTextField
+                        size="small"
+                        name="summer_air_wb"
+                        label="Summer Outdoor Air WB (F)"
+                        onBlur={handleChangeSummerOutdoorAirWBChanged}
+                      />
+                      <RHFTextField
+                        size="small"
+                        name="summer_air_rh"
+                        label="Summer Outdoor Air RH (%)"
+                        onBlur={handleChangeSummerOutdoorAirRHChanged}
+                      />
+                      <RHFTextField
+                        size="small"
+                        name="winter_air_db"
+                        label="Winter Outdoor Air DB"
+                        onBlur={handleChangeWinterOutdoorAirDBChanged}
+                      />
+                      <RHFTextField
+                        size="small"
+                        name="winter_air_wb"
+                        label="Winter Outdoor Air WB"
+                        onBlur={handleChangeWinterOutdoorAirWBChanged}
+                      />
+                      <RHFTextField
+                        size="small"
+                        name="winter_air_rh"
+                        label="Winter Outdoor Air RH"
+                        onBlur={handleChangeWinterOutdoorAirRHChanged}
+                      />
+                    </Box>
                   </Grid>
-                </AccordionDetails>
-              </Accordion>
-              <Stack sx={{ mb: '20px!important' }} direction="row" justifyContent="flex-end">
-                <Box sx={{ width: '150px' }}>
-                  <LoadingButton
-                    type="submit"
-                    variant="contained"
-                    onClick={() => console.log(getValues())}
-                    loading={isSubmitting}
-                    sx={{ width: '150px' }}
-                  >
-                    Save
-                  </LoadingButton>
-                </Box>
-              </Stack>
+                  <Grid item xs={6} md={6}>
+                    <Box sx={{ display: 'grid', rowGap: 1, columnGap: 1 }}>
+                      <RHFTextField
+                        size="small"
+                        name="summer_return_db"
+                        label="Summer Return Air DB (F)"
+                        onBlur={handleChangeSummerReturnAirDBChanged}
+                      />
+                      <RHFTextField
+                        size="small"
+                        name="summer_return_wb"
+                        label="Summer Return Air WB (F)"
+                        onBlur={handleChangeSummerReturnAirWBChanged}
+                      />
+                      <RHFTextField
+                        size="small"
+                        name="summer_return_rh"
+                        label="Summer Return Air RH (%)"
+                        onBlur={handleChangeSummerReturnAirRHChanged}
+                      />
+                      <RHFTextField
+                        size="small"
+                        name="winter_return_db"
+                        label="Winter Return Air DB"
+                        onBlur={handleChangeWinterReturnAirDBChanged}
+                      />
+                      <RHFTextField
+                        size="small"
+                        name="winter_return_wb"
+                        label="Winter Return Air WB"
+                        onBlur={handleChangeWinterReturnAirWBChanged}
+                      />
+                      <RHFTextField
+                        size="small"
+                        name="winter_return_rh"
+                        label="Winter Return Air RH"
+                        onBlur={handleChangeWinterReturnAirRHChanged}
+                      />
+                    </Box>
+                  </Grid>
+                </Grid>
+              </AccordionDetails>
+            </Accordion>
+            <Stack sx={{ mb: '20px!important' }} direction="row" justifyContent="flex-end">
+              <Box sx={{ width: '150px' }}>
+                <LoadingButton
+                  type="submit"
+                  variant="contained"
+                  onClick={() => console.log(getValues())}
+                  loading={isSubmitting}
+                  sx={{ width: '150px' }}
+                >
+                  Save
+                </LoadingButton>
+              </Box>
             </Stack>
-          </FormProvider>
-        </Container>
-        <Snackbar open={openSuccess} autoHideDuration={3000} onClose={handleCloseSuccess}>
-          <Alert onClose={handleCloseSuccess} severity="success" sx={{ width: '100%' }}>
-            New project update success!
-          </Alert>
-        </Snackbar>
-        <Snackbar open={openFail} autoHideDuration={3000} onClose={handleCloseFail}>
-          <Alert onClose={handleCloseFail} severity="error" sx={{ width: '100%' }}>
-            Server Error!
-          </Alert>
-        </Snackbar>
-      </RootStyle>
-    </>
+          </Stack>
+        </FormProvider>
+      </Container>
+      <Snackbar open={openSuccess} autoHideDuration={3000} onClose={handleCloseSuccess}>
+        <Alert onClose={handleCloseSuccess} severity="success" sx={{ width: '100%' }}>
+          New project update success!
+        </Alert>
+      </Snackbar>
+      <Snackbar open={openFail} autoHideDuration={3000} onClose={handleCloseFail}>
+        <Alert onClose={handleCloseFail} severity="error" sx={{ width: '100%' }}>
+          Server Error!
+        </Alert>
+      </Snackbar>
+    </RootStyle>
   );
 }

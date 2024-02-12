@@ -1,33 +1,19 @@
-import { useEffect, useState } from 'react';
-// yup
-import * as Yup from 'yup';
+import { useState } from 'react';
 // mui
-import { styled } from '@mui/material/styles';
-import { Stack, Grid, Container, Button, Snackbar, Alert, Divider } from '@mui/material';
-import { LoadingButton } from '@mui/lab';
+import { Container, Snackbar, Alert } from '@mui/material';
 // form
-import { useForm } from 'react-hook-form';
-import { yupResolver } from '@hookform/resolvers/yup';
-import { useRouter } from 'next/router';
 import { useGetAccountInfo } from 'src/hooks/useApi';
-import { useApiContext } from 'src/contexts/ApiContext';
+import DashboardLayout from 'src/layouts/dashboard/DashboardLayout';
+import Loading from 'src/components/loading';
 import NewUserDialog from '../component/NewUserDialog';
 import NewCustomerDialog from '../component/NewCustomerDialog';
-import FormProvider from 'src/components/hook-form/FormProvider';
-import CustomBreadcrumbs from 'src/components/custom-breadcrumbs/CustomBreadcrumbs';
-import GroupBox from 'src/components/GroupBox';
-import { RHFSelect, RHFTextField } from 'src/components/hook-form';
 import UserEditForm from './component/UserEditForm';
-import Loading from 'src/components/loading';
-import DashboardLayout from 'src/layouts/dashboard/DashboardLayout';
 
 // ------------------------------------------------------------------------
 UserEdit.getLayout = (page: React.ReactElement) => <DashboardLayout>{page}</DashboardLayout>;
 // ------------------------------------------------------------------------
 
 export default function UserEdit() {
-  const { userId } = useRouter().query;
-  const api = useApiContext();
   const { data: accountInfo, isLoading } = useGetAccountInfo();
   const { users, customerType, fobPoint, customers } = accountInfo || {
     users: [],

@@ -1,6 +1,5 @@
 import { useCallback, useState } from 'react';
 import * as React from 'react';
-import PropTypes from 'prop-types';
 // materials
 import {
   Stack,
@@ -81,7 +80,7 @@ export default function UserTableToolbar({
         <Stack direction="row" justifyContent="left" spacing={3}>
           <Button
             id="filter"
-            startIcon={<Iconify icon={'ic:outline-filter-alt'} />}
+            startIcon={<Iconify icon="ic:outline-filter-alt" />}
             onClick={handleClick}
           >
             {CustomerTypeOptions?.[customerType - 1]?.name || 'Customer Type'}
@@ -120,7 +119,7 @@ export default function UserTableToolbar({
           </Menu>
           {/* <Button startIcon={<Iconify icon={'ic:sharp-sort'} />}>Sort</Button> */}
           <Button
-            startIcon={<Iconify icon={'ic:outline-delete-outline'} />}
+            startIcon={<Iconify icon="ic:outline-delete-outline" />}
             onClick={() => onDeleteSelectedData && onDeleteSelectedData()}
           >
             Delete
@@ -138,7 +137,7 @@ export default function UserTableToolbar({
             startAdornment: (
               <InputAdornment position="start">
                 <Iconify
-                  icon={'eva:search-fill'}
+                  icon="eva:search-fill"
                   sx={{ color: 'text.disabled', width: 20, height: 20 }}
                 />
               </InputAdornment>

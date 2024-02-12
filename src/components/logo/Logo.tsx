@@ -15,12 +15,6 @@ const Logo = forwardRef<HTMLDivElement, LogoProps>(
   ({ disabledLink = false, sx, ...other }, ref) => {
     const theme = useTheme();
 
-    const PRIMARY_LIGHT = theme.palette.primary.light;
-
-    const PRIMARY_MAIN = theme.palette.primary.main;
-
-    const PRIMARY_DARK = theme.palette.primary.dark;
-
     // OR using local (public folder)
     // -------------------------------------------------------
     // const logo = (
@@ -41,16 +35,14 @@ const Logo = forwardRef<HTMLDivElement, LogoProps>(
         }}
         {...other}
       >
-        <img src="/logo/O8_Logo.png" />
+        <img src="/logo/O8_Logo.png" alt="ox logo" />
       </Box>
     );
 
-    if (disabledLink) {
-      return logo;
-    }
+    if (disabledLink) return logo;
 
     return (
-      <Link component={NextLink} href="/" sx={{ display: 'contents' }}>
+      <Link component={NextLink} title="logo" href="/" sx={{ display: 'contents' }}>
         {logo}
       </Link>
     );

@@ -1,5 +1,4 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import PropTypes from 'prop-types';
 // import { useNavigate } from 'react-router-dom';
 
 import * as Yup from 'yup';
@@ -56,7 +55,7 @@ export default function NewProjectDialog({
     usersInfo,
     createdDate,
     revisedDate,
-  } = initialInfo;
+  } = initialInfo || {};
 
   const NewUserSchema = Yup.object().shape({
     jobName: Yup.string().required('Please enter a Project Name'),
@@ -145,29 +144,30 @@ export default function NewProjectDialog({
       value = 'USA';
     }
 
-    const data = weatherData
-      ?.filter((item: any) => item.country === value)
-      .map((item: any) => item.prov_state);
+    const data =
+      weatherData
+        ?.filter((item: any) => item.country === value)
+        ?.map((item: any) => item.prov_state) || [];
     const uniqueArray: string[] = data ? [...new Set<string>(data)] : [];
     setValue('state', uniqueArray && uniqueArray[0] ? uniqueArray[0]?.toString() : '');
     setValue('city', '');
     return uniqueArray;
-  }, [values.country, weatherData]);
+  }, [values.country, weatherData, setValue]);
 
   const cityInfo = useMemo(() => {
-    let country = '';
+    let cn = '';
     if (values.country === 'CA') {
-      country = 'CAN';
+      cn = 'CAN';
     } else {
-      country = 'USA';
+      cn = 'USA';
     }
 
-    const newCity = weatherData.filter(
-      (ele: any) => ele.prov_state === values.state && ele.country === country
+    const newCity = weatherData?.filter(
+      (ele: any) => ele.prov_state === values.state && ele.country === cn
     );
     setValue('city', newCity?.[0]?.id || '');
     return newCity;
-  }, [values.state, weatherData]);
+  }, [values.state, weatherData, setValue, values.country]);
 
   // onChange handle for company Name
   const handleChangeCompanyName = (e: any) => {
@@ -234,21 +234,24 @@ export default function NewProjectDialog({
       setValue('winter_air_wb', outdoorInfo.winterOutdoorAirWB);
       setValue('winter_air_rh', outdoorInfo.winterOutdoorAirRH);
     }
-  }, [outdoorInfo]);
+  }, [outdoorInfo, setValue]);
 
-  const get_RH_By_DBWB = (first: number, second: number, setValueId: any) => {
-    if (!!first || !!second) return;
-    api.project
-      .getOutdoorInfo({
-        action: 'GET_RH_BY_DB_WB',
-        first,
-        second,
-        altitude: values.alltitude,
-      })
-      .then((data: any) => {
-        setValue(setValueId, data as never);
-      });
-  };
+  const get_RH_By_DBWB = useCallback(
+    (first: number, second: number, setValueId: any) => {
+      if (!!first || !!second) return;
+      api.project
+        .getOutdoorInfo({
+          action: 'GET_RH_BY_DB_WB',
+          first,
+          second,
+          altitude: values.alltitude,
+        })
+        .then((data: any) => {
+          setValue(setValueId, data as never);
+        });
+    },
+    [api.project, setValue, values.alltitude]
+  );
 
   // get WB value from server
   const get_WB_By_DBRH = useCallback(
@@ -265,7 +268,7 @@ export default function NewProjectDialog({
           setValue(setValueId, data as never);
         });
     },
-    [setValue, values.alltitude]
+    [setValue, values.alltitude, api.project]
   );
   const handleChangeSummerOutdoorAirDBChanged = useCallback(
     (e: any) => {
@@ -383,9 +386,7 @@ export default function NewProjectDialog({
     setStep(1);
   };
 
-  const handleClose = () => {
-    onClose && onClose();
-  };
+  const handleClose = () => onClose && onClose();
 
   return (
     <Dialog open={open} onClose={handleClose}>
@@ -422,7 +423,7 @@ export default function NewProjectDialog({
                   onChange={handleChangeCompanyName}
                 >
                   <option value="" />
-                  {companyInfo.map(
+                  {companyInfo?.map(
                     (info: any, index: number) =>
                       info.id.toString() === localStorage.getItem('customerId') && (
                         <option key={index} value={info.id}>
@@ -454,16 +455,15 @@ export default function NewProjectDialog({
                   placeholder="Application"
                 >
                   <option value="" />
-                  {applications !== undefined &&
-                    applications.map((option: any) => (
-                      <option key={option.id + option.items} value={option.id}>
-                        {option.items}
-                      </option>
-                    ))}
+                  {applications?.map((option: any) => (
+                    <option key={option.id + option.items} value={option.id}>
+                      {option.items}
+                    </option>
+                  ))}
                 </RHFSelect>
                 <RHFSelect native size="small" name="uom" label="UoM" placeholder="">
                   <option value="" />
-                  {UoM.map((info: any, index: number) => (
+                  {UoM?.map((info: any, index: number) => (
                     <option key={index} value={info.id}>
                       {info.items}
                     </option>
@@ -486,12 +486,11 @@ export default function NewProjectDialog({
                     placeholder="Please select country"
                   >
                     <option value="" />
-                    {country !== undefined &&
-                      country.map((option: any) => (
-                        <option key={`${option.id}`} value={option.value}>
-                          {option.items}
-                        </option>
-                      ))}
+                    {country?.map((option: any) => (
+                      <option key={`${option.id}`} value={option.value}>
+                        {option.items}
+                      </option>
+                    ))}
                   </RHFSelect>
 
                   <RHFSelect
@@ -502,12 +501,11 @@ export default function NewProjectDialog({
                     placeholder="Please select province/state"
                   >
                     <option value="" />
-                    {provStateInfo !== undefined &&
-                      provStateInfo?.map((option: any) => (
-                        <option key={`${option}`} value={option}>
-                          {option}
-                        </option>
-                      ))}
+                    {provStateInfo?.map((option: any) => (
+                      <option key={`${option}`} value={option}>
+                        {option}
+                      </option>
+                    ))}
                   </RHFSelect>
 
                   <RHFSelect
@@ -518,12 +516,11 @@ export default function NewProjectDialog({
                     placeholder="Please select city"
                   >
                     <option value="" />
-                    {cityInfo !== undefined &&
-                      cityInfo.map((option: any) => (
-                        <option key={`${option.id}`} value={option.id}>
-                          {option.station}
-                        </option>
-                      ))}
+                    {cityInfo?.map((option: any) => (
+                      <option key={`${option.id}`} value={option.id}>
+                        {option.station}
+                      </option>
+                    ))}
                   </RHFSelect>
                 </Stack>
 
@@ -536,12 +533,11 @@ export default function NewProjectDialog({
                     placeholder="Please select an share design conditions"
                   >
                     <option value="" />
-                    {designCondition !== undefined &&
-                      designCondition.map((option: any) => (
-                        <option key={`${option.id}`} value={option.id}>
-                          {option.items}
-                        </option>
-                      ))}
+                    {designCondition?.map((option: any) => (
+                      <option key={`${option.id}`} value={option.id}>
+                        {option.items}
+                      </option>
+                    ))}
                   </RHFSelect>
                   <RHFTextField type="number" size="small" name="altitude" label="Altitude(ft)" />
                 </Stack>
