@@ -28,6 +28,7 @@ type UnitInfoProps = {
   edit?: boolean;
   txbProductType?: string;
   txbUnitType?: string;
+  unitInfoData?: any;
 };
 
 export default function UnitInfo({
@@ -41,6 +42,7 @@ export default function UnitInfo({
   edit = false,
   txbProductType,
   txbUnitType,
+  unitInfoData,
 }: UnitInfoProps) {
   const { data: baseData, isLoading: isLoadingBaseData } = useGetAllBaseData();
 
@@ -52,7 +54,7 @@ export default function UnitInfo({
       intUnitNo: edit ? unitId : -1,
     },
     {
-      enabled: edit && typeof window !== 'undefined',
+      enabled: !edit && typeof window !== 'undefined',
     }
   );
 
@@ -70,7 +72,7 @@ export default function UnitInfo({
 
   if (isLoadingBaseData || isLoadingUnitInfo) return <CircularProgressLoading />;
 
-  const { unitInfo } = unitData || {};
+  const { unitInfo } = unitInfoData || unitData || {};
 
   return (
     <RootStyle>

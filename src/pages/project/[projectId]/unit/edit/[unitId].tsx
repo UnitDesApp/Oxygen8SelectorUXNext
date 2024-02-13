@@ -22,6 +22,7 @@ import Head from 'next/head';
 import UnitInfo from '../components/UnitInfo/UnitInfo';
 import Selection from '../components/Selection/Selection';
 import SelectionReportDialog from '../../components/dialog/SelectionReportDialog';
+import CircularProgressLoading from 'src/components/loading/CircularProgressLoading';
 
 // ----------------------------------------------------------------------
 
@@ -144,18 +145,22 @@ export default function EditUnit() {
             }
           />
           <Box sx={{ my: 3, pb: 10 }}>
-            {currentStep === 1 && (
-              <UnitInfo
-                projectId={Number(projectId)}
-                unitId={Number(unitId)}
-                isAddedNewUnit={isAddedNewUnit}
-                setIsAddedNewUnit={(no: number) => {
-                  setIntUnitNo(no);
-                  setIsAddedNewUnit(true);
-                }}
-                edit
-              />
-            )}
+            {currentStep === 1 &&
+              (isLoadingUnitInfo ? (
+                <CircularProgressLoading />
+              ) : (
+                <UnitInfo
+                  projectId={Number(projectId)}
+                  unitId={Number(unitId)}
+                  isAddedNewUnit={isAddedNewUnit}
+                  setIsAddedNewUnit={(no: number) => {
+                    setIntUnitNo(no);
+                    setIsAddedNewUnit(true);
+                  }}
+                  unitInfoData={unitData}
+                  edit
+                />
+              ))}
             {currentStep === 2 && (
               <Selection
                 unitTypeData={{
