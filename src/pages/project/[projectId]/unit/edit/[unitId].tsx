@@ -215,7 +215,7 @@ export default function EditUnit() {
                 variant="contained"
                 color="primary"
                 onClick={onClickNextStep}
-                disabled={!validateContinue()}
+                disabled={validateContinue()}
               >
                 {currentStep !== 2 ? 'Continue' : 'Done'}
                 <Iconify icon={currentStep !== 2 ? 'akar-icons:arrow-right' : 'icons8:cancel-2'} />
