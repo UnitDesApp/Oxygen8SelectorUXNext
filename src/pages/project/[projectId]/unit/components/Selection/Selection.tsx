@@ -991,7 +991,7 @@ export default function Selection({ unitTypeData, intUnitNo }: SelectionProps) {
                     >
                       {item.subGroups.map((element: any, i: number) =>
                         Array.isArray(element) ? (
-                          <Box key={index}>
+                          <Box key={i}>
                             {element.map((ele, ii) => (
                               <CustomGroupBox
                                 title={ele.title}

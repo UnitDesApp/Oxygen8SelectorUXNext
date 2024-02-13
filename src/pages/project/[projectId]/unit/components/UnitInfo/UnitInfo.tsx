@@ -20,8 +20,8 @@ const RootStyle = styled('div')(({ theme }) => ({
 type UnitInfoProps = {
   projectId: number;
   unitId?: number;
-  setIsAddedNewUnit: Function;
-  isAddedNewUnit: boolean;
+  setIsSavedUnit?: Function;
+  isSavedUnit: boolean;
   setFunction?: Function;
   intProductTypeID?: number;
   intUnitTypeID?: number;
@@ -34,8 +34,8 @@ type UnitInfoProps = {
 export default function UnitInfo({
   projectId,
   unitId,
-  setIsAddedNewUnit,
-  isAddedNewUnit,
+  setIsSavedUnit,
+  isSavedUnit,
   intProductTypeID,
   intUnitTypeID,
   setFunction,
@@ -54,7 +54,7 @@ export default function UnitInfo({
       intUnitNo: edit ? unitId : -1,
     },
     {
-      enabled: !edit && typeof window !== 'undefined',
+      enabled: typeof window !== 'undefined',
     }
   );
 
@@ -72,7 +72,7 @@ export default function UnitInfo({
 
   if (isLoadingBaseData || isLoadingUnitInfo) return <CircularProgressLoading />;
 
-  const { unitInfo } = unitInfoData || unitData || {};
+  const { unitInfo } = unitData || { unitInfo: {} };
 
   return (
     <RootStyle>
@@ -83,13 +83,13 @@ export default function UnitInfo({
             unitId={edit ? unitId : -1}
             baseData={baseData}
             unitInfo={unitInfo}
-            setIsAddedNewUnit={setIsAddedNewUnit}
-            isAddedNewUnit={isAddedNewUnit}
+            setIsSavedUnit={setIsSavedUnit}
+            isSavedUnit={isSavedUnit}
             onSuccess={() => setOpenSuccess(true)}
             onError={() => setOpenError(true)}
             edit={edit}
-            intProductTypeID={intProductTypeID || unitInfo.productTypeID || 0}
-            intUnitTypeID={intUnitTypeID || unitInfo.unitTypeID || 0}
+            intProductTypeID={intProductTypeID || unitInfo?.productTypeID || 0}
+            intUnitTypeID={intUnitTypeID || unitInfo?.unitTypeID || 0}
             setFunction={setFunction}
             txbProductType={txbProductType}
             txbUnitType={txbUnitType}

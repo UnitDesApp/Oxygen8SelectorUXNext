@@ -22,6 +22,7 @@ import Head from 'next/head';
 import SelectProductInfo from './components/SelectProductInfo/SelectProductInfo';
 import UnitInfo from './components/UnitInfo/UnitInfo';
 import Selection from './components/Selection/Selection';
+import SelectionReportDialog from '../components/dialog/SelectionReportDialog';
 
 // ----------------------------------------------------------------------
 
@@ -68,7 +69,7 @@ export default function AddNewUnit() {
   const { push, query } = useRouter();
   const { projectId } = query;
   const [currentStep, setCurrentStep] = useState(0);
-  const [isAddedNewUnit, setIsAddedNewUnit] = useState(false);
+  const [isSavedUnit, setIsSavedUnit] = useState(false);
   const [unitTypeData, setUnitTypeData] = useState<{
     intProductTypeID: number;
     txbProductType: string;
@@ -79,8 +80,6 @@ export default function AddNewUnit() {
   }>(DEFAULT_UNIT_DATA);
   const [intUnitNo, setIntUnitNo] = useState(0);
   const [openRPDialog, setOpenRPDialog] = useState(false);
-
-  const { data, isLoading: isLoadingBaseData } = useGetAllBaseData();
 
   const closeDialog = useCallback(() => {
     setOpenRPDialog(false);
@@ -119,7 +118,7 @@ export default function AddNewUnit() {
       return false;
     }
 
-    if (currentStep === 1 && isAddedNewUnit) return false;
+    if (currentStep === 1 && isSavedUnit) return false;
     if (currentStep === 2 && intUnitNo !== 0) return false;
 
     return true;
@@ -166,12 +165,12 @@ export default function AddNewUnit() {
             {currentStep === 1 && (
               <UnitInfo
                 projectId={Number(projectId)}
-                isAddedNewUnit={isAddedNewUnit}
+                isSavedUnit={isSavedUnit}
                 intProductTypeID={unitTypeData.intProductTypeID}
                 intUnitTypeID={unitTypeData.intUnitTypeID}
-                setIsAddedNewUnit={(no: number) => {
+                setIsSavedUnit={(no: number) => {
                   setIntUnitNo(no);
-                  setIsAddedNewUnit(true);
+                  setIsSavedUnit(true);
                 }}
                 txbProductType={unitTypeData.txbProductType}
                 txbUnitType={unitTypeData.txbUnitType}
@@ -238,13 +237,13 @@ export default function AddNewUnit() {
             </Grid>
           </Grid>
         </FooterStepStyle>
-        {/* <ExportSelectionDialog
-        isOpen={openRPDialog}
-        onClose={closeDialog}
-        intProjectID={projectId.toString()}
-        intUnitNo={intUnitNo.toString()}
-      /> */}
       </RootStyle>
+      <SelectionReportDialog
+        isOpen={openRPDialog}
+        onClose={() => setOpenRPDialog(false)}
+        intProjectID={projectId?.toString() || ''}
+        intUnitNo={intUnitNo.toString()}
+      />
     </>
   );
 }

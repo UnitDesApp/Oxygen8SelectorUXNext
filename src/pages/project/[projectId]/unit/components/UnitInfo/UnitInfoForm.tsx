@@ -10,7 +10,6 @@ import {
   Checkbox,
   FormControlLabel,
   Grid,
-  LinearProgress,
   Stack,
   TextField,
   Typography,
@@ -24,7 +23,7 @@ import * as IDs from 'src/utils/ids';
 import { useAuthContext } from 'src/auth/useAuthContext';
 import FormProvider from 'src/components/hook-form/FormProvider';
 import Iconify from 'src/components/iconify';
-import { RHFCheckbox, RHFSelect, RHFTextField } from 'src/components/hook-form';
+import { RHFSelect, RHFTextField } from 'src/components/hook-form';
 import { useApiContext } from 'src/contexts/ApiContext';
 import {
   getBypass,
@@ -63,8 +62,8 @@ type UnitInfoFormProps = {
   unitId?: number;
   intProductTypeID: number;
   intUnitTypeID: number;
-  setIsAddedNewUnit: Function;
-  isAddedNewUnit: boolean;
+  setIsSavedUnit?: Function;
+  isSavedUnit?: boolean;
   setFunction?: Function;
   edit?: boolean;
   unitInfo?: any;
@@ -78,8 +77,8 @@ type UnitInfoFormProps = {
 export default function UnitInfoForm({
   projectId,
   unitId,
-  setIsAddedNewUnit,
-  isAddedNewUnit,
+  setIsSavedUnit,
+  isSavedUnit,
   setFunction,
   edit = false,
   unitInfo,
@@ -244,12 +243,12 @@ export default function UnitInfoForm({
     try {
       const data = await api.project.saveUnitInfo(getAllFormData());
       if (onSuccess) onSuccess(true);
-      setIsAddedNewUnit(data.intUnitNo);
+      if (setIsSavedUnit) setIsSavedUnit(data?.intUnitNo || 0);
     } catch (e) {
       console.log(e);
       if (onError) onError(true);
     }
-  }, [edit, onSuccess, onError, getAllFormData, setIsAddedNewUnit]);
+  }, [edit, onSuccess, onError, getAllFormData, setIsSavedUnit]);
 
   // -------------------- Get String Unit Model Codes ----------------------
   const { strUnitModelValue } = useMemo(() => {
@@ -2308,7 +2307,7 @@ export default function UnitInfoForm({
               variant="contained"
               onClick={() => console.log(getValues())}
               loading={isSubmitting}
-              disabled={isAddedNewUnit}
+              disabled={isSavedUnit && !edit}
             >
               {edit ? 'Update Unit' : 'Add New Unit'}
             </LoadingButton>
