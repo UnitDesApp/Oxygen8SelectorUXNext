@@ -49,7 +49,7 @@ export default function UnitInfo({
       intUserID: typeof window !== 'undefined' && localStorage.getItem('userId'),
       intUAL: typeof window !== 'undefined' && localStorage.getItem('UAL'),
       intProjectID: projectId,
-      intUnitNo: edit ? unitId : Number(-1),
+      intUnitNo: edit ? unitId : -1,
     },
     {
       enabled: edit && typeof window !== 'undefined',
@@ -78,6 +78,7 @@ export default function UnitInfo({
         <Box sx={{ paddingBottom: '40px' }}>
           <UnitInfoForm
             projectId={projectId}
+            unitId={edit ? unitId : -1}
             baseData={baseData}
             unitInfo={unitInfo}
             setIsAddedNewUnit={setIsAddedNewUnit}
