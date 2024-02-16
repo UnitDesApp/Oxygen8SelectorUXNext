@@ -1028,7 +1028,7 @@ export default function Selection({ unitTypeData, intUnitNo }: SelectionProps) {
                                                 scope="row"
                                                 align="left"
                                               >
-                                                {item}
+                                                {rowItem}
                                               </TableCell>
                                             ))}
                                           </TableRow>
