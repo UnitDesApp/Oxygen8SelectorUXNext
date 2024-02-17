@@ -33,8 +33,8 @@ export default function NewCustomerDialog({
   onFail,
 }: NewCustomerDialogProps) {
   const api = useApiContext();
-  const { data: accountInfo, isLoading } = useGetAccountInfo();
-  const { customerList, customerType, fobPoint, country } = accountInfo || {};
+  const { data: accountInfo } = useGetAccountInfo();
+  const { customerType, fobPoint, country } = accountInfo || {};
 
   const NewCustomerSchema = Yup.object().shape({
     username: Yup.string().required('This field is required!'),
@@ -49,11 +49,12 @@ export default function NewCustomerDialog({
   const defaultValues = useMemo(
     () => ({
       username: '',
-      customerType: 0,
-      countryId: 0,
+      customerType: 1,
+      countryId: 1,
+      region: '',
       address: '',
       contactName: '',
-      fobPoint: 0,
+      fobPoint: 1,
       shippingFactor: '',
     }),
     []
@@ -91,10 +92,16 @@ export default function NewCustomerDialog({
       <DialogTitle>Add new customer</DialogTitle>
       <FormProvider methods={methods} onSubmit={handleSubmit(onSubmit)}>
         <DialogContent>
-          <Box sx={{ minWidth: '500px', display: 'grid', rowGap: 3, columnGap: 2 }}>
+          <Box sx={{ minWidth: '500px', display: 'grid', rowGap: 3, columnGap: 2, mt: 1 }}>
             <Stack direction="row" justifyContent="space-around" spacing={1}>
               <RHFTextField size="small" name="username" label="Customer Name" />
-              <RHFSelect size="small" name="customerType" label="Customer type" placeholder="">
+              <RHFSelect
+                native
+                size="small"
+                name="customerType"
+                label="Customer type"
+                placeholder=""
+              >
                 {customerType?.map((item: any) => (
                   <option key={item.id} value={item.id}>
                     {item.items}
@@ -104,16 +111,16 @@ export default function NewCustomerDialog({
               </RHFSelect>
             </Stack>
             <RHFTextField size="small" name="address" label="Address" />
-            <RHFSelect size="small" name="countryId" label="Country" placeholder="">
+            <RHFSelect native size="small" name="countryId" label="Country" placeholder="">
               {country?.map((item: any) => (
                 <option key={item.id} value={item.id}>
                   {item.items}
                 </option>
               ))}
-              {!customerList && <option value="" />}
+              {!country && <option value="" />}
             </RHFSelect>
             <RHFTextField size="small" name="contactName" label="Contact name" />
-            <RHFSelect size="small" name="fobPoint" label="FOB point" placeholder="">
+            <RHFSelect native size="small" name="fobPoint" label="FOB point" placeholder="">
               {fobPoint?.map((item: any) => (
                 <option key={item.id} value={item.id}>
                   {item.items}
