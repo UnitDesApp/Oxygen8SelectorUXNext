@@ -202,7 +202,7 @@ export default function ProjectDetailsForm({
   );
 
   useEffect(() => {
-    if (mounted) {
+    if (mounted && outdoorInfo) {
       setValue('altitude', outdoorInfo.altitude as never);
       setValue('summer_air_db', outdoorInfo.summerOutdoorAirDB as never);
       setValue('summer_air_wb', outdoorInfo.summerOutdoorAirWB as never);
