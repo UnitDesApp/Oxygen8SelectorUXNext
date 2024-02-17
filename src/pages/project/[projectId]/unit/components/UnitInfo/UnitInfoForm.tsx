@@ -367,7 +367,9 @@ export default function UnitInfoForm({
   );
 
   const ddlHandingChanged = useCallback(
-    (e: any) => setValue('ddlHandingId', Number(e.target.value)),
+    (e: any) => {
+      setValue('ddlHandingId', Number(e.target.value));
+    },
     [setValue]
   );
 
@@ -2188,7 +2190,7 @@ export default function UnitInfoForm({
                       onChange={ddlHandingChanged}
                     >
                       {handingInfo.ddlHandingDataTbl.map((item: any, index: number) => (
-                        <option key={index} value={baseData.id}>
+                        <option key={index} value={item.id}>
                           {item.items}
                         </option>
                       ))}

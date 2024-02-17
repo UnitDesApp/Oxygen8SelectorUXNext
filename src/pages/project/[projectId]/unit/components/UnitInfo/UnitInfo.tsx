@@ -54,7 +54,7 @@ export default function UnitInfo({
       intUnitNo: edit ? unitId : -1,
     },
     {
-      enabled: typeof window !== 'undefined',
+      enabled: typeof window !== 'undefined' && edit,
     }
   );
 
