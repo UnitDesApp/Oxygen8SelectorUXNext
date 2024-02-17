@@ -892,7 +892,8 @@ export default function Selection({ unitTypeData, intUnitNo }: SelectionProps) {
         visible: exhaustFan?.Visible,
         style: {
           display: 'grid',
-          gridTemplateColumns: 'repeat(2, 1fr)',
+          gridTemplateColumns:
+            exhaustFan?.GraphImageUrl !== null ? 'repeat(2, 1fr)' : 'repeat(1, 1fr)',
         },
         subGroups: [
           {
@@ -1045,10 +1046,11 @@ export default function Selection({ unitTypeData, intUnitNo }: SelectionProps) {
                             key={element.title + index}
                             bordersx={{
                               display:
-                                element.title === 'Graph' ||
-                                (element.data !== undefined && element.data.length > 0
+                                (element.title === 'Graph' ||
+                                  (element.data !== undefined && element.data.length > 0)) &&
+                                element.data !== null
                                   ? 'block'
-                                  : 'none'),
+                                  : 'none',
                               width: 'auto',
                               m: '20px 30px!important',
                               padding: '20px',
@@ -1058,7 +1060,7 @@ export default function Selection({ unitTypeData, intUnitNo }: SelectionProps) {
                               transform: 'translate(25px, -10px) scale(0.75)',
                             }}
                           >
-                            {element.title === 'Graph' && (
+                            {element.title === 'Graph' && element.data !== null && (
                               <Image
                                 src={
                                   unitTypeData?.intProductTypeID === 3
@@ -1070,7 +1072,7 @@ export default function Selection({ unitTypeData, intUnitNo }: SelectionProps) {
                             )}
 
                             {element.title !== 'Graph' && (
-                              <TableContainer component={Paper}>
+                              <TableContainer component={Paper} sx={{ height: '100%' }}>
                                 <Table size="small">
                                   <TableBody>
                                     {element.data &&
