@@ -15,11 +15,16 @@ const RootStyle = styled('div')(({ theme }) => ({}));
 // ----------------------------------------------------------------------
 interface AdminPanelWrapperProps {
   currentTab: string;
+  refetch: () => void;
   children: any;
 }
 
 // ----------------------------------------------------------------------
-export default function AdminPanelWrapper({ currentTab, children }: AdminPanelWrapperProps) {
+export default function AdminPanelWrapper({
+  currentTab,
+  children,
+  refetch,
+}: AdminPanelWrapperProps) {
   const [addUserDlgOpen, setAddUserDlgOpen] = useState(false);
   const [addCustomerDlgOpen, setAddCustomerDlgOpen] = useState(false);
   const [successDlgOpen, setSuccessDlgOpen] = useState(false);
@@ -104,12 +109,14 @@ export default function AdminPanelWrapper({ currentTab, children }: AdminPanelWr
         onClose={onCloseUserDlg}
         onSuccess={onSuccessAddUser}
         onFail={() => setFailDlgOpen(true)}
+        refetch={refetch}
       />
       <NewCustomerDialog
         open={addCustomerDlgOpen}
         onClose={onCloseCustomerDlg}
         onSuccess={onSuccessAddCustomer}
         onFail={() => setFailDlgOpen(true)}
+        refetch={refetch}
       />
     </RootStyle>
   );

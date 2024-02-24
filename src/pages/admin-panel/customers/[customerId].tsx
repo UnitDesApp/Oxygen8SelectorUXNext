@@ -47,7 +47,7 @@ UserEdit.getLayout = (page: React.ReactElement) => <DashboardLayout>{page}</Dash
 export default function UserEdit() {
   const { customerId } = useRouter().query;
   const api = useApiContext();
-  const { data: accountInfo, isLoading } = useGetAccountInfo();
+  const { data: accountInfo, isLoading, refetch } = useGetAccountInfo();
   const { customers, customerType, fobPoint, country } = accountInfo || {
     customers: [],
     fobPoint: [],
@@ -236,12 +236,14 @@ export default function UserEdit() {
         onClose={onCloseUserDlg}
         onSuccess={onSuccessAddUser}
         onFail={() => setFailDlgOpen(true)}
+        refetch={refetch}
       />
       <NewCustomerDialog
         open={addCustomerDlgOpen}
         onClose={onCloseCustomerDlg}
         onSuccess={onSuccessAddCustomer}
         onFail={() => setFailDlgOpen(true)}
+        refetch={refetch}
       />
     </RootStyle>
   );

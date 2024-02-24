@@ -56,7 +56,7 @@ interface UsersProps {
 export default function Users({ toolbar = true, checkbox = true }: UsersProps) {
   const api = useApiContext();
   const { push } = useRouter();
-  const { data: accountInfo, isLoading } = useGetAccountInfo();
+  const { data: accountInfo, isLoading, refetch } = useGetAccountInfo();
   const { users } = accountInfo || { user: [] };
 
   const dense = true;
@@ -169,7 +169,7 @@ export default function Users({ toolbar = true, checkbox = true }: UsersProps) {
   };
 
   return (
-    <AdminPanelWrapper currentTab="users">
+    <AdminPanelWrapper currentTab="users" refetch={refetch}>
       <Container>
         {toolbar && (
           <UserTableToolbar

@@ -24,6 +24,7 @@ interface NewCustomerDialogProps {
   onClose: Function;
   onSuccess: Function;
   onFail: Function;
+  refetch: Function;
 }
 
 export default function NewCustomerDialog({
@@ -31,6 +32,7 @@ export default function NewCustomerDialog({
   onClose,
   onSuccess,
   onFail,
+  refetch,
 }: NewCustomerDialogProps) {
   const api = useApiContext();
   const { data: accountInfo } = useGetAccountInfo();
@@ -78,13 +80,16 @@ export default function NewCustomerDialog({
         await api.account.addNewCustomer({ ...data, createdDate: '' });
         onSuccess();
         reset(defaultValues);
+        if (refetch) {
+          refetch();
+        }
         onClose();
       } catch (error) {
         console.error(error);
         onFail();
       }
     },
-    [defaultValues, onClose, onFail, onSuccess, reset, api.account]
+    [api.account, onSuccess, reset, defaultValues, refetch, onClose, onFail]
   );
 
   return (

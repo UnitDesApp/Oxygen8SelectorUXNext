@@ -41,7 +41,7 @@ Customers.getLayout = (page: React.ReactElement) => <DashboardLayout>{page}</Das
 
 export default function Customers() {
   const api = useApiContext();
-  const { data: accountInfo, isLoading } = useGetAccountInfo();
+  const { data: accountInfo, isLoading, refetch } = useGetAccountInfo();
   const { customers } = accountInfo || { customers: [] };
   const { push } = useRouter();
 
@@ -169,7 +169,7 @@ export default function Customers() {
   if (isLoading) return <Loading />;
 
   return (
-    <AdminPanelWrapper currentTab="customers">
+    <AdminPanelWrapper currentTab="customers" refetch={refetch}>
       <Container>
         <CustomerTableToolbar
           filterName={filterName}

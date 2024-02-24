@@ -23,9 +23,16 @@ interface NewUserDialogProps {
   onClose: Function;
   onSuccess: Function;
   onFail: Function;
+  refetch: Function;
 }
 
-export default function NewUserDialog({ open, onClose, onSuccess, onFail }: NewUserDialogProps) {
+export default function NewUserDialog({
+  open,
+  onClose,
+  onSuccess,
+  onFail,
+  refetch,
+}: NewUserDialogProps) {
   const api = useApiContext();
   const { data: accountInfo, isLoading } = useGetAccountInfo();
 
@@ -82,13 +89,16 @@ export default function NewUserDialog({ open, onClose, onSuccess, onFail }: NewU
         await api.account.addNewUser({ ...data, createdDate: '' });
         onSuccess();
         reset(defaultValues);
+        if (refetch) {
+          refetch();
+        }
         onClose();
       } catch (error) {
         console.error(error);
         onFail();
       }
     },
-    [defaultValues, onClose, onFail, onSuccess, reset, api.account]
+    [api.account, onSuccess, reset, defaultValues, refetch, onClose, onFail]
   );
 
   return (
