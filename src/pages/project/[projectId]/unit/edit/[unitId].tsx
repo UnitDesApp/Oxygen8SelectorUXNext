@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useState } from 'react';
 // import PropTypes from 'prop-types';
 // @mui
 import { styled, useTheme } from '@mui/material/styles';
@@ -13,15 +13,12 @@ import {
   Typography,
   Box,
 } from '@mui/material';
-import { useGetUnitInfo } from 'src/hooks/useApi';
 import { useRouter } from 'next/router';
 import CustomBreadcrumbs from 'src/components/custom-breadcrumbs';
 import { PATH_APP } from 'src/routes/paths';
 import Iconify from 'src/components/iconify';
 import Head from 'next/head';
-import CircularProgressLoading from 'src/components/loading/CircularProgressLoading';
 import UnitInfo from '../components/UnitInfo/UnitInfo';
-import Selection from '../components/Selection/Selection';
 import SelectionReportDialog from '../../components/dialog/SelectionReportDialog';
 import SelectionWrapper from '../components/Selection/SelectionWrapper';
 

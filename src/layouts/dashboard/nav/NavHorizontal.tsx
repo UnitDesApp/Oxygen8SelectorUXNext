@@ -2,19 +2,29 @@ import { memo } from 'react';
 // @mui
 import { useTheme } from '@mui/material/styles';
 import { AppBar, Box, BoxProps, Toolbar } from '@mui/material';
+import { useAuthContext } from 'src/auth/useAuthContext';
 // config
 import { HEADER } from '../../../config-global';
+import navConfig, { manageNavConfig } from './config-navigation';
 // utils
 import { bgBlur } from '../../../utils/cssStyles';
 // components
 import { NavSectionHorizontal } from '../../../components/nav-section';
-//
-import navConfig from './config-navigation';
+import * as ClsID from '../../../utils/ids';
 
 // ----------------------------------------------------------------------
 
 function NavHorizontal() {
   const theme = useTheme();
+  const { user } = useAuthContext();
+
+  const intUAL = Number(user?.UAL);
+
+  const isAdmin =
+    intUAL === ClsID.intUAL_Admin ||
+    intUAL === ClsID.intUAL_IntAdmin ||
+    intUAL === ClsID.intUAL_IntLvl_1 ||
+    intUAL === ClsID.intUAL_IntLvl_2;
 
   return (
     <AppBar
@@ -32,7 +42,7 @@ function NavHorizontal() {
           }),
         }}
       >
-        <NavSectionHorizontal data={navConfig} />
+        <NavSectionHorizontal data={[...navConfig, ...(isAdmin ? manageNavConfig : [])]} />
       </Toolbar>
 
       <Shadow />

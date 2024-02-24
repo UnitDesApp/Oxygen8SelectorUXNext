@@ -57,7 +57,7 @@ export default function Users({ toolbar = true, checkbox = true }: UsersProps) {
   const api = useApiContext();
   const { push } = useRouter();
   const { data: accountInfo, isLoading } = useGetAccountInfo();
-  const { users } = accountInfo || { users: [] };
+  const { users = [] } = accountInfo;
 
   const dense = true;
 
@@ -158,10 +158,10 @@ export default function Users({ toolbar = true, checkbox = true }: UsersProps) {
 
   const isNotFound = useMemo(
     () =>
-      (!filteredData.length && !!filterName) ||
-      (!filteredData.length && !!filterRole) ||
-      (!filteredData.length && !!filterStatus),
-    [filterName, filterRole, filterStatus, filteredData.length]
+      (!filteredData?.length && !!filterName) ||
+      (!filteredData?.length && !!filterRole) ||
+      (!filteredData?.length && !!filterStatus),
+    [filterName, filterRole, filterStatus, filteredData?.length]
   );
 
   const handleFilterByCustomerName = (type: number) => {
@@ -176,7 +176,7 @@ export default function Users({ toolbar = true, checkbox = true }: UsersProps) {
             filterName={filterName}
             onFilterName={handleFilterName}
             onFilterByCustomerName={handleFilterByCustomerName}
-            userNum={filteredData.length}
+            userNum={filteredData?.length}
             onDeleteSelectedData={handleMultiConfirmDialogOpen}
           />
         )}
@@ -195,22 +195,22 @@ export default function Users({ toolbar = true, checkbox = true }: UsersProps) {
                 order={order}
                 orderBy={orderBy}
                 headLabel={TABLE_HEAD}
-                rowCount={tableData.length}
+                rowCount={tableData?.length}
                 numSelected={selected.length}
                 onSort={onSort}
                 isCheckbox={checkbox}
                 onSelectAllRows={(checked) =>
                   onSelectAllRows(
                     checked,
-                    tableData.map((row: any) => row.id)
+                    tableData?.map((row: any) => row.id)
                   )
                 }
               />
 
               <TableBody>
                 {filteredData
-                  .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                  .map((row: any, index: number) => (
+                  ?.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                  ?.map((row: any, index: number) => (
                     <UserTableRow
                       key={index}
                       row={row}
@@ -224,7 +224,7 @@ export default function Users({ toolbar = true, checkbox = true }: UsersProps) {
 
                 <TableEmptyRows
                   height={denseHeight}
-                  emptyRows={emptyRows(page, rowsPerPage, tableData.length)}
+                  emptyRows={emptyRows(page, rowsPerPage, tableData?.length)}
                 />
 
                 <TableNoData isNotFound={isNotFound} />
@@ -236,7 +236,7 @@ export default function Users({ toolbar = true, checkbox = true }: UsersProps) {
           <TablePagination
             rowsPerPageOptions={[5, 10, 25]}
             component="div"
-            count={filteredData.length}
+            count={filteredData?.length}
             rowsPerPage={rowsPerPage}
             page={page}
             onPageChange={onChangePage}
@@ -271,18 +271,18 @@ function applySortFilter({
   filterRole,
   customerType,
 }: any) {
-  const stabilizedThis = tableData.map((el: any, index: number) => [el, index]);
+  const stabilizedThis = tableData?.map((el: any, index: number) => [el, index]);
 
-  stabilizedThis.sort((a: any, b: any) => {
+  stabilizedThis?.sort((a: any, b: any) => {
     const order = comparator(a[0], b[0]);
     if (order !== 0) return order;
     return a[1] - b[1];
   });
 
-  tableData = stabilizedThis.map((el: any) => el[0]);
+  tableData = stabilizedThis?.map((el: any) => el[0]);
 
   if (filterName) {
-    tableData = tableData.filter(
+    tableData = tableData?.filter(
       (item: any) =>
         item.username.toLowerCase().indexOf(filterName.toLowerCase()) !== -1 ||
         item.first_name.toString().toLowerCase().indexOf(filterName.toLowerCase()) !== -1 ||
@@ -296,15 +296,15 @@ function applySortFilter({
     );
   }
   if (filterStatus !== 'All') {
-    tableData = tableData.filter((item: any) => item.status === filterStatus);
+    tableData = tableData?.filter((item: any) => item.status === filterStatus);
   }
 
   if (filterRole !== 'All') {
-    tableData = tableData.filter((item: any) => item.role === filterRole);
+    tableData = tableData?.filter((item: any) => item.role === filterRole);
   }
 
   if (customerType && customerType !== '1') {
-    tableData = tableData.filter(
+    tableData = tableData?.filter(
       (item: any) => item.customer_type_id.toString() === customerType.toString()
     );
   }

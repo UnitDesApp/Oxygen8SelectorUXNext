@@ -1,6 +1,7 @@
 // @mui
 import { Stack, Box } from '@mui/material';
 // config
+import { useAuthContext } from 'src/auth/useAuthContext';
 import { NAV } from '../../../config-global';
 // utils
 import { hideScrollbarX } from '../../../utils/cssStyles';
@@ -8,12 +9,23 @@ import { hideScrollbarX } from '../../../utils/cssStyles';
 import Logo from '../../../components/logo';
 import { NavSectionMini } from '../../../components/nav-section';
 //
-import navConfig from './config-navigation';
+import navConfig, { manageNavConfig } from './config-navigation';
 import NavToggleButton from './NavToggleButton';
+import * as ClsID from '../../../utils/ids';
 
 // ----------------------------------------------------------------------
 
 export default function NavMini() {
+  const { user } = useAuthContext();
+
+  const intUAL = Number(user?.UAL);
+
+  const isAdmin =
+    intUAL === ClsID.intUAL_Admin ||
+    intUAL === ClsID.intUAL_IntAdmin ||
+    intUAL === ClsID.intUAL_IntLvl_1 ||
+    intUAL === ClsID.intUAL_IntLvl_2;
+
   return (
     <Box
       component="nav"
@@ -41,7 +53,7 @@ export default function NavMini() {
       >
         <Logo sx={{ mx: 'auto', my: 2 }} />
 
-        <NavSectionMini data={navConfig} />
+        <NavSectionMini data={[...navConfig, ...(isAdmin ? manageNavConfig : [])]} />
       </Stack>
     </Box>
   );
