@@ -51,6 +51,8 @@ export default function UserEditForm({
     accessPricing: Yup.string().required('This field is required!'),
     fobPoint: Yup.string().required('This field is required!'),
     createdDate: Yup.string().required('This field is required!'),
+    password: Yup.string().required('This field is required!'),
+    confirmPassword: Yup.string().oneOf([Yup.ref('password')], 'Passwords must match'),
   });
 
   const defaultValues = {
@@ -58,8 +60,8 @@ export default function UserEditForm({
     lastname: selectedUser?.last_name,
     email: selectedUser?.email,
     username: selectedUser?.username,
-    password: '',
-    confirmPassword: '',
+    password: '123',
+    confirmPassword: '123',
     customerType: selectedUser?.customer_type,
     customerId: selectedUser?.customer_id,
     access: selectedUser?.access,
@@ -77,7 +79,7 @@ export default function UserEditForm({
   const {
     getValues,
     handleSubmit,
-    formState: { isSubmitting },
+    formState: { isSubmitting, errors },
   } = methods;
 
   const onSubmit = async (data: any) => {
