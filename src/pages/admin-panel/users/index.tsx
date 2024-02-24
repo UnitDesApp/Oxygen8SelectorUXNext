@@ -57,7 +57,7 @@ export default function Users({ toolbar = true, checkbox = true }: UsersProps) {
   const api = useApiContext();
   const { push } = useRouter();
   const { data: accountInfo, isLoading } = useGetAccountInfo();
-  const { users = [] } = accountInfo;
+  const { users } = accountInfo || { user: [] };
 
   const dense = true;
 
@@ -288,10 +288,6 @@ function applySortFilter({
         item.first_name.toString().toLowerCase().indexOf(filterName.toLowerCase()) !== -1 ||
         item.last_name.toLowerCase().indexOf(filterName.toLowerCase()) !== -1 ||
         (item.email && item.email.indexOf(filterName.toLowerCase()) !== -1) ||
-        item.name.toString().toLowerCase().indexOf(filterName.toLowerCase()) !== -1 ||
-        item.access.toString().toLowerCase().indexOf(filterName.toLowerCase()) !== -1 ||
-        item.access_level.toString().toLowerCase().indexOf(filterName.toLowerCase()) !== -1 ||
-        item.access_pricing.toString().toLowerCase().indexOf(filterName.toLowerCase()) !== -1 ||
         item.created_date.toString().toLowerCase().indexOf(filterName.toLowerCase()) !== -1
     );
   }
@@ -304,8 +300,8 @@ function applySortFilter({
   }
 
   if (customerType && customerType !== '1') {
-    tableData = tableData?.filter(
-      (item: any) => item.customer_type_id.toString() === customerType.toString()
+    tableData = tableData?.filter((item: any) =>
+      item.customer_type_id ? item.customer_type_id?.toString() === customerType.toString() : true
     );
   }
   return tableData;
