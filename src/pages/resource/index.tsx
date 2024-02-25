@@ -60,6 +60,7 @@ export default function Resources() {
                 }}
               >
                 {!isLoading &&
+                  fileList &&
                   Object.entries(fileList)?.map(
                     (item: any, i) =>
                       (item[0] === currentTab || currentTab === 'all') &&

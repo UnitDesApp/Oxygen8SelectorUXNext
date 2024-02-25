@@ -14,9 +14,11 @@ export default class ProjectApi extends AbstractApi {
   getOutdoorInfo = async (params: any): Promise<any> =>
     this.client.post(`/api/job/getoutdoorinfo`, params).then((res) => res.data);
 
-  updateProject(data: any) {
-    this.client.post(`/api/job/update`, data);
-  }
+  updateProject = async (data: any) => this.client.post(`/api/job/update`, data);
+
+  deleteProject = async (data: any) => this.client.post(`/api/job/delete`, data);
+
+  duplicateProject = async (data: any) => this.client.post(`/api/job/duplicate`, data);
 
   getUnits = async (params: { jobId: number }): Promise<any> =>
     this.client.post(`/api/job/getwithunit`, params).then((res) => res.data);

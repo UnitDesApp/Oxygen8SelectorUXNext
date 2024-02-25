@@ -60,8 +60,8 @@ export default function UserEditForm({
     lastname: selectedUser?.last_name,
     email: selectedUser?.email,
     username: selectedUser?.username,
-    password: '',
-    confirmPassword: '',
+    password: '123',
+    confirmPassword: '123',
     customerType: selectedUser?.customer_type,
     customerId: selectedUser?.customer_id,
     access: selectedUser?.access,
@@ -79,7 +79,7 @@ export default function UserEditForm({
   const {
     getValues,
     handleSubmit,
-    formState: { isSubmitting },
+    formState: { isSubmitting, errors },
   } = methods;
 
   const onSubmit = async (data: any) => {
@@ -118,7 +118,13 @@ export default function UserEditForm({
               <RHFTextField size="small" name="username" label="User Name" />
               <Divider />
               <Stack direction="row" justifyContent="space-around" spacing={1}>
-                <RHFSelect size="small" name="customerType" label="Customer type" placeholder="">
+                <RHFSelect
+                  native
+                  size="small"
+                  name="customerType"
+                  label="Customer type"
+                  placeholder=""
+                >
                   {customerType?.map((item: any) => (
                     <option key={item.id} value={item.id}>
                       {item.items}
@@ -126,7 +132,13 @@ export default function UserEditForm({
                   ))}
                   {!customerType && <option value="" />}
                 </RHFSelect>
-                <RHFSelect size="small" name="customerId" label="Customer name" placeholder="">
+                <RHFSelect
+                  native
+                  size="small"
+                  name="customerId"
+                  label="Customer name"
+                  placeholder=""
+                >
                   {customers?.map((item: any) => (
                     <option key={item.id} value={item.id}>
                       {item.name}
@@ -136,11 +148,17 @@ export default function UserEditForm({
                 </RHFSelect>
               </Stack>
               <Stack direction="row" justifyContent="space-around" spacing={1}>
-                <RHFSelect size="small" name="access" label="Access" placeholder="">
+                <RHFSelect native size="small" name="access" label="Access" placeholder="">
                   <option value="1">Yes</option>
                   <option value="0">No</option>
                 </RHFSelect>
-                <RHFSelect size="small" name="accessLevel" label="Access level" placeholder="">
+                <RHFSelect
+                  native
+                  size="small"
+                  name="accessLevel"
+                  label="Access level"
+                  placeholder=""
+                >
                   <option value="10">Admin</option>
                   <option value="4">Internal Admin</option>
                   <option value="3">Internal 2</option>
@@ -148,12 +166,18 @@ export default function UserEditForm({
                   <option value="1">External</option>
                   <option value="5">External Special</option>
                 </RHFSelect>
-                <RHFSelect size="small" name="accessPricing" label="Access pricing" placeholder="">
+                <RHFSelect
+                  native
+                  size="small"
+                  name="accessPricing"
+                  label="Access pricing"
+                  placeholder=""
+                >
                   <option value="0">No</option>
                   <option value="1">Yes</option>
                 </RHFSelect>
               </Stack>
-              <RHFSelect size="small" name="fobPoint" label="FOB point" placeholder="">
+              <RHFSelect native size="small" name="fobPoint" label="FOB point" placeholder="">
                 {fobPoint?.map((item: any) => (
                   <option key={item.id} value={item.id}>
                     {item.items}

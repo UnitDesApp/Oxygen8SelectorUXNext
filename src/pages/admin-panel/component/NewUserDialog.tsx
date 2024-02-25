@@ -23,13 +23,20 @@ interface NewUserDialogProps {
   onClose: Function;
   onSuccess: Function;
   onFail: Function;
+  refetch: Function;
 }
 
-export default function NewUserDialog({ open, onClose, onSuccess, onFail }: NewUserDialogProps) {
+export default function NewUserDialog({
+  open,
+  onClose,
+  onSuccess,
+  onFail,
+  refetch,
+}: NewUserDialogProps) {
   const api = useApiContext();
   const { data: accountInfo, isLoading } = useGetAccountInfo();
 
-  const { customerType, fobPoint, customerList } = accountInfo || {};
+  const { customerType, fobPoint, customers } = accountInfo || {};
 
   const NewUserSchema = Yup.object().shape({
     firstname: Yup.string().required('This field is required!'),
@@ -82,13 +89,16 @@ export default function NewUserDialog({ open, onClose, onSuccess, onFail }: NewU
         await api.account.addNewUser({ ...data, createdDate: '' });
         onSuccess();
         reset(defaultValues);
+        if (refetch) {
+          refetch();
+        }
         onClose();
       } catch (error) {
         console.error(error);
         onFail();
       }
     },
-    [defaultValues, onClose, onFail, onSuccess, reset, api.account]
+    [api.account, onSuccess, reset, defaultValues, refetch, onClose, onFail]
   );
 
   return (
@@ -111,7 +121,13 @@ export default function NewUserDialog({ open, onClose, onSuccess, onFail }: NewU
               label="Confirm Password"
             />
             <Stack direction="row" justifyContent="space-around" spacing={1}>
-              <RHFSelect size="small" name="customerType" label="Customer type" placeholder="">
+              <RHFSelect
+                native
+                size="small"
+                name="customerType"
+                label="Customer type"
+                placeholder=""
+              >
                 {customerType?.map((item: any) => (
                   <option key={item.id} value={item.id}>
                     {item.items}
@@ -119,13 +135,13 @@ export default function NewUserDialog({ open, onClose, onSuccess, onFail }: NewU
                 ))}
                 {!customerType && <option value="" />}
               </RHFSelect>
-              <RHFSelect size="small" name="customerId" label="Customer name" placeholder="">
-                {customerList?.map((item: any) => (
+              <RHFSelect native size="small" name="customerId" label="Customer name" placeholder="">
+                {customers?.map((item: any) => (
                   <option key={item.id} value={item.id}>
                     {item.name}
                   </option>
                 ))}
-                {!customerList && <option value="" />}
+                {!customers && <option value="" />}
               </RHFSelect>
             </Stack>
             <Stack direction="row" justifyContent="space-around" spacing={1}>
@@ -133,7 +149,7 @@ export default function NewUserDialog({ open, onClose, onSuccess, onFail }: NewU
                 <option value="1">Yes</option>
                 <option value="0">No</option>
               </RHFSelect>
-              <RHFSelect size="small" name="accessLevel" label="Access level" placeholder="">
+              <RHFSelect native size="small" name="accessLevel" label="Access level" placeholder="">
                 <option value="10">Admin</option>
                 <option value="4">Internal Admin</option>
                 <option value="3">Internal 2</option>
@@ -141,12 +157,18 @@ export default function NewUserDialog({ open, onClose, onSuccess, onFail }: NewU
                 <option value="1">External</option>
                 <option value="5">External Special</option>
               </RHFSelect>
-              <RHFSelect size="small" name="accessPricing" label="Access pricing" placeholder="">
+              <RHFSelect
+                native
+                size="small"
+                name="accessPricing"
+                label="Access pricing"
+                placeholder=""
+              >
                 <option value="0">No</option>
                 <option value="1">Yes</option>
               </RHFSelect>
             </Stack>
-            <RHFSelect size="small" name="fobPoint" label="FOB point" placeholder="">
+            <RHFSelect native size="small" name="fobPoint" label="FOB point" placeholder="">
               {fobPoint?.map((item: any) => (
                 <option key={item.id} value={item.id}>
                   {item.items}

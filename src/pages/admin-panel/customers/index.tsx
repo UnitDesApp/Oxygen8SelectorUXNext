@@ -21,6 +21,7 @@ import CustomerTableRow from './component/CustomerTableRow';
 import TableSelectedActions from './component/TableSelectedActions';
 import CustomerTableToolbar from './component/CustomerTableToolbar';
 import useTabs from '../../../hooks/useTabs';
+import AdminPanelWrapper from '../component/AdminPanelWrapper';
 // components
 
 // ----------------------------------------------------------------------
@@ -40,7 +41,7 @@ Customers.getLayout = (page: React.ReactElement) => <DashboardLayout>{page}</Das
 
 export default function Customers() {
   const api = useApiContext();
-  const { data: accountInfo, isLoading } = useGetAccountInfo();
+  const { data: accountInfo, isLoading, refetch } = useGetAccountInfo();
   const { customers } = accountInfo || { customers: [] };
   const { push } = useRouter();
 
@@ -168,89 +169,91 @@ export default function Customers() {
   if (isLoading) return <Loading />;
 
   return (
-    <Container>
-      <CustomerTableToolbar
-        filterName={filterName}
-        onFilterName={handleFilterName}
-        userNum={filteredData.length}
-        onDeleteSelectedData={handleMultiConfirmDialogOpen}
-        onFilterByCustomerName={handleFilterByCustomerName}
-      />
-      <Scrollbar>
-        <TableContainer sx={{ minWidth: 800, position: 'relative' }}>
-          {selected.length > 0 && (
-            <TableSelectedActions
-              numSelected={selected.length}
-              onSelectAllRows={onSelectAllRows}
-              rowCount={selected.length}
-            />
-          )}
+    <AdminPanelWrapper currentTab="customers" refetch={refetch}>
+      <Container>
+        <CustomerTableToolbar
+          filterName={filterName}
+          onFilterName={handleFilterName}
+          userNum={filteredData.length}
+          onDeleteSelectedData={handleMultiConfirmDialogOpen}
+          onFilterByCustomerName={handleFilterByCustomerName}
+        />
+        <Scrollbar>
+          <TableContainer sx={{ minWidth: 800, position: 'relative' }}>
+            {selected.length > 0 && (
+              <TableSelectedActions
+                numSelected={selected.length}
+                onSelectAllRows={onSelectAllRows}
+                rowCount={selected.length}
+              />
+            )}
 
-          <Table size="medium">
-            <TableHeadCustom
-              order={order}
-              orderBy={orderBy}
-              headLabel={TABLE_HEAD}
-              rowCount={tableData.length}
-              numSelected={selected.length}
-              onSort={onSort}
-              onSelectAllRows={(checked) =>
-                onSelectAllRows(
-                  checked,
-                  tableData.map((row: any) => row.id)
-                )
-              }
-            />
-
-            <TableBody>
-              {filteredData
-                .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                .map((row: any, index: number) => (
-                  <CustomerTableRow
-                    key={index}
-                    row={row}
-                    selected={selected.includes(row.id)}
-                    onSelectRow={() => onSelectRow(row.id)}
-                    onDeleteRow={() => handleOneConfirmDialogOpen(row.id)}
-                    onEditRow={() => handleEditRow(row)}
-                  />
-                ))}
-
-              <TableEmptyRows
-                height={denseHeight}
-                emptyRows={emptyRows(page, rowsPerPage, tableData.length)}
+            <Table size="medium">
+              <TableHeadCustom
+                order={order}
+                orderBy={orderBy}
+                headLabel={TABLE_HEAD}
+                rowCount={tableData.length}
+                numSelected={selected.length}
+                onSort={onSort}
+                onSelectAllRows={(checked) =>
+                  onSelectAllRows(
+                    checked,
+                    tableData.map((row: any) => row.id)
+                  )
+                }
               />
 
-              <TableNoData isNotFound={isNotFound} />
-            </TableBody>
-          </Table>
-        </TableContainer>
-      </Scrollbar>
-      <Box sx={{ position: 'relative' }}>
-        <TablePagination
-          rowsPerPageOptions={[5, 10, 25]}
-          component="div"
-          count={filteredData.length}
-          rowsPerPage={rowsPerPage}
-          page={page}
-          onPageChange={onChangePage}
-          onRowsPerPageChange={onChangeRowsPerPage}
-        />
-      </Box>
+              <TableBody>
+                {filteredData
+                  .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                  .map((row: any, index: number) => (
+                    <CustomerTableRow
+                      key={index}
+                      row={row}
+                      selected={selected.includes(row.id)}
+                      onSelectRow={() => onSelectRow(row.id)}
+                      onDeleteRow={() => handleOneConfirmDialogOpen(row.id)}
+                      onEditRow={() => handleEditRow(row)}
+                    />
+                  ))}
 
-      <ConfirmDialog
-        isOpen={isOneConfirmDialog}
-        onClose={handleOneConfirmDialogClose}
-        onConfirm={handleDeleteRow}
-        isOneRow
-      />
-      <ConfirmDialog
-        isOpen={isOpenMultiConfirmDialog}
-        onClose={handleMultiConfirmDialogClose}
-        onConfirm={handleDeleteRows}
-        isOneRow={false}
-      />
-    </Container>
+                <TableEmptyRows
+                  height={denseHeight}
+                  emptyRows={emptyRows(page, rowsPerPage, tableData.length)}
+                />
+
+                <TableNoData isNotFound={isNotFound} />
+              </TableBody>
+            </Table>
+          </TableContainer>
+        </Scrollbar>
+        <Box sx={{ position: 'relative' }}>
+          <TablePagination
+            rowsPerPageOptions={[5, 10, 25]}
+            component="div"
+            count={filteredData.length}
+            rowsPerPage={rowsPerPage}
+            page={page}
+            onPageChange={onChangePage}
+            onRowsPerPageChange={onChangeRowsPerPage}
+          />
+        </Box>
+
+        <ConfirmDialog
+          isOpen={isOneConfirmDialog}
+          onClose={handleOneConfirmDialogClose}
+          onConfirm={handleDeleteRow}
+          isOneRow
+        />
+        <ConfirmDialog
+          isOpen={isOpenMultiConfirmDialog}
+          onClose={handleMultiConfirmDialogClose}
+          onConfirm={handleDeleteRows}
+          isOneRow={false}
+        />
+      </Container>
+    </AdminPanelWrapper>
   );
 }
 
