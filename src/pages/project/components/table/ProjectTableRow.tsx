@@ -106,10 +106,10 @@ export default function ProjectTableRow({
 
       <TableCell align="left" sx={{ cursor: 'pointer' }}>
         <Stack direction="row" spacing={1}>
-          <IconButton disabled={!user?.verified} aria-label="delete" onClick={onDuplicate}>
+          <IconButton aria-label="delete" onClick={onDuplicate}>
             <Iconify icon="ic:outline-file-copy" />
           </IconButton>
-          <IconButton disabled={!Number(user?.verified)} aria-label="delete" onClick={onDeleteRow}>
+          <IconButton aria-label="delete" onClick={onDeleteRow}>
             <Iconify icon="mdi:trash-outline" />
           </IconButton>
         </Stack>
