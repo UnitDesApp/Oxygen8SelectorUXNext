@@ -36,12 +36,14 @@ export default function UserTableRow({
     first_name,
     last_name,
     email,
-    customer,
+    name,
     access,
     access_level,
     access_pricing,
     created_date,
   } = row || {};
+
+  console.log(row);
 
   return (
     <TableRow hover sx={{ borderBottom: '1px solid #a7b1bc' }} selected={selected}>
@@ -51,33 +53,15 @@ export default function UserTableRow({
         </TableCell>
       )}
 
-      <TableCell align="left" sx={{ cursor: 'pointer' }} onClick={() => onEditRow()}>
-        {username}
-      </TableCell>
-      <TableCell align="left" sx={{ cursor: 'pointer' }} onClick={() => onEditRow()}>
-        {first_name}
-      </TableCell>
-      <TableCell align="left" sx={{ cursor: 'pointer' }} onClick={() => onEditRow()}>
-        {last_name}
-      </TableCell>
-      <TableCell align="left" sx={{ cursor: 'pointer' }} onClick={() => onEditRow()}>
-        {email}
-      </TableCell>
-      <TableCell align="left" sx={{ cursor: 'pointer' }} onClick={() => onEditRow()}>
-        {customer}
-      </TableCell>
-      <TableCell align="left" sx={{ cursor: 'pointer' }} onClick={() => onEditRow()}>
-        {access}
-      </TableCell>
-      <TableCell align="left" sx={{ cursor: 'pointer' }} onClick={() => onEditRow()}>
-        {access_level}
-      </TableCell>
-      <TableCell align="left" sx={{ cursor: 'pointer' }} onClick={() => onEditRow()}>
-        {access_pricing}
-      </TableCell>
-      <TableCell align="left" sx={{ cursor: 'pointer' }} onClick={() => onEditRow()}>
-        {created_date}
-      </TableCell>
+      <CustomTableCell label={username} onClick={() => onEditRow()} />
+      <CustomTableCell label={first_name} onClick={() => onEditRow()} />
+      <CustomTableCell label={last_name} onClick={() => onEditRow()} />
+      <CustomTableCell label={email} onClick={() => onEditRow()} />
+      <CustomTableCell label={name} onClick={() => onEditRow()} />
+      <CustomTableCell label={access} onClick={() => onEditRow()} />
+      <CustomTableCell label={access_level} onClick={() => onEditRow()} />
+      <CustomTableCell label={access_pricing} onClick={() => onEditRow()} />
+      <CustomTableCell label={created_date} onClick={() => onEditRow()} />
       <TableCell align="right">
         <Stack direction="row">
           <StyledIconButton onClick={() => onEditRow()}>
@@ -91,3 +75,13 @@ export default function UserTableRow({
     </TableRow>
   );
 }
+
+const CustomTableCell = ({ label, onClick }: { label: string; onClick: Function }) => (
+  <TableCell
+    align="left"
+    sx={{ cursor: 'pointer', whiteSpace: 'nowrap' }}
+    onClick={() => onClick()}
+  >
+    {label}
+  </TableCell>
+);

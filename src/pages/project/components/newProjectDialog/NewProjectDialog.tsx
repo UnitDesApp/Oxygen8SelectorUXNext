@@ -42,7 +42,6 @@ export default function NewProjectDialog({
 }: NewProjectDialogProps) {
   const api = useApiContext();
   const [step, setStep] = useState(0);
-  const [companyNameId, setCompanyNameId] = useState(-1);
 
   const {
     baseOfDesign,
@@ -60,7 +59,7 @@ export default function NewProjectDialog({
   const NewUserSchema = Yup.object().shape({
     jobName: Yup.string().required('Please enter a Project Name'),
     basisOfDesign: Yup.string().required('Please enter a Basis Of Design'),
-    referenceNo: Yup.string().required('Please select a Reference'),
+    referenceNo: Yup.string(),
     revision: Yup.number().required('Please enter a Revision'),
     companyName: Yup.string(),
     companyNameId: Yup.string().required('Please enter a Company Name'),
@@ -173,7 +172,6 @@ export default function NewProjectDialog({
   const handleChangeCompanyName = (e: any) => {
     setValue('companyNameId', e.target.value);
     setValue('companyName', e.nativeEvent.target[e.target.selectedIndex].text);
-    setCompanyNameId(e.target.value);
   };
 
   const handleChangeContactName = (e: any) => {
@@ -212,7 +210,7 @@ export default function NewProjectDialog({
     }
   };
 
-  const { data: outdoorInfo, isLoading: isLoadingOutdoorInfo } = useGetOutdoorInfo(
+  const { data: outdoorInfo } = useGetOutdoorInfo(
     {
       action: 'GET_ALL_DATA',
       country: values.country,

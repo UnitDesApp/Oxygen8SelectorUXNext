@@ -356,7 +356,7 @@ const applySortFilter = ({
   }
 
   if (filterRole !== 'All') {
-    if (filterRole === 'Projects') {
+    if (filterRole === 'My Projects') {
       tableData = tableData.filter(
         (item: any) => item.created_user_id.toString() === localStorage.getItem('userId')
       );

@@ -340,7 +340,7 @@ export default function ProjectSubmittalForm({
                       </TableHead>
 
                       <TableBody>
-                        {submittalInfo?.gvSubmittals.gvSubmittalDetailsDataSource.map(
+                        {submittalInfo?.gvSubmittals?.gvSubmittalDetailsDataSource?.map(
                           (row: any, index: number) => (
                             <Row row={row} key={index} />
                           )

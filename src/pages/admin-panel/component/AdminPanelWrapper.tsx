@@ -5,6 +5,7 @@ import { styled } from '@mui/material/styles';
 import { Container, Button, Stack, Snackbar, Alert } from '@mui/material';
 import CustomBreadcrumbs from 'src/components/custom-breadcrumbs/CustomBreadcrumbs';
 import Iconify from 'src/components/iconify';
+import { useSettingsContext } from 'src/components/settings';
 import NewUserDialog from './NewUserDialog';
 import NewCustomerDialog from './NewCustomerDialog';
 
@@ -30,6 +31,8 @@ export default function AdminPanelWrapper({
   const [successDlgOpen, setSuccessDlgOpen] = useState(false);
   const [failDlgOpen, setFailDlgOpen] = useState(false);
   const [successText, setSuccessText] = useState('');
+
+  const { themeStretch } = useSettingsContext();
 
   const onCloseUserDlg = useCallback(() => {
     setAddUserDlgOpen(false);
@@ -59,10 +62,10 @@ export default function AdminPanelWrapper({
 
   return (
     <RootStyle>
-      <Container sx={{ mt: '20px' }}>
+      <Container maxWidth={themeStretch ? false : 'xl'} sx={{ mt: '20px' }}>
         <CustomBreadcrumbs
           heading="Admin Panel"
-          links={[{ name: 'Users & Customers' }]}
+          links={[{ name: currentTab === 'users' ? 'Users' : 'Customers' }]}
           action={
             <Stack direction="row" justifyContent="center" spacing={1}>
               {currentTab === 'customers' && (

@@ -29,7 +29,7 @@ export default function Main({ children, sx, ...other }: BoxProps) {
           pb: `${HEADER.H_MOBILE + SPACING}px`,
           ...(isDesktop && {
             px: 2,
-            pt: `${HEADER.H_DASHBOARD_DESKTOP + 80}px`,
+            pt: `${HEADER.H_DASHBOARD_DESKTOP}px`,
             pb: `${HEADER.H_DASHBOARD_DESKTOP + SPACING}px`,
           }),
         }}

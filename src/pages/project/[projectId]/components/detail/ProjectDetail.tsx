@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 
 // @mui
-import { styled } from '@mui/material/styles';
 import { Box, Snackbar, Alert } from '@mui/material';
 // hooks
 import { useGetProjectById, useGetProjectInitInfo } from 'src/hooks/useApi';
