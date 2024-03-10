@@ -2,12 +2,12 @@
 import { Alert, Tooltip, Stack, Typography, Link, Box, styled, Button } from '@mui/material';
 // auth
 import Logo from 'src/components/logo';
+import { PATH_AUTH } from 'src/routes/paths';
+import { useRouter } from 'next/router';
 import { useAuthContext } from '../../../auth/useAuthContext';
 // layouts
 import LoginLayout from '../../../layouts/login';
 import NewPasswordForm from './NewPasswordForm';
-import { useRouter } from 'next/router';
-import { PATH_AUTH } from 'src/routes/paths';
 
 // ----------------------------------------------------------------------
 const ContentStyle = styled('div')(({ theme }) => ({
