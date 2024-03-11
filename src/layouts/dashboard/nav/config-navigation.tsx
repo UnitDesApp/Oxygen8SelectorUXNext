@@ -1,8 +1,9 @@
+// components
+import Iconify from 'src/components/iconify/Iconify';
 // routes
 import { PATH_APP } from '../../../routes/paths';
-// components
-import SvgColor from '../../../components/svg-color';
-import Iconify from 'src/components/iconify/Iconify';
+// config
+import * as ClsID from '../../../utils/ids';
 
 // ----------------------------------------------------------------------
 
@@ -15,6 +16,8 @@ const ICONS = {
   adminPanel: icon('mdi:monitor-dashboard'),
 };
 
+const UAL = typeof window !== 'undefined' ? localStorage?.getItem('UAL') : '';
+
 const navConfig = [
   // GENERAL
   // ----------------------------------------------------------------------
@@ -26,9 +29,11 @@ const navConfig = [
       { title: 'Resources', path: PATH_APP.resource, icon: ICONS.download },
     ],
   },
+];
 
-  // MANAGEMENT
-  // ----------------------------------------------------------------------
+export default navConfig;
+
+export const manageNavConfig = [
   {
     subheader: 'Admin Panel',
     items: [
@@ -38,11 +43,10 @@ const navConfig = [
         icon: ICONS.user,
         children: [
           { title: 'Customers', path: PATH_APP.adminPanel.customer },
+
           { title: 'Users', path: PATH_APP.adminPanel.user },
         ],
       },
     ],
   },
 ];
-
-export default navConfig;

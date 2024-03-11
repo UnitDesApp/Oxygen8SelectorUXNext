@@ -1,11 +1,13 @@
 // react
 import { useEffect, useMemo, useState } from 'react';
+import { useRouter } from 'next/router';
 // next
 import Head from 'next/head';
 import {
   Alert,
   Box,
   Container,
+  Snackbar,
   Stack,
   Table,
   TableBody,
@@ -13,10 +15,6 @@ import {
   TablePagination,
   Typography,
 } from '@mui/material';
-import TableHeadCustom from './components/table/TableHeadCustom';
-// layouts
-import DashboardLayout from '../../layouts/dashboard';
-// components
 import {
   useTable,
   emptyRows,
@@ -27,15 +25,17 @@ import {
 } from 'src/components/table';
 import { ROLE_OPTIONS } from 'src/utils/constants';
 import { useAuthContext } from 'src/auth/useAuthContext';
-import { useSettingsContext } from '../../components/settings';
-import ProjectTableRow from './components/table/ProjectTableRow';
-import ProjectTableToolbar from './components/table/ProjectTableToolbar';
 import CircularProgressLoading from 'src/components/loading/CircularProgressLoading';
 import { useGetAllProjects } from 'src/hooks/useApi';
-import { useRouter } from 'next/router';
 import { PATH_APP } from 'src/routes/paths';
 import Scrollbar from 'src/components/scrollbar/Scrollbar';
-import { useStore } from 'src/state/state';
+import ConfirmDialog from 'src/components/dialog/ConfirmDialog';
+import { useApiContext } from 'src/contexts/ApiContext';
+import ProjectTableToolbar from './components/table/ProjectTableToolbar';
+import ProjectTableRow from './components/table/ProjectTableRow';
+import { useSettingsContext } from '../../components/settings';
+import DashboardLayout from '../../layouts/dashboard';
+import TableHeadCustom from './components/table/TableHeadCustom';
 import NewProjectDialog from './components/newProjectDialog/NewProjectDialog';
 
 // ----------------------------------------------------------------------
@@ -48,6 +48,8 @@ export default function Project() {
   const { themeStretch } = useSettingsContext();
   // router
   const { push } = useRouter();
+  // project api
+  const { project } = useApiContext();
 
   // Table State
   const [filterName, setFilterName] = useState<string>('');
@@ -115,7 +117,9 @@ export default function Project() {
   };
 
   const handleDeleteRow = () => {
-    // dispatch(deleteProject({ action: 'DELETE_ONE', projectId: deleteRowID }));
+    project.deleteProject({ action: 'DELETE_ONE', projectId: deleteRowID }).then(() => {
+      refetch();
+    });
     setSelected([]);
     setDeleteRowID(-1);
     handleOneConfirmDialogClose();
@@ -129,8 +133,8 @@ export default function Project() {
     setMultiConfirmDialogState(false);
   };
 
-  const handleFilterName = (filterName: string) => {
-    setFilterName(filterName);
+  const handleFilterName = (name: string) => {
+    setFilterName(name);
     setPage(0);
   };
 
@@ -139,12 +143,15 @@ export default function Project() {
   };
 
   const handleDeleteRows = () => {
-    // dispatch(deleteProject({ action: 'DELETE_MULTIPUL', projectIdData: selected }));
+    project.deleteProject({ action: 'DELETE_MULTIPUL', projectIdData: selected }).then(() => {
+      refetch();
+    });
     setSelected([]);
     setMultiConfirmDialogState(false);
   };
 
   const handleDuplicate = (row: any) => {
+    project.duplicateProject(row).then(() => refetch());
     setOpenDuplicateSuccess(true);
   };
 
@@ -162,7 +169,7 @@ export default function Project() {
         filterRole,
         filterStatus,
       }),
-    [filterName, filterRole, order, orderBy, projects]
+    [filterName, filterRole, order, orderBy, projects, filterStatus]
   );
 
   const isNotFound = useMemo(
@@ -206,7 +213,7 @@ export default function Project() {
             />
             <Scrollbar sx={{ overflow: 'hidden' }}>
               <TableContainer>
-                <Table size={'small'}>
+                <Table size="small">
                   <TableHeadCustom
                     order={order}
                     orderBy={orderBy}
@@ -267,6 +274,31 @@ export default function Project() {
             refetch={refetch}
           />
         )}
+        <ConfirmDialog
+          isOpen={isOneConfirmDialog}
+          onClose={handleOneConfirmDialogClose}
+          onConfirm={handleDeleteRow}
+          isOneRow
+        />
+        <ConfirmDialog
+          isOpen={isOpenMultiConfirmDialog}
+          onClose={handleMultiConfirmDialogClose}
+          onConfirm={handleDeleteRows}
+          isOneRow={false}
+        />
+        <Snackbar
+          open={openDuplicateSuccess}
+          autoHideDuration={3000}
+          onClose={() => setOpenDuplicateSuccess(false)}
+        >
+          <Alert
+            onClose={() => setOpenDuplicateSuccess(false)}
+            severity="success"
+            sx={{ width: '100%' }}
+          >
+            Project duplicate successfully!
+          </Alert>
+        </Snackbar>
       </Container>
     </>
   );
@@ -324,7 +356,7 @@ const applySortFilter = ({
   }
 
   if (filterRole !== 'All') {
-    if (filterRole === 'Projects') {
+    if (filterRole === 'My Projects') {
       tableData = tableData.filter(
         (item: any) => item.created_user_id.toString() === localStorage.getItem('userId')
       );

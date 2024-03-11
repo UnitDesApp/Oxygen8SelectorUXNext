@@ -31,8 +31,8 @@ export default function ProjectStatus() {
   });
 
   const { data: submitallInfo, isLoading: isLoadingSubmittalInfo } = useGetSubmittalInfo({
-    intUserID: localStorage.getItem('userId'),
-    intUAL: localStorage.getItem('UAL'),
+    intUserID: typeof window !== 'undefined' && localStorage.getItem('userId'),
+    intUAL: typeof window !== 'undefined' && localStorage.getItem('UAL'),
     intJobID: projectId,
   });
 
@@ -63,7 +63,7 @@ export default function ProjectStatus() {
   if (isLoading) return <LinearProgress color="info" />;
   if (!submitallInfo)
     return (
-      <Stack direction={'row'} alignItems={'center'} justifyContent={'center'} sx={{ pt: '30px' }}>
+      <Stack direction="row" alignItems="center" justifyContent="center" sx={{ pt: '30px' }}>
         <Box sx={{ fontSize: '30px' }}>Unable to lead submittal data due to NO UNIT!</Box>{' '}
       </Stack>
     );

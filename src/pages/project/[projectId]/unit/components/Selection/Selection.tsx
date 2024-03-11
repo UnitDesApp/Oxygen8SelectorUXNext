@@ -120,11 +120,11 @@ export default function Selection({ unitTypeData, intUnitNo }: SelectionProps) {
   });
 
   const { data: selectionData, isLoading: isLoadingSelectionInfo } = useGetSelectionInfo({
-    intUserID: localStorage.getItem('userId'),
-    intUAL: localStorage.getItem('UAL'),
+    intUserID: typeof window !== 'undefined' && localStorage.getItem('userId'),
+    intUAL: typeof window !== 'undefined' && localStorage.getItem('UAL'),
     intProjectID: projectId,
-    intProductTypeID: unitTypeData.intProductTypeID,
-    intUnitTypeID: unitTypeData.intUnitTypeID,
+    intProductTypeID: unitTypeData?.intProductTypeID,
+    intUnitTypeID: unitTypeData?.intUnitTypeID,
     intUnitNo,
   });
 
@@ -892,7 +892,8 @@ export default function Selection({ unitTypeData, intUnitNo }: SelectionProps) {
         visible: exhaustFan?.Visible,
         style: {
           display: 'grid',
-          gridTemplateColumns: 'repeat(2, 1fr)',
+          gridTemplateColumns:
+            exhaustFan?.GraphImageUrl !== null ? 'repeat(2, 1fr)' : 'repeat(1, 1fr)',
         },
         subGroups: [
           {
@@ -940,6 +941,7 @@ export default function Selection({ unitTypeData, intUnitNo }: SelectionProps) {
     preheatElecHeater,
     preheatHWC,
     pricingDetail,
+    pricingVisible,
     reheatElecHeater,
     reheatHGRC,
     reheatHWC,
@@ -950,178 +952,177 @@ export default function Selection({ unitTypeData, intUnitNo }: SelectionProps) {
   ]);
 
   return (
-    <>
-      <RootStyle>
-        <Container>
-          {error && (
-            <Box sx={{ maringLeft: 'auto', marginRight: 'auto', marginTop: '50px' }}>
-              Server Error!
-            </Box>
-          )}
-          {isLoadingSelectionInfo ? (
-            <LinearProgress color="info" />
-          ) : (
-            <Stack spacing={5} sx={{ mt: 2 }}>
-              {SelectionInfo?.map((item: any, index: number) => (
-                <Accordion
-                  key={index}
-                  expanded={expanded[`panel${index}`]}
-                  sx={{ display: item.visible !== true ? 'none' : 'block' }}
-                  onChange={() =>
-                    setExpanded({ ...expanded, [`panel${index}`]: !expanded[`panel${index}`] })
-                  }
+    <RootStyle>
+      <Container>
+        {error && (
+          <Box sx={{ maringLeft: 'auto', marginRight: 'auto', marginTop: '50px' }}>
+            Server Error!
+          </Box>
+        )}
+        {isLoadingSelectionInfo ? (
+          <LinearProgress color="info" />
+        ) : (
+          <Stack spacing={5} sx={{ mt: 2 }}>
+            {SelectionInfo?.map((item: any, index: number) => (
+              <Accordion
+                key={index}
+                expanded={expanded[`panel${index}`]}
+                sx={{ display: item.visible !== true ? 'none' : 'block' }}
+                onChange={() =>
+                  setExpanded({ ...expanded, [`panel${index}`]: !expanded[`panel${index}`] })
+                }
+              >
+                <AccordionSummary
+                  expandIcon={<Iconify icon="il:arrow-down" />}
+                  aria-controls="panel1a-content"
+                  id="panel1a-header"
                 >
-                  <AccordionSummary
-                    expandIcon={<Iconify icon="il:arrow-down" />}
-                    aria-controls="panel1a-content"
-                    id="panel1a-header"
-                  >
-                    <Typography color="primary.main" variant="h6">
-                      {item.groupName}
-                    </Typography>
-                  </AccordionSummary>
-                  <AccordionDetails>
-                    <Grid item xs={6}>
-                      <Stack
-                        direction={item.direction}
-                        alignItems="stretch"
-                        justifyContent="left"
-                        spacing={3}
-                        sx={{ ...item.style }}
-                      >
-                        {item.subGroups.map((element: any, index: number) =>
-                          Array.isArray(element) ? (
-                            <Box key={index}>
-                              {element.map((ele, index) => (
-                                <CustomGroupBox
-                                  title={ele.title}
-                                  key={ele.title + index}
-                                  bordersx={{
-                                    display:
-                                      ele.data !== undefined && ele.data.length > 0
-                                        ? 'block'
-                                        : 'none',
-                                    width: 'auto',
-                                    m: '20px 30px!important',
-                                    padding: '20px',
-                                  }}
-                                  titlesx={{
-                                    fontSize: '18px',
-                                    transform: 'translate(25px, -10px) scale(0.75)',
-                                  }}
-                                >
-                                  <TableContainer component={Paper}>
-                                    <Table size="small">
-                                      <TableBody>
-                                        {ele.data &&
-                                          ele.data.map((row: any, index: number) => (
-                                            <TableRow
-                                              key={index}
-                                              sx={{
-                                                '&:last-child td, &:last-child th': { border: 0 },
-                                              }}
-                                            >
-                                              {row?.map((item: any, index: number) => (
-                                                <TableCell
-                                                  key={item + index}
-                                                  component="th"
-                                                  scope="row"
-                                                  align="left"
-                                                >
-                                                  {item}
-                                                </TableCell>
-                                              ))}
-                                            </TableRow>
-                                          ))}
-                                      </TableBody>
-                                    </Table>
-                                  </TableContainer>
-                                </CustomGroupBox>
-                              ))}
-                            </Box>
-                          ) : (
-                            <CustomGroupBox
-                              title={element.title}
-                              key={element.title + index}
-                              bordersx={{
-                                display:
-                                  element.title === 'Graph' ||
-                                  (element.data !== undefined && element.data.length > 0
-                                    ? 'block'
-                                    : 'none'),
-                                width: 'auto',
-                                m: '20px 30px!important',
-                                padding: '20px',
-                              }}
-                              titlesx={{
-                                fontSize: '18px',
-                                transform: 'translate(25px, -10px) scale(0.75)',
-                              }}
-                            >
-                              {element.title === 'Graph' && (
-                                <Image
-                                  src={
-                                    unitTypeData.intProductTypeID === 3
-                                      ? `/${element.data}`
-                                      : element.data
-                                  }
-                                  height="100%"
-                                />
-                              )}
-
-                              {element.title !== 'Graph' && (
+                  <Typography color="primary.main" variant="h6">
+                    {item.groupName}
+                  </Typography>
+                </AccordionSummary>
+                <AccordionDetails>
+                  <Grid item xs={6}>
+                    <Stack
+                      direction={item.direction}
+                      alignItems="stretch"
+                      justifyContent="left"
+                      spacing={3}
+                      sx={{ ...item.style }}
+                    >
+                      {item.subGroups.map((element: any, i: number) =>
+                        Array.isArray(element) ? (
+                          <Box key={i}>
+                            {element.map((ele, ii) => (
+                              <CustomGroupBox
+                                title={ele.title}
+                                key={ele.title + ii}
+                                bordersx={{
+                                  display:
+                                    ele.data !== undefined && ele.data.length > 0
+                                      ? 'block'
+                                      : 'none',
+                                  width: 'auto',
+                                  m: '20px 30px!important',
+                                  padding: '20px',
+                                }}
+                                titlesx={{
+                                  fontSize: '18px',
+                                  transform: 'translate(25px, -10px) scale(0.75)',
+                                }}
+                              >
                                 <TableContainer component={Paper}>
                                   <Table size="small">
                                     <TableBody>
-                                      {element.data &&
-                                        element.data.map((row: any, index: number) => (
+                                      {ele.data &&
+                                        ele.data.map((row: any, iii: number) => (
                                           <TableRow
-                                            key={index}
+                                            key={iii}
                                             sx={{
                                               '&:last-child td, &:last-child th': { border: 0 },
                                             }}
                                           >
-                                            {typeof row !== 'object'
-                                              ? row?.map((item: any, index: number) => (
-                                                  <TableCell
-                                                    key={index}
-                                                    component="th"
-                                                    scope="row"
-                                                    align="left"
-                                                  >
-                                                    {item}
-                                                  </TableCell>
-                                                ))
-                                              : Object.values(row)?.map(
-                                                  (item: any, index: number) => (
-                                                    <TableCell
-                                                      key={index}
-                                                      component="th"
-                                                      scope="row"
-                                                      align="left"
-                                                    >
-                                                      {item}
-                                                    </TableCell>
-                                                  )
-                                                )}
+                                            {row?.map((rowItem: any, iiii: number) => (
+                                              <TableCell
+                                                key={rowItem + iiii}
+                                                component="th"
+                                                scope="row"
+                                                align="left"
+                                              >
+                                                {rowItem}
+                                              </TableCell>
+                                            ))}
                                           </TableRow>
                                         ))}
                                     </TableBody>
                                   </Table>
                                 </TableContainer>
-                              )}
-                            </CustomGroupBox>
-                          )
-                        )}
-                      </Stack>
-                    </Grid>
-                  </AccordionDetails>
-                </Accordion>
-              ))}
-            </Stack>
-          )}
-        </Container>
-      </RootStyle>
-    </>
+                              </CustomGroupBox>
+                            ))}
+                          </Box>
+                        ) : (
+                          <CustomGroupBox
+                            title={element.title}
+                            key={element.title + index}
+                            bordersx={{
+                              display:
+                                (element.title === 'Graph' ||
+                                  (element.data !== undefined && element.data.length > 0)) &&
+                                element.data !== null
+                                  ? 'block'
+                                  : 'none',
+                              width: 'auto',
+                              m: '20px 30px!important',
+                              padding: '20px',
+                            }}
+                            titlesx={{
+                              fontSize: '18px',
+                              transform: 'translate(25px, -10px) scale(0.75)',
+                            }}
+                          >
+                            {element.title === 'Graph' && element.data !== null && (
+                              <Image
+                                src={
+                                  unitTypeData?.intProductTypeID === 3
+                                    ? `/${element.data}`
+                                    : element.data
+                                }
+                                height="100%"
+                              />
+                            )}
+
+                            {element.title !== 'Graph' && (
+                              <TableContainer component={Paper} sx={{ height: '100%' }}>
+                                <Table size="small">
+                                  <TableBody>
+                                    {element.data &&
+                                      element.data.map((row: any, idx: number) => (
+                                        <TableRow
+                                          key={idx}
+                                          sx={{
+                                            '&:last-child td, &:last-child th': { border: 0 },
+                                          }}
+                                        >
+                                          {typeof row !== 'object'
+                                            ? row?.map((rowitem: any, ii: number) => (
+                                                <TableCell
+                                                  key={ii}
+                                                  component="th"
+                                                  scope="row"
+                                                  align="left"
+                                                >
+                                                  {rowitem}
+                                                </TableCell>
+                                              ))
+                                            : Object.values(row)?.map(
+                                                (rowItem: any, iii: number) => (
+                                                  <TableCell
+                                                    key={iii}
+                                                    component="th"
+                                                    scope="row"
+                                                    align="left"
+                                                  >
+                                                    {rowItem}
+                                                  </TableCell>
+                                                )
+                                              )}
+                                        </TableRow>
+                                      ))}
+                                  </TableBody>
+                                </Table>
+                              </TableContainer>
+                            )}
+                          </CustomGroupBox>
+                        )
+                      )}
+                    </Stack>
+                  </Grid>
+                </AccordionDetails>
+              </Accordion>
+            ))}
+          </Stack>
+        )}
+      </Container>
+    </RootStyle>
   );
 }

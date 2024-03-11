@@ -54,9 +54,9 @@ const getFromLink = (dt: any, linkColumn: any, dtLink: any, sortColumn: string) 
 
   const dtSelected = new Array<{ [key: string]: any }>([]);
 
-  for (let i = 0; i < dt.length; i += 1) {
+  for (let i = 0; i < dt?.length; i += 1) {
     intID = Number(dt[i].id);
-    for (let j = 0; j < dtLink.length; j += 1) {
+    for (let j = 0; j < dtLink?.length; j += 1) {
       intLinkID = Number(dtLink[j][linkColumn]);
 
       if (intID === intLinkID) {
@@ -86,7 +86,7 @@ const getFromLink = (dt: any, linkColumn: any, dtLink: any, sortColumn: string) 
 };
 
 const sortColume = (data: any, colume: string) =>
-  data.sort((a: any, b: any) => a[colume] - b[colume]);
+  data?.sort((a: any, b: any) => a[colume] - b[colume]);
 
 const unitModelFilter = (data: any, value: any, minColumeName: string, maxColumeName: string) =>
   data
@@ -135,35 +135,35 @@ export const getUnitModel = (
       id_key: any;
     }[];
     let orientation: { value: { toString: () => any } }[];
-    unitModelId = isNaN(unitModelId) ? 0 : unitModelId;
+    unitModelId = Number.isNaN(unitModelId) ? 0 : unitModelId;
 
     switch (intProductTypeID) {
       case ClsID.intProdTypeNovaID:
-        unitModelLink = data.novaUnitModelLocOriLink;
-        location = data.generalLocation?.filter((item: { id: any }) => item.id === locationId);
-        orientation = data.generalOrientation?.filter(
+        unitModelLink = data?.novaUnitModelLocOriLink;
+        location = data?.generalLocation?.filter((item: { id: any }) => item.id === locationId);
+        orientation = data?.generalOrientation?.filter(
           (item: { id: any }) => item.id === orientationId
         );
 
-        unitModelLink = unitModelLink.filter(
+        unitModelLink = unitModelLink?.filter(
           (item: { location_value: any; orientation_value: any }) =>
             item.location_value === location?.[0]?.value.toString() &&
             item.orientation_value === orientation?.[0]?.value.toString()
         );
 
         if (intUAL === ClsID.intUAL_External || intUAL === ClsID.intUAL_ExternalSpecial) {
-          // unitModel = unitModelFilter(data.novaUnitModel, summerSupplyAirCFM, 'cfm_min_ext_users', 'cfm_max_ext_users', unitModelId);
-          // unitModel = data.novaUnitModel?.filter((item) => item.terra_spp === 1);
-          // unitModel = data.novaUnitModel?.filter((item) => (item['cfm_min_ext_users'] >= summerSupplyAirCFM && summerSupplyAirCFM <= item['cfm_max_ext_users']) ).sort((a, b) => a.cfm_max - b.cfm_max);
+          // unitModel = unitModelFilter(data?.novaUnitModel, summerSupplyAirCFM, 'cfm_min_ext_users', 'cfm_max_ext_users', unitModelId);
+          // unitModel = data?.novaUnitModel?.filter((item) => item.terra_spp === 1);
+          // unitModel = data?.novaUnitModel?.filter((item) => (item['cfm_min_ext_users'] >= summerSupplyAirCFM && summerSupplyAirCFM <= item['cfm_max_ext_users']) ).sort((a, b) => a.cfm_max - b.cfm_max);
           unitModel =
-            data.novaUnitModel?.filter(
+            data?.novaUnitModel?.filter(
               (item: { cfm_min_ext_users: number; cfm_max_ext_users: number }) =>
                 item.cfm_min_ext_users <= summerSupplyAirCFM &&
                 item.cfm_max_ext_users >= summerSupplyAirCFM
             ) || [];
         } else {
-          // unitModel = unitModelFilter(data.novaUnitModel, summerSupplyAirCFM, 'cfm_min', 'cfm_max', unitModelId);
-          unitModel = data.novaUnitModel?.filter(
+          // unitModel = unitModelFilter(data?.novaUnitModel, summerSupplyAirCFM, 'cfm_min', 'cfm_max', unitModelId);
+          unitModel = data?.novaUnitModel?.filter(
             (item: { cfm_min: number; cfm_max: number }) =>
               item.cfm_min <= summerSupplyAirCFM && item.cfm_max >= summerSupplyAirCFM
           );
@@ -179,24 +179,24 @@ export const getUnitModel = (
         unitModel = sortColume(unitModel, 'cfm_max');
 
         if (ckbBypassVal === 1) {
-          const drUnitModelBypass = unitModel.filter(
+          const drUnitModelBypass = unitModel?.filter(
             (item: { bypass_exist: number }) => item.bypass_exist === 1
           );
           const unitModelBypass = drUnitModelBypass || [];
 
-          if (unitModelBypass.length > 0) {
+          if (unitModelBypass?.length > 0) {
             unitModel = unitModel?.filter(
               (item: { bypass_exist: number }) => item.bypass_exist === 1
             );
 
             if (orientationId === ClsID.intOrientationHorizontalID) {
-              const drUnitModelBypassHorUnit = unitModel.filter(
+              const drUnitModelBypassHorUnit = unitModel?.filter(
                 (item: { bypass_exist_horizontal_unit: number }) =>
                   item.bypass_exist_horizontal_unit === 1
               );
               const unitModelBypassHorUnit = drUnitModelBypassHorUnit || [];
 
-              if (unitModelBypassHorUnit.length > 0) {
+              if (unitModelBypassHorUnit?.length > 0) {
                 unitModel = unitModel?.filter(
                   (item: { bypass_exist_horizontal_unit: number }) =>
                     item.bypass_exist_horizontal_unit === 1
@@ -218,9 +218,9 @@ export const getUnitModel = (
 
         if (intUAL === ClsID.intUAL_External || intUAL === ClsID.intUAL_ExternalSpecial) {
           if (intUnitTypeID === ClsID.intUnitTypeERV_ID) {
-            // unitModel = unitModelFilter(data.ventumHUnitModel,summerSupplyAirCFM,'erv_cfm_min_ext_users','erv_cfm_max_ext_users',unitModelId);
+            // unitModel = unitModelFilter(data?.ventumHUnitModel,summerSupplyAirCFM,'erv_cfm_min_ext_users','erv_cfm_max_ext_users',unitModelId);
             unitModel =
-              data.ventumHUnitModel?.filter(
+              data?.ventumHUnitModel?.filter(
                 (item: { erv_cfm_min_ext_users: number; erv_cfm_max_ext_users: number }) =>
                   item.erv_cfm_min_ext_users <= summerSupplyAirCFM &&
                   item.erv_cfm_max_ext_users >= summerSupplyAirCFM
@@ -231,9 +231,9 @@ export const getUnitModel = (
               items: item.model_erv,
             }));
           } else if (intUnitTypeID === ClsID.intUnitTypeHRV_ID) {
-            // unitModel = unitModelFilter(data.ventumHUnitModel,summerSupplyAirCFM,'hrv_cfm_min_ext_users','hrv_cfm_max_ext_users', unitModelId);
+            // unitModel = unitModelFilter(data?.ventumHUnitModel,summerSupplyAirCFM,'hrv_cfm_min_ext_users','hrv_cfm_max_ext_users', unitModelId);
             unitModel =
-              data.ventumHUnitModel?.filter(
+              data?.ventumHUnitModel?.filter(
                 (item: { hrv_cfm_min_ext_users: number; hrv_cfm_max_ext_users: number }) =>
                   item.hrv_cfm_min_ext_users <= summerSupplyAirCFM &&
                   item.hrv_cfm_max_ext_users >= summerSupplyAirCFM
@@ -245,9 +245,9 @@ export const getUnitModel = (
             }));
           }
         } else {
-          // unitModel = unitModelFilter(data.ventumHUnitModel, summerSupplyAirCFM, 'cfm_min', 'cfm_max', unitModelId);
+          // unitModel = unitModelFilter(data?.ventumHUnitModel, summerSupplyAirCFM, 'cfm_min', 'cfm_max', unitModelId);
           unitModel =
-            data.ventumHUnitModel?.filter(
+            data?.ventumHUnitModel?.filter(
               (item: { cfm_min: number; cfm_max: number }) =>
                 item.cfm_min <= summerSupplyAirCFM && item.cfm_max >= summerSupplyAirCFM
             ) || [];
@@ -262,9 +262,9 @@ export const getUnitModel = (
 
         if (intUAL === ClsID.intUAL_IntLvl_1 || intUAL === ClsID.intUAL_IntLvl_2) {
           if (intUnitTypeID === ClsID.intUnitTypeERV_ID) {
-            // unitModel = unitModelFilter(data.ventumLiteUnitModel,summerSupplyAirCFM,'cfm_min','cfm_max', unitModelId);
+            // unitModel = unitModelFilter(data?.ventumLiteUnitModel,summerSupplyAirCFM,'cfm_min','cfm_max', unitModelId);
             unitModel =
-              data.ventumLiteUnitModel?.filter(
+              data?.ventumLiteUnitModel?.filter(
                 (item: { cfm_min: number; cfm_max: number }) =>
                   item.cfm_min <= summerSupplyAirCFM && item.cfm_max >= summerSupplyAirCFM
               ) || [];
@@ -274,9 +274,9 @@ export const getUnitModel = (
               items: item.model_erv,
             }));
           } else if (intUnitTypeID === ClsID.intUnitTypeHRV_ID) {
-            // unitModel = unitModelFilter(data.ventumLiteUnitModel,summerSupplyAirCFM,'cfm_min','cfm_max',unitModelId);
+            // unitModel = unitModelFilter(data?.ventumLiteUnitModel,summerSupplyAirCFM,'cfm_min','cfm_max',unitModelId);
             unitModel =
-              data.ventumLiteUnitModel?.filter(
+              data?.ventumLiteUnitModel?.filter(
                 (item: { cfm_min: number; cfm_max: number }) =>
                   item.cfm_min <= summerSupplyAirCFM && item.cfm_max >= summerSupplyAirCFM
               ) || [];
@@ -288,9 +288,9 @@ export const getUnitModel = (
           }
         } else if (intUAL === ClsID.intUAL_External || intUAL === ClsID.intUAL_ExternalSpecial) {
           if (intUnitTypeID === ClsID.intUnitTypeERV_ID) {
-            // unitModel = unitModelFilter(data.ventumLiteUnitModel,summerSupplyAirCFM,'erv_cfm_min_ext_users','erv_cfm_max_ext_users',unitModelId);
+            // unitModel = unitModelFilter(data?.ventumLiteUnitModel,summerSupplyAirCFM,'erv_cfm_min_ext_users','erv_cfm_max_ext_users',unitModelId);
             unitModel =
-              data.ventumLiteUnitModel?.filter(
+              data?.ventumLiteUnitModel?.filter(
                 (item: { erv_cfm_min_ext_users: number; erv_cfm_max_ext_users: number }) =>
                   item.erv_cfm_min_ext_users <= summerSupplyAirCFM &&
                   item.erv_cfm_max_ext_users >= summerSupplyAirCFM
@@ -300,9 +300,9 @@ export const getUnitModel = (
               items: item.model_erv,
             }));
           } else if (intUnitTypeID === ClsID.intUnitTypeHRV_ID) {
-            // unitModel = unitModelFilter(data.ventumLiteUnitModel, summerSupplyAirCFM,'hrv_cfm_min_ext_users','hrv_cfm_max_ext_users',unitModelId);
+            // unitModel = unitModelFilter(data?.ventumLiteUnitModel, summerSupplyAirCFM,'hrv_cfm_min_ext_users','hrv_cfm_max_ext_users',unitModelId);
             unitModel =
-              data.ventumLiteUnitModel?.filter(
+              data?.ventumLiteUnitModel?.filter(
                 (item: { hrv_cfm_min_ext_users: number; hrv_cfm_max_ext_users: number }) =>
                   item.hrv_cfm_min_ext_users <= summerSupplyAirCFM &&
                   item.hrv_cfm_max_ext_users >= summerSupplyAirCFM
@@ -313,14 +313,14 @@ export const getUnitModel = (
             }));
           }
 
-          const drUnitModel = unitModel.filter(
+          const drUnitModel = unitModel?.filter(
             (item: { enabled_ext_users: number }) => item.enabled_ext_users === 1
           );
           unitModel = drUnitModel || [];
         } else {
-          // unitModel = unitModelFilter(data.ventumLiteUnitModel, summerSupplyAirCFM, 'cfm_min', 'cfm_max', unitModelId);
+          // unitModel = unitModelFilter(data?.ventumLiteUnitModel, summerSupplyAirCFM, 'cfm_min', 'cfm_max', unitModelId);
           unitModel =
-            data.ventumLiteUnitModel?.filter(
+            data?.ventumLiteUnitModel?.filter(
               (item: { cfm_min: number; cfm_max: number }) =>
                 item.cfm_min <= summerSupplyAirCFM && item.cfm_max >= summerSupplyAirCFM
             ) || [];
@@ -345,7 +345,7 @@ export const getUnitModel = (
         if (intUAL === ClsID.intUAL_External || intUAL === ClsID.intUAL_ExternalSpecial) {
           if (intUnitTypeID === ClsID.intUnitTypeERV_ID) {
             unitModel = unitModelFilter(
-              data.ventumPlusUnitModel,
+              data?.ventumPlusUnitModel,
               summerSupplyAirCFM,
               'erv_cfm_min_ext_users',
               'erv_cfm_max_ext_users'
@@ -356,7 +356,7 @@ export const getUnitModel = (
             }));
           } else if (intUnitTypeID === ClsID.intUnitTypeHRV_ID) {
             unitModel = unitModelFilter(
-              data.ventumPlusUnitModel,
+              data?.ventumPlusUnitModel,
               summerSupplyAirCFM,
               'hrv_cfm_min_ext_users',
               'hrv_cfm_max_ext_users'
@@ -368,7 +368,7 @@ export const getUnitModel = (
           }
         } else {
           unitModel = unitModelFilter(
-            data.ventumPlusUnitModel,
+            data?.ventumPlusUnitModel,
             summerSupplyAirCFM,
             'cfm_min',
             'cfm_max'
@@ -378,7 +378,7 @@ export const getUnitModel = (
             items: `${item.items} - (${item.cfm_min}-${item.cfm_max} CFM)`,
           }));
         }
-        location = data.generalLocation?.filter((item: { id: any }) => item.id === locationId);
+        location = data?.generalLocation?.filter((item: { id: any }) => item.id === locationId);
         unitModel = unitModel?.filter(
           (item: { location_id_key: any; enabled: number; bypass: any }) =>
             item.location_id_key === location?.[0]?.id_key &&
@@ -388,22 +388,22 @@ export const getUnitModel = (
         break;
       case ClsID.intProdTypeTerraID:
         if (intUAL === ClsID.intUAL_External || intUAL === ClsID.intUAL_ExternalSpecial) {
-          // unitModel = unitModelFilter(data.terraUnitModel,summerSupplyAirCFM,'cfm_min_ext_users','cfm_max_ext_users',unitModelId);
+          // unitModel = unitModelFilter(data?.terraUnitModel,summerSupplyAirCFM,'cfm_min_ext_users','cfm_max_ext_users',unitModelId);
           unitModel =
-            data.terraUnitModel?.filter(
+            data?.terraUnitModel?.filter(
               (item: { cfm_min_ext_users: number; cfm_max_ext_users: number }) =>
                 item.cfm_min_ext_users <= summerSupplyAirCFM &&
                 item.cfm_max_ext_users >= summerSupplyAirCFM
             ) || [];
 
-          const drUnitModel = unitModel.filter(
+          const drUnitModel = unitModel?.filter(
             (item: { enabled_ext_users: number }) => item.enabled_ext_users === 1
           );
           unitModel = drUnitModel || [];
         } else {
-          // unitModel = unitModelFilter(data.terraUnitModel, summerSupplyAirCFM, 'cfm_min', 'cfm_max', unitModelId);
+          // unitModel = unitModelFilter(data?.terraUnitModel, summerSupplyAirCFM, 'cfm_min', 'cfm_max', unitModelId);
           unitModel =
-            data.terraUnitModel?.filter(
+            data?.terraUnitModel?.filter(
               (item: { cfm_min: number; cfm_max: number }) =>
                 item.cfm_min <= summerSupplyAirCFM && item.cfm_max >= summerSupplyAirCFM
             ) || [];
@@ -415,7 +415,7 @@ export const getUnitModel = (
     }
   }
 
-  return { unitModel, summerSupplyAirCFM };
+  return { unitModelList: unitModel, summerSupplyAirCFM };
 };
 
 export const getSummerSupplyAirCFM = (
@@ -610,7 +610,9 @@ export const getSummerReturnAirCFM = (
       }
       break;
     case ClsID.intProdTypeVentumID:
-      dtModel = data.ventumHUnitModel.filter((item: { id: number }) => item.id === intUnitModelID);
+      dtModel = data?.ventumHUnitModel?.filter(
+        (item: { id: number }) => item.id === intUnitModelID
+      );
 
       if (
         intUAL === ClsID.intUAL_Admin ||
@@ -662,7 +664,7 @@ export const getSummerReturnAirCFM = (
       }
       break;
     case ClsID.intProdTypeVentumLiteID:
-      dtModel = data.ventumLiteUnitModel?.filter(
+      dtModel = data?.ventumLiteUnitModel?.filter(
         (item: { id: number }) => item.id === intUnitModelID
       );
 
@@ -716,7 +718,7 @@ export const getSummerReturnAirCFM = (
       }
       break;
     case ClsID.intProdTypeVentumPlusID:
-      dtModel = data.ventumPlusUnitModel?.filter(
+      dtModel = data?.ventumPlusUnitModel?.filter(
         (item: { id: number }) => item.id === intUnitModelID
       );
 
@@ -952,7 +954,7 @@ export const getBypass = (
 ) => {
   const result = { text: '', enabled: true, checked: ckbBypass };
   if (intProductTypeID === ClsID.intProdTypeNovaID) {
-    const dtUnitModel = data.novaUnitModel?.filter(
+    const dtUnitModel = data?.novaUnitModel?.filter(
       (item: { id: any }) => item.id === intUnitModelID
     );
 
@@ -978,7 +980,7 @@ export const getBypass = (
         (item: { bypass_exist_horizontal_unit: number }) => item.bypass_exist_horizontal_unit === 1
       );
 
-      if (drUnitModelBypassHorUnit && drUnitModelBypassHorUnit.length > 0) {
+      if (drUnitModelBypassHorUnit && drUnitModelBypassHorUnit?.length > 0) {
         result.enabled = true;
         result.text = '';
       } else {
@@ -1009,42 +1011,42 @@ export const getUnitVoltage = (
 
   switch (intProductTypeID) {
     case ClsID.intProdTypeNovaID:
-      modelVoltageLink = data.novaUnitModelVoltageLink;
+      modelVoltageLink = data?.novaUnitModelVoltageLink;
       break;
     case ClsID.intProdTypeVentumID:
-      modelVoltageLink = data.ventumHUnitModelVoltageLink;
+      modelVoltageLink = data?.ventumHUnitModelVoltageLink;
       break;
     case ClsID.intProdTypeVentumLiteID:
-      modelVoltageLink = data.ventumLiteUnitModelVoltageLink;
+      modelVoltageLink = data?.ventumLiteUnitModelVoltageLink;
       break;
     case ClsID.intProdTypeVentumPlusID:
-      modelVoltageLink = data.ventumPlusUnitModelVoltageLink;
+      modelVoltageLink = data?.ventumPlusUnitModelVoltageLink;
       break;
     case ClsID.intProdTypeTerraID:
-      modelVoltageLink = data.terraUnitModelVoltageLink;
+      modelVoltageLink = data?.terraUnitModelVoltageLink;
       break;
     default:
       break;
   }
 
   const dtLink =
-    modelVoltageLink.filter(
+    modelVoltageLink?.filter(
       (item: { unit_model_value: any }) => item.unit_model_value === strUnitModelValue
     ) || [];
-  let dtVoltage = data.electricalVoltage;
+  let dtVoltage = data?.electricalVoltage;
   if (intProductTypeID === ClsID.intProdTypeTerraID && true) {
-    dtVoltage = data.electricalVoltage?.filter(
+    dtVoltage = data?.electricalVoltage?.filter(
       (item: { terra_spp: number }) => item.terra_spp === 1
     );
   }
 
-  const unitVoltage = dtVoltage.filter(
+  const unitVoltage = dtVoltage?.filter(
     (e: { id: any }) =>
-      dtLink.filter((e_link: { voltage_id: any }) => e.id === e_link.voltage_id).length > 0
+      dtLink?.filter((e_link: { voltage_id: any }) => e.id === e_link.voltage_id)?.length > 0
   );
   const ddlUnitVoltageId = unitVoltage?.[0]?.id || 0;
 
-  return { unitVoltage, ddlUnitVoltageId };
+  return { unitVoltageList: unitVoltage, ddlUnitVoltageId };
 };
 
 export const getComponentInfo = (
@@ -1087,7 +1089,7 @@ export const getComponentInfo = (
       [];
 
     if (intProductTypeID === ClsID.intProdTypeVentumLiteID) {
-      dtPreheatComp = unitCoolingHeadingInfo.filter(
+      dtPreheatComp = unitCoolingHeadingInfo?.filter(
         (e: { id: string }) => parseInt(e.id, 10) !== ClsID.intCompHWC_ID
       );
     }
@@ -1132,7 +1134,7 @@ export const getPreheatElecHeaterInstallationInfo = (
     ddlPreheatElecHeaterInstallationId: 0,
   };
 
-  let dtPreheatElecHeaterInstallation = data.elecHeaterInstallation.filter(
+  let dtPreheatElecHeaterInstallation = data?.elecHeaterInstallation?.filter(
     (item: { id: number }) => item.id !== 1
   );
   if (intPreheatCompID === ClsID.intCompElecHeaterID || intPreheatCompID === ClsID.intCompAutoID) {
@@ -1144,12 +1146,12 @@ export const getPreheatElecHeaterInstallationInfo = (
         case ClsID.intProdTypeVentumID:
         case ClsID.intProdTypeVentumLiteID:
         case ClsID.intProdTypeTerraID:
-          dtPreheatElecHeaterInstallation = dtPreheatElecHeaterInstallation.filter(
+          dtPreheatElecHeaterInstallation = dtPreheatElecHeaterInstallation?.filter(
             (item: { id: any }) => item.id === ClsID.intElecHeaterInstallInCasingFieldID
           );
           break;
         case ClsID.intProdTypeVentumPlusID:
-          dtPreheatElecHeaterInstallation = dtPreheatElecHeaterInstallation.filter(
+          dtPreheatElecHeaterInstallation = dtPreheatElecHeaterInstallation?.filter(
             (item: { id: any }) => item.id === ClsID.intElecHeaterInstallInCasingFactoryID
           );
           break;
@@ -1158,17 +1160,17 @@ export const getPreheatElecHeaterInstallationInfo = (
           break;
       }
     } else {
-      let dtLink = data.electricHeaterInstallProdTypeLink;
+      let dtLink = data?.electricHeaterInstallProdTypeLink;
       dtLink =
         dtLink?.filter(
           (item: { product_type_id: any }) => item.product_type_id === intProductTypeID
         ) || [];
 
-      dtPreheatElecHeaterInstallation = dtPreheatElecHeaterInstallation.filter(
+      dtPreheatElecHeaterInstallation = dtPreheatElecHeaterInstallation?.filter(
         (e: { id: any }) =>
-          dtLink.filter(
+          dtLink?.filter(
             (e_link: { elec_heater_install_id: any }) => e.id === e_link.elec_heater_install_id
-          ).length === 1 // 1: Matching items, 0: Not matching items
+          )?.length === 1 // 1: Matching items, 0: Not matching items
       );
 
       switch (intProductTypeID) {
@@ -1183,7 +1185,7 @@ export const getPreheatElecHeaterInstallationInfo = (
             ClsID.intElecHeaterInstallInCasingFactoryID.toString();
           break;
         case ClsID.intProdTypeVentumLiteID:
-          dtPreheatElecHeaterInstallation = dtPreheatElecHeaterInstallation.filter(
+          dtPreheatElecHeaterInstallation = dtPreheatElecHeaterInstallation?.filter(
             (item: { id: any }) => item.id === ClsID.intElecHeaterInstallDuctMountedID
           );
           returnInfo.ddlPreheatElecHeaterInstallationDataTbl = dtPreheatElecHeaterInstallation;
@@ -1208,10 +1210,10 @@ export const getItemsAddedOnIDDataTable = (
 ) => {
   const newDt = [];
 
-  for (let i = 0; i < dt.length; i++) {
+  for (let i = 0; i < dt?.length; i += 1) {
     const strArrID = dt[i][strColumnMultipleID].split(',');
 
-    for (let j = 0; j < strArrID.length; j++) {
+    for (let j = 0; j < strArrID?.length; j += 1) {
       if (parseInt(strArrID[j], 10) === intMatchID) {
         const dr = {
           id: parseInt(dt[i].id, 10),
@@ -1417,8 +1419,8 @@ export const getHeatElecHeaterInstallationInfo = (
   ) {
     returnInfo.ddlHeatElecHeaterInstallationId = 1;
 
-    let dtElecHeaterInstallation = data.elecHeaterInstallation;
-    dtElecHeaterInstallation = dtElecHeaterInstallation.filter(
+    let dtElecHeaterInstallation = data?.elecHeaterInstallation;
+    dtElecHeaterInstallation = dtElecHeaterInstallation?.filter(
       (item: { id: number }) => item.id !== 0
     );
 
@@ -1426,8 +1428,8 @@ export const getHeatElecHeaterInstallationInfo = (
   } else {
     returnInfo.ddlHeatElecHeaterInstallationId = 0;
 
-    let dtElecHeaterInstallation = data.elecHeaterInstallation;
-    dtElecHeaterInstallation = dtElecHeaterInstallation.filter(
+    let dtElecHeaterInstallation = data?.elecHeaterInstallation;
+    dtElecHeaterInstallation = dtElecHeaterInstallation?.filter(
       (item: { id: number }) => item.id !== 0
     );
 
@@ -1458,11 +1460,11 @@ export const getReheatInfo = (
   let dtReheatComp = [];
 
   if (ckbDehumidificationVal) {
-    dtReheatComp = data.components;
+    dtReheatComp = data?.components;
 
     switch (intCoolingCompID) {
       case ClsID.intCompCWC_ID:
-        dtReheatComp = dtReheatComp.filter(
+        dtReheatComp = dtReheatComp?.filter(
           (item: { id: { toString: () => any } }) =>
             item.id.toString() !== ClsID.intCompHGRH_ID.toString()
         );
@@ -1472,7 +1474,7 @@ export const getReheatInfo = (
           intUAL === ClsID.intUAL_External &&
           (intUnitTypeID === ClsID.intUnitTypeERV_ID || intUnitTypeID === ClsID.intUnitTypeHRV_ID)
         ) {
-          dtReheatComp = dtReheatComp.filter(
+          dtReheatComp = dtReheatComp?.filter(
             (item: { id: { toString: () => any } }) =>
               item.id.toString() !== ClsID.intCompHGRH_ID.toString()
           );
@@ -1481,7 +1483,7 @@ export const getReheatInfo = (
           (intUnitModelID === ClsID.intVentumUnitModelID_H05IN_ERV ||
             intUnitModelID === ClsID.intVentumUnitModelID_H05IN_HRV)
         ) {
-          dtReheatComp = dtReheatComp.filter(
+          dtReheatComp = dtReheatComp?.filter(
             (item: { id: { toString: () => any } }) =>
               item.id.toString() !== ClsID.intCompHGRH_ID.toString()
           );
@@ -1513,7 +1515,7 @@ export const getReheatInfo = (
     reheatInfo.ddlReheatCompId = dtReheatComp?.[0]?.id;
     reheatInfo.divReheatCompVisible = true;
   } else {
-    dtReheatComp = data.components;
+    dtReheatComp = data?.components;
     reheatInfo.dtReheatComp = dtReheatComp;
     reheatInfo.ddlReheatCompId = ClsID.intCompNA_ID;
     reheatInfo.divReheatCompVisible = false;
@@ -1542,11 +1544,11 @@ export const getHeatingFluidDesignCondInfo = (
     intReheatCompID === ClsID.intCompHWC_ID
   );
 
-  const dtHeatingFluidType = data.fluidType;
+  const dtHeatingFluidType = data?.fluidType;
   returnInfo.ddlHeatingFluidTypeDataTbl = dtHeatingFluidType;
   returnInfo.ddlHeatingFluidTypeId = dtHeatingFluidType?.[0]?.id;
   returnInfo.ddlHeatingFluidConcentrationDataTbl = getItemsAddedOnIDDataTable(
-    data.fluidConcentration,
+    data?.fluidConcentration,
     'fluid_type_id',
     returnInfo.ddlHeatingFluidTypeId || 0
   );
@@ -1567,19 +1569,19 @@ export const getDamperAndActuatorInfo = (
     divDamperAndActuatorVisible?: boolean;
   } = {};
 
-  let dtDamperAndAct = data.damperActuator;
+  let dtDamperAndAct = data?.damperActuator;
 
   switch (intProductTypeID) {
     case ClsID.intProdTypeNovaID:
     case ClsID.intProdTypeVentumID:
     case ClsID.intProdTypeVentumLiteID:
     case ClsID.intProdTypeTerraID:
-      dtDamperAndAct = dtDamperAndAct.filter(
+      dtDamperAndAct = dtDamperAndAct?.filter(
         (item: { std_selection: number }) => item.std_selection === 1
       );
       break;
     case ClsID.intProdTypeVentumPlusID:
-      dtDamperAndAct = dtDamperAndAct.filter(
+      dtDamperAndAct = dtDamperAndAct?.filter(
         (item: { ventumplus: number }) => item.ventumplus === 1
       );
       break;
@@ -1614,8 +1616,8 @@ export const getDamperAndActuatorInfo = (
 };
 
 const getDdlLockItem = (dt: any[], id: any) => {
-  const temp = dt.filter((item: { id: any }) => item.id === id);
-  if (temp.length > 0) {
+  const temp = dt?.filter((item: { id: any }) => item.id === id);
+  if (temp?.length > 0) {
     return id;
   }
 
@@ -1662,15 +1664,15 @@ export const getElecHeaterVoltageInfo = (
     // intProdTypeNovaID
     if (intProductTypeID === ClsID.intProdTypeNovaID) {
       if (intUnitModelID) {
-        dtElecHeaterVoltage = data.electricalVoltage;
-        // const dtLink = data.novaElecHeatVoltageLink.filter((x) => x.unit_model_value === strUnitModelValue);
+        dtElecHeaterVoltage = data?.electricalVoltage;
+        // const dtLink = data?.novaElecHeatVoltageLink.filter((x) => x.unit_model_value === strUnitModelValue);
 
         if (intUnitVoltageID) {
           intSelectedValue = intUnitModelID;
         }
 
         // dtElecHeaterVoltage = dtElecHeaterVoltage.map(
-        //   (item) => dtLink.filter((el) => el.voltage_id === item.id).length > 0
+        //   (item) => dtLink.filter((el) => el.voltage_id === item.id)?.length > 0
         // );
       }
       // intProdTypeVentumID
@@ -1682,12 +1684,12 @@ export const getElecHeaterVoltageInfo = (
         intUnitModelID === ClsID.intVentumUnitModelID_H10IN_HRV
       ) {
         bol208V_1Ph = true;
-        dtElecHeaterVoltage = data.electricalVoltage.filter(
+        dtElecHeaterVoltage = data?.electricalVoltage?.filter(
           (item: { electric_heater_2: number; id: any }) =>
             item.electric_heater_2 === 1 || item.id === intElecHeaterVoltageID
         );
       } else {
-        dtElecHeaterVoltage = data.electricalVoltage.filter(
+        dtElecHeaterVoltage = data?.electricalVoltage?.filter(
           (item: { electric_heater: number; id: any }) =>
             item.electric_heater === 1 || item.id === intElecHeaterVoltageID
         );
@@ -1708,12 +1710,12 @@ export const getElecHeaterVoltageInfo = (
       // intProdTypeVentumLiteID
     } else if (intProductTypeID === ClsID.intProdTypeVentumLiteID) {
       bol208V_1Ph = true;
-      dtElecHeaterVoltage = data.electricalVoltage.filter(
+      dtElecHeaterVoltage = data?.electricalVoltage?.filter(
         (item: { electric_heater_3: number; id: any }) =>
           item.electric_heater_3 === 1 || item.id === intElecHeaterVoltageID
       );
 
-      if (dtElecHeaterVoltage.length > 0) {
+      if (dtElecHeaterVoltage?.length > 0) {
         if (bol208V_1Ph) {
           intSelectedValue = ClsID.intElectricVoltage_208V_1Ph_60HzID;
         } else {
@@ -1722,7 +1724,7 @@ export const getElecHeaterVoltageInfo = (
       }
       // intProdTypeVentumPlusID
     } else if (intProductTypeID === ClsID.intProdTypeVentumPlusID) {
-      dtElecHeaterVoltage = data.electricalVoltage.filter(
+      dtElecHeaterVoltage = data?.electricalVoltage?.filter(
         (item: { ventumplus_elec_heater: number; id: any }) =>
           item.ventumplus_elec_heater === 1 || item.id === intElecHeaterVoltageID
       );
@@ -1735,7 +1737,7 @@ export const getElecHeaterVoltageInfo = (
         enabled = true;
       }
 
-      if (dtElecHeaterVoltage.length > 0) {
+      if (dtElecHeaterVoltage?.length > 0) {
         if (bol208V_1Ph) {
           intSelectedValue = ClsID.intElectricVoltage_208V_1Ph_60HzID;
         } else {
@@ -1745,21 +1747,21 @@ export const getElecHeaterVoltageInfo = (
       // intProdTypeTerraID
     } else if (intProductTypeID === ClsID.intProdTypeTerraID) {
       if (ckbVoltageSPPVal) {
-        dtElecHeaterVoltage = data.electricalVoltage.filter(
+        dtElecHeaterVoltage = data?.electricalVoltage?.filter(
           (item: { terra_spp: number; id: any }) =>
             item.terra_spp === 1 || item.id === intElecHeaterVoltageID
         );
         intSelectedValue = getDdlLockItem(dtElecHeaterVoltage, intUnitVoltageID);
         enabled = false;
       } else {
-        dtElecHeaterVoltage = data.electricalVoltage.filter(
+        dtElecHeaterVoltage = data?.electricalVoltage?.filter(
           (item: { terra_non_spp: number; id: any }) =>
             item.terra_non_spp === 1 || item.id === intElecHeaterVoltageID
         );
         enabled = true;
       }
 
-      if (dtElecHeaterVoltage.length > 0) {
+      if (dtElecHeaterVoltage?.length > 0) {
         if (bol208V_1Ph) {
           intSelectedValue = ClsID.intElectricVoltage_208V_1Ph_60HzID;
         } else {
@@ -1776,14 +1778,14 @@ export const getElecHeaterVoltageInfo = (
     }
   } else {
     if (intProductTypeID === ClsID.intProdTypeVentumLiteID) {
-      dtElecHeaterVoltage = data.electricalVoltage.filter(
+      dtElecHeaterVoltage = data?.electricalVoltage?.filter(
         (item: { electric_heater_3: number; id: any }) =>
           item.electric_heater_3 === 1 || item.id === intElecHeaterVoltageID
       );
       intSelectedValue = intUnitVoltageID;
       enabled = false;
     } else if (intProductTypeID === ClsID.intProdTypeTerraID && ckbVoltageSPPVal) {
-      dtElecHeaterVoltage = data.electricalVoltage.filter(
+      dtElecHeaterVoltage = data?.electricalVoltage?.filter(
         (item: { terra_spp: number; id: any }) =>
           item.terra_spp === 1 || item.id === intElecHeaterVoltageID
       );
@@ -1793,14 +1795,14 @@ export const getElecHeaterVoltageInfo = (
       intProductTypeID === ClsID.intProdTypeVentumPlusID &&
       (ckbVoltageSPPVal || intPreheatCompID === ClsID.intCompAutoID)
     ) {
-      dtElecHeaterVoltage = data.electricalVoltage.filter(
+      dtElecHeaterVoltage = data?.electricalVoltage?.filter(
         (item: { ventumplus_elec_heater: number; id: any }) =>
           item.ventumplus_elec_heater === 1 || item.id === intElecHeaterVoltageID
       );
       intSelectedValue = getDdlLockItem(dtElecHeaterVoltage, intUnitVoltageID);
       enabled = false;
     } else {
-      dtElecHeaterVoltage = data.electricalVoltage.filter(
+      dtElecHeaterVoltage = data?.electricalVoltage?.filter(
         (item: { electric_heater: number; id: any }) =>
           item.electric_heater === 1 || item.id === intElecHeaterVoltageID
       );
@@ -1890,14 +1892,14 @@ export const getHandingInfo = (data: { handing: any }) => {
     ddlHandingId: 0,
   };
 
-  returnInfo.ddlHandingDataTbl = data.handing;
+  returnInfo.ddlHandingDataTbl = data?.handing;
   returnInfo.ddlHandingId = returnInfo.ddlHandingDataTbl?.[0]?.id;
 
   return returnInfo;
 };
 
 const isContain = (_dt: string | any[], _strColumn: string, value: any) => {
-  for (let i = 0; i < _dt.length; i += 1) {
+  for (let i = 0; i < _dt?.length; i += 1) {
     if (_dt[i][_strColumn].toString() === value) return true;
   }
 
@@ -1930,21 +1932,22 @@ export const getSupplyAirOpeningInfo = (
   let dtSelectionFinalTable: any = [];
 
   if (intUnitTypeID === ClsID.intUnitTypeERV_ID || intUnitTypeID === ClsID.intUnitTypeHRV_ID) {
-    dtLink = data.oriOpeningERV_SA_Link.filter(
+    dtLink = data?.oriOpeningERV_SA_Link?.filter(
       (item: { product_type_id: number }) => item.product_type_id === Number(intProductTypeID)
     );
-    dtLink = dtLink.filter(
+    dtLink = dtLink?.filter(
       (item: { location_id: number }) => item.location_id === Number(intLocationID)
     );
-    dtLink = dtLink.filter(
+    dtLink = dtLink?.filter(
       (item: { orientation_id: number }) => item.orientation_id === Number(intOrientationID)
     );
-    dtSelectionTable = data.openingERV_SA;
-    dtSelectionTable = dtSelectionTable.filter(
+    dtSelectionTable = data?.openingERV_SA;
+    dtSelectionTable = dtSelectionTable?.filter(
       (item: { product_type_id: number }) => item.product_type_id === Number(intProductTypeID)
     );
-    dtSelectionFinalTable = dtSelectionTable.filter(
-      (e: { items: any }) => dtLink.filter((e_link) => e.items === e_link.openings_sa).length === 1 // 1: Matching items, 0: Not matching items
+    dtSelectionFinalTable = dtSelectionTable?.filter(
+      (e: { items: any }) =>
+        dtLink?.filter((e_link) => e.items === e_link.openings_sa)?.length === 1 // 1: Matching items, 0: Not matching items
     );
 
     returnInfo.ddlSupplyAirOpeningDataTbl = dtSelectionFinalTable;
@@ -1964,7 +1967,7 @@ export const getSupplyAirOpeningInfo = (
       returnInfo.ddlSupplyAirOpeningText = dtSelectionTable?.[0]?.items.toString();
     }
   } else if (intUnitTypeID === ClsID.intUnitTypeAHU_ID) {
-    dtSelectionTable = data.openingAHU_SA;
+    dtSelectionTable = data?.openingAHU_SA;
 
     returnInfo.ddlSupplyAirOpeningDataTbl = dtSelectionTable;
     if (isContain(dtSelectionFinalTable, 'items', strSupplyAirOpening)) {
@@ -2024,22 +2027,23 @@ export const getRemainingOpeningsInfo = (
   let dtSelectionFinalTable = [];
 
   if (intUnitTypeID === ClsID.intUnitTypeERV_ID || intUnitTypeID === ClsID.intUnitTypeHRV_ID) {
-    dtLink = data.openingERV_SA_EA_Link.filter(
+    dtLink = data?.openingERV_SA_EA_Link?.filter(
       (item: { product_type_id: any }) => item.product_type_id === intProductTypeID
     );
-    dtLink = dtLink.filter(
+    dtLink = dtLink?.filter(
       (item: { openings_sa: any }) => item.openings_sa === strSupplyAirOpening
     );
-    dtLink = dtLink.filter(
+    dtLink = dtLink?.filter(
       (item: { orientation_id: number }) => item.orientation_id === Number(intOrientationID)
     );
 
-    dtSelectionTable = data.openingERV_EA;
-    dtSelectionTable = dtSelectionTable.filter(
+    dtSelectionTable = data?.openingERV_EA;
+    dtSelectionTable = dtSelectionTable?.filter(
       (item: { product_type_id: number }) => item.product_type_id === Number(intProductTypeID)
     );
-    dtSelectionFinalTable = dtSelectionTable.filter(
-      (e: { items: any }) => dtLink.filter((e_link) => e.items === e_link.openings_ea).length === 1 // 1: Matching items, 0: Not matching items
+    dtSelectionFinalTable = dtSelectionTable?.filter(
+      (e: { items: any }) =>
+        dtLink?.filter((e_link) => e.items === e_link.openings_ea)?.length === 1 // 1: Matching items, 0: Not matching items
     );
 
     returnInfo.ddlExhaustAirOpeningDataTbl = dtSelectionFinalTable;
@@ -2047,44 +2051,46 @@ export const getRemainingOpeningsInfo = (
     returnInfo.ddlExhaustAirOpeningText = dtSelectionFinalTable[0]?.items;
     returnInfo.ddlExhaustAirOpeningVisible = true;
 
-    dtLink = data.openingERV_SA_OA_Link.filter(
+    dtLink = data?.openingERV_SA_OA_Link?.filter(
       (item: { product_type_id: any }) => item.product_type_id === intProductTypeID
     );
-    dtLink = dtLink.filter(
+    dtLink = dtLink?.filter(
       (item: { openings_sa: any }) => item.openings_sa === strSupplyAirOpening
     );
-    dtLink = dtLink.filter(
+    dtLink = dtLink?.filter(
       (item: { orientation_id: any }) => item.orientation_id === intOrientationID
     );
 
-    dtSelectionTable = data.openingERV_OA;
-    dtSelectionTable = dtSelectionTable.filter(
+    dtSelectionTable = data?.openingERV_OA;
+    dtSelectionTable = dtSelectionTable?.filter(
       (item: { product_type_id: number }) => item.product_type_id === Number(intProductTypeID)
     );
-    dtSelectionFinalTable = dtSelectionTable.filter(
-      (e: { items: any }) => dtLink.filter((e_link) => e.items === e_link.openings_oa).length === 1 // 1: Matching items, 0: Not matching items
+    dtSelectionFinalTable = dtSelectionTable?.filter(
+      (e: { items: any }) =>
+        dtLink?.filter((e_link) => e.items === e_link.openings_oa)?.length === 1 // 1: Matching items, 0: Not matching items
     );
 
     returnInfo.ddlOutdoorAirOpeningDataTbl = dtSelectionFinalTable;
     returnInfo.ddlOutdoorAirOpeningId = dtSelectionFinalTable[0]?.id;
     returnInfo.ddlOutdoorAirOpeningText = dtSelectionFinalTable[0]?.items;
 
-    dtLink = data.openingERV_SA_RA_Link.filter(
+    dtLink = data?.openingERV_SA_RA_Link?.filter(
       (item: { product_type_id: any }) => item.product_type_id === intProductTypeID
     );
-    dtLink = dtLink.filter(
+    dtLink = dtLink?.filter(
       (item: { openings_sa: any }) => item.openings_sa === strSupplyAirOpening
     );
-    dtLink = dtLink.filter(
+    dtLink = dtLink?.filter(
       (item: { orientation_id: number }) => item.orientation_id === Number(intOrientationID)
     );
 
-    dtSelectionTable = data.openingERV_RA;
-    dtSelectionTable = dtSelectionTable.filter(
+    dtSelectionTable = data?.openingERV_RA;
+    dtSelectionTable = dtSelectionTable?.filter(
       (item: { product_type_id: number }) => item.product_type_id === Number(intProductTypeID)
     );
-    dtSelectionFinalTable = dtSelectionTable.filter(
-      (e: { items: any }) => dtLink.filter((e_link) => e.items === e_link.openings_ra).length === 1 // 1: Matching items, 0: Not matching items
+    dtSelectionFinalTable = dtSelectionTable?.filter(
+      (e: { items: any }) =>
+        dtLink?.filter((e_link) => e.items === e_link.openings_ra)?.length === 1 // 1: Matching items, 0: Not matching items
     );
 
     returnInfo.ddlReturnAirOpeningDataTbl = dtSelectionFinalTable;
@@ -2092,7 +2098,7 @@ export const getRemainingOpeningsInfo = (
     returnInfo.ddlReturnAirOpeningText = dtSelectionFinalTable[0]?.items;
     returnInfo.ddlReturnAirOpeningVisible = true;
   } else if (intUnitTypeID === ClsID.intUnitTypeAHU_ID) {
-    dtSelectionTable = data.openingAHU_OA;
+    dtSelectionTable = data?.openingAHU_OA;
 
     returnInfo.ddlOutdoorAirOpeningDataTbl = dtSelectionTable;
     returnInfo.ddlOutdoorAirOpeningId = dtSelectionTable[0]?.id;
@@ -2128,28 +2134,32 @@ export const getOrientation = (
       item.location_id === intLocationID
   );
 
-  let dtOrientation = getFromLink(data.generalOrientation, 'orientation_id', dtLocOri, 'max_cfm');
+  let dtOrientation = getFromLink(data?.generalOrientation, 'orientation_id', dtLocOri, 'max_cfm');
 
   if (intProductTypeID === ClsID.intProdTypeNovaID) {
-    dtOrientation = dtOrientation.filter((item) => item.max_cfm >= intSummerSupplyAirCFM);
+    dtOrientation = dtOrientation?.filter((item) => item.max_cfm >= intSummerSupplyAirCFM);
   }
 
-  return dtOrientation.filter((item) => !!item.id);
+  return dtOrientation?.filter((item) => !!item.id);
 };
 
 export const getLocation = (
   data: { prodTypeUnitTypeLocLink: any[]; generalLocation: any[] },
-  intProductTypeID: any,
-  intUnitTypeID: any
+  intProductTypeID: number,
+  intUnitTypeID: number
 ) => {
-  const dtProdUnitLocLink = data.prodTypeUnitTypeLocLink.filter(
+  const dtProdUnitLocLink = data?.prodTypeUnitTypeLocLink?.filter(
     (item: { product_type_id: any; unit_type_id: any }) =>
       item.product_type_id === intProductTypeID && item.unit_type_id === intUnitTypeID
   );
 
-  return data.generalLocation.filter(
+  return data?.generalLocation?.filter(
     (e: { id: any }) =>
-      dtProdUnitLocLink.filter((e_link: { location_id: any }) => e_link.location_id === e.id)
-        .length > 0
+      dtProdUnitLocLink?.filter((e_link: { location_id: any }) => e_link.location_id === e.id)
+        ?.length > 0
   );
 };
+
+export default function Index() {
+  return null;
+}

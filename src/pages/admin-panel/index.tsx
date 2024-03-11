@@ -6,7 +6,7 @@ export default function AdminPanel() {
 
   useEffect(() => {
     replace('/admin-panel/customers');
-  }, []);
+  }, [replace]);
 
   return null;
 }

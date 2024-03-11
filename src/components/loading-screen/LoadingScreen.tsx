@@ -1,8 +1,7 @@
 import { useState, useEffect } from 'react';
 import { m } from 'framer-motion';
 // @mui
-import { alpha, styled } from '@mui/material/styles';
-import { Box } from '@mui/material';
+import { styled } from '@mui/material/styles';
 //
 import Image from '../image/Image';
 

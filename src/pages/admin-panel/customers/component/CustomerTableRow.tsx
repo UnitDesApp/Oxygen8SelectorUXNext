@@ -1,5 +1,3 @@
-import PropTypes from 'prop-types';
-import { useCallback, useMemo } from 'react';
 // @mui
 import { styled } from '@mui/material/styles';
 import { Checkbox, TableRow, TableCell, Stack, IconButton } from '@mui/material';
@@ -22,8 +20,8 @@ interface CustomerTableRowProps {
   row: any;
   selected: boolean;
   onEditRow: Function;
-  onSelectRow: Function;
-  onDeleteRow: Function;
+  onSelectRow?: Function;
+  onDeleteRow?: Function;
 }
 
 export default function CustomerTableRow({
@@ -33,38 +31,42 @@ export default function CustomerTableRow({
   onSelectRow,
   onDeleteRow,
 }: CustomerTableRowProps) {
-  const { name, customer_type_id, address, shipping_factor_percent, region } = row;
+  const { name, customer_type_id, address, shipping_factor_percent, region } = row || {};
 
   return (
     <TableRow hover sx={{ borderBottom: '1px solid #a7b1bc' }} selected={selected}>
       <TableCell padding="checkbox">
         <Checkbox checked={selected} onClick={() => onSelectRow && onSelectRow()} />
       </TableCell>
-      <TableCell align="left" sx={{ cursor: 'pointer' }} onClick={() => onEditRow && onEditRow()}>
-        {name}
-      </TableCell>
-      <TableCell align="left" sx={{ cursor: 'pointer' }} onClick={() => onEditRow && onEditRow()}>
-        {CustomerTypeOptions[customer_type_id]}
-      </TableCell>
-      <TableCell align="left" sx={{ cursor: 'pointer' }} onClick={() => onEditRow && onEditRow()}>
-        {region}
-      </TableCell>
-      <TableCell align="left" sx={{ cursor: 'pointer' }} onClick={() => onEditRow && onEditRow()}>
-        {shipping_factor_percent}
-      </TableCell>
-      <TableCell align="left" sx={{ cursor: 'pointer' }} onClick={() => onEditRow && onEditRow()}>
-        {address}
-      </TableCell>
+      <CustomTableCell label={name} onClick={() => onEditRow && onEditRow()} />
+      <CustomTableCell
+        label={CustomerTypeOptions[customer_type_id - 1]}
+        onClick={() => onEditRow && onEditRow()}
+      />
+      <CustomTableCell label={region} onClick={() => onEditRow && onEditRow()} />
+      <CustomTableCell label={shipping_factor_percent} onClick={() => onEditRow && onEditRow()} />
+      <CustomTableCell label={address} onClick={() => onEditRow && onEditRow()} />
+
       <TableCell align="right">
         <Stack direction="row">
           <StyledIconButton onClick={() => onEditRow && onEditRow()}>
-            <Iconify icon={'fa-solid:pen'} />
+            <Iconify icon="fa-solid:pen" />
           </StyledIconButton>
-          <StyledIconButton onClick={() => onDeleteRow()}>
-            <Iconify icon={'eva:trash-2-outline'} />
+          <StyledIconButton onClick={() => onDeleteRow && onDeleteRow()}>
+            <Iconify icon="eva:trash-2-outline" />
           </StyledIconButton>
         </Stack>
       </TableCell>
     </TableRow>
   );
 }
+
+const CustomTableCell = ({ label, onClick }: { label: string; onClick: Function }) => (
+  <TableCell
+    align="left"
+    sx={{ cursor: 'pointer', whiteSpace: 'nowrap' }}
+    onClick={() => onClick()}
+  >
+    {label}
+  </TableCell>
+);

@@ -1,26 +1,8 @@
-import PropTypes from 'prop-types';
-import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import React, { useCallback, useState } from 'react';
 // @mui
-import { LoadingButton } from '@mui/lab';
-import {
-  Accordion,
-  AccordionDetails,
-  AccordionSummary,
-  Alert,
-  Box,
-  Container,
-  Grid,
-  LinearProgress,
-  Snackbar,
-  Stack,
-  TextField,
-  Typography,
-  colors,
-} from '@mui/material';
+import { Alert, Box, Container, Snackbar } from '@mui/material';
 import { styled } from '@mui/material/styles';
 // hooks
-import { yupResolver } from '@hookform/resolvers/yup';
-import { useForm } from 'react-hook-form';
 import { useGetAllBaseData, useGetUnitInfo } from 'src/hooks/useApi';
 import CircularProgressLoading from 'src/components/loading/CircularProgressLoading';
 import UnitInfoForm from './UnitInfoForm';
@@ -38,27 +20,29 @@ const RootStyle = styled('div')(({ theme }) => ({
 type UnitInfoProps = {
   projectId: number;
   unitId?: number;
-  setIsAddedNewUnit: Function;
-  isAddedNewUnit: boolean;
+  setIsSavedUnit?: Function;
+  isSavedUnit: boolean;
   setFunction?: Function;
   intProductTypeID?: number;
   intUnitTypeID?: number;
   edit?: boolean;
   txbProductType?: string;
   txbUnitType?: string;
+  unitInfoData?: any;
 };
 
 export default function UnitInfo({
   projectId,
   unitId,
-  setIsAddedNewUnit,
-  isAddedNewUnit,
+  setIsSavedUnit,
+  isSavedUnit,
   intProductTypeID,
   intUnitTypeID,
   setFunction,
   edit = false,
   txbProductType,
   txbUnitType,
+  unitInfoData,
 }: UnitInfoProps) {
   const { data: baseData, isLoading: isLoadingBaseData } = useGetAllBaseData();
 
@@ -67,10 +51,10 @@ export default function UnitInfo({
       intUserID: typeof window !== 'undefined' && localStorage.getItem('userId'),
       intUAL: typeof window !== 'undefined' && localStorage.getItem('UAL'),
       intProjectID: projectId,
-      intUnitNo: edit ? unitId : Number(-1),
+      intUnitNo: edit ? unitId : -1,
     },
     {
-      enabled: edit && typeof window !== 'undefined',
+      enabled: typeof window !== 'undefined' && edit,
     }
   );
 
@@ -88,7 +72,7 @@ export default function UnitInfo({
 
   if (isLoadingBaseData || isLoadingUnitInfo) return <CircularProgressLoading />;
 
-  const { unitInfo } = unitData || {};
+  const { unitInfo } = unitData || { unitInfo: {} };
 
   return (
     <RootStyle>
@@ -96,15 +80,16 @@ export default function UnitInfo({
         <Box sx={{ paddingBottom: '40px' }}>
           <UnitInfoForm
             projectId={projectId}
+            unitId={edit ? unitId : -1}
             baseData={baseData}
             unitInfo={unitInfo}
-            setIsAddedNewUnit={setIsAddedNewUnit}
-            isAddedNewUnit={isAddedNewUnit}
+            setIsSavedUnit={setIsSavedUnit}
+            isSavedUnit={isSavedUnit}
             onSuccess={() => setOpenSuccess(true)}
             onError={() => setOpenError(true)}
             edit={edit}
-            intProductTypeID={intUnitTypeID || unitInfo.productTypeID || 0}
-            intUnitTypeID={intProductTypeID || unitInfo.unitTypeID || 0}
+            intProductTypeID={intProductTypeID || unitInfo?.productTypeID || 0}
+            intUnitTypeID={intUnitTypeID || unitInfo?.unitTypeID || 0}
             setFunction={setFunction}
             txbProductType={txbProductType}
             txbUnitType={txbUnitType}

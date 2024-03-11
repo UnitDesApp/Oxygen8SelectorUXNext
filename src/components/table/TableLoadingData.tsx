@@ -3,11 +3,11 @@ import { TableRow, TableCell, Box, CircularProgress } from '@mui/material';
 
 // ----------------------------------------------------------------------
 
-type TableLoadingData = {
+type TableLoadingDataProps = {
   isLoading: boolean;
 };
 
-export default function TableLoadingData({ isLoading }: TableLoadingData) {
+export default function TableLoadingData({ isLoading }: TableLoadingDataProps) {
   return (
     <TableRow>
       {isLoading ? (

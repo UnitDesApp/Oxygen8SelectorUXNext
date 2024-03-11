@@ -1,5 +1,4 @@
 import React, { useCallback } from 'react';
-import PropTypes from 'prop-types';
 import { useTheme } from '@mui/material/styles';
 import { Box, IconButton, Table, TableBody, TableCell, TableRow, Typography } from '@mui/material';
 import axios from 'axios';
@@ -35,7 +34,7 @@ const ResourceTable = ({ objResources, title, resourceType, sx }: propTypes) => 
           link.click();
         });
     },
-    [resourceType]
+    [api.project, resourceType]
   );
 
   const convertDate = useCallback((date: string) => {
@@ -52,7 +51,7 @@ const ResourceTable = ({ objResources, title, resourceType, sx }: propTypes) => 
       </Typography>
       <Table size="small">
         <TableBody>
-          {objResources.map((resourceRow, i) => (
+          {objResources?.map((resourceRow, i) => (
             <TableRow
               key={i}
               hover

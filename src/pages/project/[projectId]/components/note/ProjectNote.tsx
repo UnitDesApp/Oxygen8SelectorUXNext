@@ -21,7 +21,7 @@ export default function ProjectNote() {
   const api = useApiContext();
 
   const { data: projectNote, isLoading: isLoadingProjectNote } = useGetProjectNote({
-    projectId: projectId,
+    projectId,
   });
 
   const [openSuccess, setOpenSuccess] = useState<boolean>(false);
@@ -65,7 +65,7 @@ export default function ProjectNote() {
         console.error(error);
       }
     },
-    [projectId]
+    [api.project, projectId]
   );
 
   useEffect(() => {
@@ -88,7 +88,7 @@ export default function ProjectNote() {
         <Stack direction="row" justifyContent="flex-end" sx={{ paddingTop: 2, paddingBottom: 10 }}>
           <LoadingButton
             type="submit"
-            startIcon={<Iconify icon={'fluent:save-24-regular'} />}
+            startIcon={<Iconify icon="fluent:save-24-regular" />}
             loading={isSubmitting}
             sx={{ width: '150px' }}
           >

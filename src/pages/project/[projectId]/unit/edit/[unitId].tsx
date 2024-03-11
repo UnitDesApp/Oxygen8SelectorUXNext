@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useState } from 'react';
 // import PropTypes from 'prop-types';
 // @mui
 import { styled, useTheme } from '@mui/material/styles';
@@ -13,16 +13,15 @@ import {
   Typography,
   Box,
 } from '@mui/material';
-import { useGetAllBaseData, useGetUnitInfo } from 'src/hooks/useApi';
 import { useRouter } from 'next/router';
 import CustomBreadcrumbs from 'src/components/custom-breadcrumbs';
 import { PATH_APP } from 'src/routes/paths';
 import Iconify from 'src/components/iconify';
 import Head from 'next/head';
-import SelectProductInfo from '../components/SelectProductInfo/SelectProductInfo';
+import CircularProgressLoading from 'src/components/loading/CircularProgressLoading';
 import UnitInfo from '../components/UnitInfo/UnitInfo';
-import Selection from '../components/Selection/Selection';
-import { useUnitTypeInfo } from 'src/state/state';
+import SelectionReportDialog from '../../components/dialog/SelectionReportDialog';
+import SelectionWrapper from '../components/Selection/SelectionWrapper';
 
 // ----------------------------------------------------------------------
 
@@ -52,40 +51,15 @@ const Item = styled(Paper)(({ theme }) => ({
   color: theme.palette.text.secondary,
 }));
 
-const DEFAULT_UNIT_DATA = {
-  intProductTypeID: -1,
-  txbProductType: '',
-  intUnitTypeID: -1,
-  txbUnitType: '',
-  intApplicationTypeID: -1,
-  txbApplicationType: '',
-};
-
 const STEP_PAGE_NAME = ['Select product type', 'Info', 'Selection'];
 
 export default function EditUnit() {
-  // eslint-disable-next-line no-unused-vars
   const theme = useTheme();
   const { push, query } = useRouter();
   const { projectId, unitId } = query;
   const [currentStep, setCurrentStep] = useState(1);
-  const [isAddedNewUnit, setIsAddedNewUnit] = useState(false);
-  const [intUnitNo, setIntUnitNo] = useState(0);
+  const [isSavedUnit, setIsSavedUnit] = useState(false);
   const [openRPDialog, setOpenRPDialog] = useState(false);
-
-  const { data: unitData, isLoading: isLoadingUnitInfo } = useGetUnitInfo(
-    {
-      intUserID: typeof window !== 'undefined' && localStorage.getItem('userId'),
-      intUAL: typeof window !== 'undefined' && localStorage.getItem('UAL'),
-      intProjectID: projectId,
-      intUnitNo: intUnitNo,
-    },
-    {
-      enabled: intUnitNo !== 0 && typeof window !== 'undefined',
-    }
-  );
-
-  const { unitInfo } = unitData || {};
 
   const closeDialog = useCallback(() => {
     setOpenRPDialog(false);
@@ -97,12 +71,13 @@ export default function EditUnit() {
 
   const onClickNextStep = () => {
     if (currentStep < 2) setCurrentStep(currentStep + 1);
-    else if (currentStep === 2) projectId && push(`/project/${projectId?.toString()}/unitlist`);
+    else if (currentStep === 2 && projectId)
+      push(`/project/${projectId?.toString() || '0'}/unitlist`);
   };
 
   const validateContinue = () => {
-    if (currentStep === 1 && isAddedNewUnit) return false;
-    if (currentStep === 2 && intUnitNo !== 0) return false;
+    if (currentStep === 1 && isSavedUnit) return false;
+    if (currentStep === 2) return false;
 
     return true;
   };
@@ -129,7 +104,7 @@ export default function EditUnit() {
               currentStep === 2 && (
                 <Button
                   variant="text"
-                  startIcon={<Iconify icon={'bxs:download'} />}
+                  startIcon={<Iconify icon="bxs:download" />}
                   onClick={openDialog}
                 >
                   Export report
@@ -138,26 +113,19 @@ export default function EditUnit() {
             }
           />
           <Box sx={{ my: 3, pb: 10 }}>
-            {currentStep === 1 && (
+            {currentStep === 1 && unitId && projectId && (
               <UnitInfo
                 projectId={Number(projectId)}
                 unitId={Number(unitId)}
-                isAddedNewUnit={isAddedNewUnit}
-                setIsAddedNewUnit={(no: number) => {
-                  setIntUnitNo(no);
-                  setIsAddedNewUnit(true);
+                isSavedUnit={isSavedUnit}
+                setIsSavedUnit={(no: number) => {
+                  setIsSavedUnit(true);
                 }}
                 edit
               />
             )}
-            {currentStep === 2 && (
-              <Selection
-                unitTypeData={{
-                  intProductTypeID: unitInfo?.productTypeID,
-                  intUnitTypeID: unitInfo?.unitTypeID,
-                }}
-                intUnitNo={Number(intUnitNo)}
-              />
+            {currentStep === 2 && unitId && projectId && (
+              <SelectionWrapper projectId={Number(projectId)} unitId={Number(unitId)} />
             )}
           </Box>
         </Container>
@@ -217,13 +185,13 @@ export default function EditUnit() {
             </Grid>
           </Grid>
         </FooterStepStyle>
-        {/* <ExportSelectionDialog
-        isOpen={openRPDialog}
-        onClose={closeDialog}
-        intProjectID={projectId.toString()}
-        intUnitNo={intUnitNo.toString()}
-      /> */}
       </RootStyle>
+      <SelectionReportDialog
+        isOpen={openRPDialog}
+        onClose={() => setOpenRPDialog(false)}
+        intProjectID={projectId?.toString() || ''}
+        intUnitNo={unitId?.toString() || ''}
+      />
     </>
   );
 }

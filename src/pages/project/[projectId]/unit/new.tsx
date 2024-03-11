@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useState } from 'react';
 // import PropTypes from 'prop-types';
 // @mui
 import { styled, useTheme } from '@mui/material/styles';
@@ -13,15 +13,15 @@ import {
   Typography,
   Box,
 } from '@mui/material';
-import { useGetAllBaseData } from 'src/hooks/useApi';
 import { useRouter } from 'next/router';
 import CustomBreadcrumbs from 'src/components/custom-breadcrumbs';
 import { PATH_APP } from 'src/routes/paths';
 import Iconify from 'src/components/iconify';
+import Head from 'next/head';
 import SelectProductInfo from './components/SelectProductInfo/SelectProductInfo';
 import UnitInfo from './components/UnitInfo/UnitInfo';
 import Selection from './components/Selection/Selection';
-import Head from 'next/head';
+import SelectionReportDialog from '../components/dialog/SelectionReportDialog';
 
 // ----------------------------------------------------------------------
 
@@ -68,7 +68,7 @@ export default function AddNewUnit() {
   const { push, query } = useRouter();
   const { projectId } = query;
   const [currentStep, setCurrentStep] = useState(0);
-  const [isAddedNewUnit, setIsAddedNewUnit] = useState(false);
+  const [isSavedUnit, setIsSavedUnit] = useState(false);
   const [unitTypeData, setUnitTypeData] = useState<{
     intProductTypeID: number;
     txbProductType: string;
@@ -79,8 +79,6 @@ export default function AddNewUnit() {
   }>(DEFAULT_UNIT_DATA);
   const [intUnitNo, setIntUnitNo] = useState(0);
   const [openRPDialog, setOpenRPDialog] = useState(false);
-
-  const { data, isLoading: isLoadingBaseData } = useGetAllBaseData();
 
   const closeDialog = useCallback(() => {
     setOpenRPDialog(false);
@@ -104,7 +102,8 @@ export default function AddNewUnit() {
 
   const onClickNextStep = () => {
     if (currentStep < 2) setCurrentStep(currentStep + 1);
-    else if (currentStep === 2) projectId && push(`/project/${projectId?.toString()}/unitlist`);
+    else if (currentStep === 2 && projectId)
+      push(`/project/${projectId?.toString() || '0'}/unitlist`);
   };
 
   const validateContinue = () => {
@@ -118,7 +117,7 @@ export default function AddNewUnit() {
       return false;
     }
 
-    if (currentStep === 1 && isAddedNewUnit) return false;
+    if (currentStep === 1 && isSavedUnit) return false;
     if (currentStep === 2 && intUnitNo !== 0) return false;
 
     return true;
@@ -146,7 +145,7 @@ export default function AddNewUnit() {
               currentStep === 2 && (
                 <Button
                   variant="text"
-                  startIcon={<Iconify icon={'bxs:download'} />}
+                  startIcon={<Iconify icon="bxs:download" />}
                   onClick={openDialog}
                 >
                   Export report
@@ -165,12 +164,12 @@ export default function AddNewUnit() {
             {currentStep === 1 && (
               <UnitInfo
                 projectId={Number(projectId)}
-                isAddedNewUnit={isAddedNewUnit}
+                isSavedUnit={isSavedUnit}
                 intProductTypeID={unitTypeData.intProductTypeID}
                 intUnitTypeID={unitTypeData.intUnitTypeID}
-                setIsAddedNewUnit={(no: number) => {
+                setIsSavedUnit={(no: number) => {
                   setIntUnitNo(no);
-                  setIsAddedNewUnit(true);
+                  setIsSavedUnit(true);
                 }}
                 txbProductType={unitTypeData.txbProductType}
                 txbUnitType={unitTypeData.txbUnitType}
@@ -237,13 +236,13 @@ export default function AddNewUnit() {
             </Grid>
           </Grid>
         </FooterStepStyle>
-        {/* <ExportSelectionDialog
-        isOpen={openRPDialog}
-        onClose={closeDialog}
-        intProjectID={projectId.toString()}
-        intUnitNo={intUnitNo.toString()}
-      /> */}
       </RootStyle>
+      <SelectionReportDialog
+        isOpen={openRPDialog}
+        onClose={() => setOpenRPDialog(false)}
+        intProjectID={projectId?.toString() || ''}
+        intUnitNo={intUnitNo.toString()}
+      />
     </>
   );
 }

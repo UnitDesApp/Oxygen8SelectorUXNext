@@ -1,5 +1,4 @@
 import React, { useState, useCallback } from 'react';
-import PropTypes from 'prop-types';
 import { useTheme } from '@mui/material/styles';
 import {
   Stack,
@@ -168,7 +167,7 @@ export default function QuoteMiscDataTable({
                       sx={{ color: theme.palette.success.main }}
                       onClick={() => selectRowClicked(row)}
                     >
-                      <Iconify icon={'material-symbols:edit-square-outline'} />
+                      <Iconify icon="material-symbols:edit-square-outline" />
                     </IconButton>
                   </TableCell>
                   <TableCell
@@ -178,7 +177,7 @@ export default function QuoteMiscDataTable({
                     onClick={() => deleteRow(row.misc_no)}
                   >
                     <IconButton sx={{ color: theme.palette.warning.main }}>
-                      <Iconify icon={'ion:trash-outline'} />
+                      <Iconify icon="ion:trash-outline" />
                     </IconButton>
                   </TableCell>
                 </TableRow>

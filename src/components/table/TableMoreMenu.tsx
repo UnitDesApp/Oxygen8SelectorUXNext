@@ -1,27 +1,25 @@
-import PropTypes from 'prop-types';
 // @mui
 import { IconButton } from '@mui/material';
-import Iconify from '../iconify';
 import { MouseEventHandler } from 'react';
+import Iconify from '../iconify';
 import MenuPopover from '../menu-popover/MenuPopover';
-//
+
 
 // ----------------------------------------------------------------------
 
-type TableMoreMenu = {
+type TableMoreMenuProps = {
   actions: any;
   open: any;
   onClose: MouseEventHandler<HTMLAnchorElement>;
   onOpen: (value: any) => void;
 };
 
-export default function TableMoreMenu({ actions, open, onClose, onOpen }: TableMoreMenu) {
+export default function TableMoreMenu({ actions, open, onClose, onOpen }: TableMoreMenuProps) {
   return (
     <>
       <IconButton onClick={onOpen}>
-        <Iconify icon={'eva:more-vertical-fill'} width={20} height={20} />
+        <Iconify icon="eva:more-vertical-fill" width={20} height={20} />
       </IconButton>
-
       <MenuPopover
         open={open}
         anchorEl={open}

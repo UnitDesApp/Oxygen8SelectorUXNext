@@ -6,12 +6,12 @@ import { yupResolver } from '@hookform/resolvers/yup';
 // @mui
 import { Grid, Divider, Stack, Snackbar, Alert } from '@mui/material';
 import { LoadingButton } from '@mui/lab';
+import { useApiContext } from 'src/contexts/ApiContext';
 import { useAuthContext } from 'src/auth/useAuthContext';
 import GroupBox from 'src/components/GroupBox';
 import FormProvider from 'src/components/hook-form/FormProvider';
 import { RHFTextField } from 'src/components/hook-form';
 import ChangePasswordForm from './ChangePasswordForm';
-import { useApiContext } from 'src/contexts/ApiContext';
 // ----------------------------------------------------------------------
 
 interface AccountFormProps {
@@ -20,7 +20,7 @@ interface AccountFormProps {
 
 export default function AccountForm({ accountInfo }: AccountFormProps) {
   const { user, updateUser } = useAuthContext();
-  const { customerType, fobPoint, customers } = accountInfo;
+  const { customerType, fobPoint, customers } = accountInfo || {};
   const api = useApiContext();
   const [success, setSuccess] = useState<boolean>(false);
   const [fail, setFail] = useState<boolean>(false);
@@ -45,12 +45,12 @@ export default function AccountForm({ accountInfo }: AccountFormProps) {
       firstname: user?.firstname,
       lastname: user?.lastname,
       email: user?.email,
-      customerType: customerType[0]?.id,
-      customerId: customers[0]?.id,
+      customerType: customerType?.[0]?.id,
+      customerId: customers?.[0]?.id,
       access: user?.access,
       accessLevel: 10,
       accessPricing: user?.accessPricing,
-      fobPoint: fobPoint[0]?.id,
+      fobPoint: fobPoint?.[0]?.id,
       createdDate: user?.createdDate,
     }),
     [
@@ -88,7 +88,7 @@ export default function AccountForm({ accountInfo }: AccountFormProps) {
         setFail(true);
       }
     },
-    [user?.userId]
+    [user?.userId, api.account, updateUser]
   );
 
   return (

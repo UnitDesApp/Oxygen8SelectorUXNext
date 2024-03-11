@@ -47,7 +47,7 @@ UserEdit.getLayout = (page: React.ReactElement) => <DashboardLayout>{page}</Dash
 export default function UserEdit() {
   const { customerId } = useRouter().query;
   const api = useApiContext();
-  const { data: accountInfo, isLoading } = useGetAccountInfo();
+  const { data: accountInfo, isLoading, refetch } = useGetAccountInfo();
   const { customers, customerType, fobPoint, country } = accountInfo || {
     customers: [],
     fobPoint: [],
@@ -133,126 +133,118 @@ export default function UserEdit() {
     }
   };
   return (
-    <>
-      <RootStyle>
-        <Container sx={{ mt: '20px' }}>
-          <CustomBreadcrumbs
-            heading="Project Submittal"
-            links={[
-              { name: 'Customers', href: '/admin-panel/customers' },
-              { name: 'Customer Edit' },
-            ]}
-          />
-          <Stack spacing={2}>
-            <Accordion
-              expanded={expanded.panel1}
-              onChange={() => setExpanded({ ...expanded, panel1: !expanded.panel1 })}
+    <RootStyle>
+      <Container sx={{ mt: '20px' }}>
+        <CustomBreadcrumbs
+          heading="Project Submittal"
+          links={[{ name: 'Customers', href: '/admin-panel/customers' }, { name: 'Customer Edit' }]}
+        />
+        <Stack spacing={2}>
+          <Accordion
+            expanded={expanded.panel1}
+            onChange={() => setExpanded({ ...expanded, panel1: !expanded.panel1 })}
+          >
+            <AccordionSummary
+              expandIcon={<Iconify icon="il:arrow-down" />}
+              aria-controls="panel1a-content"
+              id="panel1a-header"
             >
-              <AccordionSummary
-                expandIcon={<Iconify icon="il:arrow-down" />}
-                aria-controls="panel1a-content"
-                id="panel1a-header"
-              >
-                <Typography color="primary.main" variant="h6">
-                  CUSTOMER INFO
-                </Typography>
-              </AccordionSummary>
-              <AccordionDetails>
-                <FormProvider methods={methods} onSubmit={handleSubmit(onSubmit)}>
-                  <Box sx={{ display: 'grid', gap: 2, gridTemplateColumns: 'repeat(2, 1fr)' }}>
-                    <RHFTextField size="small" name="username" label="Customer Name" />
-                    <RHFSelect
-                      size="small"
-                      name="customerType"
-                      label="Customer type"
-                      placeholder=""
+              <Typography color="primary.main" variant="h6">
+                CUSTOMER INFO
+              </Typography>
+            </AccordionSummary>
+            <AccordionDetails>
+              <FormProvider methods={methods} onSubmit={handleSubmit(onSubmit)}>
+                <Box sx={{ display: 'grid', gap: 2, gridTemplateColumns: 'repeat(2, 1fr)' }}>
+                  <RHFTextField size="small" name="username" label="Customer Name" />
+                  <RHFSelect size="small" name="customerType" label="Customer type" placeholder="">
+                    {customerType?.map((item: any) => (
+                      <option key={item.id} value={item.id}>
+                        {item.items}
+                      </option>
+                    ))}
+                    {!customerType && <option value="" />}
+                  </RHFSelect>
+                  <RHFTextField size="small" name="address" label="Address" />
+                  <RHFSelect native size="small" name="countryId" label="Country" placeholder="">
+                    {country?.map((item: any) => (
+                      <option key={item.id} value={item.id}>
+                        {item.items}
+                      </option>
+                    ))}
+                    {!customers && <option value="" />}
+                  </RHFSelect>
+                  <RHFTextField size="small" name="contactName" label="Contact name" />
+                  <RHFSelect size="small" name="fobPoint" label="FOB point" placeholder="">
+                    {fobPoint?.map((item: any) => (
+                      <option key={item.id} value={item.id}>
+                        {item.items}
+                      </option>
+                    ))}
+                    {!fobPoint && <option value="" />}
+                  </RHFSelect>
+                  <RHFTextField size="small" name="createdDate" label="Create date" />
+                  <RHFTextField size="small" name="shippingFactor" label="Shipping factor(%)" />
+                </Box>
+                <Stack spacing={2} p={2}>
+                  <Stack direction="row" justifyContent="flex-end">
+                    <LoadingButton
+                      type="submit"
+                      loading={isSubmitting}
+                      variant="contained"
+                      color="primary"
+                      onClick={() => console.log(getValues())}
                     >
-                      {customerType?.map((item: any) => (
-                        <option key={item.id} value={item.id}>
-                          {item.items}
-                        </option>
-                      ))}
-                      {!customerType && <option value="" />}
-                    </RHFSelect>
-                    <RHFTextField size="small" name="address" label="Address" />
-                    <RHFSelect size="small" name="countryId" label="Country" placeholder="">
-                      {country?.map((item: any) => (
-                        <option key={item.id} value={item.id}>
-                          {item.items}
-                        </option>
-                      ))}
-                      {!customers && <option value="" />}
-                    </RHFSelect>
-                    <RHFTextField size="small" name="contactName" label="Contact name" />
-                    <RHFSelect size="small" name="fobPoint" label="FOB point" placeholder="">
-                      {fobPoint?.map((item: any) => (
-                        <option key={item.id} value={item.id}>
-                          {item.items}
-                        </option>
-                      ))}
-                      {!fobPoint && <option value="" />}
-                    </RHFSelect>
-                    <RHFTextField size="small" name="createdDate" label="Create date" />
-                    <RHFTextField size="small" name="shippingFactor" label="Shipping factor(%)" />
-                  </Box>
-                  <Stack spacing={2} p={2}>
-                    <Stack direction="row" justifyContent="flex-end">
-                      <LoadingButton
-                        type="submit"
-                        loading={isSubmitting}
-                        variant="contained"
-                        color="primary"
-                        onClick={() => console.log(getValues())}
-                      >
-                        Update
-                      </LoadingButton>
-                    </Stack>
+                      Update
+                    </LoadingButton>
                   </Stack>
-                </FormProvider>
-              </AccordionDetails>
-            </Accordion>
-            <Accordion
-              expanded={expanded.panel2}
-              onChange={() => setExpanded({ ...expanded, panel2: !expanded.panel2 })}
+                </Stack>
+              </FormProvider>
+            </AccordionDetails>
+          </Accordion>
+          <Accordion
+            expanded={expanded.panel2}
+            onChange={() => setExpanded({ ...expanded, panel2: !expanded.panel2 })}
+          >
+            <AccordionSummary
+              expandIcon={<Iconify icon="il:arrow-down" />}
+              aria-controls="panel1a-content"
+              id="panel1a-header"
             >
-              <AccordionSummary
-                expandIcon={<Iconify icon="il:arrow-down" />}
-                aria-controls="panel1a-content"
-                id="panel1a-header"
-              >
-                <Typography color="primary.main" variant="h6">
-                  USER LIST
-                </Typography>
-              </AccordionSummary>
-              <AccordionDetails>
-                <Users toolbar={false} checkbox={false} />
-              </AccordionDetails>
-            </Accordion>
-          </Stack>
-        </Container>
-        <Snackbar open={successDlgOpen} autoHideDuration={3000} onClose={onCloseSuccessDlgOpen}>
-          <Alert onClose={onCloseSuccessDlgOpen} severity="success" sx={{ width: '100%' }}>
-            {successText}
-          </Alert>
-        </Snackbar>
-        <Snackbar open={failDlgOpen} autoHideDuration={3000} onClose={onCloseFailDlgOpen}>
-          <Alert onClose={onCloseFailDlgOpen} severity="success" sx={{ width: '100%' }}>
-            Server error!
-          </Alert>
-        </Snackbar>
-        <NewUserDialog
-          open={addUserDlgOpen}
-          onClose={onCloseUserDlg}
-          onSuccess={onSuccessAddUser}
-          onFail={() => setFailDlgOpen(true)}
-        />
-        <NewCustomerDialog
-          open={addCustomerDlgOpen}
-          onClose={onCloseCustomerDlg}
-          onSuccess={onSuccessAddCustomer}
-          onFail={() => setFailDlgOpen(true)}
-        />
-      </RootStyle>
-    </>
+              <Typography color="primary.main" variant="h6">
+                USER LIST
+              </Typography>
+            </AccordionSummary>
+            <AccordionDetails>
+              <Users toolbar={false} checkbox={false} />
+            </AccordionDetails>
+          </Accordion>
+        </Stack>
+      </Container>
+      <Snackbar open={successDlgOpen} autoHideDuration={3000} onClose={onCloseSuccessDlgOpen}>
+        <Alert onClose={onCloseSuccessDlgOpen} severity="success" sx={{ width: '100%' }}>
+          {successText}
+        </Alert>
+      </Snackbar>
+      <Snackbar open={failDlgOpen} autoHideDuration={3000} onClose={onCloseFailDlgOpen}>
+        <Alert onClose={onCloseFailDlgOpen} severity="success" sx={{ width: '100%' }}>
+          Server error!
+        </Alert>
+      </Snackbar>
+      <NewUserDialog
+        open={addUserDlgOpen}
+        onClose={onCloseUserDlg}
+        onSuccess={onSuccessAddUser}
+        onFail={() => setFailDlgOpen(true)}
+        refetch={refetch}
+      />
+      <NewCustomerDialog
+        open={addCustomerDlgOpen}
+        onClose={onCloseCustomerDlg}
+        onSuccess={onSuccessAddCustomer}
+        onFail={() => setFailDlgOpen(true)}
+        refetch={refetch}
+      />
+    </RootStyle>
   );
 }

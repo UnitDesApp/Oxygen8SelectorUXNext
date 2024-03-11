@@ -1,4 +1,3 @@
-import PropTypes from 'prop-types';
 // @mui
 import { Container, CardContent, Card, Box } from '@mui/material';
 // components
@@ -13,9 +12,10 @@ type UnitTypesProps = {
 export default function UnitTypes(props: UnitTypesProps) {
   const { productTypeID, productTypeUnitTypeLinkDataTbl, onSelectItem } = props;
 
-  const units = productTypeUnitTypeLinkDataTbl.filter(
-    (element) => element.product_type_id === productTypeID
-  );
+  const units =
+    productTypeUnitTypeLinkDataTbl?.filter(
+      (element) => element.product_type_id === productTypeID
+    ) || [];
 
   return (
     <Container>

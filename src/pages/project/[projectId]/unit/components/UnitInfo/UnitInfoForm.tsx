@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 // @mui
 import { LoadingButton } from '@mui/lab';
@@ -9,7 +10,6 @@ import {
   Checkbox,
   FormControlLabel,
   Grid,
-  LinearProgress,
   Stack,
   TextField,
   Typography,
@@ -19,8 +19,12 @@ import {
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useForm } from 'react-hook-form';
 import { unitEditFormSchema, useGetDefaultValue } from 'src/hooks/useUnit';
-import { getUnitModelCodes } from './getUnitNoteCodes';
 import * as IDs from 'src/utils/ids';
+import { useAuthContext } from 'src/auth/useAuthContext';
+import FormProvider from 'src/components/hook-form/FormProvider';
+import Iconify from 'src/components/iconify';
+import { RHFSelect, RHFTextField } from 'src/components/hook-form';
+import { useApiContext } from 'src/contexts/ApiContext';
 import {
   getBypass,
   getComponentInfo,
@@ -50,11 +54,7 @@ import {
   getUnitVoltage,
   getValveAndActuatorInfo,
 } from './handleUnitModel';
-import { useAuthContext } from 'src/auth/useAuthContext';
-import FormProvider from 'src/components/hook-form/FormProvider';
-import Iconify from 'src/components/iconify';
-import { RHFCheckbox, RHFSelect, RHFTextField } from 'src/components/hook-form';
-import { useApiContext } from 'src/contexts/ApiContext';
+import { getUnitModelCodes } from './getUnitNoteCodes';
 
 //------------------------------------------------
 type UnitInfoFormProps = {
@@ -62,8 +62,8 @@ type UnitInfoFormProps = {
   unitId?: number;
   intProductTypeID: number;
   intUnitTypeID: number;
-  setIsAddedNewUnit: Function;
-  isAddedNewUnit: boolean;
+  setIsSavedUnit?: Function;
+  isSavedUnit?: boolean;
   setFunction?: Function;
   edit?: boolean;
   unitInfo?: any;
@@ -77,8 +77,8 @@ type UnitInfoFormProps = {
 export default function UnitInfoForm({
   projectId,
   unitId,
-  setIsAddedNewUnit,
-  isAddedNewUnit,
+  setIsSavedUnit,
+  isSavedUnit,
   setFunction,
   edit = false,
   unitInfo,
@@ -209,8 +209,8 @@ export default function UnitInfoForm({
       intProductTypeID,
       intUnitTypeID,
       ddlUnitTypeId: intUnitTypeID,
-      intUAL: localStorage.getItem('UAL'),
-      intUserID: localStorage.getItem('userId'),
+      intUAL: typeof window !== 'undefined' && localStorage.getItem('UAL'),
+      intUserID: typeof window !== 'undefined' && localStorage.getItem('userId'),
       ckbBypassVal,
       ckbDrainPanVal,
       ckbVoltageSPPVal,
@@ -242,13 +242,13 @@ export default function UnitInfoForm({
   const onSubmit = useCallback(async () => {
     try {
       const data = await api.project.saveUnitInfo(getAllFormData());
-      onSuccess && onSuccess(true);
-      setIsAddedNewUnit(data.intUnitNo);
+      if (onSuccess) onSuccess(true);
+      if (setIsSavedUnit) setIsSavedUnit(data?.intUnitNo || 0);
     } catch (e) {
       console.log(e);
-      onError && onError(true);
+      if (onError) onError(true);
     }
-  }, [edit, onSuccess, onError, getAllFormData, setIsAddedNewUnit]);
+  }, [edit, onSuccess, onError, getAllFormData, setIsSavedUnit]);
 
   // -------------------- Get String Unit Model Codes ----------------------
   const { strUnitModelValue } = useMemo(() => {
@@ -275,7 +275,7 @@ export default function UnitInfoForm({
         break;
     }
 
-    const unitModelValue = unitModel.filter((item: any) => item.id === values.ddlUnitModelId)?.[0]
+    const unitModelValue = unitModel?.filter((item: any) => item.id === values.ddlUnitModelId)?.[0]
       ?.value;
 
     return getUnitModelCodes(
@@ -357,7 +357,7 @@ export default function UnitInfoForm({
     (e: any, key: any) => {
       if (e.target.value === '') {
         setValue(key, '');
-      } else if (!isNaN(+e.target.value)) {
+      } else if (!Number.isNaN(+e.target.value)) {
         setValue(key, parseFloat(e.target.value));
         return true;
       }
@@ -367,7 +367,9 @@ export default function UnitInfoForm({
   );
 
   const ddlHandingChanged = useCallback(
-    (e: any) => setValue('ddlHandingId', Number(e.target.value)),
+    (e: any) => {
+      setValue('ddlHandingId', Number(e.target.value));
+    },
     [setValue]
   );
 
@@ -427,7 +429,7 @@ export default function UnitInfoForm({
 
   // ----------------------- Get UnitModel Dropdown List ---------------------------
   const unitModel = useMemo(() => {
-    const { unitModel, summerSupplyAirCFM } = getUnitModel(
+    const { unitModelList, summerSupplyAirCFM } = getUnitModel(
       baseData,
       Number(intUnitTypeID),
       Number(intProductTypeID),
@@ -439,7 +441,7 @@ export default function UnitInfoForm({
       Number(user?.UAL || 0)
     );
 
-    const filteredUnitModel = unitModel?.filter((item: any) => item.id) || [];
+    const filteredUnitModel = unitModelList?.filter((item: any) => item.id) || [];
 
     if (filteredUnitModel.length > 0) {
       setValue('ddlUnitModelId', filteredUnitModel?.[0]?.id);
@@ -449,7 +451,7 @@ export default function UnitInfoForm({
       setValue('txbSummerSupplyAirCFM', summerSupplyAirCFM.toString());
     }
 
-    return unitModel;
+    return unitModelList;
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     baseData,
@@ -510,7 +512,7 @@ export default function UnitInfoForm({
   const locationInfo = useMemo(() => {
     const locations = getLocation(baseData, intProductTypeID, intUnitTypeID);
 
-    if (locations.filter((item: any) => item.id === values.ddlLocationId)?.length === 0) {
+    if (locations?.filter((item: any) => item.id === values.ddlLocationId)?.length === 0) {
       setValue('ddlLocationId', locations[0].id);
     }
 
@@ -519,39 +521,43 @@ export default function UnitInfoForm({
 
   // ---------------------------- Get Unit Voltage Info -----------------------------
   const unitVoltage = useMemo(() => {
-    const { unitVoltage, ddlUnitVoltageId } = getUnitVoltage(
+    const { unitVoltageList, ddlUnitVoltageId } = getUnitVoltage(
       baseData,
       intProductTypeID,
       strUnitModelValue
     );
-    if (unitVoltage.filter((item: any) => item.id === values.ddlUnitVoltageId)?.length === 0) {
+    if (unitVoltageList?.filter((item: any) => item.id === values.ddlUnitVoltageId)?.length === 0) {
       setValue('ddlUnitVoltageId', ddlUnitVoltageId);
     }
-    return unitVoltage;
+    return unitVoltageList;
   }, [baseData, intProductTypeID, strUnitModelValue, values.ddlUnitVoltageId, setValue]);
 
   // ---------------------------- Get QAFilter Model DDL -----------------------------
   const OAFilterModel = useMemo(
-    () => baseData.filterModel?.filter((item: any) => item.outdoor_air === 1),
+    () => baseData?.filterModel?.filter((item: any) => item.outdoor_air === 1),
     [baseData]
   );
 
   // ---------------------------- Get RAFilter Model DDL -----------------------------
   const RAFilterModel = useMemo(
-    () => baseData.filterModel?.filter((item: any) => item.return_air === 1),
+    () => baseData?.filterModel?.filter((item: any) => item.return_air === 1),
     [baseData]
   );
 
   // ---------------------------- Initialize QAFilter Model --------------------------
   useEffect(() => {
-    if (OAFilterModel.filter((item: any) => item?.id === values.ddlOA_FilterModelId).length === 0) {
+    if (
+      OAFilterModel?.filter((item: any) => item?.id === values.ddlOA_FilterModelId).length === 0
+    ) {
       setValue('ddlOA_FilterModelId', OAFilterModel[0].id);
     }
   }, [setValue, OAFilterModel, values.ddlOA_FilterModelId]);
 
   // ---------------------------- Initialize RAFilter Model --------------------------
   useEffect(() => {
-    if (RAFilterModel.filter((item: any) => item?.id === values.ddlRA_FilterModelId).length === 0) {
+    if (
+      RAFilterModel?.filter((item: any) => item?.id === values.ddlRA_FilterModelId).length === 0
+    ) {
       setValue('ddlRA_FilterModelId', RAFilterModel[0].id);
     }
   }, [setValue, RAFilterModel, values.ddlOA_FilterModelId]);
@@ -621,7 +627,10 @@ export default function UnitInfoForm({
   );
 
   // -------------- Get User Authentication Level from LocalStorage ----------------
-  const ualInfo = useMemo(() => getUALInfo(Number(localStorage.getItem('UAL'))), []);
+  const ualInfo = useMemo(
+    () => getUALInfo(Number(typeof window !== 'undefined' && localStorage.getItem('UAL'))),
+    []
+  );
 
   // -------------- Get Heating Pump Information ----------------
   const heatPumpInfo = useMemo(() => {
@@ -640,7 +649,7 @@ export default function UnitInfoForm({
   const dxCoilRefrigDesignCondInfo = useMemo(
     () =>
       getDXCoilRefrigDesignCondInfo(
-        Number(localStorage.getItem('UAL')),
+        Number(typeof window !== 'undefined' && localStorage.getItem('UAL')),
         Number(values.ddlCoolingCompId)
       ),
     [values.ddlCoolingCompId]
@@ -860,7 +869,7 @@ export default function UnitInfoForm({
   );
 
   const isAvailable = useCallback((value: any[]) => !!value && value.length > 0, []);
-  if (edit) setFunction && setFunction(handleSubmit(onSubmit));
+  if (edit && setFunction) setFunction(handleSubmit(onSubmit));
 
   return (
     <FormProvider methods={methods} onSubmit={handleSubmit(onSubmit)}>
@@ -904,7 +913,7 @@ export default function UnitInfoForm({
                     //   setValueWithCheck(e, 'txbQty');
                     // }}
                   />
-                  {isAvailable(baseData.unitType) && (
+                  {isAvailable(baseData?.unitType) && (
                     <RHFSelect
                       native
                       size="small"
@@ -913,7 +922,7 @@ export default function UnitInfoForm({
                       placeholder=""
                       disabled
                     >
-                      {baseData.unitType.map((item: any, index: number) => (
+                      {baseData?.unitType.map((item: any, index: number) => (
                         <option key={index} value={item.id}>
                           {item.items}
                         </option>
@@ -1220,7 +1229,7 @@ export default function UnitInfoForm({
                     ))}
                   </RHFSelect>
                 )}
-                {isAvailable(baseData.fluidConcentration) && (
+                {isAvailable(baseData?.fluidConcentration) && (
                   <RHFSelect
                     native
                     size="small"
@@ -1228,7 +1237,7 @@ export default function UnitInfoForm({
                     label="Heating Fluid %"
                   >
                     {getItemsAddedOnIDDataTable(
-                      baseData.fluidConcentration,
+                      baseData?.fluidConcentration,
                       'fluid_type_id',
                       Number(values.ddlHeatingFluidTypeId)
                     )?.map((item: any, index: number) => (
@@ -1402,7 +1411,7 @@ export default function UnitInfoForm({
                   }
                   label="Dehumidification"
                 />
-                {isAvailable(baseData.handing) && (
+                {isAvailable(baseData?.handing) && (
                   <RHFSelect
                     native
                     size="small"
@@ -1413,7 +1422,7 @@ export default function UnitInfoForm({
                       setValue('ddlCoolingCoilHandingId', Number(e.target.value))
                     }
                   >
-                    {baseData.handing?.map((item: any, index: number) => (
+                    {baseData?.handing?.map((item: any, index: number) => (
                       <option key={index} value={item.id}>
                         {item.items}
                       </option>
@@ -1459,21 +1468,21 @@ export default function UnitInfoForm({
                 spacing={1}
                 sx={{ ...getDisplay(Number(values.ddlCoolingCompId) === IDs.intCompCWC_ID) }}
               >
-                {isAvailable(baseData.fluidType) && (
+                {isAvailable(baseData?.fluidType) && (
                   <RHFSelect
                     native
                     size="small"
                     name="ddlCoolingFluidTypeId"
                     label="Cooling Fluid Type"
                   >
-                    {baseData.fluidType?.map((item: any, index: number) => (
+                    {baseData?.fluidType?.map((item: any, index: number) => (
                       <option key={index} value={item.id}>
                         {item.items}
                       </option>
                     ))}
                   </RHFSelect>
                 )}
-                {isAvailable(baseData.fluidConcentration) && (
+                {isAvailable(baseData?.fluidConcentration) && (
                   <RHFSelect
                     native
                     size="small"
@@ -1481,7 +1490,7 @@ export default function UnitInfoForm({
                     label="Cooling Fluid %"
                   >
                     {getItemsAddedOnIDDataTable(
-                      baseData.fluidConcentration,
+                      baseData?.fluidConcentration,
                       'fluid_type_id',
                       Number(values.ddlCoolingFluidTypeId)
                     )?.map((item: any, index: number) => (
@@ -1624,7 +1633,7 @@ export default function UnitInfoForm({
                     setValueWithCheck(e, 'txbWinterHeatingSetpointDB');
                   }}
                 />
-                {isAvailable(baseData.handing) && (
+                {isAvailable(baseData?.handing) && (
                   <RHFSelect
                     native
                     size="small"
@@ -1635,7 +1644,7 @@ export default function UnitInfoForm({
                       setValue('ddlHeatingCoilHandingId', Number(e.target.value))
                     }
                   >
-                    {baseData.handing?.map((item: any, index: number) => (
+                    {baseData?.handing?.map((item: any, index: number) => (
                       <option key={index} value={item.id}>
                         {item.items}
                       </option>
@@ -1674,21 +1683,21 @@ export default function UnitInfoForm({
                 spacing={1}
                 sx={{ ...getDisplay(values.ddlHeatingCompId === IDs.intCompHWC_ID) }}
               >
-                {isAvailable(baseData.fluidType) && (
+                {isAvailable(baseData?.fluidType) && (
                   <RHFSelect
                     native
                     size="small"
                     name="ddlHeatingFluidTypeId"
                     label="Heating Fluid Type"
                   >
-                    {baseData.fluidType?.map((item: any, index: number) => (
+                    {baseData?.fluidType?.map((item: any, index: number) => (
                       <option key={index} value={item.id}>
                         {item.items}
                       </option>
                     ))}
                   </RHFSelect>
                 )}
-                {isAvailable(baseData.fluidType && baseData.fluidConcentration) && (
+                {isAvailable(baseData?.fluidType && baseData?.fluidConcentration) && (
                   <RHFSelect
                     native
                     size="small"
@@ -1696,7 +1705,7 @@ export default function UnitInfoForm({
                     label="Heating Fluid %"
                   >
                     {getItemsAddedOnIDDataTable(
-                      baseData.fluidConcentration,
+                      baseData?.fluidConcentration,
                       'fluid_type_id',
                       Number(values.ddlHeatingFluidTypeId)
                     )?.map((item: any, index: number) => (
@@ -1842,7 +1851,7 @@ export default function UnitInfoForm({
                     setValueWithCheck(e, 'txbSummerReheatSetpointDB');
                   }}
                 />
-                {isAvailable(baseData.handing) && (
+                {isAvailable(baseData?.handing) && (
                   <RHFSelect
                     native
                     size="small"
@@ -1853,7 +1862,7 @@ export default function UnitInfoForm({
                       setValue('ddlHeatingCoilHandingId', Number(e.target.value))
                     }
                   >
-                    {baseData.handing?.map((item: any, index: number) => (
+                    {baseData?.handing?.map((item: any, index: number) => (
                       <option key={index} value={item.id}>
                         {item.items}
                       </option>
@@ -1892,21 +1901,21 @@ export default function UnitInfoForm({
                 spacing={1}
                 sx={{ ...getDisplay(values.ddlReheatCompId === IDs.intCompHWC_ID) }}
               >
-                {isAvailable(baseData.fluidType) && (
+                {isAvailable(baseData?.fluidType) && (
                   <RHFSelect
                     native
                     size="small"
                     name="ddlHeatingFluidTypeId"
                     label="Reheat Fluid Type"
                   >
-                    {baseData.fluidType?.map((item: any, index: number) => (
+                    {baseData?.fluidType?.map((item: any, index: number) => (
                       <option key={index} value={item.id}>
                         {item.items}
                       </option>
                     ))}
                   </RHFSelect>
                 )}
-                {isAvailable(baseData.fluidType && baseData.fluidConcentration) && (
+                {isAvailable(baseData?.fluidType && baseData?.fluidConcentration) && (
                   <RHFSelect
                     native
                     size="small"
@@ -1914,7 +1923,7 @@ export default function UnitInfoForm({
                     label="Reheat Fluid %"
                   >
                     {getItemsAddedOnIDDataTable(
-                      baseData.fluidConcentration,
+                      baseData?.fluidConcentration,
                       'fluid_type_id',
                       Number(values.ddlHeatingFluidTypeId)
                     )?.map((item: any, index: number) => (
@@ -2141,7 +2150,7 @@ export default function UnitInfoForm({
                   )}
                   label="Valve Type"
                 >
-                  {baseData.valveType
+                  {baseData?.valveType
                     ?.filter((item: any) => item.items !== '""')
                     ?.map((item: any, index: number) => (
                       <option key={index} value={item.id}>
@@ -2181,7 +2190,7 @@ export default function UnitInfoForm({
                       onChange={ddlHandingChanged}
                     >
                       {handingInfo.ddlHandingDataTbl.map((item: any, index: number) => (
-                        <option key={index} value={baseData.id}>
+                        <option key={index} value={item.id}>
                           {item.items}
                         </option>
                       ))}
@@ -2300,7 +2309,7 @@ export default function UnitInfoForm({
               variant="contained"
               onClick={() => console.log(getValues())}
               loading={isSubmitting}
-              disabled={isAddedNewUnit}
+              disabled={isSavedUnit && !edit}
             >
               {edit ? 'Update Unit' : 'Add New Unit'}
             </LoadingButton>

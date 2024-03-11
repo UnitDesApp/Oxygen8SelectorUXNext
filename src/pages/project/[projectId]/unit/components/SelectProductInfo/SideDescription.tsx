@@ -1,4 +1,3 @@
-import PropTypes from 'prop-types';
 // @mui
 import { styled } from '@mui/material/styles';
 import {
@@ -35,7 +34,7 @@ export default function SideDescription({
   productInfomation,
   sx,
 }: SideDescriptionProps) {
-  const { title, image, description } = productInfomation;
+  const { title, image, description } = productInfomation || {};
   return (
     <Drawer anchor="right" open={open} onClose={() => handleDrawerClose(0)}>
       <Box sx={{ ...sx, padding: 3, width: '300px', paddingBottom: '120px', paddingTop: '100px' }}>
@@ -44,7 +43,7 @@ export default function SideDescription({
             About {title}
           </Typography>
           <IconButton onClick={() => handleDrawerClose()} sx={{ width: '40px', mb: 1 }}>
-            <Iconify icon={'iconoir:cancel'} />
+            <Iconify icon="iconoir:cancel" />
           </IconButton>
         </Stack>
         <Box

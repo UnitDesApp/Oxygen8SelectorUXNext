@@ -1,19 +1,19 @@
 // react
-import { useCallback, useEffect, useMemo } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 // next
 import Head from 'next/head';
 import { Box, Container, Stack, Tab, Button, Tabs } from '@mui/material';
 // layouts
-import DashboardLayout from '../../../layouts/dashboard';
 // components
 import { PROJECT_DASHBOARD_TABS } from 'src/utils/constants';
-import { useSettingsContext } from '../../../components/settings';
 import { useRouter } from 'next/router';
 import { PATH_APP } from 'src/routes/paths';
 import useTabs from 'src/hooks/useTabs';
 import { capitalCase } from 'change-case';
 import CustomBreadcrumbs from 'src/components/custom-breadcrumbs';
 import Iconify from 'src/components/iconify';
+import { useSettingsContext } from '../../../components/settings';
+import DashboardLayout from '../../../layouts/dashboard';
 // import sub components
 import UnitList from './components/unitlist/UnitList';
 import ProjectDetail from './components/detail/ProjectDetail';
@@ -21,6 +21,7 @@ import ProjectQuote from './components/quote/ProjectQuote';
 import ProjectSubmittal from './components/submittal/ProjectSubmittal';
 import ProjectStatus from './components/status/ProjectStatus';
 import ProjectNote from './components/note/ProjectNote';
+import ReportDialog from './components/dialog/ReportDialog';
 
 // ----------------------------------------------------------------------
 
@@ -37,9 +38,16 @@ export default function Project() {
   // useTab
   const { currentTab, onChangeTab, setCurrentTab } = useTabs(tab?.toString());
 
+  // useState
+  const [openExportDialog, setOpenExportDialog] = useState<boolean>(false);
+
+  const handleOpneExportDialog = () => {
+    setOpenExportDialog(true);
+  };
+
   useEffect(() => {
     setCurrentTab(tab?.toString() || '');
-  }, [tab]);
+  }, [setCurrentTab, tab]);
 
   const TABS = useMemo(
     () => [
@@ -85,9 +93,10 @@ export default function Project() {
     [push, onChangeTab, projectId]
   );
 
-  const tabData = useMemo(() => {
-    return TABS.filter((item) => item.value === currentTab)?.[0];
-  }, [TABS, currentTab]);
+  const tabData = useMemo(
+    () => TABS.filter((item) => item.value === currentTab)?.[0],
+    [TABS, currentTab]
+  );
 
   return (
     <>
@@ -101,12 +110,16 @@ export default function Project() {
           links={[{ name: 'Projects', href: PATH_APP.project }, { name: tabData?.title || '' }]}
           action={
             <Stack spacing={2} direction="row" alignItems="flex-end" sx={{ mt: 3 }}>
-              <Button variant="text" startIcon={<Iconify icon={'bxs:download'} />}>
+              <Button
+                variant="text"
+                startIcon={<Iconify icon="bxs:download" />}
+                onClick={() => setOpenExportDialog(true)}
+              >
                 Export report
               </Button>
               <Button
                 variant="contained"
-                startIcon={<Iconify icon={'eva:plus-fill'} />}
+                startIcon={<Iconify icon="eva:plus-fill" />}
                 onClick={() => projectId && push(PATH_APP.newUnit(projectId?.toString()))}
               >
                 Add new unit
@@ -121,12 +134,22 @@ export default function Project() {
           value={currentTab}
           onChange={onChangeTabHandle}
         >
-          {TABS.map((tab) => (
-            <Tab disableRipple key={tab.value} label={capitalCase(tab.title)} value={tab.value} />
+          {TABS.map((tabItem) => (
+            <Tab
+              disableRipple
+              key={tabItem.value}
+              label={capitalCase(tabItem.title)}
+              value={tabItem.value}
+            />
           ))}
         </Tabs>
         <Box sx={{ my: 3 }}>{tabData?.component || null}</Box>
       </Container>
+      <ReportDialog
+        isOpen={openExportDialog}
+        onClose={() => setOpenExportDialog(false)}
+        intProjectID={projectId?.toString() || ''}
+      />
     </>
   );
 }

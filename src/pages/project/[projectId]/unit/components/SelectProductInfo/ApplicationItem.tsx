@@ -1,4 +1,3 @@
-import PropTypes from 'prop-types';
 // @mui
 import { styled } from '@mui/material/styles';
 import { Box, Typography, IconButton, Button } from '@mui/material';
@@ -23,7 +22,7 @@ type ApplicationItemProps = {
 
 export default function ApplicationItem({ label, onSelectItem, id, active }: ApplicationItemProps) {
   return (
-    <Box textAlign={'center'}>
+    <Box textAlign="center">
       <BoxStyle
         id={id}
         onClick={() => onSelectItem && onSelectItem(id)}
@@ -38,7 +37,7 @@ export default function ApplicationItem({ label, onSelectItem, id, active }: App
           {label}
           <span>
             <IconButton aria-label="info" sx={{ padding: '5px', pt: 0 }}>
-              <Iconify icon={'ant-design:exclamation-circle-outlined'} />
+              <Iconify icon="ant-design:exclamation-circle-outlined" />
             </IconButton>
           </span>
         </Typography>

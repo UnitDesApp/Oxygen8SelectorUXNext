@@ -21,7 +21,7 @@ type ProductTypeItemProps = {
 };
 export default function ProductTypeItem({ label, onSelectItem, id, active }: ProductTypeItemProps) {
   return (
-    <Box textAlign={'center'}>
+    <Box textAlign="center">
       <BoxStyle
         id={id || ''}
         onClick={() => onSelectItem(id)}
@@ -36,13 +36,13 @@ export default function ProductTypeItem({ label, onSelectItem, id, active }: Pro
           {label}
           <span>
             <IconButton aria-label="info" sx={{ padding: '5px', pt: 0 }}>
-              <Iconify icon={'ant-design:exclamation-circle-outlined'} />
+              <Iconify icon="ant-design:exclamation-circle-outlined" />
             </IconButton>
           </span>
         </Typography>
       </Box>
       <Divider />
-      <Stack textAlign={'center'} spacing={2} mt={1}>
+      <Stack textAlign="center" spacing={2} mt={1}>
         <Typography>ERV</Typography>
         <Typography>Indoor/Outdoor</Typography>
         <Typography>Standard Efficiency</Typography>
