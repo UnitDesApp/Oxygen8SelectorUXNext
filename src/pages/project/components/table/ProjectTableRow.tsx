@@ -1,14 +1,10 @@
-import { useState, useCallback, SetStateAction, MouseEventHandler } from 'react';
+import { useState, useCallback, MouseEventHandler } from 'react';
 // @mui
 import { Checkbox, TableRow, TableCell, MenuItem, Stack, IconButton } from '@mui/material';
-import { useAuthContext } from 'src/auth/useAuthContext';
-import { IconButtonAnimate } from 'src/components/animate';
 import Iconify from 'src/components/iconify';
 import TableMoreMenu from 'src/components/table/TableMoreMenu';
-// components
 
 // ----------------------------------------------------------------------
-
 const statusArr = ['draft', 'quoted', 'released', 'closed'];
 
 type ProjectTableRowProps = {
@@ -47,8 +43,6 @@ export default function ProjectTableRow({
     revised_date,
     status,
   } = row || {};
-
-  const { user } = useAuthContext();
 
   const statusValue = statusArr[status || 0];
 
@@ -106,10 +100,10 @@ export default function ProjectTableRow({
 
       <TableCell align="left" sx={{ cursor: 'pointer' }}>
         <Stack direction="row" spacing={1}>
-          <IconButton disabled={!user?.verified} aria-label="delete" onClick={onDuplicate}>
+          <IconButton aria-label="delete" onClick={onDuplicate}>
             <Iconify icon="ic:outline-file-copy" />
           </IconButton>
-          <IconButton disabled={!Number(user?.verified)} aria-label="delete" onClick={onDeleteRow}>
+          <IconButton aria-label="delete" onClick={onDeleteRow}>
             <Iconify icon="mdi:trash-outline" />
           </IconButton>
         </Stack>

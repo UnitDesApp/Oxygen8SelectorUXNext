@@ -7,6 +7,7 @@ import {
   Alert,
   Box,
   Container,
+  Snackbar,
   Stack,
   Table,
   TableBody,
@@ -28,6 +29,8 @@ import CircularProgressLoading from 'src/components/loading/CircularProgressLoad
 import { useGetAllProjects } from 'src/hooks/useApi';
 import { PATH_APP } from 'src/routes/paths';
 import Scrollbar from 'src/components/scrollbar/Scrollbar';
+import ConfirmDialog from 'src/components/dialog/ConfirmDialog';
+import { useApiContext } from 'src/contexts/ApiContext';
 import ProjectTableToolbar from './components/table/ProjectTableToolbar';
 import ProjectTableRow from './components/table/ProjectTableRow';
 import { useSettingsContext } from '../../components/settings';
@@ -45,6 +48,8 @@ export default function Project() {
   const { themeStretch } = useSettingsContext();
   // router
   const { push } = useRouter();
+  // project api
+  const { project } = useApiContext();
 
   // Table State
   const [filterName, setFilterName] = useState<string>('');
@@ -112,7 +117,9 @@ export default function Project() {
   };
 
   const handleDeleteRow = () => {
-    // dispatch(deleteProject({ action: 'DELETE_ONE', projectId: deleteRowID }));
+    project.deleteProject({ action: 'DELETE_ONE', projectId: deleteRowID }).then(() => {
+      refetch();
+    });
     setSelected([]);
     setDeleteRowID(-1);
     handleOneConfirmDialogClose();
@@ -136,12 +143,15 @@ export default function Project() {
   };
 
   const handleDeleteRows = () => {
-    // dispatch(deleteProject({ action: 'DELETE_MULTIPUL', projectIdData: selected }));
+    project.deleteProject({ action: 'DELETE_MULTIPUL', projectIdData: selected }).then(() => {
+      refetch();
+    });
     setSelected([]);
     setMultiConfirmDialogState(false);
   };
 
   const handleDuplicate = (row: any) => {
+    project.duplicateProject(row).then(() => refetch());
     setOpenDuplicateSuccess(true);
   };
 
@@ -264,6 +274,31 @@ export default function Project() {
             refetch={refetch}
           />
         )}
+        <ConfirmDialog
+          isOpen={isOneConfirmDialog}
+          onClose={handleOneConfirmDialogClose}
+          onConfirm={handleDeleteRow}
+          isOneRow
+        />
+        <ConfirmDialog
+          isOpen={isOpenMultiConfirmDialog}
+          onClose={handleMultiConfirmDialogClose}
+          onConfirm={handleDeleteRows}
+          isOneRow={false}
+        />
+        <Snackbar
+          open={openDuplicateSuccess}
+          autoHideDuration={3000}
+          onClose={() => setOpenDuplicateSuccess(false)}
+        >
+          <Alert
+            onClose={() => setOpenDuplicateSuccess(false)}
+            severity="success"
+            sx={{ width: '100%' }}
+          >
+            Project duplicate successfully!
+          </Alert>
+        </Snackbar>
       </Container>
     </>
   );
@@ -321,7 +356,7 @@ const applySortFilter = ({
   }
 
   if (filterRole !== 'All') {
-    if (filterRole === 'Projects') {
+    if (filterRole === 'My Projects') {
       tableData = tableData.filter(
         (item: any) => item.created_user_id.toString() === localStorage.getItem('userId')
       );

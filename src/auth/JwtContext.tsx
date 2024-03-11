@@ -84,6 +84,7 @@ const reducer = (state: AuthStateType, action: ActionsType) => {
     return {
       ...state,
       isAuthenticated: false,
+      isInitialized: true,
       user: null,
     };
   }
@@ -112,10 +113,6 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
       if (accessToken && isValidToken(accessToken)) {
         setSession(accessToken);
-
-        // const response = await axios.get('/api/account/my-account');
-
-        // const { user } = response.data;
 
         dispatch({
           type: Types.INITIAL,
@@ -243,6 +240,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
   // LOGOUT
   const logout = useCallback(() => {
     setSession(null);
+    localStorage.setItem('accessToken', '');
     dispatch({
       type: Types.LOGOUT,
     });

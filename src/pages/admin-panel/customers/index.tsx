@@ -21,6 +21,7 @@ import CustomerTableRow from './component/CustomerTableRow';
 import TableSelectedActions from './component/TableSelectedActions';
 import CustomerTableToolbar from './component/CustomerTableToolbar';
 import useTabs from '../../../hooks/useTabs';
+import AdminPanelWrapper from '../component/AdminPanelWrapper';
 // components
 
 // ----------------------------------------------------------------------
@@ -40,10 +41,9 @@ Customers.getLayout = (page: React.ReactElement) => <DashboardLayout>{page}</Das
 
 export default function Customers() {
   const api = useApiContext();
-  const { data: accountInfo, isLoading } = useGetAccountInfo();
+  const { data: accountInfo, isLoading, refetch } = useGetAccountInfo();
   const { customers } = accountInfo || { customers: [] };
   const { push } = useRouter();
-
   const dense = true;
 
   const {
@@ -108,7 +108,7 @@ export default function Customers() {
   }, []);
 
   // eslint-disable-next-line no-unused-vars
-  const { currentTab: filterStatus, onChangeTab: onChangeFilterStatus } = useTabs('All');
+  const { currentTab: filterStatus } = useTabs('All');
 
   const handleFilterName = useCallback(
     (name: string) => {
@@ -168,7 +168,7 @@ export default function Customers() {
   if (isLoading) return <Loading />;
 
   return (
-    <Container>
+    <AdminPanelWrapper currentTab="customers" refetch={refetch}>
       <CustomerTableToolbar
         filterName={filterName}
         onFilterName={handleFilterName}
@@ -250,7 +250,7 @@ export default function Customers() {
         onConfirm={handleDeleteRows}
         isOneRow={false}
       />
-    </Container>
+    </AdminPanelWrapper>
   );
 }
 
