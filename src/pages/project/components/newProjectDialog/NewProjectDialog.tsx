@@ -394,7 +394,7 @@ export default function NewProjectDialog({
     const contacts = usersInfo?.filter(
       (item: any) => Number(item.customer_id) === Number(values.companyNameId)
     );
-    if (contacts.length === 0) {
+    if (!contacts || contacts?.length === 0) {
       setValue('contactName', '');
       setValue('contactNameId', 0);
     }
@@ -452,7 +452,7 @@ export default function NewProjectDialog({
                   onChange={handleChangeContactName}
                 >
                   <option value="" />
-                  {contactInfo.length > 0 ? (
+                  {contactInfo && contactInfo?.length > 0 ? (
                     contactInfo.map((info: any, index: number) => (
                       <option key={index} value={info.id}>
                         {`${info.first_name} ${info.last_name}`}
