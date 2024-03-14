@@ -8,7 +8,6 @@ import {
   Box,
   Grid,
   Typography,
-  LinearProgress,
   Accordion,
   AccordionDetails,
   AccordionSummary,
@@ -20,7 +19,7 @@ import {
 import { LoadingButton } from '@mui/lab';
 // hooks
 import { yupResolver } from '@hookform/resolvers/yup';
-import { EventType, useForm } from 'react-hook-form';
+import { useForm } from 'react-hook-form';
 import { useGetOutdoorInfo } from 'src/hooks/useApi';
 import { useApiContext } from 'src/contexts/ApiContext';
 import { useRouter } from 'next/router';
@@ -103,7 +102,7 @@ export default function ProjectDetailsForm({
   const projectInfoSchema = Yup.object().shape({
     jobName: Yup.string().required('Please enter a Project Name'),
     basisOfDesign: Yup.string().required('Please enter a Basis Of Design'),
-    referenceNo: Yup.string().required('Please select a Reference'),
+    referenceNo: Yup.string(),
     revision: Yup.string().required('Please enter a Revision'),
     createdDate: Yup.string().required('Please enter a Created Date'),
     revisedDate: Yup.string().required('Please enter a Revised Date'),

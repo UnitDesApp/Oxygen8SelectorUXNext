@@ -1,6 +1,6 @@
 // @mui
 import { useTheme } from '@mui/material/styles';
-import { Stack, AppBar, Toolbar, IconButton } from '@mui/material';
+import { Stack, AppBar, Toolbar, IconButton, Box, BoxProps } from '@mui/material';
 // utils
 import { bgBlur } from '../../../utils/cssStyles';
 // hooks
@@ -14,6 +14,7 @@ import Iconify from '../../../components/iconify';
 import { useSettingsContext } from '../../../components/settings';
 //
 import AccountPopover from './AccountPopover';
+import NavHorizontal from '../nav/NavHorizontal';
 
 // ----------------------------------------------------------------------
 
@@ -36,7 +37,7 @@ export default function Header({ onOpenNav, navBar }: Props) {
   const isOffset = useOffSetTop(HEADER.H_DASHBOARD_DESKTOP) && !isNavHorizontal;
 
   const renderContent = (
-    <Stack flexGrow={1} direction="row" alignItems="center" justifyContent="space-between">
+    <Stack flexGrow={1} direction="row" alignItems="center" justifyContent="space-between" gap={4}>
       {isDesktop && isNavHorizontal && <Logo sx={{ mr: 2.5, height: '40px' }} />}
 
       {!isDesktop && (
@@ -48,7 +49,7 @@ export default function Header({ onOpenNav, navBar }: Props) {
       {navBar && navBar}
 
       <Stack
-        flexGrow={1}
+        flex="none"
         direction="row"
         alignItems="center"
         justifyContent="flex-end"
@@ -81,7 +82,6 @@ export default function Header({ onOpenNav, navBar }: Props) {
             width: 1,
             bgcolor: 'background.default',
             height: HEADER.H_DASHBOARD_DESKTOP_OFFSET,
-            borderBottom: `dashed 1px ${theme.palette.divider}`,
           }),
           ...(isNavMini && {
             width: `calc(100% - ${NAV.W_DASHBOARD_MINI + 1}px)`,
@@ -97,6 +97,29 @@ export default function Header({ onOpenNav, navBar }: Props) {
       >
         {renderContent}
       </Toolbar>
+      <Shadow />
     </AppBar>
+  );
+}
+
+// ----------------------------------------------------------------------
+
+function Shadow({ sx, ...other }: BoxProps) {
+  return (
+    <Box
+      sx={{
+        left: 0,
+        right: 0,
+        bottom: 0,
+        height: 24,
+        zIndex: -1,
+        width: 1,
+        m: 'auto',
+        position: 'absolute',
+        boxShadow: (theme) => theme.customShadows.z8,
+        ...sx,
+      }}
+      {...other}
+    />
   );
 }

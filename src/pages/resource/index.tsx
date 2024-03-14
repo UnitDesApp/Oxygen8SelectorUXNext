@@ -19,6 +19,9 @@ export default function Resources() {
 
   const { data: fileList, isLoading } = useGetFileList();
 
+  // const isVerified = user?.verified && !Number(user?.verified);
+  const isVerified = true;
+
   return (
     <>
       <Head>
@@ -42,7 +45,7 @@ export default function Resources() {
             //   </Button>
             // }
           />
-          {user?.verified && !Number(user?.verified) ? (
+          {!isVerified ? (
             <Alert sx={{ width: '100%', mt: 3 }} severity="warning">
               <b>You are not verified!</b> -{' '}
               {`Please check your email inbox, if you didn't receive
