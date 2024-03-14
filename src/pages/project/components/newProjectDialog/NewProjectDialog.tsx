@@ -59,7 +59,6 @@ export default function NewProjectDialog({
   const NewUserSchema = Yup.object().shape({
     jobName: Yup.string().required('Please enter a Project Name'),
     basisOfDesign: Yup.string().required('Please enter a Basis Of Design'),
-    referenceNo: Yup.string(),
     revision: Yup.number().required('Please enter a Revision'),
     companyName: Yup.string(),
     companyNameId: Yup.string().required('Please enter a Company Name'),
@@ -71,7 +70,7 @@ export default function NewProjectDialog({
     state: Yup.string().required('Please select a Province / State'),
     city: Yup.string().required('Please select a City'),
     ashareDesignConditions: Yup.string().required('Please enter a ASHARE Design Conditions'),
-    alltitude: Yup.number(),
+    altitude: Yup.number().required('Please enter a ASHARE Design Conditions'),
     summer_air_db: Yup.number(),
     summer_air_wb: Yup.number(),
     summer_air_rh: Yup.number(),
@@ -92,7 +91,6 @@ export default function NewProjectDialog({
   const defaultValues = {
     jobName: '',
     basisOfDesign: '',
-    referenceNo: '',
     revision: 0,
     companyName: '',
     companyNameId: 0,
@@ -104,7 +102,7 @@ export default function NewProjectDialog({
     state: '',
     city: '',
     ashareDesignConditions: '',
-    alltitude: 0,
+    altitude: 0,
     summer_air_db: 0,
     summer_air_wb: 0,
     summer_air_rh: 0,
@@ -130,6 +128,7 @@ export default function NewProjectDialog({
     watch,
     getValues,
     handleSubmit,
+    reset,
     formState: { isSubmitting },
   } = methods;
 
@@ -172,6 +171,8 @@ export default function NewProjectDialog({
   const handleChangeCompanyName = (e: any) => {
     setValue('companyNameId', e.target.value);
     setValue('companyName', e.nativeEvent.target[e.target.selectedIndex].text);
+    setValue('contactNameId', 0);
+    setValue('contactName', '');
   };
 
   const handleChangeContactName = (e: any) => {
@@ -181,7 +182,7 @@ export default function NewProjectDialog({
 
   const onSubmit = async (data: any) => {
     try {
-      api.project.addNewProject({
+      await api.project.addNewProject({
         ...data,
         jobId: -1,
         createdUserId: localStorage.getItem('userId'),
@@ -189,11 +190,13 @@ export default function NewProjectDialog({
         createdDate,
         revisedDate,
         applicationOther: '',
+        referenceNo: data?.referenceNo ? data.referenceNo : '',
         testNewPrice: data.testNewPrice ? 1 : 0,
       });
 
       setOpenSuccess();
       refetch();
+      reset(defaultValues);
       onClose();
     } catch (error) {
       setOpenFail();
@@ -224,7 +227,7 @@ export default function NewProjectDialog({
 
   useEffect(() => {
     if (outdoorInfo) {
-      setValue('alltitude', outdoorInfo.altitude);
+      setValue('altitude', outdoorInfo.altitude);
       setValue('summer_air_db', outdoorInfo.summerOutdoorAirDB);
       setValue('summer_air_wb', outdoorInfo.summerOutdoorAirWB);
       setValue('summer_air_rh', outdoorInfo.summerOutdoorAirRH);
@@ -242,13 +245,13 @@ export default function NewProjectDialog({
           action: 'GET_RH_BY_DB_WB',
           first,
           second,
-          altitude: values.alltitude,
+          altitude: values.altitude,
         })
         .then((data: any) => {
           setValue(setValueId, data as never);
         });
     },
-    [api.project, setValue, values.alltitude]
+    [api.project, setValue, values.altitude]
   );
 
   // get WB value from server
@@ -260,13 +263,13 @@ export default function NewProjectDialog({
           action: 'GET_WB_BY_DB_HR',
           first,
           second,
-          altitude: values.alltitude,
+          altitude: values.altitude,
         })
         .then((data: any) => {
           setValue(setValueId, data as never);
         });
     },
-    [setValue, values.alltitude, api.project]
+    [setValue, values.altitude, api.project]
   );
   const handleChangeSummerOutdoorAirDBChanged = useCallback(
     (e: any) => {
@@ -379,12 +382,25 @@ export default function NewProjectDialog({
     handleSubmit(() => {});
     if (getValues('jobName') === '') return;
     if (getValues('basisOfDesign') === '') return;
-    if (getValues('referenceNo') === '') return;
     if (getValues('companyName') === '') return;
+    if (getValues('contactName') === '') return;
+    if (getValues('revision') === 0) return;
     setStep(1);
   };
 
   const handleClose = () => onClose && onClose();
+
+  const contactInfo = useMemo(() => {
+    const contacts = usersInfo?.filter(
+      (item: any) => Number(item.customer_id) === Number(values.companyNameId)
+    );
+    if (contacts.length === 0) {
+      setValue('contactName', '');
+      setValue('contactNameId', 0);
+    }
+
+    return contacts;
+  }, [setValue, usersInfo, values.companyNameId]);
 
   return (
     <Dialog open={open} onClose={handleClose}>
@@ -421,14 +437,11 @@ export default function NewProjectDialog({
                   onChange={handleChangeCompanyName}
                 >
                   <option value="" />
-                  {companyInfo?.map(
-                    (info: any, index: number) =>
-                      info.id.toString() === localStorage.getItem('customerId') && (
-                        <option key={index} value={info.id}>
-                          {info.name}
-                        </option>
-                      )
-                  )}
+                  {companyInfo?.map((info: any, index: number) => (
+                    <option key={index} value={info.id}>
+                      {info.name}
+                    </option>
+                  ))}
                 </RHFSelect>
                 <RHFSelect
                   native
@@ -439,11 +452,15 @@ export default function NewProjectDialog({
                   onChange={handleChangeContactName}
                 >
                   <option value="" />
-                  {usersInfo?.map((info: any, index: number) => (
-                    <option key={index} value={info.id}>
-                      {`${info.first_name} ${info.last_name}`}
-                    </option>
-                  ))}
+                  {contactInfo.length > 0 ? (
+                    contactInfo.map((info: any, index: number) => (
+                      <option key={index} value={info.id}>
+                        {`${info.first_name} ${info.last_name}`}
+                      </option>
+                    ))
+                  ) : (
+                    <option value={0}>No contact available</option>
+                  )}
                 </RHFSelect>
                 <RHFSelect
                   native

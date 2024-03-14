@@ -457,7 +457,6 @@ export default function UnitInfoForm({
     baseData,
     intUnitTypeID,
     intProductTypeID,
-    values.ddlUnitModelId,
     values.ddlLocationId,
     values.ddlOrientationId,
     values.txbSummerSupplyAirCFM,
@@ -712,7 +711,15 @@ export default function UnitInfoForm({
       strUnitModelValue
     );
 
-    if (!edit) setValue('ddlElecHeaterVoltageId', result?.ddlElecHeaterVoltageId);
+    if (!edit && result?.ddlElecHeaterVoltageDataTbl) {
+      const selectedId = result?.ddlElecHeaterVoltageDataTbl.find(
+        (item) => item.id === values.ddlElecHeaterVoltageId
+      );
+
+      if (!selectedId) {
+        setValue('ddlElecHeaterVoltageId', result?.ddlElecHeaterVoltageId);
+      }
+    }
 
     return result;
   }, [

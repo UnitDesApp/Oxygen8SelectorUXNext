@@ -286,6 +286,16 @@ export default function Project() {
           onConfirm={handleDeleteRows}
           isOneRow={false}
         />
+        <Snackbar open={openSuccess} autoHideDuration={3000} onClose={handleCloseSuccess}>
+          <Alert onClose={() => setOpenSuccess(false)} severity="success" sx={{ width: '100%' }}>
+            Project created successfully!
+          </Alert>
+        </Snackbar>
+        <Snackbar open={openFail} autoHideDuration={3000} onClose={handleCloseFail}>
+          <Alert onClose={() => setOpenFail(false)} severity="error" sx={{ width: '100%' }}>
+            Project creation failed!
+          </Alert>
+        </Snackbar>
         <Snackbar
           open={openDuplicateSuccess}
           autoHideDuration={3000}
