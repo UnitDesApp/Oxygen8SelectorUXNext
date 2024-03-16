@@ -22,6 +22,8 @@ import FormProvider from 'src/components/hook-form/FormProvider';
 import { useApiContext } from 'src/contexts/ApiContext';
 import { useGetOutdoorInfo } from 'src/hooks/useApi';
 import { RHFSelect, RHFTextField } from 'src/components/hook-form';
+import { getRandomNumber } from 'src/utils/referenceNumber';
+import { isInCurrentMonth } from 'src/utils/date';
 
 type NewProjectDialogProps = {
   open: boolean;
@@ -30,6 +32,7 @@ type NewProjectDialogProps = {
   setOpenFail: Function;
   initialInfo: any;
   refetch: Function;
+  projectList: any[];
 };
 
 export default function NewProjectDialog({
@@ -39,6 +42,7 @@ export default function NewProjectDialog({
   setOpenFail,
   initialInfo,
   refetch,
+  projectList,
 }: NewProjectDialogProps) {
   const api = useApiContext();
   const [step, setStep] = useState(0);
@@ -88,35 +92,41 @@ export default function NewProjectDialog({
     revisedDate: Yup.string(),
   });
 
-  const defaultValues = {
-    jobName: '',
-    basisOfDesign: '',
-    revision: 0,
-    companyName: '',
-    companyNameId: 0,
-    contactName: '',
-    contactNameId: 0,
-    application: '',
-    uom: '',
-    country: 'CA',
-    state: '',
-    city: '',
-    ashareDesignConditions: '',
-    altitude: 0,
-    summer_air_db: 0,
-    summer_air_wb: 0,
-    summer_air_rh: 0,
-    winter_air_db: 0,
-    winter_air_wb: 0,
-    winter_air_rh: 0,
-    summer_return_db: 75,
-    summer_return_wb: 63,
-    summer_return_rh: 51.17,
-    winter_return_db: 70,
-    winter_return_wb: 52.9,
-    winter_return_rh: 30,
-    testNewPrice: 0,
-  };
+  const defaultValues = useMemo(
+    () => ({
+      jobName: '',
+      basisOfDesign: 2,
+      referenceNo: getRandomNumber(
+        projectList.filter((item) => isInCurrentMonth(item.created_date)).length + 1
+      ),
+      revision: 0,
+      companyName: '',
+      companyNameId: 0,
+      contactName: '',
+      contactNameId: 0,
+      application: '',
+      uom: 1,
+      country: 'CA',
+      state: '',
+      city: '',
+      ashareDesignConditions: '',
+      altitude: 0,
+      summer_air_db: 0,
+      summer_air_wb: 0,
+      summer_air_rh: 0,
+      winter_air_db: 0,
+      winter_air_wb: 0,
+      winter_air_rh: 0,
+      summer_return_db: 75,
+      summer_return_wb: 63,
+      summer_return_rh: 51.17,
+      winter_return_db: 70,
+      winter_return_wb: 52.9,
+      winter_return_rh: 30,
+      testNewPrice: 0,
+    }),
+    [projectList]
+  );
 
   const methods = useForm({
     resolver: yupResolver(NewUserSchema),
@@ -131,6 +141,10 @@ export default function NewProjectDialog({
     reset,
     formState: { isSubmitting },
   } = methods;
+
+  useEffect(() => {
+    reset(defaultValues);
+  }, [defaultValues, projectList, reset]);
 
   const values = watch();
 
@@ -197,6 +211,7 @@ export default function NewProjectDialog({
       setOpenSuccess();
       refetch();
       reset(defaultValues);
+      setStep(0);
       onClose();
     } catch (error) {
       setOpenFail();
@@ -381,9 +396,8 @@ export default function NewProjectDialog({
   const onContinueBtnClicked = () => {
     handleSubmit(() => {});
     if (getValues('jobName') === '') return;
-    if (getValues('basisOfDesign') === '') return;
+    if (!getValues('basisOfDesign')) return;
     if (getValues('companyName') === '') return;
-    if (getValues('contactName') === '') return;
     if (getValues('revision') === 0) return;
     setStep(1);
   };
@@ -404,35 +418,36 @@ export default function NewProjectDialog({
 
   return (
     <Dialog open={open} onClose={handleClose}>
-      <DialogTitle>{!step ? 'Create new project' : 'Design conditions'}</DialogTitle>
+      <DialogTitle>{!step ? 'Create New Project' : 'Design conditions'}</DialogTitle>
       <FormProvider methods={methods} onSubmit={handleSubmit(onSubmit)}>
         <DialogContent>
           {!step ? (
             <Card sx={{ p: 3 }}>
               <Box sx={{ minWidth: '500px', display: 'grid', rowGap: 3, columnGap: 2 }}>
-                <RHFTextField size="small" name="jobName" label="Project name" />
+                <RHFTextField size="small" name="jobName" label="Project Name" />
                 <RHFSelect
                   native
                   size="small"
                   name="basisOfDesign"
-                  label="Basis Of design"
-                  placeholder="Basis of design"
+                  label="Project Stage"
+                  placeholder="Project Stage"
                 >
                   <option value="" />
-                  {baseOfDesign !== undefined &&
-                    baseOfDesign.map((option: any) => (
-                      <option key={`${option.id}basisOfDesign`} value={option.id}>
-                        {option.items}
+                  {['Budget', 'Basic of Design', 'Non-Basic of Design'].map(
+                    (option: string, index: number) => (
+                      <option key={`${index}basisOfDesign`} value={index + 2}>
+                        {option}
                       </option>
-                    ))}
+                    )
+                  )}
                 </RHFSelect>
-                <RHFTextField size="small" name="referenceNo" label="Reference no" />
-                <RHFTextField size="small" type="number" name="revision" label="Revision no" />
+                <RHFTextField size="small" name="referenceNo" label="Reference #" />
+                <RHFTextField size="small" type="number" name="revision" label="Revision #" />
                 <RHFSelect
                   native
                   size="small"
                   name="companyNameId"
-                  label="Company name"
+                  label="Company Name"
                   placeholder=""
                   onChange={handleChangeCompanyName}
                 >
@@ -447,7 +462,7 @@ export default function NewProjectDialog({
                   native
                   size="small"
                   name="contactNameId"
-                  label="Contact name"
+                  label="Contact Name"
                   placeholder=""
                   onChange={handleChangeContactName}
                 >

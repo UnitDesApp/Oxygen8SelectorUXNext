@@ -271,6 +271,7 @@ export default function Project() {
             setOpenSuccess={() => setOpenSuccess(true)}
             setOpenFail={() => setOpenFail(true)}
             initialInfo={projects?.jobInitInfo}
+            projectList={projects.jobList}
             refetch={refetch}
           />
         )}
