@@ -35,13 +35,11 @@ export default function LoadingScreen() {
     <StyledRoot>
       <m.div
         animate={{
-          opacity: [1, 0.48, 0.48, 1, 1],
+          opacity: [0, 1, 0],
         }}
         transition={{
-          duration: 4,
+          duration: 2,
           ease: 'easeInOut',
-          repeatDelay: 2,
-          repeat: Infinity,
         }}
       >
         <Image src="/assets/illustrations/Splash.png" sx={{ width: '100vw' }} />
