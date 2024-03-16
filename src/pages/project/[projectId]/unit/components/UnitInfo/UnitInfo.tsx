@@ -10,7 +10,6 @@ import UnitInfoForm from './UnitInfoForm';
 //------------------------------------------------
 const RootStyle = styled('div')(({ theme }) => ({
   paddingTop: theme.spacing(3),
-  mb: '100px',
   [theme.breakpoints.up('md')]: {
     paddingTop: theme.spacing(3),
   },
@@ -77,7 +76,7 @@ export default function UnitInfo({
   return (
     <RootStyle>
       <Container>
-        <Box sx={{ paddingBottom: '40px' }}>
+        <Box>
           <UnitInfoForm
             projectId={projectId}
             unitId={edit ? unitId : -1}

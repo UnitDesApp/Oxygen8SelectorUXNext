@@ -145,7 +145,7 @@ export default function NewUserDialog({
               </RHFSelect>
             </Stack>
             <Stack direction="row" justifyContent="space-around" spacing={1}>
-              <RHFSelect size="small" name="access" label="Access" placeholder="">
+              <RHFSelect native size="small" name="access" label="Access" placeholder="">
                 <option value="1">Yes</option>
                 <option value="0">No</option>
               </RHFSelect>

@@ -53,11 +53,11 @@ export default function UserTableRow({
         </TableCell>
       )}
 
-      <CustomTableCell label={username} onClick={() => onEditRow()} />
       <CustomTableCell label={first_name} onClick={() => onEditRow()} />
       <CustomTableCell label={last_name} onClick={() => onEditRow()} />
-      <CustomTableCell label={email} onClick={() => onEditRow()} />
       <CustomTableCell label={name} onClick={() => onEditRow()} />
+      <CustomTableCell label={username} onClick={() => onEditRow()} />
+      <CustomTableCell label={email} onClick={() => onEditRow()} />
       <CustomTableCell label={access} onClick={() => onEditRow()} />
       <CustomTableCell label={access_level} onClick={() => onEditRow()} />
       <CustomTableCell label={access_pricing} onClick={() => onEditRow()} />

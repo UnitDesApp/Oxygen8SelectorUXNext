@@ -23,11 +23,11 @@ import AdminPanelWrapper from '../component/AdminPanelWrapper';
 
 // ----------------------------------------------------------------------
 const TABLE_HEAD = [
-  { id: 'user_name', label: 'Username', align: 'left' },
   { id: 'first_name', label: 'First Name', align: 'left' },
   { id: 'last_name', label: 'Last Name', align: 'left' },
-  { id: 'email', label: 'Email', align: 'left' },
   { id: 'customer', label: 'Customer', align: 'left' },
+  { id: 'user_name', label: 'Username', align: 'left' },
+  { id: 'email', label: 'Email', align: 'left' },
   { id: 'access', label: 'Access', align: 'left' },
   { id: 'access_level', label: 'Access Level', align: 'left' },
   { id: 'access_pricing', label: 'Access Pricing', align: 'left' },
