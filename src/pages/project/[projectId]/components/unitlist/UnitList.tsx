@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 // @mui
 import {
   Box,
@@ -49,9 +49,19 @@ export default function UnitList() {
   const { query, push } = useRouter();
   const { projectId } = query;
 
-  const { data: units, isLoading: isLoadingUnits } = useGetAllUnits({
+  const {
+    data: units,
+    isLoading: isLoadingUnits,
+    refetch,
+    isRefetching,
+  } = useGetAllUnits({
     jobId: Number(projectId),
   });
+
+  useEffect(() => {
+    refetch();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const {
     page,
@@ -156,7 +166,7 @@ export default function UnitList() {
     [dataFiltered.length, filterName, filterRole, filterStatus]
   );
 
-  return isLoadingUnits ? (
+  return isLoadingUnits || isRefetching ? (
     <Box>
       <CircularProgressLoading />
     </Box>

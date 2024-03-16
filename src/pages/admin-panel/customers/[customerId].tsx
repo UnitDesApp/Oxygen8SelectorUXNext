@@ -157,7 +157,13 @@ export default function UserEdit() {
               <FormProvider methods={methods} onSubmit={handleSubmit(onSubmit)}>
                 <Box sx={{ display: 'grid', gap: 2, gridTemplateColumns: 'repeat(2, 1fr)' }}>
                   <RHFTextField size="small" name="username" label="Customer Name" />
-                  <RHFSelect size="small" name="customerType" label="Customer type" placeholder="">
+                  <RHFSelect
+                    native
+                    size="small"
+                    name="customerType"
+                    label="Customer type"
+                    placeholder=""
+                  >
                     {customerType?.map((item: any) => (
                       <option key={item.id} value={item.id}>
                         {item.items}
@@ -175,7 +181,7 @@ export default function UserEdit() {
                     {!customers && <option value="" />}
                   </RHFSelect>
                   <RHFTextField size="small" name="contactName" label="Contact name" />
-                  <RHFSelect size="small" name="fobPoint" label="FOB point" placeholder="">
+                  <RHFSelect native size="small" name="fobPoint" label="FOB point" placeholder="">
                     {fobPoint?.map((item: any) => (
                       <option key={item.id} value={item.id}>
                         {item.items}
