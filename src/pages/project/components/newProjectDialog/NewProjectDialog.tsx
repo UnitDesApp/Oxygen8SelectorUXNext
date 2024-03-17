@@ -97,7 +97,7 @@ export default function NewProjectDialog({
       jobName: '',
       basisOfDesign: 2,
       referenceNo: getRandomNumber(
-        projectList.filter((item) => isInCurrentMonth(item.created_date)).length + 1
+        (projectList?.filter((item) => isInCurrentMonth(item.created_date)).length || 0) + 1
       ),
       revision: 0,
       companyName: '',
