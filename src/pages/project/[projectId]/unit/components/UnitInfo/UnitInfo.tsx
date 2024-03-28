@@ -49,7 +49,8 @@ export default function UnitInfo({
     {
       intUserID: typeof window !== 'undefined' && localStorage.getItem('userId'),
       intUAL: typeof window !== 'undefined' && localStorage.getItem('UAL'),
-      intProjectID: projectId,
+      // intProjectID: projectId,
+      intJobId: projectId,
       intUnitNo: edit ? unitId : -1,
     },
     {
@@ -71,8 +72,9 @@ export default function UnitInfo({
 
   if (isLoadingBaseData || isLoadingUnitInfo) return <CircularProgressLoading />;
 
+  // const { unitInfo } = unitData || { unitInfo: {} };
   const { unitInfo } = unitData || { unitInfo: {} };
-
+  
   return (
     <RootStyle>
       <Container>
@@ -87,8 +89,8 @@ export default function UnitInfo({
             onSuccess={() => setOpenSuccess(true)}
             onError={() => setOpenError(true)}
             edit={edit}
-            intProductTypeID={intProductTypeID || unitInfo?.productTypeID || 0}
-            intUnitTypeID={intUnitTypeID || unitInfo?.unitTypeID || 0}
+            intProductTypeID={intProductTypeID || unitInfo?.oUnit?.intProdTypeId || 0}
+            intUnitTypeID={intUnitTypeID || unitInfo?.oUnit?.intUnitTypeId || 0}
             setFunction={setFunction}
             txbProductType={txbProductType}
             txbUnitType={txbUnitType}

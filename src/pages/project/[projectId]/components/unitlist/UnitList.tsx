@@ -135,7 +135,7 @@ export default function UnitList() {
   };
 
   const handleEditRow = (row: any) => {
-    setIntProductTypeID(Number(row.product_type_id));
+    setIntProductTypeID(Number(row.prod_type_id));
     setIntUnitTypeID(Number(row.unit_type_id));
     push(PATH_APP.editUnit(projectId?.toString() || '0', row.unit_no));
   };
