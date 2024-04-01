@@ -1,8 +1,8 @@
-//REGISTER
+// REGISTER
 export const POST_JWT_REGISTER = "/api/auth/signup";
 
 
-//LOGIN
+// LOGIN
 export const POST_JWT_LOGIN = "/api/auth/signin";
 
 // Units

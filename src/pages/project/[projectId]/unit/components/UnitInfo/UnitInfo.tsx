@@ -67,8 +67,11 @@ export default function UnitInfo({
       intJobId: projectId,
       intUnitNo: edit ? unitId : -1,
     }).then((res: any) => {
-      setunitData(JSON.parse(res)['unitInfo']);
-      setunitInfo(JSON.parse(res)['unitInfo']);
+ //     setunitData(JSON.parse(res)['unitInfo']);
+ //     setunitInfo(JSON.parse(res)['unitInfo']);
+      setunitData(JSON.parse(res.unitInfo));
+      setunitInfo(JSON.parse(res.unitInfo));
+
       setisLoadingUnitInfo(false);
     })
 
@@ -79,7 +82,7 @@ export default function UnitInfo({
     return () => {
       // second
     }
-  }, [])
+  }, [edit, projectId, unitId])
 
 
   // ----------------------- Success State and Handle Close ---------------------------

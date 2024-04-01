@@ -539,7 +539,7 @@ export default function UnitInfoForm({
     (e: any, key: any) => {
       if (e.target.value === '') {
         setValue(key, '');
-      } else if (!isNaN(+e.target.value)) {
+      } else if (!Number.isNaN(Number(+e.target.value))) {
         setValue(key, e.target.value);
         return true;
       }

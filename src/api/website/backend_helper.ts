@@ -10,10 +10,9 @@ const api = new APIClient();
 export const postJwtLogin = (data: any) => api.create(url.POST_JWT_LOGIN, data);
 
 // Register Method
-export const postJwtRegister = (url: any, data: any) => {
-  return api.create(url, data)
+export const postJwtRegister = (data: any) =>  api.create(url, data)
     .catch(err => {
-      var message;
+      let message;
       if (err.response && err.response.status) {
         switch (err.response.status) {
           case 404:
@@ -32,7 +31,6 @@ export const postJwtRegister = (url: any, data: any) => {
       }
       throw message;
     });
-};
 
 
 
@@ -41,12 +39,12 @@ export const postJwtRegister = (url: any, data: any) => {
    */
 
 export const getAuthenticatedUser = () => {
-  var res = localStorage.getItem("authUser");
+  const res = localStorage.getItem("authUser");
   if (res) {
     return JSON.parse(res);
-  } else {
+  } 
     return null;
-  }
+  
 };
 
 export const updateAuthenticatedUser = (user: any) => {
@@ -62,9 +60,7 @@ export const getLoggedInUser = () => {
 };
 
 // //is user is logged in
-export const isUserAuthenticated = () => {
-  return getLoggedInUser() !== null;
-};
+export const isUserAuthenticated = () =>  getLoggedInUser() !== null;
 
 
 // Get Unit

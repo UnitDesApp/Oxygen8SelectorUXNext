@@ -7,10 +7,8 @@ axios.defaults.baseURL = BACKEND_ENDPOINT;
 axios.defaults.headers.post["Content-Type"] = "application/json";
 // intercepting to capture errors
 axios.interceptors.response.use(
-  function (response) {
-    return response.data ? response.data : response;
-  },
-  function (error) {
+  (response) => response.data ? response.data : response,
+  (error) => {
     // Any status codes that falls outside the range of 2xx cause this function to trigger
     let message;
     switch (error.status) {
@@ -38,14 +36,15 @@ class APIClient {
   //  get = (url:any, params) => {
   //   return axios.get(url, params);
   // };
+  // eslint-disable-next-line class-methods-use-this
   get = (url: any, params: any) => {
     let response;
 
-    let paramKeys: string[] = [];
+    const paramKeys: string[] = [];
 
     if (params) {
       Object.keys(params).map(key => {
-        paramKeys.push(key + '=' + params[key])
+        paramKeys.push(`${key  }=${  params[key]}`)
         return paramKeys;
       });
 
@@ -57,44 +56,42 @@ class APIClient {
 
     return response;
   }
-  /**
-   * post given data to url
-   */
-  create = (url: any, data: any) => {
-    return axios.post(url, data);
-  };
 
   /**
    * post given data to url
    */
-  postFormData = (url: any, formData: any) => {
-    return axios.post(url, formData, {
+  // eslint-disable-next-line class-methods-use-this
+  create = (url: any, data: any) => axios.post(url, data);
+
+  /**
+   * post given data to url
+   */
+  // eslint-disable-next-line class-methods-use-this
+  postFormData = (url: any, formData: any) => axios.post(url, formData, {
       headers: {
         'Content-Type': 'multipart/form-data'
       }
     });
-  };
 
   /**
    * Updates data
    */
-  update = (url: any, data: any) => {
-    return axios.put(url, data);
-  };
+  // eslint-disable-next-line class-methods-use-this
+  update = (url: any, data: any) => axios.put(url, data);
+
   /**
    * Delete
    */
-  delete = (url: any, config: any) => {
-    return axios.delete(url, { ...config });
-  };
+  // eslint-disable-next-line class-methods-use-this
+  delete = (url: any, config: any) => axios.delete(url, { ...config });
 }
+
 const getLoggedinUser = () => {
   const user = localStorage.getItem("authUser");
   if (!user) {
     return null;
-  } else {
+  } 
     return JSON.parse(user);
-  }
 };
 
 export { APIClient, getLoggedinUser };
