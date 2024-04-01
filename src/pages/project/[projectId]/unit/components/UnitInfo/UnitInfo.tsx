@@ -69,8 +69,8 @@ export default function UnitInfo({
     }).then((res: any) => {
  //     setunitData(JSON.parse(res)['unitInfo']);
  //     setunitInfo(JSON.parse(res)['unitInfo']);
-      setunitData(JSON.parse(res.unitInfo));
-      setunitInfo(JSON.parse(res.unitInfo));
+      setunitData(JSON.parse(res).unitInfo);
+      setunitInfo(JSON.parse(res).unitInfo);
 
       setisLoadingUnitInfo(false);
     })
