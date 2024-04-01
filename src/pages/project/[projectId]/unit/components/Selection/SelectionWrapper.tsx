@@ -11,7 +11,8 @@ export default function SelectionWrapper({ projectId, unitId }: SelectionWrapper
     {
       intUserID: typeof window !== 'undefined' && localStorage.getItem('userId'),
       intUAL: typeof window !== 'undefined' && localStorage.getItem('UAL'),
-      intProjectID: projectId,
+      // intProjectID: projectId,
+      intJobId: projectId,
       intUnitNo: unitId,
     },
     {

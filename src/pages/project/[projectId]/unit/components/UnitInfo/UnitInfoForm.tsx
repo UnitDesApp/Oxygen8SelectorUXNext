@@ -96,6 +96,8 @@ export default function UnitInfoForm({
   const isResetCalled = useRef(false);
   const user = useAuthContext();
 
+
+
   // ------------------------------- Checkbox State -----------------------------------
   const [ckbBypassVal, setCkbBypassVal] = useState(false);
   const [ckbDrainPanVal, setCkbDrainPanVal] = useState(false);
@@ -238,10 +240,307 @@ export default function UnitInfoForm({
     ]
   );
 
+
+  // const oUC = {
+  //  }
+
+  // const formValues = getValues();
+
+  const getAllFormData1 =  useCallback(
+    () => ({
+      // oUnitInputs : {
+        oUnit: {
+          "intJobId" : projectId,
+          "intUnitNo" : edit ? unitId : 0,
+          "intProdTypeId" : intProductTypeID,
+          "intUnitTypeId" : intUnitTypeID,
+          "strTag" :  formValues.txtTag ,
+          "intQty" : formValues.txbQty,
+          "intUnitVoltageId" : formValues.ddlUnitVoltageId,
+          "intIsPHI" : 0,
+          "intIsBypass" : 0,
+          "intUnitModelId" : formValues.ddlUnitModelId,
+          "intSelectionTypeId" : 0,
+          "intLocationId" : formValues.ddlLocationId,
+          "intIsDownshot" : 0,
+          "intOrientationId" : formValues.ddlOrientationId,
+          "intControlPreferenceId" : formValues.ddlOrientationId,
+          "intControlsViaId" : 0,
+        },
+        oUnitAirflow : {
+          "intJobId" : projectId,
+          "intUnitNo" : edit ? unitId : 0,
+          "intProdTypeId" : intProductTypeID,
+          "intUnitTypeId" : intUnitTypeID,
+          "intAltitude" : formValues.ddlUnitVoltageId,
+          "intSummerSupplyAirCFM" : formValues.txbSummerSupplyAirCFM,
+          "intSummerReturnAirCFM" : formValues.txbSummerReturnAirCFM,
+          "intWinterSupplyAirCFM" : formValues.txbSummerSupplyAirCFM,
+          "intWinterReturnAirCFM" : formValues.txbSummerReturnAirCFM,
+          "dblSummerOutdoorAirDB" : formValues.txbSummerOutdoorAirDB,
+          "dblSummerOutdoorAirWB" : formValues.txbSummerOutdoorAirWB,
+          "dblSummerOutdoorAirRH" : formValues.txbSummerOutdoorAirRH,
+          "dblWinterOutdoorAirDB" : formValues.txbWinterOutdoorAirDB,
+          "dblWinterOutdoorAirWB" : formValues.txbWinterOutdoorAirWB,
+          "dblWinterOutdoorAirRH" : formValues.txbWinterOutdoorAirRH,
+          "dblSummerReturnAirDB" : formValues.txbSummerReturnAirDB,
+          "dblSummerReturnAirWB" : formValues.txbSummerReturnAirWB,
+          "dblSummerReturnAirRH" : formValues.txbSummerReturnAirRH,
+          "dblWinterReturnAirDB" : formValues.txbWinterReturnAirDB,
+          "dblWinterReturnAirWB" : formValues.txbWinterReturnAirWB,
+          "dblWinterReturnAirRH" : formValues.txbWinterReturnAirRH,
+          "dblSupplyAirESP" : formValues.txbSupplyAirESP,
+          "dblExhaustAirESP" : formValues.txbExhaustAirESP,
+        },
+        oUnitCompOpt : {
+          "intJobId" : projectId,
+          "intUnitNo" : edit ? unitId : 0,
+          "intProdTypeId" : intProductTypeID,
+          "intUnitTypeId" : intUnitTypeID,
+          "intOA_FilterModelId" : formValues.ddlOA_FilterModelId,
+          "intFinalFilterModelId" : 0,
+          "intRA_FitlerModelId" : formValues.ddlRA_FilterModelId,
+          "intHeatExchCompId" : formValues.ddlHeatExchCompId,
+          "intPreheatCompId" : formValues.ddlPreheatCompId,
+          "intIsBackupHeating" : 0,
+          "intCoolingCompId" : formValues.ddlCoolingCompId,
+          "intHeatingCompId" : formValues.ddlHeatingCompId,
+          "intReheatCompId" : formValues.ddlReheatCompId,
+          "intIsHeatPump" : ckbHeatPumpVal === true ? 1 : 0,
+          "intIsDehumidification" : ckbDehumidificationVal === true ? 1 : 0,
+          "intElecHeaterVoltageId" : formValues.ddlElecHeaterVoltageId,
+          "intPreheatElecHeaterInstallationId" : formValues.ddlPreheatElecHeaterInstallationId,
+          "intHeatingElecHeaterInstallationId" : formValues.ddlHeatElecHeaterInstallationId,
+          "intPreheatElecHeaterStdCoilNo" : 0,
+          "intCoolingDX_VRV_KitQty" : 0,
+          "dblCoolingDX_VRV_KitTonnage" : 0,
+          "intHeatingElecHeaterStdCoilNo" : 0,
+          "intReheatElecHeaterStdCoilNo" : 0,
+          
+          "intReheatHGRC_VRV_KitQty" : 0,
+          "dblReheatHGRC_VRV_KitTonnage" : 0,
+          "intDamperAndActuatorId" : formValues.ddlDamperAndActuatorId,
+          "intisValveAndActuatorIncluded" : ckbValveAndActuatorVal === true ? 1 : 0,
+          "intPreheatHWC_ValveAndActuatorId" : 0,
+          "intCoolingCWC_ValveAndActuatorId" : 0,
+          "intHeatingHWC_ValveAndActuatorId" : 0,
+          "intReheatHWC_ValveAndActuatorId" : 0,
+          "intValveTypeId" : formValues.ddlValveTypeId,
+          "intIsDrainPan" : ckbDrainPanVal === true ? 1 : 0,
+          "dblOA_FilterPD" : formValues.txbOA_FilterPD,
+          "dblRA_FilterPD" : formValues.txbRA_FilterPD,
+          "dblPreheatSetpointDB" : formValues.txbWinterPreheatSetpointDB,
+          "dblCoolingSetpointDB" : formValues.txbSummerCoolingSetpointDB,
+          "dblCoolingSetpointWB" : formValues.txbSummerCoolingSetpointWB,
+          "dblHeatingSetpointDB" : formValues.txbWinterHeatingSetpointDB,
+          "dblReheatSetpontDB" : formValues.txbSummerReheatSetpointDB,
+          "dblBackupHeatingSetpontDB" : 0,
+          "intCoolingFluidTypeId" : formValues.ddlCoolingFluidTypeId,
+          "intCoolingFluidConcentId" : formValues.ddlCoolingFluidConcentrationId,
+          "dblCoolingFluidEntTemp" : formValues.txbCoolingFluidEntTemp,
+          "dblCoolingFluidLvgTemp" : formValues.txbCoolingFluidLvgTemp,
+          "dblHeatingFluidTypeId" : formValues.ddlHeatingFluidTypeId,
+          "dblHeatingFluidConcentId" : formValues.ddlHeatingFluidConcentrationId,
+          "dblHeatingFluidEntTemp" : formValues.txbHeatingFluidEntTemp,
+          "dblHeatingFluidLvgTemp" : formValues.txbHeatingFluidLvgTemp,
+          "dblRefrigSuctionTemp" : formValues.txbRefrigSuctionTemp,
+          "dblRefrigLiquidTemp" : formValues.txbRefrigLiquidTemp,
+          "dblRefrigSuperheatTemp" : formValues.txbRefrigSuperheatTemp,
+          "dblRefrigCondensingTemp" : formValues.txbRefrigCondensingTemp,
+          "dblRefrigVaporTemp" : formValues.txbRefrigVaporTemp,
+          "dblRefrigSubcoolingTemp" : formValues.txbRefrigSubcoolingTemp,
+          "intIsHeatExchEA_Warning" : 0,
+        },
+        oUnitCompOptCust : {
+          "intJobId" : projectId,
+          "intUnitNo" : edit ? unitId : 0,
+          "intProdTypeId" : intProductTypeID,
+          "intUnitTypeId" : intUnitTypeID,
+          "intIsPreheatHWCUseCap" : 0,
+          "dblPrheatHWCCap" : formValue.txbReheatHWC_Cap,
+          "intIsPrehatHWCUseFlowRate" : 0,
+          "dblPreheatHWCFlowRate" : formValue.txbPreheatHWC_FlowRate,
+          "intIsCoolingCWCUseCap" : 0,
+          "dblCoolingCWCCap" : formValue.txbCoolingCWC_Cap,
+          "intIsCoolingCWCUseFlowRate" : 0,
+          "dblCoolingCWCFlowRate" : formValue.txbCoolingCWC_FlowRate,
+          "intIsHeatingHWCUseCap" : 0,
+          "dblHeatingHWCCap" : formValue.txbReheatHWC_Cap,
+          "intIsHeatingHWCUseFlowRate" : 0,
+          "dblHeatingHWCFlowRate" : formValue.txbHeatingHWC_FlowRate,
+          "intIsReheatHWCUseCap" : 0,
+          "dblReheatHWCCap" : formValue.txbHeatingHWC_Cap,
+          "intIsReheatHWCUseFlowRate" : 0,
+          "dblReheatHWCFlowRate" : formValue.txbReheatHWC_FlowRate,
+        },
+      //  }
+    }),
+    []
+  );
+
+
+   const getUnitInputs = () => {
+    // const jsonData = '{"name":"John", "age":30, "city":"London"}';
+    // let oUnitInputs;
+    const formValues = getValues();
+    const oUnitInputs = {
+        oUnit: {
+          "intJobId" : projectId,
+          "intUnitNo" : edit ? unitId : 0,
+          "intProdTypeId" : intProductTypeID,
+          "intUnitTypeId" : intUnitTypeID,
+          "strTag" :  formValues.txtTag ,
+          "intQty" : formValues.txbQty,
+          "intUnitVoltageId" : formValues.ddlUnitVoltageId,
+          "intIsPHI" : 0,
+          "intIsBypass" : 0,
+          "intUnitModelId" : formValues.ddlUnitModelId,
+          "intSelectionTypeId" : 0,
+          "intLocationId" : formValues.ddlLocationId,
+          "intIsDownshot" : 0,
+          "intOrientationId" : formValues.ddlOrientationId,
+          "intControlsPreferenceId" : formValues.ddlControlsPreferenceId,
+          "intControlViaId" : 0,
+        },
+        oUnitAirflow : {
+          "intJobId" : projectId,
+          "intUnitNo" : edit ? unitId : 0,
+          "intProdTypeId" : intProductTypeID,
+          "intUnitTypeId" : intUnitTypeID,
+          "intAltitude" : formValues.ddlUnitVoltageId,
+          "intSummerSupplyAirCFM" : formValues.txbSummerSupplyAirCFM,
+          "intSummerReturnAirCFM" : formValues.txbSummerReturnAirCFM,
+          "intWinterSupplyAirCFM" : formValues.txbSummerSupplyAirCFM,
+          "intWinterReturnAirCFM" : formValues.txbSummerReturnAirCFM,
+          "dblSummerOutdoorAirDB" : formValues.txbSummerOutdoorAirDB,
+          "dblSummerOutdoorAirWB" : formValues.txbSummerOutdoorAirWB,
+          "dblSummerOutdoorAirRH" : formValues.txbSummerOutdoorAirRH,
+          "dblWinterOutdoorAirDB" : formValues.txbWinterOutdoorAirDB,
+          "dblWinterOutdoorAirWB" : formValues.txbWinterOutdoorAirWB,
+          "dblWinterOutdoorAirRH" : formValues.txbWinterOutdoorAirRH,
+          "dblSummerReturnAirDB" : formValues.txbSummerReturnAirDB,
+          "dblSummerReturnAirWB" : formValues.txbSummerReturnAirWB,
+          "dblSummerReturnAirRH" : formValues.txbSummerReturnAirRH,
+          "dblWinterReturnAirDB" : formValues.txbWinterReturnAirDB,
+          "dblWinterReturnAirWB" : formValues.txbWinterReturnAirWB,
+          "dblWinterReturnAirRH" : formValues.txbWinterReturnAirRH,
+          "dblSupplyAirESP" : formValues.txbSupplyAirESP,
+          "dblExhaustAirESP" : formValues.txbExhaustAirESP,
+        },
+        oUnitCompOpt : {
+          "intJobId" : projectId,
+          "intUnitNo" : edit ? unitId : 0,
+          "intProdTypeId" : intProductTypeID,
+          "intUnitTypeId" : intUnitTypeID,
+          "intOA_FilterModelId" : formValues.ddlOA_FilterModelId,
+          "intFinalFilterModelId" : 0,
+          "intRA_FitlerModelId" : formValues.ddlRA_FilterModelId,
+          "intHeatExchCompId" : formValues.ddlHeatExchCompId,
+          "intPreheatCompId" : formValues.ddlPreheatCompId,
+          "intIsBackupHeating" : 0,
+          "intCoolingCompId" : formValues.ddlCoolingCompId,
+          "intHeatingCompId" : formValues.ddlHeatingCompId,
+          "intReheatCompId" : formValues.ddlReheatCompId,
+          "intIsHeatPump" : ckbHeatPumpVal === true ? 1 : 0,
+          "intIsDehumidification" : ckbDehumidificationVal === true ? 1 : 0,
+          "intElecHeaterVoltageId" : formValues.ddlElecHeaterVoltageId,
+          "intPreheatElecHeaterInstallationId" : formValues.ddlPreheatElecHeaterInstallationId,
+          "intHeatingElecHeaterInstallationId" : formValues.ddlHeatElecHeaterInstallationId,
+          "intPreheatElecHeaterStdCoilNo" : 0,
+          "intCoolingDX_VRV_KitQty" : 0,
+          "dblCoolingDX_VRV_KitTonnage" : 0,
+          "intHeatingElecHeaterStdCoilNo" : 0,
+          "intReheatElecHeaterStdCoilNo" : 0,
+          
+          "intReheatHGRC_VRV_KitQty" : 0,
+          "dblReheatHGRC_VRV_KitTonnage" : 0,
+          "intDamperAndActuatorId" : formValues.ddlDamperAndActuatorId,
+          "intisValveAndActuatorIncluded" : ckbValveAndActuatorVal === true ? 1 : 0,
+          "intPreheatHWC_ValveAndActuatorId" : 0,
+          "intCoolingCWC_ValveAndActuatorId" : 0,
+          "intHeatingHWC_ValveAndActuatorId" : 0,
+          "intReheatHWC_ValveAndActuatorId" : 0,
+          "intValveTypeId" : formValues.ddlValveTypeId,
+          "intIsDrainPan" : ckbDrainPanVal === true ? 1 : 0,
+          "dblOA_FilterPD" : formValues.txbOA_FilterPD,
+          "dblRA_FilterPD" : formValues.txbRA_FilterPD,
+          "dblPreheatSetpointDB" : formValues.txbWinterPreheatSetpointDB,
+          "dblCoolingSetpointDB" : formValues.txbSummerCoolingSetpointDB,
+          "dblCoolingSetpointWB" : formValues.txbSummerCoolingSetpointWB,
+          "dblHeatingSetpointDB" : formValues.txbWinterHeatingSetpointDB,
+          "dblReheatSetpontDB" : formValues.txbSummerReheatSetpointDB,
+          "dblBackupHeatingSetpontDB" : 0,
+          "intCoolingFluidTypeId" : formValues.ddlCoolingFluidTypeId,
+          "intCoolingFluidConcentId" : formValues.ddlCoolingFluidConcentrationId,
+          "dblCoolingFluidEntTemp" : formValues.txbCoolingFluidEntTemp,
+          "dblCoolingFluidLvgTemp" : formValues.txbCoolingFluidLvgTemp,
+          "dblHeatingFluidTypeId" : formValues.ddlHeatingFluidTypeId,
+          "dblHeatingFluidConcentId" : formValues.ddlHeatingFluidConcentrationId,
+          "dblHeatingFluidEntTemp" : formValues.txbHeatingFluidEntTemp,
+          "dblHeatingFluidLvgTemp" : formValues.txbHeatingFluidLvgTemp,
+          "dblRefrigSuctionTemp" : formValues.txbRefrigSuctionTemp,
+          "dblRefrigLiquidTemp" : formValues.txbRefrigLiquidTemp,
+          "dblRefrigSuperheatTemp" : formValues.txbRefrigSuperheatTemp,
+          "dblRefrigCondensingTemp" : formValues.txbRefrigCondensingTemp,
+          "dblRefrigVaporTemp" : formValues.txbRefrigVaporTemp,
+          "dblRefrigSubcoolingTemp" : formValues.txbRefrigSubcoolingTemp,
+          "intIsHeatExchEA_Warning" : 0,
+        },
+        oUnitCompOptCust : {
+          "intJobId" : projectId,
+          "intUnitNo" : edit ? unitId : 0,
+          "intProdTypeId" : intProductTypeID,
+          "intUnitTypeId" : intUnitTypeID,
+          "intIsPreheatHWCUseCap" : 0,
+          "dblPrheatHWCCap" : formValues.txbReheatHWC_Cap,
+          "intIsPrehatHWCUseFlowRate" : 0,
+          "dblPreheatHWCFlowRate" : formValues.txbPreheatHWC_FlowRate,
+          "intIsCoolingCWCUseCap" : 0,
+          "dblCoolingCWCCap" : formValues.txbCoolingCWC_Cap,
+          "intIsCoolingCWCUseFlowRate" : 0,
+          "dblCoolingCWCFlowRate" : formValues.txbCoolingCWC_FlowRate,
+          "intIsHeatingHWCUseCap" : 0,
+          "dblHeatingHWCCap" : formValues.txbReheatHWC_Cap,
+          "intIsHeatingHWCUseFlowRate" : 0,
+          "dblHeatingHWCFlowRate" : formValues.txbHeatingHWC_FlowRate,
+          "intIsReheatHWCUseCap" : 0,
+          "dblReheatHWCCap" : formValues.txbHeatingHWC_Cap,
+          "intIsReheatHWCUseFlowRate" : 0,
+          "dblReheatHWCFlowRate" : formValues.txbReheatHWC_FlowRate,
+        },
+        oUnitLayout : {
+          "intJobId" : projectId,
+          "intUnitNo" : edit ? unitId : 0,
+          "intProdTypeId" : intProductTypeID,
+          "intUnitTypeId" : intUnitTypeID,
+          "intHandingId" : formValues.ddlHandingId,
+          "intPreheatCoilHandingId" : formValues.ddlPreheatCoilHandingId,
+          "intCoolingCoilHandingId" : formValues.ddlCoolingCoilHandingId,
+          "intHeatingCoilHandingId" : formValues.ddlHeatingCoilHandingId,
+          "intSAOpeningId" : formValues.ddlSupplyAirOpeningId,
+          "strSAOpening" : formValues.ddlSupplyAirOpeningText,
+          "intEAOpeningId" : formValues.ddlExhaustAirOpeningId,
+          "strEAOpening" : formValues.ddlExhaustAirOpeningText,
+          "intOAOpeningId" : formValues.ddlOutdoorAirOpeningId,
+          "strOAOpening" : formValues.ddlOutdoorAirOpeningText,
+          "intRAOpeningId" : formValues.ddlReturnAirOpeningId,
+          "strRAOpening" : formValues.ddlReturnAirOpeningText,
+        },
+       }
+  
+    return oUnitInputs;
+  };
+
+
+
   // --------------------------- Submit (Save) -----------------------------
   const onSubmit = useCallback(async () => {
     try {
-      const data = await api.project.saveUnitInfo(getAllFormData());
+      // const data = await api.project.saveUnitInfo(getAllFormData1());
+      // formValues = getValues();
+      // const oUC = getAllFormData1(formValues);
+      const oUC = getUnitInputs();
+      const data = await api.project.saveUnitInfo(oUC);
       if (onSuccess) onSuccess(true);
       if (setIsSavedUnit) setIsSavedUnit(data?.intUnitNo || 0);
     } catch (e) {
@@ -359,6 +658,20 @@ export default function UnitInfoForm({
         setValue(key, '');
       } else if (!Number.isNaN(+e.target.value)) {
         setValue(key, parseFloat(e.target.value));
+        return true;
+      }
+      return false;
+    },
+    [setValue]
+  );
+
+
+  const setValueWithCheck1 = useCallback(
+    (e: any, key: any) => {
+      if (e.target.value === '') {
+        setValue(key, '');
+      } else if (!isNaN(+e.target.value)) {
+        setValue(key, e.target.value);
         return true;
       }
       return false;
@@ -512,7 +825,7 @@ export default function UnitInfoForm({
     const locations = getLocation(baseData, intProductTypeID, intUnitTypeID);
 
     if (locations?.filter((item: any) => item.id === values.ddlLocationId)?.length === 0) {
-      setValue('ddlLocationId', locations[0].id);
+      setValue('ddlLocationId', locations[0]?.id);
     }
 
     return locations;
@@ -1025,7 +1338,7 @@ export default function UnitInfoForm({
                     name="txbSupplyAirESP"
                     label="Supply Air ESP (inH2O)"
                     onChange={(e: any) => {
-                      setValueWithCheck(e, 'txbSupplyAirESP');
+                      setValueWithCheck1(e, 'txbSupplyAirESP');
                     }}
                     onBlur={handleBlurSupplyAirESP}
                   />
@@ -1035,7 +1348,7 @@ export default function UnitInfoForm({
                     label="Exhaust Air ESP (inH2O)"
                     sx={getDisplay(!isUnitTypeAHU())}
                     onChange={(e: any) => {
-                      setValueWithCheck(e, 'txbExhaustAirESP');
+                      setValueWithCheck1(e, 'txbExhaustAirESP');
                     }}
                     onBlur={handleBlurExhaustAirESP}
                   />
@@ -1179,6 +1492,19 @@ export default function UnitInfoForm({
                     ))}
                   </RHFSelect>
                 )}
+                <RHFTextField
+                  size="small"
+                  name="txbWinterPreheatSetpointDB"
+                  label="Preheat LAT Setpoint DB (F):"
+                  autoComplete="off"
+                  sx={getDisplay(
+                    values.ddlPreheatCompId === IDs.intCompElecHeaterID ||
+                      values.ddlCoolingCompId === IDs.intCompHWC_ID
+                  )}
+                  onChange={(e: any) => {
+                    setValueWithCheck1(e, 'txbWinterPreheatSetpointDB');
+                  }}
+                />
                 {isAvailable(baseData?.handing) && (
                   <RHFSelect
                     native
@@ -1259,7 +1585,7 @@ export default function UnitInfoForm({
                   name="txbHeatingFluidEntTemp"
                   label="Heating Fluid Ent Temp (F)"
                   onChange={(e: any) => {
-                    setValueWithCheck(e, 'txbHeatingFluidEntTemp');
+                    setValueWithCheck1(e, 'txbHeatingFluidEntTemp');
                   }}
                 />
                 <RHFTextField
@@ -1267,7 +1593,7 @@ export default function UnitInfoForm({
                   name="txbHeatingFluidLvgTemp"
                   label="Heating Fluid Lvg Temp (F)"
                   onChange={(e: any) => {
-                    setValueWithCheck(e, 'txbHeatingFluidLvgTemp');
+                    setValueWithCheck1(e, 'txbHeatingFluidLvgTemp');
                   }}
                 />
               </Stack>
@@ -1294,7 +1620,7 @@ export default function UnitInfoForm({
                   label="Preheat HWC Capacity (MBH)"
                   sx={getDisplay(customInputs.divPreheatHWC_UseCapVisible)}
                   onChange={(e: any) => {
-                    setValueWithCheck(e, 'txbPreheatHWC_Cap');
+                    setValueWithCheck1(e, 'txbPreheatHWC_Cap');
                   }}
                 />
                 <FormControlLabel
@@ -1319,7 +1645,7 @@ export default function UnitInfoForm({
                   label="Preheat HWC Flow Rate (GPM)"
                   sx={getDisplay(customInputs.divPreheatHWC_UseFlowRateVisible)}
                   onChange={(e: any) => {
-                    setValueWithCheck(e, 'txbPreheatHWC_FlowRate');
+                    setValueWithCheck1(e, 'txbPreheatHWC_FlowRate');
                   }}
                 />
               </Stack>
@@ -1377,7 +1703,7 @@ export default function UnitInfoForm({
                       values.ddlCoolingCompId === IDs.intCompDX_ID
                   )}
                   onChange={(e: any) => {
-                    setValueWithCheck(e, 'txbSummerCoolingSetpointDB');
+                    setValueWithCheck1(e, 'txbSummerCoolingSetpointDB');
                   }}
                 />
                 <RHFTextField
@@ -1390,7 +1716,7 @@ export default function UnitInfoForm({
                       Number(values.ddlCoolingCompId) === IDs.intCompDX_ID
                   )}
                   onChange={(e: any) => {
-                    setValueWithCheck(e, 'txbSummerCoolingSetpointWB');
+                    setValueWithCheck1(e, 'txbSummerCoolingSetpointWB');
                   }}
                 />
                 <FormControlLabel
@@ -1449,7 +1775,7 @@ export default function UnitInfoForm({
                   name="txbRefrigSuctionTemp"
                   label="Suction Temp (F)"
                   onChange={(e: any) => {
-                    setValueWithCheck(e, 'txbRefrigSuctionTemp');
+                    setValueWithCheck1(e, 'txbRefrigSuctionTemp');
                   }}
                 />
 
@@ -1458,7 +1784,7 @@ export default function UnitInfoForm({
                   name="txbRefrigLiquidTemp"
                   label="Liquid Temp (F)"
                   onChange={(e: any) => {
-                    setValueWithCheck(e, 'txbRefrigLiquidTemp');
+                    setValueWithCheck1(e, 'txbRefrigLiquidTemp');
                   }}
                 />
 
@@ -1467,7 +1793,7 @@ export default function UnitInfoForm({
                   name="txbRefrigSuperheatTemp"
                   label="Superheat Temp (F)"
                   onChange={(e: any) => {
-                    setValueWithCheck(e, 'txbRefrigSuperheatTemp');
+                    setValueWithCheck1(e, 'txbRefrigSuperheatTemp');
                   }}
                 />
               </Stack>
@@ -1496,11 +1822,7 @@ export default function UnitInfoForm({
                     name="ddlCoolingFluidConcentrationId"
                     label="Cooling Fluid %"
                   >
-                    {getItemsAddedOnIDDataTable(
-                      baseData?.fluidConcentration,
-                      'fluid_type_id',
-                      Number(values.ddlCoolingFluidTypeId)
-                    )?.map((item: any, index: number) => (
+                    {getItemsAddedOnIDDataTable(baseData?.fluidConcentration, 'fluid_type_id', Number(values.ddlCoolingFluidTypeId))?.map((item: any, index: number) => (
                       <option key={index} value={item.id}>
                         {item.items}
                       </option>
@@ -1512,7 +1834,7 @@ export default function UnitInfoForm({
                   name="txbCoolingFluidEntTemp"
                   label="Cooling Fluid Ent Temp (F)"
                   onChange={(e: any) => {
-                    setValueWithCheck(e, 'txbCoolingFluidEntTemp');
+                    setValueWithCheck1(e, 'txbCoolingFluidEntTemp');
                   }}
                 />
 
@@ -1521,7 +1843,7 @@ export default function UnitInfoForm({
                   name="txbCoolingFluidLvgTemp"
                   label="Cooling Fluid Lvg Temp (F)"
                   onChange={(e: any) => {
-                    setValueWithCheck(e, 'txbCoolingFluidLvgTemp');
+                    setValueWithCheck1(e, 'txbCoolingFluidLvgTemp');
                   }}
                 />
               </Stack>
@@ -1552,7 +1874,7 @@ export default function UnitInfoForm({
                   label="Cooling CWC Capacity (MBH)"
                   sx={getDisplay(customInputs.divCoolingCWC_UseCapVisible)}
                   onChange={(e: any) => {
-                    setValueWithCheck(e, 'txbCoolingCWC_Cap');
+                    setValueWithCheck1(e, 'txbCoolingCWC_Cap');
                   }}
                 />
                 <FormControlLabel
@@ -1577,7 +1899,7 @@ export default function UnitInfoForm({
                   label="Cooling CWC Flow Rate (GPM)"
                   sx={getDisplay(customInputs.divCoolingCWC_UseFlowRateVisible)}
                   onChange={(e: any) => {
-                    setValueWithCheck(e, 'txbCoolingCWC_FlowRate');
+                    setValueWithCheck1(e, 'txbCoolingCWC_FlowRate');
                   }}
                 />
               </Stack>
@@ -1637,7 +1959,7 @@ export default function UnitInfoForm({
                       ckbHeatPumpVal
                   )}
                   onChange={(e: any) => {
-                    setValueWithCheck(e, 'txbWinterHeatingSetpointDB');
+                    setValueWithCheck1(e, 'txbWinterHeatingSetpointDB');
                   }}
                 />
                 {isAvailable(baseData?.handing) && (
@@ -1727,7 +2049,7 @@ export default function UnitInfoForm({
                   name="txbHeatingFluidEntTemp"
                   label="Heating Fluid Ent Temp (F)"
                   onChange={(e: any) => {
-                    setValueWithCheck(e, 'txbHeatingFluidEntTemp');
+                    setValueWithCheck1(e, 'txbHeatingFluidEntTemp');
                   }}
                 />
                 <RHFTextField
@@ -1735,7 +2057,7 @@ export default function UnitInfoForm({
                   name="txbHeatingFluidLvgTemp"
                   label="Heating Fluid Lvg Temp (F)"
                   onChange={(e: any) => {
-                    setValueWithCheck(e, 'txbHeatingFluidLvgTemp');
+                    setValueWithCheck1(e, 'txbHeatingFluidLvgTemp');
                   }}
                 />
               </Stack>
@@ -1769,7 +2091,7 @@ export default function UnitInfoForm({
                   label="Heating HWC Capacity (MBH)"
                   sx={getDisplay(customInputs.divHeatingHWC_UseCapVisible)}
                   onChange={(e: any) => {
-                    setValueWithCheck(e, 'txbHeatingHWC_Cap');
+                    setValueWithCheck1(e, 'txbHeatingHWC_Cap');
                   }}
                 />
                 <FormControlLabel
@@ -1794,7 +2116,7 @@ export default function UnitInfoForm({
                   label="Heating HWC Flow Rate (GPM)"
                   sx={getDisplay(customInputs.divHeatingHWC_UseFlowRateVisible)}
                   onChange={(e: any) => {
-                    setValueWithCheck(e, 'txbHeatingHWC_FlowRate');
+                    setValueWithCheck1(e, 'txbHeatingHWC_FlowRate');
                   }}
                 />
               </Stack>
@@ -1855,7 +2177,7 @@ export default function UnitInfoForm({
                       values.ddlReheatCompId === IDs.intCompHGRH_ID
                   )}
                   onChange={(e: any) => {
-                    setValueWithCheck(e, 'txbSummerReheatSetpointDB');
+                    setValueWithCheck1(e, 'txbSummerReheatSetpointDB');
                   }}
                 />
                 {isAvailable(baseData?.handing) && (
@@ -1945,7 +2267,7 @@ export default function UnitInfoForm({
                   name="txbHeatingFluidEntTemp"
                   label="Reheat Fluid Ent Temp (F)"
                   onChange={(e: any) => {
-                    setValueWithCheck(e, 'txbHeatingFluidEntTemp');
+                    setValueWithCheck1(e, 'txbHeatingFluidEntTemp');
                   }}
                 />
                 <RHFTextField
@@ -1953,7 +2275,7 @@ export default function UnitInfoForm({
                   name="txbHeatingFluidLvgTemp"
                   label="Reheat Fluid Lvg Temp (F)"
                   onChange={(e: any) => {
-                    setValueWithCheck(e, 'txbHeatingFluidLvgTemp');
+                    setValueWithCheck1(e, 'txbHeatingFluidLvgTemp');
                   }}
                 />
               </Stack>
@@ -1987,7 +2309,7 @@ export default function UnitInfoForm({
                   label="Reheat HWC Capacity (MBH)"
                   sx={getDisplay(customInputs.divReheatHWC_UseCapVisible)}
                   onChange={(e: any) => {
-                    setValueWithCheck(e, 'txbReheatHWC_Cap');
+                    setValueWithCheck1(e, 'txbReheatHWC_Cap');
                   }}
                 />
                 <FormControlLabel
@@ -2012,7 +2334,7 @@ export default function UnitInfoForm({
                   label="Reheat HWC Flow Rate (GPM)"
                   sx={getDisplay(customInputs.divReheatHWC_UseFlowRateVisible)}
                   onChange={(e: any) => {
-                    setValueWithCheck(e, 'txbReheatHWC_FlowRate');
+                    setValueWithCheck1(e, 'txbReheatHWC_FlowRate');
                   }}
                 />
               </Stack>
@@ -2025,7 +2347,7 @@ export default function UnitInfoForm({
                   name="txbRefrigCondensingTemp"
                   label="Condensing Temp (F)"
                   onChange={(e: any) => {
-                    setValueWithCheck(e, 'txbRefrigCondensingTemp');
+                    setValueWithCheck1(e, 'txbRefrigCondensingTemp');
                   }}
                 />
                 <RHFTextField
@@ -2033,7 +2355,7 @@ export default function UnitInfoForm({
                   name="txbRefrigVaporTemp"
                   label="Condensing Temp (F)"
                   onChange={(e: any) => {
-                    setValueWithCheck(e, 'txbRefrigVaporTemp');
+                    setValueWithCheck1(e, 'txbRefrigVaporTemp');
                   }}
                 />
                 <RHFTextField
@@ -2041,7 +2363,7 @@ export default function UnitInfoForm({
                   name="txbRefrigSubcoolingTemp"
                   label="Subcooling Temp (F)"
                   onChange={(e: any) => {
-                    setValueWithCheck(e, 'txbRefrigSubcoolingTemp');
+                    setValueWithCheck1(e, 'txbRefrigSubcoolingTemp');
                   }}
                 />
                 <RHFTextField
@@ -2049,7 +2371,7 @@ export default function UnitInfoForm({
                   name="txbPercentCondensingLoad"
                   label="% Condensing Load"
                   onChange={(e: any) => {
-                    setValueWithCheck(e, 'txbPercentCondensingLoad');
+                    setValueWithCheck1(e, 'txbPercentCondensingLoad');
                   }}
                 />
               </Stack>

@@ -14,7 +14,7 @@ export default function UnitTypes(props: UnitTypesProps) {
 
   const units =
     productTypeUnitTypeLinkDataTbl?.filter(
-      (element) => element.product_type_id === productTypeID
+      (element) => element.prod_type_id === productTypeID
     ) || [];
 
   return (

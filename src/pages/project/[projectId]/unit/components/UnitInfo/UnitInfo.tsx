@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useState, useEffect } from 'react';
 // @mui
 import { Alert, Box, Container, Snackbar } from '@mui/material';
 import { styled } from '@mui/material/styles';
@@ -6,6 +6,7 @@ import { styled } from '@mui/material/styles';
 import { useGetAllBaseData, useGetUnitInfo } from 'src/hooks/useApi';
 import CircularProgressLoading from 'src/components/loading/CircularProgressLoading';
 import UnitInfoForm from './UnitInfoForm';
+import { GetAllBaseData, GetUnitInfo } from 'src/api/website/backend_helper';
 
 //------------------------------------------------
 const RootStyle = styled('div')(({ theme }) => ({
@@ -14,6 +15,13 @@ const RootStyle = styled('div')(({ theme }) => ({
     paddingTop: theme.spacing(3),
   },
 }));
+
+interface TUnitInfoData {
+  oUnit?: {
+    intProdTypeId?: number;
+    intUnitTypeId?: number;
+  };
+}
 
 //------------------------------------------------
 type UnitInfoProps = {
@@ -43,19 +51,35 @@ export default function UnitInfo({
   txbUnitType,
   unitInfoData,
 }: UnitInfoProps) {
-  const { data: baseData, isLoading: isLoadingBaseData } = useGetAllBaseData();
 
-  const { data: unitData, isLoading: isLoadingUnitInfo } = useGetUnitInfo(
-    {
+  const [baseData, setbaseData] = useState(null)
+  const [unitData, setunitData] = useState(null)
+  const [isLoadingUnitInfo, setisLoadingUnitInfo] = useState(true)
+  const [isLoadingBaseData, setisLoadingBaseData] = useState(true)
+  const [unitInfo, setunitInfo] = useState<TUnitInfoData>({})
+
+  useEffect(() => {
+    GetUnitInfo({
       intUserID: typeof window !== 'undefined' && localStorage.getItem('userId'),
       intUAL: typeof window !== 'undefined' && localStorage.getItem('UAL'),
-      intProjectID: projectId,
+      // intProjectID: projectId,
+      intJobId: projectId,
       intUnitNo: edit ? unitId : -1,
-    },
-    {
-      enabled: typeof window !== 'undefined' && edit,
+    }).then((res: any) => {
+      setunitData(JSON.parse(res)['unitInfo']);
+      setunitInfo(JSON.parse(res)['unitInfo']);
+      setisLoadingUnitInfo(false);
+    })
+
+    GetAllBaseData().then((res: any) => {
+      setbaseData(JSON.parse(res));
+      setisLoadingBaseData(false);
+    })
+    return () => {
+      // second
     }
-  );
+  }, [])
+
 
   // ----------------------- Success State and Handle Close ---------------------------
   const [openSuccess, setOpenSuccess] = useState(false);
@@ -68,31 +92,33 @@ export default function UnitInfo({
   const handleCloseError = () => {
     setOpenError(false);
   };
-
-  if (isLoadingBaseData || isLoadingUnitInfo) return <CircularProgressLoading />;
-
-  const { unitInfo } = unitData || { unitInfo: {} };
-
+  
   return (
     <RootStyle>
       <Container>
+        {
+          (isLoadingBaseData || isLoadingUnitInfo) &&
+          (<CircularProgressLoading />)
+        }
         <Box>
-          <UnitInfoForm
-            projectId={projectId}
-            unitId={edit ? unitId : -1}
-            baseData={baseData}
-            unitInfo={unitInfo}
-            setIsSavedUnit={setIsSavedUnit}
-            isSavedUnit={isSavedUnit}
-            onSuccess={() => setOpenSuccess(true)}
-            onError={() => setOpenError(true)}
-            edit={edit}
-            intProductTypeID={intProductTypeID || unitInfo?.productTypeID || 0}
-            intUnitTypeID={intUnitTypeID || unitInfo?.unitTypeID || 0}
-            setFunction={setFunction}
-            txbProductType={txbProductType}
-            txbUnitType={txbUnitType}
-          />
+          {(unitData && baseData && unitInfo) && (
+            <UnitInfoForm
+              projectId={projectId}
+              unitId={edit ? unitId : -1}
+              baseData={baseData}
+              unitInfo={unitInfo}
+              setIsSavedUnit={setIsSavedUnit}
+              isSavedUnit={isSavedUnit}
+              onSuccess={() => setOpenSuccess(true)}
+              onError={() => setOpenError(true)}
+              edit={edit}
+              intProductTypeID={intProductTypeID || (unitInfo?.oUnit?.intProdTypeId ?? 0)}
+              intUnitTypeID={intUnitTypeID || (unitInfo?.oUnit?.intUnitTypeId ?? 0)}
+              setFunction={setFunction}
+              txbProductType={txbProductType}
+              txbUnitType={txbUnitType}
+            />
+          )}
         </Box>
       </Container>
       <Snackbar open={openSuccess} autoHideDuration={6000} onClose={handleCloseSuccess}>

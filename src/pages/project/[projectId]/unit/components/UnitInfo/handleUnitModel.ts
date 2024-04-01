@@ -1163,7 +1163,7 @@ export const getPreheatElecHeaterInstallationInfo = (
       let dtLink = data?.electricHeaterInstallProdTypeLink;
       dtLink =
         dtLink?.filter(
-          (item: { product_type_id: any }) => item.product_type_id === intProductTypeID
+          (item: { prod_type_id: any }) => item.prod_type_id === intProductTypeID
         ) || [];
 
       dtPreheatElecHeaterInstallation = dtPreheatElecHeaterInstallation?.filter(
@@ -1933,7 +1933,7 @@ export const getSupplyAirOpeningInfo = (
 
   if (intUnitTypeID === ClsID.intUnitTypeERV_ID || intUnitTypeID === ClsID.intUnitTypeHRV_ID) {
     dtLink = data?.oriOpeningERV_SA_Link?.filter(
-      (item: { product_type_id: number }) => item.product_type_id === Number(intProductTypeID)
+      (item: { prod_type_id: number }) => item.prod_type_id === Number(intProductTypeID)
     );
     dtLink = dtLink?.filter(
       (item: { location_id: number }) => item.location_id === Number(intLocationID)
@@ -1943,7 +1943,7 @@ export const getSupplyAirOpeningInfo = (
     );
     dtSelectionTable = data?.openingERV_SA;
     dtSelectionTable = dtSelectionTable?.filter(
-      (item: { product_type_id: number }) => item.product_type_id === Number(intProductTypeID)
+      (item: { prod_type_id: number }) => item.prod_type_id === Number(intProductTypeID)
     );
     dtSelectionFinalTable = dtSelectionTable?.filter(
       (e: { items: any }) =>
@@ -2028,7 +2028,7 @@ export const getRemainingOpeningsInfo = (
 
   if (intUnitTypeID === ClsID.intUnitTypeERV_ID || intUnitTypeID === ClsID.intUnitTypeHRV_ID) {
     dtLink = data?.openingERV_SA_EA_Link?.filter(
-      (item: { product_type_id: any }) => item.product_type_id === intProductTypeID
+      (item: { prod_type_id: any }) => item.prod_type_id === intProductTypeID
     );
     dtLink = dtLink?.filter(
       (item: { openings_sa: any }) => item.openings_sa === strSupplyAirOpening
@@ -2039,7 +2039,7 @@ export const getRemainingOpeningsInfo = (
 
     dtSelectionTable = data?.openingERV_EA;
     dtSelectionTable = dtSelectionTable?.filter(
-      (item: { product_type_id: number }) => item.product_type_id === Number(intProductTypeID)
+      (item: { prod_type_id: number }) => item.prod_type_id === Number(intProductTypeID)
     );
     dtSelectionFinalTable = dtSelectionTable?.filter(
       (e: { items: any }) =>
@@ -2052,7 +2052,7 @@ export const getRemainingOpeningsInfo = (
     returnInfo.ddlExhaustAirOpeningVisible = true;
 
     dtLink = data?.openingERV_SA_OA_Link?.filter(
-      (item: { product_type_id: any }) => item.product_type_id === intProductTypeID
+      (item: { prod_type_id: any }) => item.prod_type_id === intProductTypeID
     );
     dtLink = dtLink?.filter(
       (item: { openings_sa: any }) => item.openings_sa === strSupplyAirOpening
@@ -2063,7 +2063,7 @@ export const getRemainingOpeningsInfo = (
 
     dtSelectionTable = data?.openingERV_OA;
     dtSelectionTable = dtSelectionTable?.filter(
-      (item: { product_type_id: number }) => item.product_type_id === Number(intProductTypeID)
+      (item: { prod_type_id: number }) => item.prod_type_id === Number(intProductTypeID)
     );
     dtSelectionFinalTable = dtSelectionTable?.filter(
       (e: { items: any }) =>
@@ -2075,7 +2075,7 @@ export const getRemainingOpeningsInfo = (
     returnInfo.ddlOutdoorAirOpeningText = dtSelectionFinalTable[0]?.items;
 
     dtLink = data?.openingERV_SA_RA_Link?.filter(
-      (item: { product_type_id: any }) => item.product_type_id === intProductTypeID
+      (item: { prod_type_id: any }) => item.prod_type_id === intProductTypeID
     );
     dtLink = dtLink?.filter(
       (item: { openings_sa: any }) => item.openings_sa === strSupplyAirOpening
@@ -2086,7 +2086,7 @@ export const getRemainingOpeningsInfo = (
 
     dtSelectionTable = data?.openingERV_RA;
     dtSelectionTable = dtSelectionTable?.filter(
-      (item: { product_type_id: number }) => item.product_type_id === Number(intProductTypeID)
+      (item: { prod_type_id: number }) => item.prod_type_id === Number(intProductTypeID)
     );
     dtSelectionFinalTable = dtSelectionTable?.filter(
       (e: { items: any }) =>
@@ -2128,8 +2128,8 @@ export const getOrientation = (
   intSummerSupplyAirCFM: number
 ) => {
   const dtLocOri = data?.locOriLink?.filter(
-    (item: { product_type_id: any; unit_type_id: any; location_id: any }) =>
-      item.product_type_id === intProductTypeID &&
+    (item: { prod_type_id: any; unit_type_id: any; location_id: any }) =>
+      item.prod_type_id === intProductTypeID &&
       item.unit_type_id === intUnitTypeID &&
       item.location_id === intLocationID
   );
@@ -2149,8 +2149,8 @@ export const getLocation = (
   intUnitTypeID: number
 ) => {
   const dtProdUnitLocLink = data?.prodTypeUnitTypeLocLink?.filter(
-    (item: { product_type_id: any; unit_type_id: any }) =>
-      item.product_type_id === intProductTypeID && item.unit_type_id === intUnitTypeID
+    (item: { prod_type_id: any; unit_type_id: any }) =>
+      item.prod_type_id === intProductTypeID && item.unit_type_id === intUnitTypeID
   );
 
   return data?.generalLocation?.filter(
@@ -2159,6 +2159,11 @@ export const getLocation = (
         ?.length > 0
   );
 };
+
+
+
+
+
 
 export default function Index() {
   return null;
