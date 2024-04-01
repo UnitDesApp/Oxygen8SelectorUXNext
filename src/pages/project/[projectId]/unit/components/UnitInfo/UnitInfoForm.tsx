@@ -408,7 +408,7 @@ export default function UnitInfoForm({
       // const data = await api.project.saveUnitInfo(getAllFormData1());
       // formValues = getValues();
       // const oUC = getAllFormData1(formValues);
-      const oUC = getUnitInputs();
+      const oUC: any = getUnitInputs();
       const data = await api.project.saveUnitInfo(oUC);
       if (onSuccess) onSuccess(true);
       if (setIsSavedUnit) setIsSavedUnit(data?.intUnitNo || 0);
