@@ -1,5 +1,7 @@
 import { useGetUnitInfo } from 'src/hooks/useApi';
+import { any } from 'prop-types';
 import Selection from './Selection';
+
 
 interface SelectionWrapperProps {
   projectId: number;
@@ -20,7 +22,8 @@ export default function SelectionWrapper({ projectId, unitId }: SelectionWrapper
     }
   );
 
-  const { unitInfo } = unitData || { unitInfo: {} };
+ // const { unitInfo  } = unitData || { unitInfo: {} };
+const unitInfo: any = unitData || {};
 
   return !isLoadingUnitInfo ? (
     <Selection
