@@ -2,7 +2,6 @@ import { useGetUnitInfo } from 'src/hooks/useApi';
 import { any } from 'prop-types';
 import Selection from './Selection';
 
-
 interface SelectionWrapperProps {
   projectId: number;
   unitId: number;
@@ -11,7 +10,7 @@ interface SelectionWrapperProps {
 export default function SelectionWrapper({ projectId, unitId }: SelectionWrapperProps) {
   const { data: unitData, isLoading: isLoadingUnitInfo } = useGetUnitInfo(
     {
-      intUserID: typeof window !== 'undefined' && localStorage.getItem('userId'),
+      intUserId: typeof window !== 'undefined' && localStorage.getItem('userId'),
       intUAL: typeof window !== 'undefined' && localStorage.getItem('UAL'),
       // intProjectID: projectId,
       intJobId: projectId,
