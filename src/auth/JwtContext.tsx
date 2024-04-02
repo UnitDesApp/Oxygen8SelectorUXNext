@@ -5,6 +5,7 @@ import { isValidToken, setSession } from './utils';
 import { ActionMapType, AuthStateType, AuthUserType, JWTContextType } from './types';
 // utils
 import localStorageAvailable from '../utils/localStorageAvailable';
+import { useRouter } from 'next/router';
 
 // ----------------------------------------------------------------------
 
@@ -105,6 +106,8 @@ export function AuthProvider({ children }: AuthProviderProps) {
   const [state, dispatch] = useReducer(reducer, initialState);
   const { user: userApi } = useApiContext();
 
+  const { push, query, pathname} = useRouter();
+
   const storageAvailable = localStorageAvailable();
 
   const initialize = useCallback(async () => {
@@ -137,6 +140,9 @@ export function AuthProvider({ children }: AuthProviderProps) {
           },
         });
       } else {
+        if(pathname!='/login' && pathname!='/reset-password'){
+          push('/login');
+        }
         dispatch({
           type: Types.INITIAL,
           payload: {
@@ -272,9 +278,9 @@ export function AuthProvider({ children }: AuthProviderProps) {
       user: state.user,
       method: 'jwt',
       login,
-      loginWithGoogle: () => {},
-      loginWithGithub: () => {},
-      loginWithTwitter: () => {},
+      loginWithGoogle: () => { },
+      loginWithGithub: () => { },
+      loginWithTwitter: () => { },
       register,
       logout,
       updateUser,

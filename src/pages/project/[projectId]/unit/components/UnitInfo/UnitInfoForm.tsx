@@ -244,14 +244,14 @@ export default function UnitInfoForm({
   // const oUC = {
   //  }
 
-  // const formValues = getValues();
+  const formValues = getValues();
 
 
 
    const getUnitInputs = () => {
     // const jsonData = '{"name":"John", "age":30, "city":"London"}';
     // let oUnitInputs;
-    const formValues = getValues();
+    // const formValues = getValues();
     const oUnitInputs = {
         oUser: {
           "intUserId" : typeof window !== 'undefined' && localStorage.getItem('userId'),
