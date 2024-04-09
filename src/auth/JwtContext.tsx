@@ -1,11 +1,12 @@
 import { createContext, useEffect, useReducer, useCallback, useMemo } from 'react';
 //
 import { useApiContext } from 'src/contexts/ApiContext';
+import { useRouter } from 'next/router';
 import { isValidToken, setSession } from './utils';
 import { ActionMapType, AuthStateType, AuthUserType, JWTContextType } from './types';
 // utils
 import localStorageAvailable from '../utils/localStorageAvailable';
-import { useRouter } from 'next/router';
+
 
 // ----------------------------------------------------------------------
 
@@ -140,7 +141,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
           },
         });
       } else {
-        if(pathname!='/login' && pathname!='/reset-password'){
+        if(pathname!=='/login' && pathname!=='/reset-password'){
           push('/login');
         }
         dispatch({
@@ -161,7 +162,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
         },
       });
     }
-  }, [storageAvailable]);
+  }, [pathname, push, storageAvailable]);
 
   useEffect(() => {
     initialize();
