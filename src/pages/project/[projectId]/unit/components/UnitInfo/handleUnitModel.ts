@@ -578,7 +578,7 @@ export const getSummerReturnAirCFM = (
     ddlOrientationId: any;
     ddlUnitModelId: any;
     intProductTypeID: any;
-    ckbBypassVal: any;
+    ckbBypass: any;
     intUnitTypeID: any;
   },
   intUAL: any,
@@ -588,10 +588,10 @@ export const getSummerReturnAirCFM = (
   const intOrientationID = Number(values.ddlOrientationId);
   const intUnitModelID = Number(values.ddlUnitModelId);
   const intProductTypeID = Number(values.intProductTypeID);
-  const ckbBypassVal = Number(values.ckbBypassVal);
+  const ckbBypassVal = Number(values.ckbBypass);
   let intSummerReturnAirCFM = Number(summerReturnAirCFM);
   const intUnitTypeID = Number(values.intUnitTypeID);
-  const ckbBypass = Number(values.ckbBypassVal);
+  const ckbBypass = Number(values.ckbBypass);
 
   if (
     intOrientationID === ClsID.intOrientationHorizontalID &&
@@ -1524,36 +1524,106 @@ export const getReheatInfo = (
   return reheatInfo;
 };
 
-export const getHeatingFluidDesignCondInfo = (
+export const getHeatingFluidTypeInfo = (
   data: { fluidType: any; fluidConcentration: any },
   intPreheatCompID: any,
   intHeatingCompID: any,
   intReheatCompID: any
 ) => {
   const returnInfo: {
-    divHeatingFluidDesignCondVisible?: boolean;
-    ddlHeatingFluidTypeDataTbl?: any;
-    ddlHeatingFluidTypeId?: number;
-    ddlHeatingFluidConcentrationDataTbl?: any;
-    ddlHeatingFluidConcentrationId?: number;
+    isVisible?: boolean;
+    dataTable?: any;
+    defaultId?: number;
+    // FluidConcenData?: any;
+    // FluidConcenId?: number;
   } = {};
 
-  returnInfo.divHeatingFluidDesignCondVisible = !!(
+  returnInfo.isVisible = !!(
     intPreheatCompID === ClsID.intCompHWC_ID ||
     intHeatingCompID === ClsID.intCompHWC_ID ||
     intReheatCompID === ClsID.intCompHWC_ID
   );
 
-  const dtHeatingFluidType = data?.fluidType;
-  returnInfo.ddlHeatingFluidTypeDataTbl = dtHeatingFluidType;
-  returnInfo.ddlHeatingFluidTypeId = dtHeatingFluidType?.[0]?.id;
-  returnInfo.ddlHeatingFluidConcentrationDataTbl = getItemsAddedOnIDDataTable(
-    data?.fluidConcentration,
-    'fluid_type_id',
-    returnInfo.ddlHeatingFluidTypeId || 0
-  );
-  returnInfo.ddlHeatingFluidConcentrationId =
-    returnInfo.ddlHeatingFluidConcentrationDataTbl?.[0]?.id;
+  let dataTableSel = data?.fluidType;
+  dataTableSel = dataTableSel?.filter((item: { id: number }) => item.id !== 1);
+  
+  returnInfo.dataTable = dataTableSel;
+  returnInfo.defaultId = returnInfo.dataTable?.[0]?.id;
+  // returnInfo.FluidConcenData = getItemsAddedOnIDDataTable(data?.fluidConcentration,'fluid_type_id',returnInfo.FluidTypeId || 0);
+  // returnInfo.FluidConcenId = returnInfo.FluidConcenData?.[0]?.id;
+
+  return returnInfo;
+};
+
+
+export const getHeatingFluidConcenInfo = (
+  data: { fluidConcentration: any },
+  FluidTypeId: any,
+) => {
+  const returnInfo: {
+    isVisible?: boolean;
+    dataTable?: any;
+    defaultId?: number;
+  } = {};
+
+  let dataTableSel = data?.fluidConcentration;
+  // DataSel = DataSel?.filter((item: { id: number }) => item.id !== 1);
+
+  dataTableSel = getItemsAddedOnIDDataTable(dataTableSel,'fluid_type_id', FluidTypeId || 0);
+  returnInfo.dataTable = dataTableSel;
+  returnInfo.defaultId = dataTableSel?.[0]?.id;
+
+  return returnInfo;
+};
+
+
+
+export const getCoolingFluidTypeInfo = (
+  data: { fluidType: any; fluidConcentration: any },
+  intCoolingCompID: any,
+) => {
+  const returnInfo: {
+    isVisible?: boolean;
+    dataTable?: any;
+    defaultId?: number;
+    // FluidConcenData?: any;
+    // FluidConcenId?: number;
+  } = {};
+
+  // returnInfo.divHeatingFluidDesignCondVisible = !!(
+  //   intPreheatCompID === ClsID.intCompHWC_ID ||
+  //   intHeatingCompID === ClsID.intCompHWC_ID ||
+  //   intReheatCompID === ClsID.intCompHWC_ID
+  // );
+
+  let dataTableSel = data?.fluidType;
+  dataTableSel = dataTableSel?.filter((item: { id: number }) => item.id !== 1);
+  
+  returnInfo.dataTable = dataTableSel;
+  returnInfo.defaultId = dataTableSel?.[0]?.id;
+  // returnInfo.FluidConcenData = getItemsAddedOnIDDataTable(data?.fluidConcentration,'fluid_type_id',returnInfo.FluidTypeId || 0);
+  // returnInfo.FluidConcenId = returnInfo.FluidConcenData?.[0]?.id;
+
+  return returnInfo;
+};
+
+
+export const getCoolingFluidConcenInfo = (
+  data: { fluidConcentration: any },
+  FluidTypeId: any,
+) => {
+  const returnInfo: {
+    isVisible?: boolean;
+    dataTable?: any;
+    defaultId?: number;
+  } = {};
+
+  let dataTableSel = data?.fluidConcentration;
+  // DataSel = DataSel?.filter((item: { id: number }) => item.id !== 1);
+
+  dataTableSel = getItemsAddedOnIDDataTable(dataTableSel,'fluid_type_id', FluidTypeId || 0);
+  returnInfo.dataTable = dataTableSel;
+  returnInfo.defaultId = dataTableSel?.[0]?.id;
 
   return returnInfo;
 };
@@ -1576,14 +1646,10 @@ export const getDamperAndActuatorInfo = (
     case ClsID.intProdTypeVentumID:
     case ClsID.intProdTypeVentumLiteID:
     case ClsID.intProdTypeTerraID:
-      dtDamperAndAct = dtDamperAndAct?.filter(
-        (item: { std_selection: number }) => item.std_selection === 1
-      );
+      dtDamperAndAct = dtDamperAndAct?.filter((item: { std_selection: number }) => item.std_selection === 1);
       break;
     case ClsID.intProdTypeVentumPlusID:
-      dtDamperAndAct = dtDamperAndAct?.filter(
-        (item: { ventumplus: number }) => item.ventumplus === 1
-      );
+      dtDamperAndAct = dtDamperAndAct?.filter((item: { ventumplus: number }) => item.ventumplus === 1);
       break;
     default:
       break;
@@ -1907,7 +1973,11 @@ const isContain = (_dt: string | any[], _strColumn: string, value: any) => {
 };
 
 export const getSupplyAirOpeningInfo = (
-  data: { oriOpeningERV_SA_Link: any[]; openingERV_SA: any[]; openingAHU_SA: any[] },
+  data: { 
+    oriOpeningERV_SA_Link: any,
+    openingERV_SA: any,
+    openingAHU_SA: any
+  },
   intUnitTypeID: any,
   intProductTypeID: any,
   intLocationID: any,
@@ -1927,35 +1997,44 @@ export const getSupplyAirOpeningInfo = (
     ddlSupplyAirOpeningId: 0,
     ddlSupplyAirOpeningText: '',
   };
+
+  const dtOriOpeningERV_SA_Link = data?.oriOpeningERV_SA_Link;
+  let dtOpeningERV_SA = data?.openingERV_SA;
+  const dtOpeningAHU_SA = data?.openingAHU_SA;
   let dtLink: any[] = [];
   let dtSelectionTable = [];
   let dtSelectionFinalTable: any = [];
 
   if (intUnitTypeID === ClsID.intUnitTypeERV_ID || intUnitTypeID === ClsID.intUnitTypeHRV_ID) {
-    dtLink = data?.oriOpeningERV_SA_Link?.filter(
-      (item: { prod_type_id: number }) => item.prod_type_id === Number(intProductTypeID)
-    );
-    dtLink = dtLink?.filter(
-      (item: { location_id: number }) => item.location_id === Number(intLocationID)
-    );
-    dtLink = dtLink?.filter(
-      (item: { orientation_id: number }) => item.orientation_id === Number(intOrientationID)
-    );
-    dtSelectionTable = data?.openingERV_SA;
-    dtSelectionTable = dtSelectionTable?.filter(
-      (item: { prod_type_id: number }) => item.prod_type_id === Number(intProductTypeID)
-    );
-    dtSelectionFinalTable = dtSelectionTable?.filter(
-      (e: { items: any }) =>
+    // dtLink = data?.oriOpeningERV_SA_Link?.filter((item: { prod_type_id: number }) => item.prod_type_id === Number(intProductTypeID));
+    // dtLink = dtLink?.filter((item: { location_id: number }) => item.location_id === Number(intLocationID));
+    // dtLink = dtLink?.filter((item: { orientation_id: number }) => item.orientation_id === Number(intOrientationID));
+
+    // dtLink = dtOriOpeningERV_SA_Link?.filter((item: { prod_type_id: number, location_id: number,orientation_id: number }) => item.prod_type_id === Number(intProductTypeID) &&
+    //                                                       item.location_id === Number(intLocationID) &&
+    //                                                       item.orientation_id === Number(intOrientationID));
+    
+    dtLink = dtOriOpeningERV_SA_Link?.filter((item: { prod_type_id: number }) => item.prod_type_id === Number(intProductTypeID))
+    dtLink = dtLink?.filter((item: { location_id: number }) => item.location_id === Number(intLocationID))
+    dtLink = dtLink?.filter((item: { orientation_id: number }) => item.orientation_id === Number(intOrientationID))
+                                                  
+
+    // dtSelectionTable = data?.openingERV_SA;
+    // dtSelectionTable = dtSelectionTable?.filter((item: { prod_type_id: number }) => item.prod_type_id === Number(intProductTypeID));
+   
+    dtOpeningERV_SA = dtOpeningERV_SA?.filter((item: { prod_type_id: number })  => item.prod_type_id === Number(intProductTypeID));
+
+    dtSelectionFinalTable = dtOpeningERV_SA?.filter((e: { items: any }) =>
         dtLink?.filter((e_link) => e.items === e_link.openings_sa)?.length === 1 // 1: Matching items, 0: Not matching items
     );
 
+  //   dtSelectionFinalTable = dtSelectionTable?.filter(e =>
+  //     dtLink?.filter((e_link) => e.items === e_link.openings_sa)?.length === 1 // 1: Matching items, 0: Not matching items
+  // );
+
     returnInfo.ddlSupplyAirOpeningDataTbl = dtSelectionFinalTable;
 
-    if (
-      intOrientationID === ClsID.intOrientationVerticalID &&
-      (intCoolingCompID > 1 || intHeatingCompID > 1 || intReheatCompID > 1)
-    ) {
+    if (intOrientationID === ClsID.intOrientationVerticalID && (intCoolingCompID > 1 || intHeatingCompID > 1 || intReheatCompID > 1)) {
       returnInfo.ddlSupplyAirOpeningId = ClsID.intSA_Open_2_ID;
     }
 
@@ -1963,8 +2042,8 @@ export const getSupplyAirOpeningInfo = (
       returnInfo.ddlSupplyAirOpeningId = intSupplyAirOpeningId;
       returnInfo.ddlSupplyAirOpeningText = strSupplyAirOpening;
     } else {
-      returnInfo.ddlSupplyAirOpeningId = dtSelectionTable?.[0]?.id;
-      returnInfo.ddlSupplyAirOpeningText = dtSelectionTable?.[0]?.items.toString();
+      returnInfo.ddlSupplyAirOpeningId = dtSelectionFinalTable?.[0]?.id;
+      returnInfo.ddlSupplyAirOpeningText = dtSelectionFinalTable?.[0]?.items.toString();
     }
   } else if (intUnitTypeID === ClsID.intUnitTypeAHU_ID) {
     dtSelectionTable = data?.openingAHU_SA;
@@ -1974,8 +2053,8 @@ export const getSupplyAirOpeningInfo = (
       returnInfo.ddlSupplyAirOpeningId = intSupplyAirOpeningId;
       returnInfo.ddlSupplyAirOpeningText = strSupplyAirOpening;
     } else {
-      returnInfo.ddlSupplyAirOpeningId = dtSelectionTable?.[0]?.id;
-      returnInfo.ddlSupplyAirOpeningText = dtSelectionTable?.[0]?.items.toString();
+      returnInfo.ddlSupplyAirOpeningId = dtSelectionFinalTable?.[0]?.id;
+      returnInfo.ddlSupplyAirOpeningText = dtSelectionFinalTable?.[0]?.items.toString();
     }
   }
 
@@ -1984,13 +2063,13 @@ export const getSupplyAirOpeningInfo = (
 
 export const getRemainingOpeningsInfo = (
   data: {
-    openingERV_SA_EA_Link: any[];
-    openingERV_EA: any[];
-    openingERV_SA_OA_Link: any[];
-    openingERV_OA: any[];
-    openingERV_SA_RA_Link: any[];
-    openingERV_RA: any[];
-    openingAHU_OA: any[];
+    openingERV_SA_EA_Link: any,
+    openingERV_EA: any,
+    openingERV_SA_OA_Link: any,
+    openingERV_OA: any,
+    openingERV_SA_RA_Link: any,
+    openingERV_RA: any,
+    openingAHU_OA: any,
   },
   intUnitTypeID: any,
   intProductTypeID: any,
@@ -2022,27 +2101,34 @@ export const getRemainingOpeningsInfo = (
     ddlReturnAirOpeningText: '',
     ddlReturnAirOpeningVisible: false,
   };
+
+  // let dtOpeningERV_EA = data?.openingERV_EA;
+  // let dtOpeningERV_SA_OA_Link = data?.openingERV_SA_OA_Link;
+  // let dtOpeningERV_OA = data?.openingERV_OA;
+  // let dtOpeningERV_SA_RA_Link = data?.openingERV_SA_RA_Link;
+  // let dtOpeningERV_RA = data?.openingERV_RA;
+  const dtOpeningAHU_OA = data?.openingAHU_OA
   let dtLink: any[] = [];
   let dtSelectionTable = [];
   let dtSelectionFinalTable = [];
 
   if (intUnitTypeID === ClsID.intUnitTypeERV_ID || intUnitTypeID === ClsID.intUnitTypeHRV_ID) {
-    dtLink = data?.openingERV_SA_EA_Link?.filter(
-      (item: { prod_type_id: any }) => item.prod_type_id === intProductTypeID
-    );
-    dtLink = dtLink?.filter(
-      (item: { openings_sa: any }) => item.openings_sa === strSupplyAirOpening
-    );
-    dtLink = dtLink?.filter(
-      (item: { orientation_id: number }) => item.orientation_id === Number(intOrientationID)
-    );
+    // dtLink = data?.openingERV_SA_EA_Link?.filter((item: { prod_type_id: any }) => item.prod_type_id === intProductTypeID);  
+    // dtLink = dtLink?.filter((item: { openings_sa: any }) => item.openings_sa === strSupplyAirOpening);
+    // dtLink1 = dtLink?.filter((item: { orientation_id: number }) => item.orientation_id === Number(intOrientationID));
 
-    dtSelectionTable = data?.openingERV_EA;
-    dtSelectionTable = dtSelectionTable?.filter(
-      (item: { prod_type_id: number }) => item.prod_type_id === Number(intProductTypeID)
-    );
-    dtSelectionFinalTable = dtSelectionTable?.filter(
-      (e: { items: any }) =>
+    const dtOpeningERV_SA_EA_Link = data?.openingERV_SA_EA_Link;
+    dtLink = dtOpeningERV_SA_EA_Link?.filter((item: { prod_type_id: number }) => item.prod_type_id === Number(intProductTypeID));
+    dtLink = dtLink?.filter((item: { openings_sa: any }) => item.openings_sa === strSupplyAirOpening);
+    dtLink = dtLink?.filter((item: { orientation_id: number }) => item.orientation_id === Number(intOrientationID));  
+
+
+    // dtSelectionTable = data?.openingERV_EA;
+    // dtSelectionTable = dtSelectionTable?.filter((item: { prod_type_id: number }) => item.prod_type_id === Number(intProductTypeID));
+  
+    dtSelectionTable = data?.openingERV_EA?.filter((item: { prod_type_id: number }) => item.prod_type_id === Number(intProductTypeID));
+
+    dtSelectionFinalTable = dtSelectionTable?.filter((e: { items: any }) =>
         dtLink?.filter((e_link) => e.items === e_link.openings_ea)?.length === 1 // 1: Matching items, 0: Not matching items
     );
 
@@ -2051,22 +2137,22 @@ export const getRemainingOpeningsInfo = (
     returnInfo.ddlExhaustAirOpeningText = dtSelectionFinalTable[0]?.items;
     returnInfo.ddlExhaustAirOpeningVisible = true;
 
-    dtLink = data?.openingERV_SA_OA_Link?.filter(
-      (item: { prod_type_id: any }) => item.prod_type_id === intProductTypeID
-    );
-    dtLink = dtLink?.filter(
-      (item: { openings_sa: any }) => item.openings_sa === strSupplyAirOpening
-    );
-    dtLink = dtLink?.filter(
-      (item: { orientation_id: any }) => item.orientation_id === intOrientationID
-    );
+    // dtLink = data?.openingERV_SA_OA_Link?.filter((item: { prod_type_id: any }) => item.prod_type_id === intProductTypeID);
+    // dtLink = dtLink?.filter((item: { openings_sa: any }) => item.openings_sa === strSupplyAirOpening);
+    // dtLink = dtLink?.filter((item: { orientation_id: any }) => item.orientation_id === intOrientationID);
+ 
+    const dtOpeningERV_SA_OA_Link = data?.openingERV_SA_OA_Link;
+    dtLink = dtOpeningERV_SA_OA_Link?.filter((item: { prod_type_id: number }) => item.prod_type_id === intProductTypeID);
+    dtLink = dtLink?.filter((item: { openings_sa: any }) => item.openings_sa === strSupplyAirOpening);
+    dtLink = dtLink?.filter((item: { orientation_id: number }) => item.orientation_id === intOrientationID);
 
-    dtSelectionTable = data?.openingERV_OA;
-    dtSelectionTable = dtSelectionTable?.filter(
-      (item: { prod_type_id: number }) => item.prod_type_id === Number(intProductTypeID)
-    );
-    dtSelectionFinalTable = dtSelectionTable?.filter(
-      (e: { items: any }) =>
+    // dtSelectionTable = data?.openingERV_OA;
+    // dtSelectionTable = dtSelectionTable?.filter((item: { prod_type_id: number }) => item.prod_type_id === Number(intProductTypeID));
+    
+    const dtOpeningERV_OA = data?.openingERV_OA;
+    dtSelectionTable = dtOpeningERV_OA?.filter((item: { prod_type_id: number }) => item.prod_type_id === Number(intProductTypeID));
+
+    dtSelectionFinalTable = dtSelectionTable?.filter((e: { items: any }) =>
         dtLink?.filter((e_link) => e.items === e_link.openings_oa)?.length === 1 // 1: Matching items, 0: Not matching items
     );
 
@@ -2074,22 +2160,27 @@ export const getRemainingOpeningsInfo = (
     returnInfo.ddlOutdoorAirOpeningId = dtSelectionFinalTable[0]?.id;
     returnInfo.ddlOutdoorAirOpeningText = dtSelectionFinalTable[0]?.items;
 
-    dtLink = data?.openingERV_SA_RA_Link?.filter(
-      (item: { prod_type_id: any }) => item.prod_type_id === intProductTypeID
-    );
-    dtLink = dtLink?.filter(
-      (item: { openings_sa: any }) => item.openings_sa === strSupplyAirOpening
-    );
-    dtLink = dtLink?.filter(
-      (item: { orientation_id: number }) => item.orientation_id === Number(intOrientationID)
-    );
+    // dtLink = data?.openingERV_SA_RA_Link?.filter((item: { prod_type_id: any }) => item.prod_type_id === intProductTypeID);
+    // dtLink = dtLink?.filter((item: { openings_sa: any }) => item.openings_sa === strSupplyAirOpening);
+    // dtLink = dtLink?.filter((item: { orientation_id: number }) => item.orientation_id === Number(intOrientationID));
 
-    dtSelectionTable = data?.openingERV_RA;
-    dtSelectionTable = dtSelectionTable?.filter(
-      (item: { prod_type_id: number }) => item.prod_type_id === Number(intProductTypeID)
-    );
-    dtSelectionFinalTable = dtSelectionTable?.filter(
-      (e: { items: any }) =>
+    // dtLink = data?.openingERV_SA_RA_Link?.filter(item => item.prod_type_id === intProductTypeID &&
+    //   item.openings_sa === strSupplyAirOpening &&
+    //   item.orientation_id === Number(intOrientationID));
+
+    const dtOpeningERV_SA_RA_Link = data?.openingERV_SA_RA_Link;
+    dtLink = dtOpeningERV_SA_RA_Link?.filter((item: { prod_type_id: number }) => item.prod_type_id === intProductTypeID);
+    dtLink = dtLink?.filter((item: { openings_sa: any }) => item.openings_sa === strSupplyAirOpening);
+    dtLink = dtLink?.filter((item: { orientation_id: number }) => item.orientation_id === Number(intOrientationID));
+
+
+    // dtSelectionTable = data?.openingERV_RA;
+    // dtSelectionTable = dtSelectionTable?.filter((item: { prod_type_id: number }) => item.prod_type_id === Number(intProductTypeID));
+    
+    const dtOpeningERV_RA = data?.openingERV_RA;
+    dtSelectionTable = dtOpeningERV_RA?.filter((item: { prod_type_id: number }) => item.prod_type_id === Number(intProductTypeID));
+
+    dtSelectionFinalTable = dtSelectionTable?.filter((e: { items: any }) =>
         dtLink?.filter((e_link) => e.items === e_link.openings_ra)?.length === 1 // 1: Matching items, 0: Not matching items
     );
 
@@ -2127,11 +2218,10 @@ export const getOrientation = (
   intLocationID: any,
   intSummerSupplyAirCFM: number
 ) => {
-  const dtLocOri = data?.locOriLink?.filter(
-    (item: { prod_type_id: any; unit_type_id: any; location_id: any }) =>
-      item.prod_type_id === intProductTypeID &&
-      item.unit_type_id === intUnitTypeID &&
-      item.location_id === intLocationID
+  const dtLocOri = data?.locOriLink?.filter((item: { prod_type_id: any; unit_type_id: any; location_id: any }) => 
+                                                                          item.prod_type_id === intProductTypeID &&
+                                                                          item.unit_type_id === intUnitTypeID &&
+                                                                          item.location_id === intLocationID
   );
 
   let dtOrientation = getFromLink(data?.generalOrientation, 'orientation_id', dtLocOri, 'max_cfm');
@@ -2148,15 +2238,12 @@ export const getLocation = (
   intProductTypeID: number,
   intUnitTypeID: number
 ) => {
-  const dtProdUnitLocLink = data?.prodTypeUnitTypeLocLink?.filter(
-    (item: { prod_type_id: any; unit_type_id: any }) =>
+  const dtProdUnitLocLink = data?.prodTypeUnitTypeLocLink?.filter((item: { prod_type_id: any; unit_type_id: any }) =>
       item.prod_type_id === intProductTypeID && item.unit_type_id === intUnitTypeID
   );
 
-  return data?.generalLocation?.filter(
-    (e: { id: any }) =>
-      dtProdUnitLocLink?.filter((e_link: { location_id: any }) => e_link.location_id === e.id)
-        ?.length > 0
+  return data?.generalLocation?.filter((e: { id: any }) =>
+    dtProdUnitLocLink?.filter((e_link: { location_id: any }) => e_link.location_id === e.id)?.length > 0
   );
 };
 
