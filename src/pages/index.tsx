@@ -8,7 +8,7 @@ export default function Index() {
 
   useEffect(() => {
     if (router.pathname === '/') {
-      router.push('/project');
+      router.push('/login');
     }
   }, [router, router.pathname, router.push]);
 

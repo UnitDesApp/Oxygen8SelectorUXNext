@@ -120,11 +120,11 @@ export default function Selection({ unitTypeData, intUnitNo }: SelectionProps) {
   });
 
   const { data: selectionData, isLoading: isLoadingSelectionInfo } = useGetSelectionInfo({
-    intUserID: typeof window !== 'undefined' && localStorage.getItem('userId'),
+    intUserId: typeof window !== 'undefined' && localStorage.getItem('userId'),
     intUAL: typeof window !== 'undefined' && localStorage.getItem('UAL'),
-    intProjectID: projectId,
-    intProductTypeID: unitTypeData?.intProductTypeID,
-    intUnitTypeID: unitTypeData?.intUnitTypeID,
+    intJobId: projectId,
+    intProdTypeId: unitTypeData?.intProductTypeID,
+    intUnitTypeId: unitTypeData?.intUnitTypeID,
     intUnitNo,
   });
 

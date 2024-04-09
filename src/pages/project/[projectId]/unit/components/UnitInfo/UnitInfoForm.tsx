@@ -7,13 +7,14 @@ import {
   AccordionDetails,
   AccordionSummary,
   Box,
-  Checkbox,
+  // Checkbox,
   FormControlLabel,
   Grid,
   Stack,
   TextField,
   Typography,
-  colors,
+  // colors,
+  // Collapse,
 } from '@mui/material';
 // hooks
 import { yupResolver } from '@hookform/resolvers/yup';
@@ -23,8 +24,9 @@ import * as IDs from 'src/utils/ids';
 import { useAuthContext } from 'src/auth/useAuthContext';
 import FormProvider from 'src/components/hook-form/FormProvider';
 import Iconify from 'src/components/iconify';
-import { RHFSelect, RHFTextField } from 'src/components/hook-form';
+import { RHFCheckbox, RHFSelect, RHFTextField } from 'src/components/hook-form';
 import { useApiContext } from 'src/contexts/ApiContext';
+import { any, number } from 'prop-types';
 import {
   getBypass,
   getComponentInfo,
@@ -38,7 +40,10 @@ import {
   getHandingInfo,
   getHeatElecHeaterInstallationInfo,
   getHeatPumpInfo,
-  getHeatingFluidDesignCondInfo,
+  getHeatingFluidTypeInfo,
+  getHeatingFluidConcenInfo,
+  getCoolingFluidTypeInfo,
+  getCoolingFluidConcenInfo,
   getItemsAddedOnIDDataTable,
   getLocation,
   getOrientation,
@@ -55,6 +60,7 @@ import {
   getValveAndActuatorInfo,
 } from './handleUnitModel';
 import { getUnitModelCodes } from './getUnitNoteCodes';
+
 
 //------------------------------------------------
 type UnitInfoFormProps = {
@@ -73,6 +79,8 @@ type UnitInfoFormProps = {
   txbProductType?: string;
   txbUnitType?: string;
 };
+
+
 
 export default function UnitInfoForm({
   projectId,
@@ -96,47 +104,47 @@ export default function UnitInfoForm({
   const isResetCalled = useRef(false);
   const user = useAuthContext();
 
-
-
   // ------------------------------- Checkbox State -----------------------------------
-  const [ckbBypassVal, setCkbBypassVal] = useState(false);
-  const [ckbDrainPanVal, setCkbDrainPanVal] = useState(false);
-  const [ckbVoltageSPPVal, setCkbVoltageSPPVal] = useState(false);
-  const [ckbDehumidificationVal, setCkbDehumidificationVal] = useState(false);
-  const [ckbValveAndActuatorVal, setCkbValveAndActuatorVal] = useState(false);
-  const [ckbHeatPumpVal, setCkbHeatPumpVal] = useState(false);
-  const [ckbDownshotVal, setCkbDownshotVal] = useState(false);
-  const [ckbFlowRateAndCap, setCkbFlowRateAndCap] = useState({
-    ckbPreheatHWC_UseCap: false,
-    ckbPreheatHWC_UseFlowRate: false,
-    ckbCoolingCWC_UseCap: false,
-    ckbCoolingCWC_UseFlowRate: false,
-    ckbHeatingHWC_UseCap: false,
-    ckbHeatingHWC_UseFlowRate: false,
-    ckbReheatHWC_UseCap: false,
-    ckbReheatHWC_UseFlowRate: false,
-  });
+  const [ckbBypass, setCkbBypassVal] = useState(false);
+  // const [ckbDrainPanVal, setCkbDrainPanVal] = useState(false);
+  // const [ckbVoltageSPPVal, setCkbVoltageSPPVal] = useState(false);
+  // const [ckbDehumidificationVal, setCkbDehumidificationVal] = useState(false);
+  // const [ckbValveAndActuatorVal, setCkbValveAndActuatorVal] = useState(false);
+  // const [ckbHeatPumpVal, setCkbHeatPumpVal] = useState(false);
+  // const [ckbDownshotVal, setCkbDownshotVal] = useState(false);
+  // const [ckbCoolingCWCUseCap, setckbCoolingCWCUseCap = useState({
+  //   ckbPreheatHWC_UseCap: false,
+  //   ckbPreheatHWC_UseFlowRate: false,
+  //   ckbCoolingCWC_UseCap: false,
+  //   ckbCoolingCWC_UseFlowRate: false,
+  //   ckbHeatingHWC_UseCap: false,
+  //   ckbHeatingHWC_UseFlowRate: false,
+  //   ckbReheatHWC_UseCap: false,
+  //   ckbReheatHWC_UseFlowRate: false,
+  // });
+  // const [ckbCoolingCWCUseCap, setCkbCoolingCWCUseCap] = useState(false);
+
 
   // ------------------------- Initialize Checkbox Values -----------------------------
   useEffect(() => {
     if (edit) {
-      setCkbBypassVal(!!unitInfo?.ckbBypassVal);
-      setCkbDrainPanVal(!!unitInfo?.ckbDrainPanVal);
-      setCkbVoltageSPPVal(!!unitInfo?.ckbVoltageSPPVal);
-      setCkbDehumidificationVal(!!unitInfo?.ckbDehumidificationVal);
-      setCkbValveAndActuatorVal(!!unitInfo?.ckbValveAndActuatorVal);
-      setCkbHeatPumpVal(!!unitInfo?.ckbHeatPumpVal);
-      setCkbDownshotVal(!!unitInfo?.ckbDownshot?.isDownshot);
-      setCkbFlowRateAndCap({
-        ckbPreheatHWC_UseCap: false,
-        ckbPreheatHWC_UseFlowRate: false,
-        ckbCoolingCWC_UseCap: false,
-        ckbCoolingCWC_UseFlowRate: false,
-        ckbHeatingHWC_UseCap: false,
-        ckbHeatingHWC_UseFlowRate: false,
-        ckbReheatHWC_UseCap: false,
-        ckbReheatHWC_UseFlowRate: false,
-      });
+      // setCkbBypassVal(!!unitInfo?.ckbBypassVal);
+      // setCkbDrainPanVal(!!unitInfo?.ckbDrainPanVal);
+      // setCkbVoltageSPPVal(!!unitInfo?.ckbVoltageSPPVal);
+      // setCkbDehumidificationVal(!!unitInfo?.ckbDehumidificationVal);
+      // setCkbValveAndActuatorVal(!!unitInfo?.ckbValveAndActuatorVal);
+      // setCkbHeatPumpVal(!!unitInfo?.ckbHeatPumpVal);
+      // setCkbDownshotVal(!!unitInfo?.ckbDownshot?.isDownshot);
+      // setCkbFlowRateAndCap({
+      //   ckbPreheatHWC_UseCap: false,
+      //   ckbPreheatHWC_UseFlowRate: false,
+      //   ckbCoolingCWC_UseCap: false,
+      //   ckbCoolingCWC_UseFlowRate: false,
+      //   ckbHeatingHWC_UseCap: false,
+      //   ckbHeatingHWC_UseFlowRate: false,
+      //   ckbReheatHWC_UseCap: false,
+      //   ckbReheatHWC_UseFlowRate: false,
+      // });
     }
   }, [
     edit,
@@ -164,6 +172,7 @@ export default function UnitInfoForm({
 
   // ---------------------- Initalize Default Values ---------------------
   const defaultValues = useGetDefaultValue(edit, unitInfo, baseData);
+  
 
   // ---------------- Initalize Form with default values -----------------
   const methods = useForm({
@@ -193,6 +202,8 @@ export default function UnitInfoForm({
   // ------------------------- Form State Values --------------------------
   const values = watch();
 
+ 
+
   /*
    * Style functions that check if the compoment should be displayed or not
    */
@@ -213,14 +224,14 @@ export default function UnitInfoForm({
       ddlUnitTypeId: intUnitTypeID,
       intUAL: typeof window !== 'undefined' && localStorage.getItem('UAL'),
       intUserID: typeof window !== 'undefined' && localStorage.getItem('userId'),
-      ckbBypassVal,
-      ckbDrainPanVal,
-      ckbVoltageSPPVal,
-      ckbDehumidificationVal,
-      ckbValveAndActuatorVal,
-      ckbHeatPumpVal,
-      ckbDownshotVal,
-      ...ckbFlowRateAndCap,
+      // ckbBypassVal,
+      // ckbDrainPanVal,
+      // ckbVoltageSPPVal,
+      // ckbDehumidificationVal,
+      // ckbValveAndActuatorVal,
+      // ckbHeatPumpVal,
+      // ckbDownshotVal,
+      // ...ckbFlowRateAndCap,
     }),
     [
       getValues,
@@ -229,14 +240,14 @@ export default function UnitInfoForm({
       unitId,
       intProductTypeID,
       intUnitTypeID,
-      ckbBypassVal,
-      ckbDrainPanVal,
-      ckbVoltageSPPVal,
-      ckbDehumidificationVal,
-      ckbValveAndActuatorVal,
-      ckbHeatPumpVal,
-      ckbDownshotVal,
-      ckbFlowRateAndCap,
+      // ckbBypassVal,
+      // ckbDrainPanVal,
+      // ckbVoltageSPPVal,
+      // ckbDehumidificationVal,
+      // ckbValveAndActuatorVal,
+      // ckbHeatPumpVal,
+      // ckbDownshotVal,
+      // ckbFlowRateAndCap,
     ]
   );
 
@@ -252,7 +263,12 @@ export default function UnitInfoForm({
     // const jsonData = '{"name":"John", "age":30, "city":"London"}';
     // let oUnitInputs;
     const formValues = getValues();
+    
     const oUnitInputs = {
+        oUser: {
+          "intUserId" : typeof window !== 'undefined' && localStorage.getItem('userId'),
+          "intUAL": typeof window !== 'undefined' && localStorage.getItem('UAL')
+        },
         oUnit: {
           "intJobId" : projectId,
           "intUnitNo" : edit ? unitId : 0,
@@ -301,50 +317,50 @@ export default function UnitInfoForm({
           "intUnitNo" : edit ? unitId : 0,
           "intProdTypeId" : intProductTypeID,
           "intUnitTypeId" : intUnitTypeID,
-          "intOA_FilterModelId" : formValues.ddlOA_FilterModelId,
-          "intFinalFilterModelId" : 0,
-          "intRA_FitlerModelId" : formValues.ddlRA_FilterModelId,
+          "intOAFilterModelId" : formValues.ddlOA_FilterModelId,
+          "intSAFinalFilterModelId" : 0,
+          "intRAFilterModelId" : formValues.ddlRA_FilterModelId,
           "intHeatExchCompId" : formValues.ddlHeatExchCompId,
           "intPreheatCompId" : formValues.ddlPreheatCompId,
           "intIsBackupHeating" : 0,
           "intCoolingCompId" : formValues.ddlCoolingCompId,
           "intHeatingCompId" : formValues.ddlHeatingCompId,
           "intReheatCompId" : formValues.ddlReheatCompId,
-          "intIsHeatPump" : ckbHeatPumpVal === true ? 1 : 0,
-          "intIsDehumidification" : ckbDehumidificationVal === true ? 1 : 0,
+          "intIsHeatPump" : Number(formValues.ckbHeatPump) === 1 ? 1 : 0,  // Do not use formValues.ckbHeatPumpVal === true 
+          "intIsDehumidification" : Number(formValues.ckbDehumidification) === 1 ? 1 : 0,  // Do not use formValues.ckbDehumidificationVal === true 
           "intElecHeaterVoltageId" : formValues.ddlElecHeaterVoltageId,
           "intPreheatElecHeaterInstallationId" : formValues.ddlPreheatElecHeaterInstallationId,
           "intHeatingElecHeaterInstallationId" : formValues.ddlHeatElecHeaterInstallationId,
           "intPreheatElecHeaterStdCoilNo" : 0,
-          "intCoolingDX_VRV_KitQty" : 0,
-          "dblCoolingDX_VRV_KitTonnage" : 0,
+          "intCoolingDX_VRVKitQty" : 0,
+          "dblCoolingDX_VRVKitTonnage" : 0,
           "intHeatingElecHeaterStdCoilNo" : 0,
           "intReheatElecHeaterStdCoilNo" : 0,
           
-          "intReheatHGRC_VRV_KitQty" : 0,
-          "dblReheatHGRC_VRV_KitTonnage" : 0,
+          "intReheatHGRC_VRVKitQty" : 0,
+          "dblReheatHGRC_VRVKitTonnage" : 0,
           "intDamperAndActuatorId" : formValues.ddlDamperAndActuatorId,
-          "intisValveAndActuatorIncluded" : ckbValveAndActuatorVal === true ? 1 : 0,
-          "intPreheatHWC_ValveAndActuatorId" : 0,
-          "intCoolingCWC_ValveAndActuatorId" : 0,
-          "intHeatingHWC_ValveAndActuatorId" : 0,
-          "intReheatHWC_ValveAndActuatorId" : 0,
+          "intisValveAndActuatorIncluded" : Number(formValues.ckbValveAndActuator) === 1 ? 1 : 0,
+          "intPreheatHWCValveAndActuatorId" : 0,
+          "intCoolingCWCValveAndActuatorId" : 0,
+          "intHeatingHWCValveAndActuatorId" : 0,
+          "intReheatHWCValveAndActuatorId" : 0,
           "intValveTypeId" : formValues.ddlValveTypeId,
-          "intIsDrainPan" : ckbDrainPanVal === true ? 1 : 0,
-          "dblOA_FilterPD" : formValues.txbOA_FilterPD,
-          "dblRA_FilterPD" : formValues.txbRA_FilterPD,
+          "intIsDrainPan" : Number(formValues.ckbDrainPan) === 1 ? 1 : 0,
+          "dblOAFilterPD" : formValues.txbOA_FilterPD,
+          "dblRAFilterPD" : formValues.txbRA_FilterPD,
           "dblPreheatSetpointDB" : formValues.txbWinterPreheatSetpointDB,
           "dblCoolingSetpointDB" : formValues.txbSummerCoolingSetpointDB,
           "dblCoolingSetpointWB" : formValues.txbSummerCoolingSetpointWB,
           "dblHeatingSetpointDB" : formValues.txbWinterHeatingSetpointDB,
-          "dblReheatSetpontDB" : formValues.txbSummerReheatSetpointDB,
+          "dblReheatSetpointDB" : formValues.txbSummerReheatSetpointDB,
           "dblBackupHeatingSetpontDB" : 0,
           "intCoolingFluidTypeId" : formValues.ddlCoolingFluidTypeId,
           "intCoolingFluidConcentId" : formValues.ddlCoolingFluidConcentrationId,
           "dblCoolingFluidEntTemp" : formValues.txbCoolingFluidEntTemp,
           "dblCoolingFluidLvgTemp" : formValues.txbCoolingFluidLvgTemp,
-          "dblHeatingFluidTypeId" : formValues.ddlHeatingFluidTypeId,
-          "dblHeatingFluidConcentId" : formValues.ddlHeatingFluidConcentrationId,
+          "intHeatingFluidTypeId" : formValues.ddlHeatingFluidTypeId,
+          "intHeatingFluidConcentId" : formValues.ddlHeatingFluidConcentrationId,
           "dblHeatingFluidEntTemp" : formValues.txbHeatingFluidEntTemp,
           "dblHeatingFluidLvgTemp" : formValues.txbHeatingFluidLvgTemp,
           "dblRefrigSuctionTemp" : formValues.txbRefrigSuctionTemp,
@@ -360,22 +376,22 @@ export default function UnitInfoForm({
           "intUnitNo" : edit ? unitId : 0,
           "intProdTypeId" : intProductTypeID,
           "intUnitTypeId" : intUnitTypeID,
-          "intIsPreheatHWCUseCap" : 0,
-          "dblPrheatHWCCap" : formValues.txbReheatHWC_Cap,
-          "intIsPrehatHWCUseFlowRate" : 0,
-          "dblPreheatHWCFlowRate" : formValues.txbPreheatHWC_FlowRate,
-          "intIsCoolingCWCUseCap" : 0,
-          "dblCoolingCWCCap" : formValues.txbCoolingCWC_Cap,
-          "intIsCoolingCWCUseFlowRate" : 0,
-          "dblCoolingCWCFlowRate" : formValues.txbCoolingCWC_FlowRate,
-          "intIsHeatingHWCUseCap" : 0,
-          "dblHeatingHWCCap" : formValues.txbReheatHWC_Cap,
-          "intIsHeatingHWCUseFlowRate" : 0,
-          "dblHeatingHWCFlowRate" : formValues.txbHeatingHWC_FlowRate,
-          "intIsReheatHWCUseCap" : 0,
-          "dblReheatHWCCap" : formValues.txbHeatingHWC_Cap,
-          "intIsReheatHWCUseFlowRate" : 0,
-          "dblReheatHWCFlowRate" : formValues.txbReheatHWC_FlowRate,
+          "intIsPreheatHWCUseCap" : Number(formValues.ckbPreheatHWCUseCap) === 1 ? 1 : 0,
+          "dblPreheatHWCCap" : formValues.txbPreheatHWCCap,
+          "intIsPreheatHWCUseFlowRate" : Number(formValues.ckbPreheatHWCUseFlowRate) === 1 ? 1 : 0,
+          "dblPreheatHWCFlowRate" : formValues.txbPreheatHWCFlowRate,
+          "intIsCoolingCWCUseCap" : Number(formValues.ckbCoolingCWCUseCap) === 1 ? 1 : 0,
+          "dblCoolingCWCCap" : formValues.txbCoolingCWCCap,
+          "intIsCoolingCWCUseFlowRate" : Number(formValues.ckbCoolingCWCUseFlowRate) === 1 ? 1 : 0,
+          "dblCoolingCWCFlowRate" : formValues.txbCoolingCWCFlowRate,
+          "intIsHeatingHWCUseCap" : Number(formValues.ckbHeatingHWCUseCap) === 1 ? 1 : 0,
+          "dblHeatingHWCCap" : formValues.txbHeatingHWCCap,
+          "intIsHeatingHWCUseFlowRate" : Number(formValues.ckbHeatingHWCUseFlowRate) === 1 ? 1 : 0,
+          "dblHeatingHWCFlowRate" : formValues.txbHeatingHWCFlowRate,
+          "intIsReheatHWCUseCap" : Number(formValues.ckbReheatHWCUseCap) === 1 ? 1 : 0,
+          "dblReheatHWCCap" : formValues.txbReheatHWCCap,
+          "intIsReheatHWCUseFlowRate" : Number(formValues.ckbReheatHWCUseFlowRate) === 1 ? 1 : 0,
+          "dblReheatHWCFlowRate" : formValues.txbReheatHWCFlowRate,
         },
         oUnitLayout : {
           "intJobId" : projectId,
@@ -443,8 +459,7 @@ export default function UnitInfoForm({
         break;
     }
 
-    const unitModelValue = unitModel?.filter((item: any) => item.id === values.ddlUnitModelId)?.[0]
-      ?.value;
+    const unitModelValue = unitModel?.filter((item: any) => item.id === values.ddlUnitModelId)?.[0]?.value;
 
     return getUnitModelCodes(
       unitModelValue,
@@ -452,11 +467,11 @@ export default function UnitInfoForm({
       intUnitTypeID,
       values.ddlLocationId,
       values.ddlOrientationId,
-      Number(ckbBypassVal),
+      Number(values.ckbBypass),
       baseData
     );
   }, [
-    ckbBypassVal,
+    values.ckbBypass,
     baseData,
     intProductTypeID,
     intUnitTypeID,
@@ -491,6 +506,8 @@ export default function UnitInfoForm({
     [setValue]
   );
 
+
+
   const ddlCoolingCompChanged = useCallback(
     (e: any) => setValue('ddlCoolingCompId', Number(e.target.value)),
     [setValue]
@@ -511,47 +528,24 @@ export default function UnitInfoForm({
     [setValue]
   );
 
-  const ckbHeatPumpChanged = useCallback(
-    () => setCkbHeatPumpVal(!ckbHeatPumpVal),
-    [ckbHeatPumpVal]
-  );
+  // const ckbHeatPumpChanged = useCallback(
+  //   () => setCkbHeatPumpVal(!values.ckbHeatPumpVal),
+  //   [values.ckbHeatPumpVal]
+  // );
 
-  const ckbDehumidificationChanged = useCallback(() => {
-    setCkbDehumidificationVal(!ckbDehumidificationVal);
-    console.log('ckbDehumidificationVal:', ckbDehumidificationVal);
-  }, [ckbDehumidificationVal]);
+  // const ckbDehumidificationChanged = useCallback(() => {
+  //   setCkbDehumidificationVal(!values.ckbDehumidificationVal);
+  //   console.log('ckbDehumidificationVal:', values.ckbDehumidificationVal);
+  // }, [values.ckbDehumidificationVal]);
 
-  const setValueWithCheck = useCallback(
-    (e: any, key: any) => {
-      if (e.target.value === '') {
-        setValue(key, '');
-      } else if (!Number.isNaN(+e.target.value)) {
-        setValue(key, parseFloat(e.target.value));
-        return true;
-      }
-      return false;
-    },
-    [setValue]
-  );
-
-
-  const setValueWithCheck1 = useCallback(
-    (e: any, key: any) => {
-      if (e.target.value === '') {
-        setValue(key, '');
-      } else if (!Number.isNaN(Number(+e.target.value))) {
-        setValue(key, e.target.value);
-        return true;
-      }
-      return false;
-    },
-    [setValue]
-  );
 
   const ddlHandingChanged = useCallback(
     (e: any) => {
       setValue('ddlHandingId', Number(e.target.value));
-    },
+      setValue('ddlPreheatCoilHandingId', Number(e.target.value));
+      setValue('ddlCoolingCoilHandingId', Number(e.target.value));
+      setValue('ddlHeatingCoilHandingId', Number(e.target.value));
+   },
     [setValue]
   );
 
@@ -587,6 +581,35 @@ export default function UnitInfoForm({
     [setValue]
   );
 
+
+  const setValueWithCheck = useCallback(
+    (e: any, key: any) => {
+      if (e.target.value === '') {
+        setValue(key, '');
+      } else if (!Number.isNaN(+e.target.value)) {
+        setValue(key, parseFloat(e.target.value));
+        return true;
+      }
+      return false;
+    },
+    [setValue]
+  );
+
+  const setValueWithCheck1 = useCallback(
+    (e: any, key: any) => {
+      if (e.target.value === '') {
+        setValue(key, '');
+      } else if (!Number.isNaN(Number(+e.target.value))) {
+        setValue(key, e.target.value);
+        return true;
+      }
+      return false;
+    },
+    [setValue]
+  );
+
+
+
   /* ---------------------------- End OnChange functions ---------------------------- */
 
   // ---------------------------- Check if UnitType is AHU ----------------------------
@@ -619,7 +642,7 @@ export default function UnitInfoForm({
       Number(values.ddlLocationId),
       Number(values.ddlOrientationId),
       values.txbSummerSupplyAirCFM,
-      Number(ckbBypassVal),
+      Number(values.ckbBypass),
       Number(user?.UAL || 0)
     );
 
@@ -627,6 +650,10 @@ export default function UnitInfoForm({
 
     if (filteredUnitModel.length > 0) {
       setValue('ddlUnitModelId', filteredUnitModel?.[0]?.id);
+    }
+
+    if (edit){
+      setValue('ddlUnitModelId', defaultValues?.ddlUnitModelId);
     }
 
     if (summerSupplyAirCFM && values.txbSummerSupplyAirCFM === summerSupplyAirCFM.toString()) {
@@ -642,7 +669,7 @@ export default function UnitInfoForm({
     values.ddlLocationId,
     values.ddlOrientationId,
     values.txbSummerSupplyAirCFM,
-    ckbBypassVal,
+    values.ckbBypass,
     user?.UAL,
     setValue,
   ]);
@@ -654,7 +681,7 @@ export default function UnitInfoForm({
       intProductTypeID,
       values.ddlUnitModelId,
       values.ddlOrientationId,
-      Number(ckbBypassVal)
+      Number(values.ckbBypass)
     );
     setCkbBypassVal(!!result.checked);
     return result;
@@ -720,26 +747,35 @@ export default function UnitInfoForm({
   );
 
   // ---------------------------- Get RAFilter Model DDL -----------------------------
-  const RAFilterModel = useMemo(
-    () => baseData?.filterModel?.filter((item: any) => item.return_air === 1),
-    [baseData]
-  );
+  const RAFilterModel = useMemo(() => {
+    const info: { 
+      dataTable: any; 
+    } = { 
+      dataTable: any, 
+    };
+     
+    info.dataTable =  baseData?.filterModel?.filter((item: any) => item.return_air === 1);
+
+    return info; 
+  },[baseData]);
 
   // ---------------------------- Initialize QAFilter Model --------------------------
   useEffect(() => {
-    if (
-      OAFilterModel?.filter((item: any) => item?.id === values.ddlOA_FilterModelId).length === 0
-    ) {
+    if ( OAFilterModel?.filter((item: any) => item?.id === values.ddlOA_FilterModelId).length === 0) {
       setValue('ddlOA_FilterModelId', OAFilterModel[0].id);
     }
+
+
   }, [setValue, OAFilterModel, values.ddlOA_FilterModelId]);
 
   // ---------------------------- Initialize RAFilter Model --------------------------
   useEffect(() => {
-    if (
-      RAFilterModel?.filter((item: any) => item?.id === values.ddlRA_FilterModelId).length === 0
-    ) {
-      setValue('ddlRA_FilterModelId', RAFilterModel[0].id);
+    if (RAFilterModel?.dataTable?.filter((item: any) => item?.id === values.ddlRA_FilterModelId).length === 0) {
+      setValue('ddlRA_FilterModelId', RAFilterModel?.dataTable[0]?.id);
+    
+      if (edit){
+        setValue('ddlRA_FilterModelId', defaultValues?.ddlRA_FilterModelId);
+      }
     }
   }, [setValue, RAFilterModel, values.ddlOA_FilterModelId]);
 
@@ -753,7 +789,7 @@ export default function UnitInfoForm({
     () =>
       getReheatInfo(
         baseData,
-        ckbDehumidificationVal,
+        values.ckbDehumidification,
         Number(values.ddlCoolingCompId),
         Number(user?.UAL || 0),
         Number(intUnitTypeID),
@@ -761,7 +797,7 @@ export default function UnitInfoForm({
         Number(values.ddlUnitModelId)
       ),
     [
-      ckbDehumidificationVal,
+      values.ckbDehumidification,
       baseData,
       intProductTypeID,
       intUnitTypeID,
@@ -780,14 +816,206 @@ export default function UnitInfoForm({
       intProductTypeID
     );
 
-    if (!edit)
-      setValue(
-        'ddlPreheatElecHeaterInstallationId',
-        result?.ddlPreheatElecHeaterInstallationId || 1
-      );
+    if (!edit) {
+      setValue('ddlPreheatElecHeaterInstallationId',result?.ddlPreheatElecHeaterInstallationId || 1 );
+    }
 
     return result.ddlPreheatElecHeaterInstallationDataTbl;
   }, [edit, baseData, setValue, intProductTypeID, values.ddlLocationId, values.ddlPreheatCompId]);
+
+
+
+  const preheatHWCCapInfo = useMemo(() => {
+    const info: { 
+      resetCapacity: number; 
+      isDisabled: boolean;
+    } = { 
+      resetCapacity: 0, 
+      isDisabled: true,
+    };
+     
+    if (Number(values.ckbPreheatHWCUseCap) === 0) { 
+      setValue('txbPreheatHWCCap', "0"); 
+      info.isDisabled=true;
+    }
+    else {
+      info.isDisabled = false;
+    }
+
+    return info;
+  }, [
+    // edit,
+    // baseData,
+    // setValue,
+    values.ckbPreheatHWCUseCap,
+  ]);
+
+
+  const preheatHWCFlowRateInfo = useMemo(() => {
+    const info: { 
+      resetCapacity: number; 
+      isDisabled: boolean;
+    } = { 
+      resetCapacity: 0, 
+      isDisabled: true,
+    };
+     
+    if (Number(values.ckbPreheatHWCUseFlowRate) === 0) { 
+      setValue('txbPreheatHWCFlowRate', "0"); 
+      info.isDisabled=true;
+    }
+    else {
+      info.isDisabled = false;
+    }
+
+    return info;
+  }, [
+    values.ckbPreheatHWCUseFlowRate,
+  ]);
+
+
+  const coolingCWCCapInfo = useMemo(() => {
+    const info: { 
+      resetCapacity: number; 
+      isDisabled: boolean;
+    } = { 
+      resetCapacity: 0, 
+      isDisabled: true,
+    };
+     
+    if (Number(values.ckbCoolingCWCUseCap) === 0) { 
+      setValue('txbCoolingCWCCap', "0"); 
+      info.isDisabled=true;
+    }
+    else {
+      info.isDisabled = false;
+    }
+
+    return info;
+  }, [
+    // edit,
+    // baseData,
+    // setValue,
+    values.ckbCoolingCWCUseCap,
+  ]);
+
+
+  const coolingCWCFlowRateInfo = useMemo(() => {
+    const info: { 
+      resetCapacity: number; 
+      isDisabled: boolean;
+    } = { 
+      resetCapacity: 0, 
+      isDisabled: true,
+    };
+     
+    if (Number(values.ckbCoolingCWCUseFlowRate) === 0) { 
+      setValue('txbCoolingCWCFlowRate', "0"); 
+      info.isDisabled=true;
+    }
+    else {
+      info.isDisabled = false;
+    }
+
+    return info;
+  }, [
+    values.ckbCoolingCWCUseFlowRate,
+  ]);
+
+
+  const heatingHWCCapInfo = useMemo(() => {
+    const info: { 
+      resetCapacity: number; 
+      isDisabled: boolean;
+    } = { 
+      resetCapacity: 0, 
+      isDisabled: true,
+    };
+     
+    if (Number(values.ckbHeatingHWCUseCap) === 0) { 
+      setValue('txbHeatingHWCCap', "0"); 
+      info.isDisabled=true;
+    }
+    else {
+      info.isDisabled = false;
+    }
+
+    return info;
+  }, [
+    values.ckbHeatingHWCUseCap,
+  ]);
+
+
+  const heatingHWCFlowRateInfo = useMemo(() => {
+    const info: { 
+      resetCapacity: number; 
+      isDisabled: boolean;
+    } = { 
+      resetCapacity: 0, 
+      isDisabled: true,
+    };
+     
+    if (Number(values.ckbHeatingHWCUseFlowRate) === 0) { 
+      setValue('txbHeatingHWCFlowRate', "0"); 
+      info.isDisabled=true;
+    }
+    else {
+      info.isDisabled = false;
+    }
+
+    return info;
+  }, [
+    values.ckbHeatingHWCUseFlowRate,
+  ]);
+
+
+  const reheatHWCCapInfo = useMemo(() => {
+    const info: { 
+      resetCapacity: number; 
+      isDisabled: boolean;
+    } = { 
+      resetCapacity: 0, 
+      isDisabled: true,
+    };
+     
+    if (Number(values.ckbReheatHWCUseCap) === 0) { 
+      setValue('txbReheatHWCCap', "0"); 
+      info.isDisabled=true;
+    }
+    else {
+      info.isDisabled = false;
+    }
+
+    return info;
+  }, [
+    values.ckbReheatHWCUseCap,
+  ]);
+
+
+  const reheatHWCFlowRateInfo = useMemo(() => {
+    const info: { 
+      resetCapacity: number; 
+      isDisabled: boolean;
+    } = { 
+      resetCapacity: 0, 
+      isDisabled: true,
+    };
+     
+    if (Number(values.ckbReheatHWCUseFlowRate) === 0) { 
+      setValue('txbReheatHWCFlowRate', "0"); 
+      info.isDisabled=true;
+    }
+    else {
+      info.isDisabled = false;
+    }
+
+    return info;
+  }, [
+    values.ckbReheatHWCUseFlowRate,
+  ]);
+
+
+
 
   const customInputs = useMemo(
     () =>
@@ -807,24 +1035,28 @@ export default function UnitInfoForm({
     ]
   );
 
+
   // -------------- Get User Authentication Level from LocalStorage ----------------
   const ualInfo = useMemo(
     () => getUALInfo(Number(typeof window !== 'undefined' && localStorage.getItem('UAL'))),
     []
   );
 
+
   // -------------- Get Heating Pump Information ----------------
   const heatPumpInfo = useMemo(() => {
     const result = getHeatPumpInfo(Number(values.ddlCoolingCompId));
-    ckbHeatPumpChanged();
+    // ckbHeatPumpChanged();
     return result;
   }, [values.ddlCoolingCompId]);
+
 
   // -------------- Get Dehumidification Information ----------------
   const dehumidificationInfo = useMemo(
     () => getDehumidificationInfo(Number(values.ddlCoolingCompId)),
     [values.ddlCoolingCompId]
   );
+
 
   // -------------- Get Coil Refrigerate Design Condition Information ----------------
   const dxCoilRefrigDesignCondInfo = useMemo(
@@ -836,6 +1068,7 @@ export default function UnitInfoForm({
     [values.ddlCoolingCompId]
   );
 
+
   const heatElecHeaterInstallationInfo = useMemo(
     () =>
       getHeatElecHeaterInstallationInfo(
@@ -846,18 +1079,23 @@ export default function UnitInfoForm({
     [baseData, intProductTypeID, values.ddlHeatingCompId, values.ddlReheatCompId]
   );
 
-  const heatingFluidDesignCondInfo = useMemo(() => {
-    const result = getHeatingFluidDesignCondInfo(
+
+  const heatingFluidTypeInfo = useMemo(() => {
+    const result = getHeatingFluidTypeInfo(
       baseData,
       Number(values.ddlPreheatCompId),
       Number(values.ddlHeatingCompId),
       Number(values.ddlReheatCompId)
-    );
-
-    if (!edit) {
-      setValue('ddlHeatingFluidTypeId', result?.ddlHeatingFluidTypeId);
-      setValue('ddlHeatingFluidConcentrationId', result?.ddlHeatingFluidConcentrationId);
+    ); 
+    
+    // if (!edit) {
+      setValue('ddlHeatingFluidTypeId', result?.defaultId);
+      // setValue('ddlHeatingFluidConcentrationId', result?.FluidConcenId);
+    // }
+    if (edit){
+      setValue('ddlHeatingFluidTypeId', defaultValues?.ddlHeatingFluidTypeId);
     }
+
 
     return result;
   }, [
@@ -868,6 +1106,69 @@ export default function UnitInfoForm({
     values.ddlPreheatCompId,
     values.ddlReheatCompId,
   ]);
+
+
+  const heatingFluidConcenInfo = useMemo(() => {
+    const result = getHeatingFluidConcenInfo(
+      baseData,
+      Number(values.ddlHeatingFluidTypeId),
+    ); 
+    
+    // if (!edit) {
+      setValue('ddlHeatingFluidConcentrationId', result?.defaultId);
+    // }
+    if (edit){
+      setValue('ddlHeatingFluidConcentrationId', defaultValues?.ddlHeatingFluidConcentrationId);
+    }
+
+    return result;
+  }, [
+    edit,
+    baseData,
+    setValue,
+    values.ddlHeatingFluidTypeId,
+  ]);
+
+
+  const coolingFluidTypeInfo = useMemo(() => {
+    const result = getCoolingFluidTypeInfo(
+      baseData,
+      Number(values.ddlCoolingCompId)
+    );
+    
+    // if (!edit) {
+      setValue('ddlCoolingFluidTypeId', result?.defaultId);
+      // setValue('ddlCoolingFluidConcentrationId', result?.defaultId);
+    // }
+
+    return result;
+  }, [
+    edit,
+    baseData,
+    setValue,
+    values.ddlCoolingCompId,
+  ]);
+
+
+  const coolingFluidConcenInfo = useMemo(() => {
+    const result = getCoolingFluidConcenInfo(
+      baseData,
+      Number(values.ddlCoolingFluidTypeId),
+    ); 
+    
+    // if (!edit) {
+      setValue('ddlCoolingFluidConcentrationId', result?.defaultId);
+    // }
+
+    return result;
+  }, [
+    edit,
+    baseData,
+    setValue,
+    values.ddlCoolingFluidTypeId,
+  ]);
+
+
 
   const damperAndActuatorInfo = useMemo(() => {
     const result = getDamperAndActuatorInfo(
@@ -889,7 +1190,7 @@ export default function UnitInfoForm({
       Number(intUnitTypeID),
       Number(values.ddlElecHeaterVoltageId),
       Number(values.ddlUnitVoltageId),
-      Number(ckbVoltageSPPVal),
+      Number(values.ckbVoltageSPP),
       strUnitModelValue
     );
 
@@ -906,7 +1207,7 @@ export default function UnitInfoForm({
     return result;
   }, [
     edit,
-    ckbVoltageSPPVal,
+    values.ckbVoltageSPP,
     baseData,
     setValue,
     intProductTypeID,
@@ -940,11 +1241,23 @@ export default function UnitInfoForm({
     [intProductTypeID, intUnitTypeID]
   );
 
+  // const handingInfo = useMemo(() => {
+  //   const result = getHandingInfo(baseData);
+  //   if (!edit) setValue('ddlHandingId', result.ddlHandingId);
+  //   return result;
+  // }, [edit, baseData, setValue]);
+
+
   const handingInfo = useMemo(() => {
-    const result = getHandingInfo(baseData);
-    if (!edit) setValue('ddlHandingId', result.ddlHandingId);
+    const result = baseData?.handing;
+    // if (!edit) setValue('ddlHandingId', defaultValues?.ddlHandingId);
+    setValue('ddlHandingId', (!edit)? baseData?.handing[0].id : defaultValues.ddlHandingId);
+    setValue('ddlPreheatCoilHandingId', (!edit)? baseData?.handing[0].id : defaultValues.ddlPreheatCoilHandingId);
+    setValue('ddlCoolingCoilHandingId', (!edit)? baseData?.handing[0].id : defaultValues.ddlCoolingCoilHandingId);
+    setValue('ddlHeatingCoilHandingId', (!edit)? baseData?.handing[0].id : defaultValues.ddlHeatingCoilHandingId);
     return result;
   }, [edit, baseData, setValue]);
+
 
   const supplyAirOpeningInfo = useMemo(() => {
     const result = getSupplyAirOpeningInfo(
@@ -960,7 +1273,7 @@ export default function UnitInfoForm({
       Number(values.ddlReheatCompId)
     );
 
-    setValue('ddlSupplyAirOpeningId', result?.ddlSupplyAirOpeningId);
+    setValue('ddlSupplyAirOpeningId', (!edit)? result?.ddlSupplyAirOpeningId : defaultValues.ddlSupplyAirOpeningId);
     setValue('ddlSupplyAirOpeningText', result?.ddlSupplyAirOpeningText);
     return result;
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -988,12 +1301,19 @@ export default function UnitInfoForm({
       Number(values.ddlOrientationId)
     );
 
-    if (!edit) setValue('ddlExhaustAirOpeningId', result?.ddlExhaustAirOpeningId);
-    if (!edit) setValue('ddlExhaustAirOpeningText', result?.ddlExhaustAirOpeningText);
-    if (!edit) setValue('ddlOutdoorAirOpeningId', result?.ddlOutdoorAirOpeningId);
-    if (!edit) setValue('ddlOutdoorAirOpeningText', result?.ddlOutdoorAirOpeningText);
-    if (!edit) setValue('ddlReturnAirOpeningId', result?.ddlReturnAirOpeningId);
-    if (!edit) setValue('ddlReturnAirOpeningText', result?.ddlReturnAirOpeningText);
+    // if (!edit) setValue('ddlExhaustAirOpeningId', result?.ddlExhaustAirOpeningId);
+    // if (!edit) setValue('ddlExhaustAirOpeningText', result?.ddlExhaustAirOpeningText);
+    // if (!edit) setValue('ddlOutdoorAirOpeningId', result?.ddlOutdoorAirOpeningId);
+    // if (!edit) setValue('ddlOutdoorAirOpeningText', result?.ddlOutdoorAirOpeningText);
+    // if (!edit) setValue('ddlReturnAirOpeningId', result?.ddlReturnAirOpeningId);
+    // if (!edit) setValue('ddlReturnAirOpeningText', result?.ddlReturnAirOpeningText);
+
+    setValue('ddlExhaustAirOpeningId', (!edit)? result?.ddlExhaustAirOpeningId : defaultValues.ddlExhaustAirOpeningId);
+    setValue('ddlExhaustAirOpeningText', result?.ddlExhaustAirOpeningText);
+    setValue('ddlOutdoorAirOpeningId',  (!edit)? result?.ddlOutdoorAirOpeningId : defaultValues.ddlOutdoorAirOpeningId);
+    setValue('ddlOutdoorAirOpeningText', result?.ddlOutdoorAirOpeningText);
+    setValue('ddlReturnAirOpeningId', (!edit)? result?.ddlReturnAirOpeningId : defaultValues.ddlReturnAirOpeningId);
+    setValue('ddlReturnAirOpeningText', result?.ddlReturnAirOpeningText);
 
     setRemainingOpeningsInfo(result);
   }, [
@@ -1013,13 +1333,13 @@ export default function UnitInfoForm({
         e.target.value,
         intProductTypeID,
         Number(user?.UAL || 0),
-        Number(ckbBypassVal)
+        Number(values.ckbBypass)
       );
       setValue('txbSummerSupplyAirCFM', value);
       setValue('txbSummerReturnAirCFM', value);
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [ckbBypassVal, getAllFormData, setValue, user?.UAL || 0]
+    [values.ckbBypass, getAllFormData, setValue, user?.UAL || 0]
   );
 
   const handleBlurSummerReturnAirCFM = useCallback(
@@ -1134,17 +1454,19 @@ export default function UnitInfoForm({
                       ))}
                     </RHFSelect>
                   )}
-                  <FormControlLabel
-                    sx={getInlineDisplay(ckbDownshotVal)}
-                    control={
-                      <Checkbox
-                        name="ckbDownshotVal"
-                        checked={ckbDownshotVal}
-                        onChange={() => setCkbDownshotVal(!ckbDownshotVal)}
+                   {/* <FormControlLabel
+                    control={ */}
+                      <RHFCheckbox
+                      sx={getInlineDisplay(values.ckbDownshot)}
+                      label="Downshot"
+                      name="ckbDownshot"
+                        checked={values.ckbDownshot}
+                        // onChange={() => setCkbDownshotVal(!values.ckbDownshotVal)}
+                        onChange={(e: any) => setValue('ckbDownshot', Number(e.target.checked))}
                       />
-                    }
-                    label="Downshot"
-                  />
+                     {/* }
+                     label="Downshot"
+                   /> */}
                   {isAvailable(orientationInfo) && (
                     <RHFSelect
                       native
@@ -1168,9 +1490,7 @@ export default function UnitInfoForm({
                       name="ddlControlsPreferenceId"
                       label="Control Preference"
                       placeholder=""
-                      onChange={(e: any) => {
-                        setValue('ddlControlsPreferenceId', Number(e.target.value));
-                      }}
+                      onChange={(e: any) => {setValue('ddlControlsPreferenceId', Number(e.target.value));}}
                     >
                       {baseData?.controlsPreference?.map((item: any, index: number) => (
                         <option key={index} value={item.id}>
@@ -1225,24 +1545,22 @@ export default function UnitInfoForm({
               </Grid>
               <Grid item xs={4} md={4}>
                 <Box sx={{ display: 'grid', rowGap: 1, columnGap: 1 }}>
-                  <FormControlLabel
-                    sx={getDisplay(
-                      intProductTypeID === IDs.intProdTypeVentumLiteID || isUnitTypeAHU()
-                    )}
-                    control={
-                      <Checkbox
-                        name="ckbBypassVal"
-                        sx={{
-                          color: ckbBypassInfo.text !== '' ? colors.red[500] : 'text.primary',
-                          size: 'small',
-                        }}
-                        checked={ckbBypassVal}
-                        onChange={() => setCkbBypassVal(!ckbBypassVal)}
+                  {/* <FormControlLabel
+                    sx={getDisplay(intProductTypeID === IDs.intProdTypeVentumLiteID || isUnitTypeAHU())}
+                    control={ */}
+                      <RHFCheckbox
+                        label={`Bypass for Economizer: ${ckbBypassInfo.text}`}
+                        name="ckbBypass"
+                        sx={getDisplay(intProductTypeID === IDs.intProdTypeVentumLiteID || isUnitTypeAHU())}
+                        // sx={{color: ckbBypassInfo.text !== '' ? colors.red[500] : 'text.primary', size: 'small', }}
+                        checked={values.ckbBypass}
+                        // onChange={() => setCkbBypassVal(!values.ckbBypassVal)}
+                        onChange={(e: any) => {setValue('ckbBypass', Number(e.target.checked));}}
                         disabled={!ckbBypassInfo.enabled}
                       />
-                    }
+                    {/* }
                     label={`Bypass for Economizer: ${ckbBypassInfo.text}`}
-                  />
+                  /> */}
                   {isAvailable(unitModel) && (
                     <RHFSelect
                       native
@@ -1276,10 +1594,11 @@ export default function UnitInfoForm({
                   <FormControlLabel
                     sx={getDisplay(intProductTypeID === IDs.intProdTypeVentumLiteID)}
                     control={
-                      <Checkbox
+                      <RHFCheckbox
+                        label="Single Point Power Connection"
                         name="ckbVoltageSPPVal"
-                        checked={ckbVoltageSPPVal}
-                        onChange={() => setCkbVoltageSPPVal(!ckbVoltageSPPVal)}
+                        checked={values.ckbVoltageSPP}
+                        onChange={(e: any) => setValue('ckbVoltageSPP', Number(e.target.checked))}
                       />
                     }
                     label="Single Point Power Connection"
@@ -1299,7 +1618,7 @@ export default function UnitInfoForm({
                       ))}
                     </RHFSelect>
                   )}
-                  {isAvailable(RAFilterModel) && (
+                  {isAvailable(RAFilterModel?.dataTable) && (
                     <RHFSelect
                       native
                       size="small"
@@ -1307,7 +1626,7 @@ export default function UnitInfoForm({
                       label="RA Filter"
                       onChange={(e: any) => setValue('ddlRA_FilterModelId', Number(e.target.value))}
                     >
-                      {RAFilterModel?.map((item: any, index: number) => (
+                      {RAFilterModel?.dataTable?.map((item: any, index: number) => (
                         <option key={index} value={item.id}>
                           {item.items}
                         </option>
@@ -1366,13 +1685,8 @@ export default function UnitInfoForm({
                   name="txbWinterPreheatSetpointDB"
                   label="Preheat LAT Setpoint DB (F):"
                   autoComplete="off"
-                  sx={getDisplay(
-                    values.ddlPreheatCompId === IDs.intCompElecHeaterID ||
-                      values.ddlCoolingCompId === IDs.intCompHWC_ID
-                  )}
-                  onChange={(e: any) => {
-                    setValueWithCheck1(e, 'txbWinterPreheatSetpointDB');
-                  }}
+                  sx={getDisplay(values.ddlPreheatCompId === IDs.intCompElecHeaterID || values.ddlCoolingCompId === IDs.intCompHWC_ID)}
+                  onChange={(e: any) => {setValueWithCheck1(e, 'txbWinterPreheatSetpointDB');}}
                 />
                 {isAvailable(baseData?.handing) && (
                   <RHFSelect
@@ -1400,9 +1714,7 @@ export default function UnitInfoForm({
                     size="small"
                     name="ddlPreheatElecHeaterInstallationId"
                     label="Preheat Elec. Heater Installation"
-                    onChange={(e: any) =>
-                      setValue('ddlPreheatElecHeaterInstallationId', Number(e.target.value))
-                    }
+                    onChange={(e: any) =>setValue('ddlPreheatElecHeaterInstallationId', Number(e.target.value))}
                     placeholder=""
                   >
                     {preheatElecHeaterInstallationInfo?.map((item: any, index: number) => (
@@ -1424,7 +1736,7 @@ export default function UnitInfoForm({
                     name="ddlHeatingFluidTypeId"
                     label="Heating Fluid Type"
                   >
-                    {baseData?.fluidType?.map((item: any, index: number) => (
+                    {heatingFluidTypeInfo?.dataTable?.map((item: any, index: number) => (
                       <option key={index} value={item.id}>
                         {item.items}
                       </option>
@@ -1438,11 +1750,7 @@ export default function UnitInfoForm({
                     name="ddlHeatingFluidConcentrationId"
                     label="Heating Fluid %"
                   >
-                    {getItemsAddedOnIDDataTable(
-                      baseData?.fluidConcentration,
-                      'fluid_type_id',
-                      Number(values.ddlHeatingFluidTypeId)
-                    )?.map((item: any, index: number) => (
+                    {heatingFluidConcenInfo?.dataTable?.map((item: any, index: number) => (
                       <option key={index} value={item.id}>
                         {item.items}
                       </option>
@@ -1453,69 +1761,70 @@ export default function UnitInfoForm({
                   size="small"
                   name="txbHeatingFluidEntTemp"
                   label="Heating Fluid Ent Temp (F)"
-                  onChange={(e: any) => {
-                    setValueWithCheck1(e, 'txbHeatingFluidEntTemp');
-                  }}
+                  onChange={(e: any) => {setValueWithCheck1(e, 'txbHeatingFluidEntTemp');}}
                 />
                 <RHFTextField
                   size="small"
                   name="txbHeatingFluidLvgTemp"
                   label="Heating Fluid Lvg Temp (F)"
-                  onChange={(e: any) => {
-                    setValueWithCheck1(e, 'txbHeatingFluidLvgTemp');
-                  }}
+                  onChange={(e: any) => {setValueWithCheck1(e, 'txbHeatingFluidLvgTemp');}}
                 />
               </Stack>
-              <Stack spacing={1} sx={{ mb: 3 }}>
-                <FormControlLabel
+              <Stack spacing={1} sx={{ mb: 3, display: getInlineDisplay(values.ddlPreheatCompId === IDs.intCompHWC_ID)}}>
+                {/* <FormControlLabel
                   sx={getInlineDisplay(customInputs.divPreheatHWC_UseCapVisible)}
-                  control={
-                    <Checkbox
-                      name="ckbPreheatHWC_UseCap"
-                      checked={ckbFlowRateAndCap.ckbPreheatHWC_UseCap}
-                      onChange={() => {
-                        setCkbFlowRateAndCap({
-                          ...ckbFlowRateAndCap,
-                          ckbPreheatHWC_UseCap: !ckbFlowRateAndCap.ckbPreheatHWC_UseCap,
-                        });
-                      }}
+                  control={ */}
+                    <RHFCheckbox
+                      // sx={getInlineDisplay(values.ddlPreheatCompId === IDs.intCompHWC_ID)}
+                      label="Preheat HWC Use Capacity"
+                      name="ckbPreheatHWCUseCap"
+                      checked={values.ckbPreheatHWCUseCap}
+                      onChange={(e: any) => setValue('ckbPreheatHWCUseCap', Number(e.target.checked))}
+                      // onChange={() => {
+                      //   setCkbFlowRateAndCap({
+                      //     ...values.ckbPreheatHWCUseCapVal,
+                      //     ckbPreheatHWC_UseCap: !values.ckbPreheatHWCUseCapVal,
+                      //   });
+                      // }}
                     />
-                  }
+                  {/* }
                   label="Preheat HWC Use Capacity"
-                />
+                /> */}
                 <RHFTextField
                   size="small"
-                  name="txbPreheatHWC_Cap"
+                  name="txbPreheatHWCCap"
                   label="Preheat HWC Capacity (MBH)"
-                  sx={getDisplay(customInputs.divPreheatHWC_UseCapVisible)}
-                  onChange={(e: any) => {
-                    setValueWithCheck1(e, 'txbPreheatHWC_Cap');
-                  }}
+                  // sx={getDisplay(values.ddlPreheatCompId === IDs.intCompHWC_ID)}
+                  disabled= {preheatHWCCapInfo.isDisabled}
+                  // value={preheatHWCUseCapInfo.resetCapacity}
+                  onChange={(e: any) => {setValueWithCheck1(e, 'txbPreheatHWCCap');}}
                 />
-                <FormControlLabel
+                {/* <FormControlLabel
                   sx={getInlineDisplay(customInputs.divPreheatHWC_UseFlowRateVisible)}
-                  control={
-                    <Checkbox
-                      name="ckbPreheatHWC_UseFlowRate"
-                      checked={!!ckbFlowRateAndCap.ckbPreheatHWC_UseFlowRate}
-                      onChange={() => {
-                        setCkbFlowRateAndCap({
-                          ...ckbFlowRateAndCap,
-                          ckbPreheatHWC_UseFlowRate: !ckbFlowRateAndCap.ckbPreheatHWC_UseFlowRate,
-                        });
-                      }}
+                  control={ */}
+                    <RHFCheckbox
+                      // sx={getInlineDisplay(customInputs.divPreheatHWC_UseFlowRateVisible)}
+                      label="Preheat HWC Use Flow Rate"
+                      name="ckbPreheatHWCUseFlowRate"
+                      checked={values.ckbPreheatHWCUseFlowRate}
+                      onChange={(e: any) => setValue('ckbPreheatHWCUseFlowRate', Number(e.target.checked))}
+                      // onChange={() => {
+                      //   setCkbFlowRateAndCap({
+                      //     ...values.ckbPreheatHWCUseCapVal,
+                      //     ckbPreheatHWC_UseFlowRate: !values.ckbPreheatHWCUseFlowRateVal,
+                      //   });
+                      // }}
                     />
-                  }
+                  {/* }
                   label="Preheat HWC Use Flow Rate"
-                />
+                /> */}
                 <RHFTextField
                   size="small"
-                  name="txbPreheatHWC_FlowRate"
+                  name="txbPreheatHWCFlowRate"
                   label="Preheat HWC Flow Rate (GPM)"
-                  sx={getDisplay(customInputs.divPreheatHWC_UseFlowRateVisible)}
-                  onChange={(e: any) => {
-                    setValueWithCheck1(e, 'txbPreheatHWC_FlowRate');
-                  }}
+                  // sx={getDisplay(customInputs.divPreheatHWC_UseFlowRateVisible)}
+                  disabled= {preheatHWCFlowRateInfo.isDisabled}
+                  onChange={(e: any) => {setValueWithCheck1(e, 'txbPreheatHWCFlowRate');}}
                 />
               </Stack>
             </Box>
@@ -1571,48 +1880,44 @@ export default function UnitInfoForm({
                     values.ddlCoolingCompId === IDs.intCompCWC_ID ||
                       values.ddlCoolingCompId === IDs.intCompDX_ID
                   )}
-                  onChange={(e: any) => {
-                    setValueWithCheck1(e, 'txbSummerCoolingSetpointDB');
-                  }}
+                  onChange={(e: any) => {setValueWithCheck1(e, 'txbSummerCoolingSetpointDB');}}
                 />
                 <RHFTextField
                   size="small"
                   name="txbSummerCoolingSetpointWB"
                   label="Cooling LAT Setpoint WB (F):"
                   autoComplete="off"
-                  sx={getDisplay(
-                    Number(values.ddlCoolingCompId) === IDs.intCompCWC_ID ||
-                      Number(values.ddlCoolingCompId) === IDs.intCompDX_ID
-                  )}
-                  onChange={(e: any) => {
-                    setValueWithCheck1(e, 'txbSummerCoolingSetpointWB');
-                  }}
+                  sx={getDisplay(Number(values.ddlCoolingCompId) === IDs.intCompCWC_ID || Number(values.ddlCoolingCompId) === IDs.intCompDX_ID)}
+                  onChange={(e: any) => {setValueWithCheck1(e, 'txbSummerCoolingSetpointWB');}}
                 />
-                <FormControlLabel
+                {/* <FormControlLabel
                   sx={getInlineDisplay(values.ddlCoolingCompId === IDs.intCompDX_ID)}
-                  control={
-                    <Checkbox
-                      name="ckbHeatPumpVal"
-                      checked={ckbHeatPumpVal}
-                      onChange={ckbHeatPumpChanged}
+                  control={ */}
+                    <RHFCheckbox
+                    sx={getInlineDisplay(values.ddlCoolingCompId === IDs.intCompDX_ID)}
+                    label="Heat Pump"
+                    name="ckbHeatPump"
+                      checked={values.ckbHeatPump}
+                      // onChange={ckbHeatPumpChanged}
+                      onChange={(e: any) => setValue('ckbHeatPump', Number(e.target.checked))}
                     />
-                  }
+                  {/* }
                   label="Heat Pump"
-                />
-                <FormControlLabel
-                  sx={getInlineDisplay(
-                    values.ddlCoolingCompId === IDs.intCompCWC_ID ||
-                      values.ddlCoolingCompId === IDs.intCompDX_ID
-                  )}
-                  control={
-                    <Checkbox
-                      name="ckbDehumidificationVal"
-                      checked={ckbDehumidificationVal}
-                      onClick={ckbDehumidificationChanged}
+                /> */}
+                {/* <FormControlLabel
+                  sx={getInlineDisplay(values.ddlCoolingCompId === IDs.intCompCWC_ID || values.ddlCoolingCompId === IDs.intCompDX_ID)}
+                  control={ */}
+                    <RHFCheckbox
+                      sx={getInlineDisplay(values.ddlCoolingCompId === IDs.intCompCWC_ID || values.ddlCoolingCompId === IDs.intCompDX_ID)}
+                      label="Dehumidification"
+                      name="ckbDehumidification"
+                      checked={values.ckbDehumidification}
+                      // onChange={(e: any) => setCkbDehumidificationVal(e.target.checked)}
+                      onChange={(e: any) => setValue('ckbDehumidification', Number(e.target.checked))}
                     />
-                  }
+                  {/* }
                   label="Dehumidification"
-                />
+                /> */}
                 {isAvailable(baseData?.handing) && (
                   <RHFSelect
                     native
@@ -1620,9 +1925,7 @@ export default function UnitInfoForm({
                     name="ddlCoolingCoilHandingId"
                     label="Cooling Coil Handing"
                     sx={getDisplay(Number(values.ddlCoolingCompId) > 1)}
-                    onChange={(e: any) =>
-                      setValue('ddlCoolingCoilHandingId', Number(e.target.value))
-                    }
+                    onChange={(e: any) => setValue('ddlCoolingCoilHandingId', Number(e.target.value))}
                   >
                     {baseData?.handing?.map((item: any, index: number) => (
                       <option key={index} value={item.id}>
@@ -1632,20 +1935,12 @@ export default function UnitInfoForm({
                   </RHFSelect>
                 )}
               </Stack>
-              <Stack
-                spacing={1}
-                sx={{
-                  ...getDisplay(dxCoilRefrigDesignCondInfo.divDXCoilRefrigDesignCondVisible),
-                  mb: 3,
-                }}
-              >
+              <Stack spacing={1} sx={{ mb: 3, display: getInlineDisplay(values.ddlCoolingCompId === IDs.intCompDX_ID)}}>
                 <RHFTextField
                   size="small"
                   name="txbRefrigSuctionTemp"
                   label="Suction Temp (F)"
-                  onChange={(e: any) => {
-                    setValueWithCheck1(e, 'txbRefrigSuctionTemp');
-                  }}
+                  onChange={(e: any) => {setValueWithCheck1(e, 'txbRefrigSuctionTemp');}}
                 />
 
                 <RHFTextField
@@ -1666,10 +1961,7 @@ export default function UnitInfoForm({
                   }}
                 />
               </Stack>
-              <Stack
-                spacing={1}
-                sx={{ ...getDisplay(Number(values.ddlCoolingCompId) === IDs.intCompCWC_ID) }}
-              >
+              <Stack spacing={1} sx={{ ...getDisplay(Number(values.ddlCoolingCompId) === IDs.intCompCWC_ID) }}>
                 {isAvailable(baseData?.fluidType) && (
                   <RHFSelect
                     native
@@ -1677,7 +1969,7 @@ export default function UnitInfoForm({
                     name="ddlCoolingFluidTypeId"
                     label="Cooling Fluid Type"
                   >
-                    {baseData?.fluidType?.map((item: any, index: number) => (
+                    {coolingFluidTypeInfo?.dataTable?.map((item: any, index: number) => (
                       <option key={index} value={item.id}>
                         {item.items}
                       </option>
@@ -1691,7 +1983,7 @@ export default function UnitInfoForm({
                     name="ddlCoolingFluidConcentrationId"
                     label="Cooling Fluid %"
                   >
-                    {getItemsAddedOnIDDataTable(baseData?.fluidConcentration, 'fluid_type_id', Number(values.ddlCoolingFluidTypeId))?.map((item: any, index: number) => (
+                    {coolingFluidConcenInfo?.dataTable?.map((item: any, index: number) => (
                       <option key={index} value={item.id}>
                         {item.items}
                       </option>
@@ -1702,74 +1994,71 @@ export default function UnitInfoForm({
                   size="small"
                   name="txbCoolingFluidEntTemp"
                   label="Cooling Fluid Ent Temp (F)"
-                  onChange={(e: any) => {
-                    setValueWithCheck1(e, 'txbCoolingFluidEntTemp');
-                  }}
+                  onChange={(e: any) => {setValueWithCheck1(e, 'txbCoolingFluidEntTemp'); }}
                 />
 
                 <RHFTextField
                   size="small"
                   name="txbCoolingFluidLvgTemp"
                   label="Cooling Fluid Lvg Temp (F)"
-                  onChange={(e: any) => {
-                    setValueWithCheck1(e, 'txbCoolingFluidLvgTemp');
-                  }}
+                  onChange={(e: any) => {setValueWithCheck1(e, 'txbCoolingFluidLvgTemp');}}
                 />
               </Stack>
 
-              <Stack spacing={1}>
-                <FormControlLabel
-                  sx={{
-                    ...getInlineDisplay(customInputs.divCoolingCWC_UseCapVisible),
-                    margin: 0,
-                  }}
-                  control={
-                    <Checkbox
-                      name="ckbCoolingCWC_UseCap"
-                      checked={!!ckbFlowRateAndCap.ckbCoolingCWC_UseCap}
-                      onChange={() => {
-                        setCkbFlowRateAndCap({
-                          ...ckbFlowRateAndCap,
-                          ckbCoolingCWC_UseCap: !ckbFlowRateAndCap.ckbCoolingCWC_UseCap,
-                        });
-                      }}
+              <Stack spacing={1} sx={{ mb: 3, display: getInlineDisplay(values.ddlCoolingCompId === IDs.intCompCWC_ID)}}>
+                {/* <FormControlLabel
+                  sx={{...getInlineDisplay(customInputs.divCoolingCWC_UseCapVisible),margin: 0,}}
+                  control={ */}
+                    <RHFCheckbox
+                      // sx={{...getInlineDisplay(customInputs.divCoolingCWC_UseCapVisible),margin: 0,}}
+                      label="Cooling CWC Use Capacity"
+                      name="ckbCoolingCWCUseCap"
+                      checked={values.ckbCoolingCWCUseCap}
+                      // onChange={() => {
+                      //   setCkbFlowRateAndCap({
+                      //     ...values.ckbCoolingCWCUseCapVal,
+                      //     ckbCoolingCWC_UseCap: !values.ckbCoolingCWCUseCapVal,
+                      //   });
+                      // }}
+                      onChange={(e: any) => setValue('ckbCoolingCWCUseCap', Number(e.target.checked))}
                     />
-                  }
+                  {/* }
                   label="Cooling CWC Use Capacity"
-                />
+                /> */}
                 <RHFTextField
                   size="small"
-                  name="txbCoolingCWC_Cap"
+                  name="txbCoolingCWCCap"
                   label="Cooling CWC Capacity (MBH)"
-                  sx={getDisplay(customInputs.divCoolingCWC_UseCapVisible)}
-                  onChange={(e: any) => {
-                    setValueWithCheck1(e, 'txbCoolingCWC_Cap');
-                  }}
+                  disabled= {coolingCWCCapInfo.isDisabled}
+                  // sx={getDisplay(customInputs.divCoolingCWC_UseCapVisible)}
+                  onChange={(e: any) => {setValueWithCheck1(e, 'txbCoolingCWCCap');}}
                 />
-                <FormControlLabel
+                {/* <FormControlLabel
                   sx={getInlineDisplay(customInputs.divCoolingCWC_UseFlowRateVisible)}
-                  control={
-                    <Checkbox
-                      name="ckbCoolingCWC_UseFlowRate"
-                      checked={!!ckbFlowRateAndCap.ckbCoolingCWC_UseFlowRate}
-                      onChange={() => {
-                        setCkbFlowRateAndCap({
-                          ...ckbFlowRateAndCap,
-                          ckbCoolingCWC_UseFlowRate: !ckbFlowRateAndCap.ckbCoolingCWC_UseFlowRate,
-                        });
-                      }}
+                  control={ */}
+                    <RHFCheckbox
+                      // sx={getInlineDisplay(customInputs.divCoolingCWC_UseFlowRateVisible)}
+                      label="Cooling CWC Use Flow Rate"
+                      name="ckbCoolingCWCUseFlowRate"
+                      checked={values.ckbCoolingCWCUseFlowRate}
+                      // onChange={() => {
+                      //   setCkbFlowRateAndCap({
+                      //     values,
+                      //     ckbCoolingCWC_UseFlowRate: !values.ckbCoolingCWCUseFlowRateVal,
+                      //   });
+                      // }}
+                      onChange={(e: any) => setValue('ckbCoolingCWCUseFlowRate', Number(e.target.checked))}
                     />
-                  }
+                  {/* }
                   label="Cooling CWC Use Flow Rate"
-                />
+                /> */}
                 <RHFTextField
                   size="small"
-                  name="txbCoolingCWC_FlowRate"
+                  name="txbCoolingCWCFlowRate"
                   label="Cooling CWC Flow Rate (GPM)"
-                  sx={getDisplay(customInputs.divCoolingCWC_UseFlowRateVisible)}
-                  onChange={(e: any) => {
-                    setValueWithCheck1(e, 'txbCoolingCWC_FlowRate');
-                  }}
+                  // sx={getDisplay(customInputs.divCoolingCWC_UseFlowRateVisible)}
+                  disabled= {coolingCWCFlowRateInfo.isDisabled}
+                  onChange={(e: any) => {setValueWithCheck1(e, 'txbCoolingCWCFlowRate');}}
                 />
               </Stack>
             </Box>
@@ -1825,7 +2114,7 @@ export default function UnitInfoForm({
                   sx={getDisplay(
                     Number(values.ddlHeatingCompId) === IDs.intCompElecHeaterID ||
                       Number(values.ddlHeatingCompId) === IDs.intCompHWC_ID ||
-                      ckbHeatPumpVal
+                      values.ckbHeatPump
                   )}
                   onChange={(e: any) => {
                     setValueWithCheck1(e, 'txbWinterHeatingSetpointDB');
@@ -1850,22 +2139,17 @@ export default function UnitInfoForm({
                   </RHFSelect>
                 )}
               </Stack>
-              <Stack
-                spacing={1}
-                sx={{ ...getDisplay(values.ddlHeatingCompId === IDs.intCompElecHeaterID) }}
-              >
+              <Stack spacing={1} sx={{ ...getDisplay(values.ddlHeatingCompId === IDs.intCompElecHeaterID) }} >
                 {isAvailable(
                   heatElecHeaterInstallationInfo.ddlHeatElecHeaterInstallationDataTbl
                 ) && (
                   <RHFSelect
                     native
-                    size="small"
-                    name="ddlHeatElecHeaterInstallationId"
                     label="Heating Elec. Heater Installation"
-                    onChange={(e: any) =>
-                      setValue('ddlHeatElecHeaterInstallationId', Number(e.target.value))
-                    }
+                    name="ddlHeatElecHeaterInstallationId"
+                    size="small"
                     placeholder=""
+                    onChange={(e: any) => setValue('ddlHeatElecHeaterInstallationId', Number(e.target.value)) }
                   >
                     {heatElecHeaterInstallationInfo.ddlHeatElecHeaterInstallationDataTbl?.map(
                       (item: any, index: number) => (
@@ -1875,12 +2159,9 @@ export default function UnitInfoForm({
                       )
                     )}
                   </RHFSelect>
-                )}
+                )}              
               </Stack>
-              <Stack
-                spacing={1}
-                sx={{ ...getDisplay(values.ddlHeatingCompId === IDs.intCompHWC_ID) }}
-              >
+              <Stack spacing={1} sx={{ ...getDisplay(values.ddlHeatingCompId === IDs.intCompHWC_ID)}}>
                 {isAvailable(baseData?.fluidType) && (
                   <RHFSelect
                     native
@@ -1888,7 +2169,7 @@ export default function UnitInfoForm({
                     name="ddlHeatingFluidTypeId"
                     label="Heating Fluid Type"
                   >
-                    {baseData?.fluidType?.map((item: any, index: number) => (
+                    {heatingFluidTypeInfo?.dataTable?.map((item: any, index: number) => (
                       <option key={index} value={item.id}>
                         {item.items}
                       </option>
@@ -1902,11 +2183,7 @@ export default function UnitInfoForm({
                     name="ddlHeatingFluidConcentrationId"
                     label="Heating Fluid %"
                   >
-                    {getItemsAddedOnIDDataTable(
-                      baseData?.fluidConcentration,
-                      'fluid_type_id',
-                      Number(values.ddlHeatingFluidTypeId)
-                    )?.map((item: any, index: number) => (
+                    {heatingFluidConcenInfo?.dataTable?.map((item: any, index: number) => (
                       <option key={index} value={item.id}>
                         {item.items}
                       </option>
@@ -1917,86 +2194,78 @@ export default function UnitInfoForm({
                   size="small"
                   name="txbHeatingFluidEntTemp"
                   label="Heating Fluid Ent Temp (F)"
-                  onChange={(e: any) => {
-                    setValueWithCheck1(e, 'txbHeatingFluidEntTemp');
-                  }}
+                  onChange={(e: any) => {setValueWithCheck1(e, 'txbHeatingFluidEntTemp');}}
                 />
                 <RHFTextField
                   size="small"
                   name="txbHeatingFluidLvgTemp"
                   label="Heating Fluid Lvg Temp (F)"
-                  onChange={(e: any) => {
-                    setValueWithCheck1(e, 'txbHeatingFluidLvgTemp');
-                  }}
+                  onChange={(e: any) => {setValueWithCheck1(e, 'txbHeatingFluidLvgTemp');}}
                 />
               </Stack>
-              <Stack
-                spacing={1}
-                sx={{
-                  ...getDisplay(
-                    values.ddlHeatingCompId === IDs.intCompHWC_ID && ualInfo.divCustomVisible
-                  ),
-                }}
-              >
-                <FormControlLabel
+              <Stack spacing={1} sx={{ mb: 3, display: getInlineDisplay(values.ddlHeatingCompId === IDs.intCompHWC_ID)}}>
+                {/* <FormControlLabel
                   sx={getInlineDisplay(customInputs.divCoolingCWC_UseFlowRateVisible)}
-                  control={
-                    <Checkbox
-                      name="ckbHeatingHWC_UseCap"
-                      checked={!!ckbFlowRateAndCap.ckbCoolingCWC_UseFlowRate}
-                      onChange={() => {
-                        setCkbFlowRateAndCap({
-                          ...ckbFlowRateAndCap,
-                          ckbCoolingCWC_UseFlowRate: !ckbFlowRateAndCap.ckbCoolingCWC_UseFlowRate,
-                        });
-                      }}
+                  control={ */}
+                    <RHFCheckbox
+                    // sx={getInlineDisplay(customInputs.divCoolingCWC_UseFlowRateVisible)}
+                    label="Heating HWC Use Capacity"
+                    name="ckbHeatingHWCUseCap"
+                    checked={values.ckbHeatingHWCUseCap}
+                      // onChange={() => {
+                      //   setCkbFlowRateAndCap({
+                      //     ...values,
+                      //     ckbCoolingCWC_UseFlowRate: !values.ckbCoolingCWCUseFlowRateVal,
+                      //   });
+                      // }}
+                      onChange={(e: any) => setValue('ckbHeatingHWCUseCap', Number(e.target.checked))}
                     />
-                  }
+                  {/* }
                   label="Heating HWC Use Capacity"
-                />
+                /> */}
                 <RHFTextField
                   size="small"
-                  name="txbHeatingHWC_Cap"
+                  name="txbHeatingHWCCap"
                   label="Heating HWC Capacity (MBH)"
-                  sx={getDisplay(customInputs.divHeatingHWC_UseCapVisible)}
-                  onChange={(e: any) => {
-                    setValueWithCheck1(e, 'txbHeatingHWC_Cap');
-                  }}
+                  // sx={getDisplay(customInputs.divHeatingHWC_UseCapVisible)}
+                  disabled= {heatingHWCCapInfo.isDisabled}
+                  onChange={(e: any) => {setValueWithCheck1(e, 'txbHeatingHWCCap');}}
                 />
-                <FormControlLabel
+                {/* <FormControlLabel
                   sx={getInlineDisplay(customInputs.divCoolingCWC_UseFlowRateVisible)}
-                  control={
-                    <Checkbox
-                      name="ckbHeatingHWC_UseFlowRate"
-                      checked={!!ckbFlowRateAndCap.ckbCoolingCWC_UseFlowRate}
-                      onChange={() => {
-                        setCkbFlowRateAndCap({
-                          ...ckbFlowRateAndCap,
-                          ckbCoolingCWC_UseFlowRate: !ckbFlowRateAndCap.ckbCoolingCWC_UseFlowRate,
-                        });
-                      }}
+                  control={ */}
+                    <RHFCheckbox
+                    // sx={getInlineDisplay(customInputs.divCoolingCWC_UseFlowRateVisible)}
+                    label="Heating HWC Use Flow Rate"
+                    name="ckbHeatingHWCUseFlowRate"
+                      checked={values.ckbHeatingHWCUseFlowRate}
+                      // onChange={() => {
+                      //   setCkbFlowRateAndCap({
+                      //     ...values,
+                      //     ckbCoolingCWC_UseFlowRate: !values.ckbCoolingCWCUseFlowRateVal,
+                      //   });
+                      // }}
+                      onChange={(e: any) => setValue('ckbHeatingHWCUseFlowRate', Number(e.target.checked))}
                     />
-                  }
+                  {/* }
                   label="Heating HWC Use Flow Rate"
-                />
+                /> */}
                 <RHFTextField
                   size="small"
-                  name="txbHeatingHWC_FlowRate"
+                  name="txbHeatingHWCFlowRate"
                   label="Heating HWC Flow Rate (GPM)"
-                  sx={getDisplay(customInputs.divHeatingHWC_UseFlowRateVisible)}
-                  onChange={(e: any) => {
-                    setValueWithCheck1(e, 'txbHeatingHWC_FlowRate');
-                  }}
+                  disabled= {heatingHWCFlowRateInfo.isDisabled}
+                  // sx={getDisplay(customInputs.divHeatingHWC_UseFlowRateVisible)}
+                  onChange={(e: any) => {setValueWithCheck1(e, 'txbHeatingHWCFlowRate');}}
                 />
               </Stack>
             </Box>
           </AccordionDetails>
         </Accordion>
         <Accordion
-          sx={getDisplay(ckbDehumidificationVal)}
+          sx={getDisplay(values.ckbDehumidification)}
           expanded={expanded.panel5}
-          onChange={() => setExpanded({ ...expanded, panel5: !expanded.panel5 })}
-        >
+          onChange={() => setExpanded({ ...expanded, panel5: !expanded.panel5 })}>
           <AccordionSummary
             expandIcon={<Iconify icon="il:arrow-down" />}
             aria-controls="panel1a-content"
@@ -2008,14 +2277,7 @@ export default function UnitInfoForm({
           </AccordionSummary>
           <AccordionDetails>
             <Box
-              sx={{
-                display: 'grid',
-                rowGap: 3,
-                columnGap: 3,
-                gridTemplateColumns: {
-                  xs: 'repeat(3, 1fr)',
-                },
-              }}
+              sx={{display: 'grid',rowGap: 3,columnGap: 3, gridTemplateColumns: {xs: 'repeat(3, 1fr)',}, }}
             >
               <Stack spacing={1}>
                 {isAvailable(dtReheatComp) && (
@@ -2025,7 +2287,7 @@ export default function UnitInfoForm({
                     name="ddlReheatCompId"
                     label="Reheat"
                     placeholder=""
-                    sx={getDisplay(ckbDehumidificationVal)}
+                    sx={getDisplay(values.ckbDehumidification)}
                     onChange={ddlReheatCompChanged}
                   >
                     {dtReheatComp?.map((item: any, index: number) => (
@@ -2045,9 +2307,7 @@ export default function UnitInfoForm({
                       values.ddlReheatCompId === IDs.intCompHWC_ID ||
                       values.ddlReheatCompId === IDs.intCompHGRH_ID
                   )}
-                  onChange={(e: any) => {
-                    setValueWithCheck1(e, 'txbSummerReheatSetpointDB');
-                  }}
+                  onChange={(e: any) => {setValueWithCheck1(e, 'txbSummerReheatSetpointDB');}}
                 />
                 {isAvailable(baseData?.handing) && (
                   <RHFSelect
@@ -2080,9 +2340,7 @@ export default function UnitInfoForm({
                     size="small"
                     name="ddlHeatElecHeaterInstallationId"
                     label="Reheat Elec. Heater Installation"
-                    onChange={(e: any) =>
-                      setValue('ddlHeatElecHeaterInstallationId', Number(e.target.value))
-                    }
+                    onChange={(e: any) => setValue('ddlHeatElecHeaterInstallationId', Number(e.target.value))}
                     placeholder=""
                   >
                     {heatElecHeaterInstallationInfo.ddlHeatElecHeaterInstallationDataTbl?.map(
@@ -2106,7 +2364,7 @@ export default function UnitInfoForm({
                     name="ddlHeatingFluidTypeId"
                     label="Reheat Fluid Type"
                   >
-                    {baseData?.fluidType?.map((item: any, index: number) => (
+                    {heatingFluidTypeInfo?.dataTable?.map((item: any, index: number) => (
                       <option key={index} value={item.id}>
                         {item.items}
                       </option>
@@ -2120,11 +2378,7 @@ export default function UnitInfoForm({
                     name="ddlHeatingFluidConcentrationId"
                     label="Reheat Fluid %"
                   >
-                    {getItemsAddedOnIDDataTable(
-                      baseData?.fluidConcentration,
-                      'fluid_type_id',
-                      Number(values.ddlHeatingFluidTypeId)
-                    )?.map((item: any, index: number) => (
+                    {heatingFluidConcenInfo?.dataTable?.map((item: any, index: number) => (
                       <option key={index} value={item.id}>
                         {item.items}
                       </option>
@@ -2135,97 +2389,84 @@ export default function UnitInfoForm({
                   size="small"
                   name="txbHeatingFluidEntTemp"
                   label="Reheat Fluid Ent Temp (F)"
-                  onChange={(e: any) => {
-                    setValueWithCheck1(e, 'txbHeatingFluidEntTemp');
-                  }}
+                  onChange={(e: any) => {setValueWithCheck1(e, 'txbHeatingFluidEntTemp');}}
                 />
                 <RHFTextField
                   size="small"
                   name="txbHeatingFluidLvgTemp"
                   label="Reheat Fluid Lvg Temp (F)"
-                  onChange={(e: any) => {
-                    setValueWithCheck1(e, 'txbHeatingFluidLvgTemp');
-                  }}
+                  onChange={(e: any) => {setValueWithCheck1(e, 'txbHeatingFluidLvgTemp');}}
                 />
               </Stack>
-              <Stack
-                spacing={1}
-                sx={{
-                  ...getDisplay(
-                    values.ddlReheatCompId === IDs.intCompHWC_ID && ualInfo.divCustomVisible
-                  ),
-                }}
-              >
-                <FormControlLabel
+              <Stack spacing={1} sx={{...getDisplay(values.ddlReheatCompId === IDs.intCompHWC_ID && ualInfo.divCustomVisible),}}>
+                {/* <FormControlLabel
                   sx={getInlineDisplay(customInputs.divReheatHWC_UseCapVisible)}
-                  control={
-                    <Checkbox
-                      name="ckbReheatHWC_UseCap"
-                      checked={ckbFlowRateAndCap.ckbReheatHWC_UseCap}
-                      onChange={() => {
-                        setCkbFlowRateAndCap({
-                          ...ckbFlowRateAndCap,
-                          ckbReheatHWC_UseCap: !ckbFlowRateAndCap.ckbReheatHWC_UseCap,
-                        });
-                      }}
+                  control={ */}
+                    <RHFCheckbox
+                    // sx={getInlineDisplay(customInputs.divReheatHWC_UseCapVisible)}
+                    label="Reheat HWC Use Capacity"
+                    name="ckbReheatHWCUseCap"
+                      checked={values.ckbReheatHWCUseCap}
+                      // onChange={() => {
+                      //   setCkbFlowRateAndCap({
+                      //     ...values,
+                      //     ckbReheatHWC_UseCap: !values.ckbReheatHWCUseCapVal,
+                      //   });
+                      // }}
+                      onChange={(e: any) => setValue('ckbReheatHWCUseCap', Number(e.target.checked))}
                     />
-                  }
+                  {/* }
                   label="Reheat HWC Use Capacity"
-                />
+                /> */}
                 <RHFTextField
                   size="small"
-                  name="txbReheatHWC_Cap"
+                  name="txbReheatHWCCap"
                   label="Reheat HWC Capacity (MBH)"
-                  sx={getDisplay(customInputs.divReheatHWC_UseCapVisible)}
-                  onChange={(e: any) => {
-                    setValueWithCheck1(e, 'txbReheatHWC_Cap');
-                  }}
+                  // sx={getDisplay(customInputs.divReheatHWC_UseCapVisible)}
+                  disabled= {reheatHWCCapInfo.isDisabled}
+                  onChange={(e: any) => {setValueWithCheck1(e, 'txbReheatHWCCap');}}
                 />
-                <FormControlLabel
+                {/* <FormControlLabel
                   sx={getInlineDisplay(customInputs.divReheatHWC_UseFlowRateVisible)}
-                  control={
-                    <Checkbox
-                      name="ckbReheatHWC_UseFlowRate"
-                      checked={ckbFlowRateAndCap.ckbReheatHWC_UseFlowRate}
-                      onChange={() => {
-                        setCkbFlowRateAndCap({
-                          ...ckbFlowRateAndCap,
-                          ckbReheatHWC_UseFlowRate: !ckbFlowRateAndCap.ckbReheatHWC_UseFlowRate,
-                        });
-                      }}
+                  control={ */}
+                    <RHFCheckbox
+                    // sx={getInlineDisplay(customInputs.divReheatHWC_UseFlowRateVisible)}
+                    label="Reheat HWC Use Flow Rate"
+                    name="ckbReheatHWCUseFlowRate"
+                    checked={values.ckbReheatHWCUseFlowRate}
+                      // onChange={() => {
+                      //   setCkbFlowRateAndCap({
+                      //     ...values,
+                      //     ckbReheatHWC_UseFlowRate: !values.ckbReheatHWCUseFlowRateVal,
+                      //   });
+                      // }}
+                    onChange={(e: any) => setValue('ckbReheatHWCUseFlowRate', Number(e.target.checked))}
+
                     />
-                  }
+                  {/* }
                   label="Reheat HWC Use Flow Rate"
-                />
+                /> */}
                 <RHFTextField
                   size="small"
-                  name="txbReheatHWC_FlowRate"
+                  name="txbReheatHWCFlowRate"
                   label="Reheat HWC Flow Rate (GPM)"
-                  sx={getDisplay(customInputs.divReheatHWC_UseFlowRateVisible)}
-                  onChange={(e: any) => {
-                    setValueWithCheck1(e, 'txbReheatHWC_FlowRate');
-                  }}
+                  // sx={getDisplay(customInputs.divReheatHWC_UseFlowRateVisible)}
+                  disabled= {reheatHWCFlowRateInfo.isDisabled}
+                  onChange={(e: any) => {setValueWithCheck1(e, 'txbReheatHWCFlowRate');}}
                 />
               </Stack>
-              <Stack
-                spacing={1}
-                sx={{ ...getDisplay(values.ddlReheatCompId === IDs.intCompHGRH_ID) }}
-              >
+              <Stack spacing={1} sx={{ ...getDisplay(values.ddlReheatCompId === IDs.intCompHGRH_ID)}}>
                 <RHFTextField
                   size="small"
                   name="txbRefrigCondensingTemp"
                   label="Condensing Temp (F)"
-                  onChange={(e: any) => {
-                    setValueWithCheck1(e, 'txbRefrigCondensingTemp');
-                  }}
+                  onChange={(e: any) => {setValueWithCheck1(e, 'txbRefrigCondensingTemp');}}
                 />
                 <RHFTextField
                   size="small"
                   name="txbRefrigVaporTemp"
                   label="Condensing Temp (F)"
-                  onChange={(e: any) => {
-                    setValueWithCheck1(e, 'txbRefrigVaporTemp');
-                  }}
+                  onChange={(e: any) => {setValueWithCheck1(e, 'txbRefrigVaporTemp');}}
                 />
                 <RHFTextField
                   size="small"
@@ -2312,28 +2553,34 @@ export default function UnitInfoForm({
                     )}
                   </RHFSelect>
                 )}
-                <FormControlLabel
+                {/* <FormControlLabel
                   sx={getDisplay(valveAndActuatorInfo.divValveAndActuatorVisible)}
-                  control={
-                    <Checkbox
-                      name="ckbValveAndActuatorVal"
-                      defaultChecked={ckbValveAndActuatorVal}
-                      onChange={() => setCkbValveAndActuatorVal(!ckbValveAndActuatorVal)}
+                  control={ */}
+                    <RHFCheckbox
+                      sx={getDisplay(valveAndActuatorInfo.divValveAndActuatorVisible)}
+                      label="Include Valves & Actuator"
+                      name="ckbValveAndActuator"
+                      defaultChecked={values.ckbValveAndActuator}
+                      // onChange={() => setCkbValveAndActuatorVal(!values.ckbValveAndActuatorVal)}
+                      onChange={(e: any) => setValue('ckbValveAndActuator', Number(e.target.checked))}
                     />
-                  }
+                  {/* }
                   label="Include Valves & Actuator"
-                />
-                <FormControlLabel
+                /> */}
+                {/* <FormControlLabel
                   sx={getInlineDisplay(drainPanInfo.divDrainPanVisible)}
-                  control={
-                    <Checkbox
-                      name="ckbDrainPanVal"
-                      checked={ckbDrainPanVal}
-                      onChange={() => setCkbDrainPanVal(!ckbDrainPanVal)}
+                  control={ */}
+                    <RHFCheckbox
+                    sx={getInlineDisplay(drainPanInfo.divDrainPanVisible)}
+                    label="Drain Pan Required"
+                    name="ckbDrainPanVal"
+                    checked={values.ckbDrainPan}
+                      // onChange={() => setCkbDrainPanVal(!values.ckbDrainPanVal)}
+                    onChange={(e: any) => setValue('ckbDrainPan', Number(e.target.checked))}
                     />
-                  }
+                  {/* }
                   label="Drain Pan Required"
-                />
+                /> */}
               </Stack>
               <Stack spacing={1}>
                 <RHFSelect
@@ -2377,7 +2624,7 @@ export default function UnitInfoForm({
             <Grid container spacing={5}>
               <Grid item xs={4} md={4}>
                 <Stack spacing={3}>
-                  {isAvailable(handingInfo.ddlHandingDataTbl) && (
+                  {isAvailable(handingInfo) && (
                     <RHFSelect
                       native
                       size="small"
@@ -2387,7 +2634,7 @@ export default function UnitInfoForm({
                       value={getValues('ddlHandingId')}
                       onChange={ddlHandingChanged}
                     >
-                      {handingInfo.ddlHandingDataTbl.map((item: any, index: number) => (
+                      {handingInfo.map((item: any, index: number) => (
                         <option key={index} value={item.id}>
                           {item.items}
                         </option>

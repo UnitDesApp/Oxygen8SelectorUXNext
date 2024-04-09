@@ -78,11 +78,11 @@ export default class ProjectApi extends AbstractApi {
   getUnitInfo = (prarms: any): Promise<any> =>
     this.client.post(`/api/units/GetUnitInfo`, prarms).then((res: any) => JSON.parse(res.data));
 
-  getSelectionInfo = (prarms: any): Promise<any> =>
-    this.client.post(`/api/units/ViewSelection`, prarms).then((res: any) => res.data);
+  getSelectionInfo = (params: any): Promise<any> =>
+    this.client.post(`/api/units/ViewSelection`, params).then((res: any) => res.data);
 
-  saveUnitInfo = (prarms: JSON): Promise<any> =>
-    this.client.post(`/api/units/Save`, prarms).then((res: any) => res.data);
+  saveUnitInfo = (params: JSON): Promise<any> =>
+    this.client.post(`/api/units/Save`, params).then((res: any) => res.data);
 
   getFileList = (): Promise<any> =>
     this.client.post('/api/resource/getFiles').then((res: any) => res.data);
