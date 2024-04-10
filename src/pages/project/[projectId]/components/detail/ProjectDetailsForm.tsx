@@ -440,7 +440,8 @@ export default function ProjectDetailsForm({
         const formData = {
           ...data,
           jobId: projectId,
-          createdUserId: project?.created_user_id,
+          // createdUserId: project?.created_user_id,
+          createdUserId: localStorage.getItem('userId'),
           revisedUserId: localStorage.getItem('userId'),
           applicationOther: '',
         };
@@ -455,7 +456,8 @@ export default function ProjectDetailsForm({
         }
       }
     },
-    [projectId, project?.created_user_id, api.project, onSuccess, onFail]
+    // [projectId, project?.created_user_id, api.project, onSuccess, onFail]
+    [projectId, api.project, onSuccess, onFail]
   );
 
   return (
