@@ -29,14 +29,10 @@ const Logo = forwardRef<HTMLDivElement, LogoProps>(
       <Box
         ref={ref}
         component="div"
-        sx={{
-          display: 'inline-flex',
-          ...sx,
-        }}
-        {...other}
+        sx={{display: 'inline-flex', ...sx,}}{...other}
+        // width='1' // 1 = 100%
       >
-
-        <img src="/logo/O8_Logo.png" alt="o8 logo" />
+        <img src="/logo/O8_Logo.png" alt="o8 logo" width="400" />
 
       </Box>
     );
