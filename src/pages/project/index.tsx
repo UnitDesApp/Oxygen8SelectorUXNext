@@ -163,7 +163,7 @@ export default function Project() {
     () =>
       projects &&
       applySortFilter({
-        tableData: projects.jobList,
+        tableData: projects.dbtJobList,
         comparator: getComparator(order, orderBy),
         filterName,
         filterRole,
@@ -264,14 +264,17 @@ export default function Project() {
             </Box>
           </Box>
         )}
-        {projects?.jobInitInfo && (
+                {/* {projects?.jobInitInfo && ( */}
+
+        {projects?.dbtUsers && (
           <NewProjectDialog
             open={newProjectDialogOpen}
             onClose={() => setNewProjectDialog(false)}
             setOpenSuccess={() => setOpenSuccess(true)}
             setOpenFail={() => setOpenFail(true)}
-            initialInfo={projects?.jobInitInfo}
-            projectList={projects.jobList}
+            // initialInfo={projects?.jobInitInfo}
+            initialInfo={projects}
+            projectList={projects.dbtJobList}
             refetch={refetch}
           />
         )}

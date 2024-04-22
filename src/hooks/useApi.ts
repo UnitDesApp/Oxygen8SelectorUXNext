@@ -11,59 +11,34 @@ export const useGetProjectInitInfo = (config?: UseQueryOptions<any, any, any, an
   return useQuery<any>(`get-project-init-info`, () => api.project.getProjectInitInfo(), config);
 };
 
-export const useGetProjectById = (
-  params: { id: number },
-  config?: UseQueryOptions<any, any, any, any>
-) => {
+export const useGetProjectById = (params: { id: number }, config?: UseQueryOptions<any, any, any, any>) => {
   const api = useApiContext();
-  return useQuery<any>(
-    [`get-project-by-id`, params],
-    () => api.project.getProjectById(params),
-    config
-  );
+  return useQuery<any>([`get-project-by-id`, params], () => api.project.getProjectById(params), config);
 };
 
 export const useGetOutdoorInfo = (params: any, config?: UseQueryOptions<any, any, any, any>) => {
   const api = useApiContext();
-  return useQuery<any>(
-    [`get-outdoor-info`, params],
-    () => api.project.getOutdoorInfo(params),
-    config
-  );
+  return useQuery<any>([`get-outdoor-info`, params], () => api.project.getOutdoorInfo(params), config);
 };
 
-export const useGetAllUnits = (
-  params: { jobId: number },
-  config?: UseQueryOptions<any, any, any, any>
-) => {
+export const useGetAllUnits = (params: { jobId: number }, config?: UseQueryOptions<any, any, any, any>) => {
   const api = useApiContext();
   return useQuery<any>([`get-all-units`, params], () => api.project.getUnits(params), config);
 };
+
 export const useGetQuoteInfo = (params: any, config?: UseQueryOptions<any, any, any, any>) => {
   const api = useApiContext();
-  return useQuery<any>(
-    `get-project-quote-info`,
-    () => api.project.getProjectQuoteInfo(params),
-    config
-  );
+  return useQuery<any>(`get-project-quote-info`, () => api.project.getProjectQuoteInfo(params), config);
 };
 
 export const useGetSubmittalInfo = (params: any, config?: UseQueryOptions<any, any, any, any>) => {
   const api = useApiContext();
-  return useQuery<any>(
-    [`get-project-submittal-info`, params],
-    () => api.project.getSubmittalInfo(params),
-    config
-  );
+  return useQuery<any>( [`get-project-submittal-info`, params], () => api.project.getSubmittalInfo(params), config);
 };
 
 export const useGetProjectNote = (params: any, config?: UseQueryOptions<any, any, any, any>) => {
   const api = useApiContext();
-  return useQuery<any>(
-    [`get-project-note-info`, params],
-    () => api.project.getProjectNote(params),
-    config
-  );
+  return useQuery<any>([`get-project-note-info`, params], () => api.project.getProjectNote(params), config);
 };
 
 export const useGetAllBaseData = (config?: UseQueryOptions<any, any, any, any>) => {
@@ -78,11 +53,7 @@ export const useGetUnitInfo = (params: any, config?: UseQueryOptions<any, any, a
 
 export const useGetSelectionInfo = (params: any, config?: UseQueryOptions<any, any, any, any>) => {
   const api = useApiContext();
-  return useQuery<any>(
-    [`get-selection-info`, params],
-    () => api.project.getSelectionInfo(params),
-    config
-  );
+  return useQuery<any>([`get-selection-info`, params], () => api.project.getSelectionInfo(params), config);
 };
 
 export const useGetFileList = (config?: UseQueryOptions<any, any, any, any>) => {

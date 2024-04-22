@@ -575,8 +575,8 @@ export const getSummerReturnAirCFM = (
   summerReturnAirCFM: any,
   values: {
     txbSummerSupplyAirCFM: any;
-    ddlOrientationId: any;
-    ddlUnitModelId: any;
+    ddlOrientation: any;
+    ddlUnitModel: any;
     intProductTypeID: any;
     ckbBypass: any;
     intUnitTypeID: any;
@@ -585,8 +585,8 @@ export const getSummerReturnAirCFM = (
   data: { ventumHUnitModel: any[]; ventumLiteUnitModel: any[]; ventumPlusUnitModel: any[] }
 ) => {
   const intSummerSupplyAirCFM = Number(values.txbSummerSupplyAirCFM);
-  const intOrientationID = Number(values.ddlOrientationId);
-  const intUnitModelID = Number(values.ddlUnitModelId);
+  const intOrientationID = Number(values.ddlOrientation);
+  const intUnitModelID = Number(values.ddlUnitModel);
   const intProductTypeID = Number(values.intProductTypeID);
   const ckbBypassVal = Number(values.ckbBypass);
   let intSummerReturnAirCFM = Number(summerReturnAirCFM);
