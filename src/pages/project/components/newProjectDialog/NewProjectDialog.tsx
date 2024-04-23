@@ -397,24 +397,23 @@ export default function NewProjectDialog({
   );
 
 
-
-  const weatherDataCountryInfo = useMemo(() => {
+  const [weatherDataCountryInfo, setweatherDataCountryInfo] = useState([])
+  useEffect(() => {
     const dtSelCountry = dbtWeatherData.map((e: any) => 
       e.country,)?.filter((v:any, i:any, e: any) => e.indexOf(v) === i);
-    // setValue('ddlCountry', dtSelCountry?.[0]?.country);
+    // setValue('ddlCountry', dtSelCountry?.[0]?.country);. 
     setValue('ddlCountry', String(dtSelCountry?.[0]));
-
-    return dtSelCountry;
-  }, [dbtWeatherData, setValue]);
-
+    setweatherDataCountryInfo(dtSelCountry);  
+  }, [dbtWeatherData])
+  
 
   const weatherDataProvStateInfo = useMemo(() => {
-    let dtSelProvState = dbtWeatherData.filter((e: any) => e.country === getValues('ddlCountry'));
+    let dtSelProvState = dbtWeatherData.filter((e: any) => e.country === formValues.ddlCountry);
     dtSelProvState = dtSelProvState?.map((e: any) => e.prov_state)?.filter((v:any, i:any, e: any) => e.indexOf(v) === i);
     setValue('ddlProvState', dtSelProvState?.[0]); // Set this to trigger the event for next dropdown - ddlState
    
     return dtSelProvState;
-  }, [dbtWeatherData, getValues, setValue]);
+  }, [dbtWeatherData, formValues.ddlCountry]);
 
 
   const weatherDataCityInfo = useMemo(() => {
@@ -423,7 +422,7 @@ export default function NewProjectDialog({
     setValue('ddlCity', dtSelCity?.[0]?.id); // Set this to trigger the next event
 
     return dtSelCity;
-  }, [dbtWeatherData, getValues, setValue]);
+  }, [dbtWeatherData, formValues.ddlCountry, formValues.ddlProvState]);
 
 
 
@@ -632,7 +631,7 @@ export default function NewProjectDialog({
 
   // ------------------------- Set default Form Values --------------------------
   useEffect(() => {
-    reset(defaultValues);
+    // reset(defaultValues);
 
     setValue('ddlAshareDesignConditions', dbtWeatherDesignConditions?.[0].id);
 
@@ -785,8 +784,8 @@ export default function NewProjectDialog({
                   >
                     {/* <option value="0" id='Select' /> */}
                     {/* {weatherData?.map((option: any) => ( */}
-                    {weatherDataCountryInfo.dtSelCountry?.map((option: any) => (
-                      <option key={`${option}`} value={option}>
+                    {weatherDataCountryInfo.map((option: any, idx: any) => (
+                      <option key={`${idx}`} value={option}>
                         {option}
                       </option>
                     ))}
