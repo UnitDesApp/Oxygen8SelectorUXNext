@@ -77,9 +77,12 @@ export default function NewProjectDialog({
     ddlCompanyContactName: Yup.number(),
     ddlApplication: Yup.string().required('Please enter a Application'),
     ddlUoM: Yup.string().required('Please select a UoM'),
-    ddlCountry: Yup.string().required('Please select a County'),
-    ddlProvState: Yup.string().required('Please select a Province / State'),
-    ddlCity: Yup.number().required('Please select a City'),
+    // ddlCountry: Yup.string().required('Please select a County'),
+    // ddlProvState: Yup.string().required('Please select a Province / State'),
+    // ddlCity: Yup.number().required('Please select a City'),
+    ddlCountry: Yup.string(),
+    ddlProvState: Yup.string(),
+    ddlCity: Yup.number(),
     ddlAshareDesignConditions: Yup.string().required('Please enter a ASHARE Design Conditions'),
     // txbAltitude: Yup.number().required('Please enter a Altitude'),
     txbAltitude: Yup.number(),
@@ -280,6 +283,8 @@ export default function NewProjectDialog({
     //     referenceNo: data?.referenceNo ? data.referenceNo : '',
     //     testNewPrice: data.testNewPrice ? 1 : 0,
     //   });
+    if (step === 2) {
+
       try {
         const oJC: any = getJobInputs();  // JC: Job Container       
         await api.project.addNewProject(oJC);
@@ -291,6 +296,7 @@ export default function NewProjectDialog({
     } catch (error) {
       setOpenFail();
     }
+  }
   };
 
   const onClickedBackBtn = () => {
@@ -309,12 +315,63 @@ export default function NewProjectDialog({
     if (formValues.txbJobName === '') return;
     if (formValues.txbReferenceNo === '' || formValues.txbReferenceNo === '0') return;
     // if (formValues.txbCompanyName === '') return;
-    if (formValues.txbRevisionNo === '' || formValues.txbRevisionNo === '0') return;
+    if (formValues.txbRevisionNo === '') return;
     setStep(1);
   };
 
   
   const handleClose = () => onClose && onClose();
+
+
+
+  const [companyInfo, setCompanyInfo] = useState([]) 
+  useMemo(() => {
+    const dtSelUser = dbtUsers?.filter((e: any) => e.id === Number(localStorage.getItem('userId')));
+    let dtSelCompany;
+
+    switch(Number(localStorage.getItem('UAL'))) {
+      case Ids?.intUAL_Admin:
+      case Ids.intUAL_IntAdmin:
+      case Ids.intUAL_IntLvl_2:
+      case Ids.intUAL_IntLvl_1:
+         dtSelCompany = dbtCustomer;
+        break;
+      case Ids.intUAL_External:
+      case Ids.intUAL_ExternalSpecial:
+        dtSelCompany = dbtCustomer?.filter((e: any) => e.id === Number(dtSelUser?.[0]?.customer_id));
+         break;
+      default:
+        break;
+    }
+
+    setCompanyInfo(dtSelCompany);
+
+    if (dtSelCompany?.length > 0) {
+      setValue('ddlCompanyName', dtSelCompany?.[0]?.id);
+    }
+    else {
+      setValue('txbCompanyName', '');
+      setValue('ddlCompanyName', 0);
+    }
+
+  }, [dbtCustomer, dbtUsers, setValue]);
+
+
+  const [companyContactInfo, setCompanyContactInfo] = useState([]) 
+  useMemo(() => {
+    const dtSelCompanyContacts = dbtUsers?.filter((item: any) => Number(item.customer_id) === Number(formValues.ddlCompanyName));
+    setCompanyContactInfo(dtSelCompanyContacts);
+
+    if (dtSelCompanyContacts?.length > 0) {
+          setValue('ddlCompanyContactName', dtSelCompanyContacts?.[0]?.id);
+    }
+    else{
+      setValue('txbCompanyContactName', '');
+      setValue('ddlCompanyContactName', 0);
+    }
+
+  }, [dbtUsers, formValues.ddlCompanyName, setValue]);
+
 
 
   const { data: outdoorInfo } = useGetOutdoorInfo(
@@ -329,17 +386,17 @@ export default function NewProjectDialog({
     }
   );
 
-  useEffect(() => {
-    if (outdoorInfo) {
-      setValue('txbAltitude', outdoorInfo.altitude);
-      setValue('txbSummerOA_DB', outdoorInfo.summerOutdoorAirDB);
-      setValue('txbSummerOA_WB', outdoorInfo.summerOutdoorAirWB);
-      setValue('txbSummerOA_RH', outdoorInfo.summerOutdoorAirRH);
-      setValue('txbWinterOA_DB', outdoorInfo.winterOutdoorAirDB);
-      setValue('txbWinterOA_WB', outdoorInfo.winterOutdoorAirWB);
-      setValue('txbWinterOA_RH', outdoorInfo.winterOutdoorAirRH);
-    }
-  }, [outdoorInfo, setValue]);
+  // useEffect(() => {
+  //   if (outdoorInfo) {
+  //     setValue('txbAltitude', outdoorInfo.altitude);
+  //     setValue('txbSummerOA_DB', outdoorInfo.summerOutdoorAirDB);
+  //     setValue('txbSummerOA_WB', outdoorInfo.summerOutdoorAirWB);
+  //     setValue('txbSummerOA_RH', outdoorInfo.summerOutdoorAirRH);
+  //     setValue('txbWinterOA_DB', outdoorInfo.winterOutdoorAirDB);
+  //     setValue('txbWinterOA_WB', outdoorInfo.winterOutdoorAirWB);
+  //     setValue('txbWinterOA_RH', outdoorInfo.winterOutdoorAirRH);
+  //   }
+  // }, [outdoorInfo, setValue]);
 
 
   const get_RH_By_DBWB = useCallback(
@@ -397,41 +454,47 @@ export default function NewProjectDialog({
   );
 
 
-  const [weatherDataCountryInfo, setweatherDataCountryInfo] = useState([])
-  useEffect(() => {
+  const [weatherDataCountryInfo, setWeatherDataCountryInfo] = useState([])
+  useMemo(() => {
     const dtSelCountry = dbtWeatherData.map((e: any) => 
       e.country,)?.filter((v:any, i:any, e: any) => e.indexOf(v) === i);
-    // setValue('ddlCountry', dtSelCountry?.[0]?.country);. 
+    // setValue('ddlCountry', dtSelCountry?.[0]?.country); 
+    
+    setWeatherDataCountryInfo(dtSelCountry);  
     setValue('ddlCountry', String(dtSelCountry?.[0]));
-    setweatherDataCountryInfo(dtSelCountry);  
-  }, [dbtWeatherData])
+
+  }, [dbtWeatherData, setValue])
   
 
-  const weatherDataProvStateInfo = useMemo(() => {
+  const [weatherDataProvStateInfo, setWeatherDataProvStateInfo] = useState([])
+  useMemo(() => {
     let dtSelProvState = dbtWeatherData.filter((e: any) => e.country === formValues.ddlCountry);
     dtSelProvState = dtSelProvState?.map((e: any) => e.prov_state)?.filter((v:any, i:any, e: any) => e.indexOf(v) === i);
-    setValue('ddlProvState', dtSelProvState?.[0]); // Set this to trigger the event for next dropdown - ddlState
    
-    return dtSelProvState;
-  }, [dbtWeatherData, formValues.ddlCountry]);
+    setWeatherDataProvStateInfo(dtSelProvState);
+    setValue('ddlProvState', dtSelProvState?.[0]); // Set this to trigger the event for next dropdown - ddlCity
+
+  }, [dbtWeatherData, formValues.ddlCountry, setValue]);
 
 
-  const weatherDataCityInfo = useMemo(() => {
-    let dtSelCity = dbtWeatherData.filter((e: any) => e.country === getValues('ddlCountry'));
-    dtSelCity = dtSelCity.filter((e: any) => e.prov_state === getValues('ddlProvState'));
-    setValue('ddlCity', dtSelCity?.[0]?.id); // Set this to trigger the next event
+  const [weatherDataCityInfo, setWeatherDataCityInfo] = useState([])
+  useMemo(() => {
+    let dtSelCity = dbtWeatherData.filter((e: any) => e.country === formValues.ddlCountry);
+    dtSelCity = dtSelCity.filter((e: any) => e.prov_state === formValues.ddlProvState);
 
-    return dtSelCity;
-  }, [dbtWeatherData, formValues.ddlCountry, formValues.ddlProvState]);
+    setWeatherDataCityInfo(dtSelCity);
+    setValue('ddlCity', dtSelCity?.[0]?.id); // 
+
+  }, [dbtWeatherData, formValues.ddlCountry, formValues.ddlProvState, setValue]);
 
 
 
   const weatherDataStationData = useMemo(() => {
-    const dtSelStation = dbtWeatherData?.filter((e: { id: number }) => e.id === Number(getValues('ddlCity')));
+    const dtSelStation = dbtWeatherData?.filter((e: { id: number }) => e.id === Number(formValues.ddlCity));
 
     setValue('txbAltitude', dtSelStation?.[0]?.elevation_foot);
 
-    switch(Number(getValues('ddlAshareDesignConditions'))){
+    switch(Number(formValues.ddlAshareDesignConditions)){
       case 1:
         setValue('txbSummerOA_DB', dtSelStation?.[0]?.cooling_db010);
         setValue('txbSummerOA_WB', dtSelStation?.[0]?.cooling_wb_db010);
@@ -464,7 +527,7 @@ export default function NewProjectDialog({
 
 
     return dtSelStation;
-  }, [dbtWeatherData, setValue, getValues, get_RH_By_DBWB]);
+  }, [dbtWeatherData, setValue, formValues.ddlAshareDesignConditions, formValues.ddlCity, getValues, get_RH_By_DBWB]);
 
 
   // const ddlCountryOnChange = useCallback(
@@ -582,30 +645,13 @@ export default function NewProjectDialog({
 
 
 
-  const contactInfo = useMemo(() => {
-    const contacts = dbtUsers?.filter((item: any) => Number(item.customer_id) === Number(formValues.ddlCompanyName));
-
-    if (contacts?.length > 0) {
-          setValue('ddlCompanyContactName', contacts?.[0]?.id || '');
-    }
-    else{
-      setValue('txbCompanyContactName', '');
-      setValue('ddlCompanyContactName', 0);
-    }
-
-    // if (!contacts || contacts?.length === 0) {
-    //   setValue('txbContactName', '');
-    //   setValue('ddlContactName', 0);
-    // }
-
-    return contacts;
-  }, [setValue, dbtUsers, formValues.ddlCompanyName]);
-
-
   const setValueWithCheck = useCallback(
     (e: any, key: any) => {
       if (e.target.value === '') {
         setValue(key, '');
+      } else if (e.target.value[0] === '0') {
+        setValue(key, '0');
+        return true;
       } else if (!Number.isNaN(+e.target.value)) {
         setValue(key, parseFloat(e.target.value));
         return true;
@@ -635,28 +681,9 @@ export default function NewProjectDialog({
 
     setValue('ddlAshareDesignConditions', dbtWeatherDesignConditions?.[0].id);
 
-    const dtSelUser = dbtUsers?.filter((e: any) => e.id === Number(localStorage.getItem('userId')));
-    let companyList;
-
-    switch(Number(localStorage.getItem('UAL'))) {
-      case Ids?.intUAL_Admin:
-      case Ids.intUAL_IntAdmin:
-      case Ids.intUAL_IntLvl_2:
-      case Ids.intUAL_IntLvl_1:
-         companyList = dbtCustomer?.filter((e: any) => e.id === Number(dtSelUser?.[0]?.customer_id));
-        break;
-      case Ids.intUAL_External:
-      case Ids.intUAL_ExternalSpecial:
-        companyList = dbtCustomer;
-         break;
-      default:
-        break;
-    }
-
-    setValue('ddlCompanyName', companyList?.[0]?.id || 0);
 
     
-  }, [defaultValues, projectList, reset, dbtCustomer, setValue, dbtUsers, contactInfo, dbtWeatherDesignConditions, dbtWeatherData, formValues.ddlCountry, weatherDataCountryInfo]);
+  }, [defaultValues, projectList, reset, dbtCustomer, setValue, dbtUsers, dbtWeatherDesignConditions, dbtWeatherData, formValues.ddlCountry, weatherDataCountryInfo]);
   
   return (
     <Dialog open={open} onClose={handleClose}>
@@ -696,7 +723,7 @@ export default function NewProjectDialog({
                   />
                 <RHFTextField 
                   size="small" 
-                  type="number" 
+                  // type="number" 
                   name="txbRevisionNo" 
                   label="Revision #"
                   onChange={(e: any) => {setValueWithCheck(e, 'txbRevisionNo');}}
@@ -710,7 +737,7 @@ export default function NewProjectDialog({
                   // onChange={handleChangeCompanyName}
                 >
                   {/* <option value="" /> */}
-                  {dbtCustomer?.map((info: any, index: number) => (
+                  {companyInfo?.map((info: any, index: number) => (
                     <option key={index} value={info.id}>
                       {info.name}
                     </option>
@@ -726,8 +753,8 @@ export default function NewProjectDialog({
                   onChange={handleChangeContactName}
                 >
                   {/* <option value="" /> */}
-                  {contactInfo && contactInfo?.length > 0 ? (
-                    contactInfo?.map((info: any, index: number) => (
+                  {companyContactInfo && companyContactInfo?.length > 0 ? (
+                    companyContactInfo?.map((info: any, index: number) => (
                       <option key={index} value={info.id}>
                         {`${info.first_name} ${info.last_name}`}
                       </option>
@@ -799,8 +826,13 @@ export default function NewProjectDialog({
                     placeholder="Please select province/state"
                   >
                     {/* <option value="" /> */}
-                    {weatherDataProvStateInfo?.map((option: any) => (
+                    {/* {weatherDataProvStateInfo?.map((option: any) => (
                       <option key={`${option}`} value={option}>
+                        {option}
+                      </option>
+                    ))} */}
+                    {weatherDataProvStateInfo.map((option: any, idx: any) => (
+                      <option key={`${idx}`} value={option}>
                         {option}
                       </option>
                     ))}
@@ -818,7 +850,7 @@ export default function NewProjectDialog({
                       <option key={`${option.id}`} value={option.id}>
                         {option.station}
                       </option>
-                    ))}
+                    ))}                 
                   </RHFSelect>
                 </Stack>
 
@@ -838,7 +870,7 @@ export default function NewProjectDialog({
                     ))}
                   </RHFSelect>
                   <RHFTextField 
-                    type="number" 
+                    // type="number" 
                     size="small" 
                     name="txbAltitude" 
                     label="Altitude(ft)"
