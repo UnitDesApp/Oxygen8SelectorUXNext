@@ -2,18 +2,30 @@ import { AxiosResponse } from 'axios';
 import AbstractApi from './AbstractApi';
 
 export default class ProjectApi extends AbstractApi {
+  // PsyCalc ==================================================================================
+  getRH_By_DB_WB = (params: JSON): Promise<any> =>
+    this.client.post(`/api/PsyCalc/GetRH_By_DB_WB`, params).then((res: any) => res.data);
+
+  getWB_By_DB_RH = (params: JSON): Promise<any> =>
+    this.client.post(`/api/PsyCalc/GetWB_By_DB_RH`, params).then((res: any) => res.data);
+  
+
   // Job ==================================================================================
   addNewProject = (params: JSON): Promise<any> =>
     this.client.post(`/api/job/add`, params).then((res: any) => res.data);
 
   getProjects = async (): Promise<any> =>
-    this.client.post(`/api/jobs/Get`).then((res: any) => JSON.parse(res.data));
+    this.client.post(`/api/job/GetSavedJobs`).then((res: any) => JSON.parse(res.data));
 
   getProjectInitInfo = async (): Promise<any> =>
-    this.client.get(`/api/jobs/initinfo`).then((res: any) => JSON.parse(res.data));
+    this.client.get(`/api/job/initinfo`).then((res: any) => JSON.parse(res.data));
 
-  getProjectById = async (params: { id: number }): Promise<any> =>
-    this.client.post(`/api/job/GetSavedJob`, params).then((res: any) => res.data);
+  getJobSelTables = async (): Promise<any> =>
+    this.client.get(`/api/job/GetJobSelTables`).then((res: any) => JSON.parse(res.data));
+
+
+  getJobById = async (params: JSON): Promise<any> =>
+    this.client.post(`/api/job/GetSavedJob`, params).then((res: any) => JSON.parse(res.data));
 
   getOutdoorInfo = async (params: any): Promise<any> =>
     this.client.post(`/api/job/getoutdoorinfo`, params).then((res: any) => res.data);
@@ -27,6 +39,7 @@ export default class ProjectApi extends AbstractApi {
   getUnits = async (params: { jobId: number }): Promise<any> =>
     this.client.post(`/api/job/getwithunit`, params).then((res: any) => res.data);
 
+  
   // Unit ==================================================================================
   saveUnitInfo = (params: JSON): Promise<any> =>
     this.client.post(`/api/units/Save`, params).then((res: any) => res.data);

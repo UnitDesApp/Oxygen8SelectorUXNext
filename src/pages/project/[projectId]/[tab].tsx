@@ -16,12 +16,13 @@ import { useSettingsContext } from '../../../components/settings';
 import DashboardLayout from '../../../layouts/dashboard';
 // import sub components
 import UnitList from './components/unitlist/UnitList';
-import ProjectDetail from './components/detail/ProjectDetail';
+// import ProjectDetail from './components/detail/ProjectDetail';
 import ProjectQuote from './components/quote/ProjectQuote';
 import ProjectSubmittal from './components/submittal/ProjectSubmittal';
 import ProjectStatus from './components/status/ProjectStatus';
 import ProjectNote from './components/note/ProjectNote';
 import ReportDialog from './components/dialog/ReportDialog';
+import ProjectDetail from '../components/newProjectDialog/ProjectInfo';
 
 // ----------------------------------------------------------------------
 

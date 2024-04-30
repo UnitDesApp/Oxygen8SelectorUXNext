@@ -26,7 +26,7 @@ import {
 import { ROLE_OPTIONS } from 'src/utils/constants';
 import { useAuthContext } from 'src/auth/useAuthContext';
 import CircularProgressLoading from 'src/components/loading/CircularProgressLoading';
-import { useGetAllProjects } from 'src/hooks/useApi';
+import { useGetAllProjects, useGetJobSelTables } from 'src/hooks/useApi';
 import { PATH_APP } from 'src/routes/paths';
 import Scrollbar from 'src/components/scrollbar/Scrollbar';
 import ConfirmDialog from 'src/components/dialog/ConfirmDialog';
@@ -36,7 +36,7 @@ import ProjectTableRow from './components/table/ProjectTableRow';
 import { useSettingsContext } from '../../components/settings';
 import DashboardLayout from '../../layouts/dashboard';
 import TableHeadCustom from './components/table/TableHeadCustom';
-import NewProjectDialog from './components/newProjectDialog/NewProjectDialog';
+import NewProjectDialog from './components/newProjectDialog/ProjectInfoDialog';
 
 // ----------------------------------------------------------------------
 
@@ -65,7 +65,10 @@ export default function Project() {
   const [openSuccess, setOpenSuccess] = useState<boolean>(false);
   const [openFail, setOpenFail] = useState<boolean>(false);
 
-  const { data: projects, isLoading: isLoadingProjects, refetch } = useGetAllProjects();
+  // const { data: projects, isLoading: isLoadingProjects, refetch } = useGetAllProjects();
+  const { data: projects, isLoading: isLoadingProjects, refetch } =   useGetAllProjects();;
+  const { data: jobSelTables } =   useGetJobSelTables();;
+
 
   const {
     page,
@@ -264,18 +267,20 @@ export default function Project() {
             </Box>
           </Box>
         )}
+                
                 {/* {projects?.jobInitInfo && ( */}
-
-        {projects?.dbtUsers && (
+        {jobSelTables && (
           <NewProjectDialog
+            loadProjectStep='SHOW_FIRST_DIALOG'
             open={newProjectDialogOpen}
             onClose={() => setNewProjectDialog(false)}
             setOpenSuccess={() => setOpenSuccess(true)}
             setOpenFail={() => setOpenFail(true)}
             // initialInfo={projects?.jobInitInfo}
-            initialInfo={projects}
-            projectList={projects.dbtJobList}
+            // initialInfo={projects}
+            initialInfo={jobSelTables}
             refetch={refetch}
+            savedJob={null}
           />
         )}
         <ConfirmDialog

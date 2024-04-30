@@ -106,45 +106,13 @@ export default function UnitInfoForm({
 
   // ------------------------------- Checkbox State -----------------------------------
   const [ckbBypass, setCkbBypassVal] = useState(false);
-  // const [ckbDrainPanVal, setCkbDrainPanVal] = useState(false);
-  // const [ckbVoltageSPPVal, setCkbVoltageSPPVal] = useState(false);
-  // const [ckbDehumidificationVal, setCkbDehumidificationVal] = useState(false);
-  // const [ckbValveAndActuatorVal, setCkbValveAndActuatorVal] = useState(false);
-  // const [ckbHeatPumpVal, setCkbHeatPumpVal] = useState(false);
-  // const [ckbDownshotVal, setCkbDownshotVal] = useState(false);
-  // const [ckbCoolingCWCUseCap, setckbCoolingCWCUseCap = useState({
-  //   ckbPreheatHWC_UseCap: false,
-  //   ckbPreheatHWC_UseFlowRate: false,
-  //   ckbCoolingCWC_UseCap: false,
-  //   ckbCoolingCWC_UseFlowRate: false,
-  //   ckbHeatingHWC_UseCap: false,
-  //   ckbHeatingHWC_UseFlowRate: false,
-  //   ckbReheatHWC_UseCap: false,
-  //   ckbReheatHWC_UseFlowRate: false,
-  // });
-  // const [ckbCoolingCWCUseCap, setCkbCoolingCWCUseCap] = useState(false);
 
 
   // ------------------------- Initialize Checkbox Values -----------------------------
   useEffect(() => {
     if (edit) {
       // setCkbBypassVal(!!unitInfo?.ckbBypassVal);
-      // setCkbDrainPanVal(!!unitInfo?.ckbDrainPanVal);
-      // setCkbVoltageSPPVal(!!unitInfo?.ckbVoltageSPPVal);
-      // setCkbDehumidificationVal(!!unitInfo?.ckbDehumidificationVal);
-      // setCkbValveAndActuatorVal(!!unitInfo?.ckbValveAndActuatorVal);
-      // setCkbHeatPumpVal(!!unitInfo?.ckbHeatPumpVal);
-      // setCkbDownshotVal(!!unitInfo?.ckbDownshot?.isDownshot);
-      // setCkbFlowRateAndCap({
-      //   ckbPreheatHWC_UseCap: false,
-      //   ckbPreheatHWC_UseFlowRate: false,
-      //   ckbCoolingCWC_UseCap: false,
-      //   ckbCoolingCWC_UseFlowRate: false,
-      //   ckbHeatingHWC_UseCap: false,
-      //   ckbHeatingHWC_UseFlowRate: false,
-      //   ckbReheatHWC_UseCap: false,
-      //   ckbReheatHWC_UseFlowRate: false,
-      // });
+
     }
   }, [
     edit,
@@ -549,6 +517,28 @@ export default function UnitInfoForm({
     [setValue]
   );
 
+  // const ddlPreheatHandingChanged = useCallback(
+  //   (e: any) => {
+  //     setValue('ddlPreheatCoilHanding', Number(e.target.value));
+  //  },
+  //   [setValue]
+  // );
+
+  // const ddlCoolingHandingChanged = useCallback(
+  //   (e: any) => {
+  //     setValue('ddlCoolingCoilHanding', Number(e.target.value));
+  //  },
+  //   [setValue]
+  // );
+
+  const ddlHeatingCoilHandingChanged = useCallback(
+    (e: any) => {
+      setValue('ddlHeatingCoilHanding', Number(e.target.value));
+   },
+    [setValue]
+  );
+
+
   const ddlSupplyAirOpeningChanged = useCallback(
     (e: any) => {
       setValue('ddlSupplyAirOpening', Number(e.target.value));
@@ -782,8 +772,7 @@ export default function UnitInfoForm({
   // ------------------------- Get each complete informaiton --------------------------
   const { dtPreheatComp, dtCoolingComp, dtHeatingComp } = useMemo(
     () => getComponentInfo(baseData, Number(intProductTypeID), Number(intUnitTypeID)),
-    [baseData, intProductTypeID, intUnitTypeID]
-  );
+    [baseData, intProductTypeID, intUnitTypeID]);
 
   const { dtReheatComp } = useMemo(
     () =>
@@ -843,12 +832,7 @@ export default function UnitInfoForm({
     }
 
     return info;
-  }, [
-    // edit,
-    // baseData,
-    // setValue,
-    formValues.ckbPreheatHWCUseCap,
-  ]);
+  }, [formValues.ckbPreheatHWCUseCap,]);
 
 
   const preheatHWCFlowRateInfo = useMemo(() => {
@@ -869,9 +853,7 @@ export default function UnitInfoForm({
     }
 
     return info;
-  }, [
-    formValues.ckbPreheatHWCUseFlowRate,
-  ]);
+  }, [formValues.ckbPreheatHWCUseFlowRate,]);
 
 
   const coolingCWCCapInfo = useMemo(() => {
@@ -892,12 +874,7 @@ export default function UnitInfoForm({
     }
 
     return info;
-  }, [
-    // edit,
-    // baseData,
-    // setValue,
-    formValues.ckbCoolingCWCUseCap,
-  ]);
+  }, [formValues.ckbCoolingCWCUseCap,]);
 
 
   const coolingCWCFlowRateInfo = useMemo(() => {
@@ -918,9 +895,7 @@ export default function UnitInfoForm({
     }
 
     return info;
-  }, [
-    formValues.ckbCoolingCWCUseFlowRate,
-  ]);
+  }, [formValues.ckbCoolingCWCUseFlowRate,]);
 
 
   const heatingHWCCapInfo = useMemo(() => {
@@ -941,9 +916,7 @@ export default function UnitInfoForm({
     }
 
     return info;
-  }, [
-    formValues.ckbHeatingHWCUseCap,
-  ]);
+  }, [formValues.ckbHeatingHWCUseCap,]);
 
 
   const heatingHWCFlowRateInfo = useMemo(() => {
@@ -964,9 +937,7 @@ export default function UnitInfoForm({
     }
 
     return info;
-  }, [
-    formValues.ckbHeatingHWCUseFlowRate,
-  ]);
+  }, [formValues.ckbHeatingHWCUseFlowRate, ]);
 
 
   const reheatHWCCapInfo = useMemo(() => {
@@ -987,9 +958,7 @@ export default function UnitInfoForm({
     }
 
     return info;
-  }, [
-    formValues.ckbReheatHWCUseCap,
-  ]);
+  }, [formValues.ckbReheatHWCUseCap,]);
 
 
   const reheatHWCFlowRateInfo = useMemo(() => {
@@ -1010,9 +979,7 @@ export default function UnitInfoForm({
     }
 
     return info;
-  }, [
-    formValues.ckbReheatHWCUseFlowRate,
-  ]);
+  }, [formValues.ckbReheatHWCUseFlowRate,]);
 
 
 
@@ -1065,8 +1032,7 @@ export default function UnitInfoForm({
         Number(typeof window !== 'undefined' && localStorage.getItem('UAL')),
         Number(formValues.ddlCoolingComp)
       ),
-    [formValues.ddlCoolingComp]
-  );
+    [formValues.ddlCoolingComp]);
 
 
   const heatElecHeaterInstallationInfo = useMemo(
@@ -1076,8 +1042,7 @@ export default function UnitInfoForm({
         Number(formValues.ddlHeatingComp),
         Number(formValues.ddlReheatComp)
       ),
-    [baseData, intProductTypeID, formValues.ddlHeatingComp, formValues.ddlReheatComp]
-  );
+    [baseData, intProductTypeID, formValues.ddlHeatingComp, formValues.ddlReheatComp]);
 
 
   const heatingFluidTypeInfo = useMemo(() => {
@@ -1238,8 +1203,7 @@ export default function UnitInfoForm({
 
   const drainPanInfo = useMemo(
     () => getDrainPanInfo(Number(intProductTypeID), Number(intUnitTypeID)),
-    [intProductTypeID, intUnitTypeID]
-  );
+    [intProductTypeID, intUnitTypeID]);
 
   // const handingInfo = useMemo(() => {
   //   const result = getHandingInfo(baseData);
@@ -1339,8 +1303,7 @@ export default function UnitInfoForm({
       setValue('txbSummerReturnAirCFM', value);
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [formValues.ckbBypass, getAllFormData, setValue, user?.UAL || 0]
-  );
+    [formValues.ckbBypass, getAllFormData, setValue, user?.UAL || 0]);
 
   const handleBlurSummerReturnAirCFM = useCallback(
     (e: any) => {
@@ -1374,8 +1337,7 @@ export default function UnitInfoForm({
       );
       setValue('txbExhaustAirESP', value);
     },
-    [setValue, intProductTypeID, intUnitTypeID, formValues.ddlUnitModel]
-  );
+    [setValue, intProductTypeID, intUnitTypeID, formValues.ddlUnitModel]);
 
   const isAvailable = useCallback((value: any[]) => !!value && value.length > 0, []);
   if (edit && setFunction) setFunction(handleSubmit(onSubmit));
@@ -1691,6 +1653,7 @@ export default function UnitInfoForm({
                     name="ddlPreheatCoilHanding"
                     label="Preheat Coil Handing"
                     sx={getDisplay(formValues.ddlPreheatComp > 0)}
+                    onChange={(e: any) => setValue('ddlPreheatCoilHanding', Number(e.target.value))}
                   >
                     {baseData?.handing?.map((item: any, index: number) => (
                       <option key={index} value={item.id}>
@@ -1938,23 +1901,17 @@ export default function UnitInfoForm({
                   label="Suction Temp (F)"
                   onChange={(e: any) => {setValueWithCheck1(e, 'txbRefrigSuctionTemp');}}
                 />
-
                 <RHFTextField
                   size="small"
                   name="txbRefrigLiquidTemp"
                   label="Liquid Temp (F)"
-                  onChange={(e: any) => {
-                    setValueWithCheck1(e, 'txbRefrigLiquidTemp');
-                  }}
+                  onChange={(e: any) => {setValueWithCheck1(e, 'txbRefrigLiquidTemp');}}
                 />
-
                 <RHFTextField
                   size="small"
                   name="txbRefrigSuperheatTemp"
                   label="Superheat Temp (F)"
-                  onChange={(e: any) => {
-                    setValueWithCheck1(e, 'txbRefrigSuperheatTemp');
-                  }}
+                  onChange={(e: any) => {setValueWithCheck1(e, 'txbRefrigSuperheatTemp');}}
                 />
               </Stack>
               <Stack spacing={1} sx={{ ...getDisplay(Number(formValues.ddlCoolingComp) === IDs.intCompCWC_ID) }}>
@@ -2123,9 +2080,10 @@ export default function UnitInfoForm({
                     name="ddlHeatingCoilHanding"
                     label="Heating Coil Handing"
                     sx={getDisplay(Number(formValues.ddlHeatingComp) > 1)}
-                    onChange={(e: any) =>
-                      setValue('ddlHeatingCoilHanding', Number(e.target.value))
-                    }
+                    // onChange={(e: any) =>
+                    //   setValue('ddlHeatingCoilHanding', Number(e.target.value))
+                    // }
+                    onChange={ddlHeatingCoilHandingChanged}
                   >
                     {baseData?.handing?.map((item: any, index: number) => (
                       <option key={index} value={item.id}>
@@ -2312,9 +2270,8 @@ export default function UnitInfoForm({
                     name="ddlHeatingCoilHanding"
                     label="Reheat Coil Handing"
                     sx={getDisplay(Number(formValues.ddlReheatComp) > 1)}
-                    onChange={(e: any) =>
-                      setValue('ddlHeatingCoilHanding', Number(e.target.value))
-                    }
+                    onChange={ddlHeatingCoilHandingChanged} // Heat and Reheat same component
+
                   >
                     {baseData?.handing?.map((item: any, index: number) => (
                       <option key={index} value={item.id}>
