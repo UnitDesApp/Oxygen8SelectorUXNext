@@ -72,7 +72,9 @@ export const intDamperActuatorInCasingID = 4;
 
 export const intElecHeaterInstallNA_ID = 1;
 export const intElecHeaterInstallDuctMountedID = 2;
-export const intElecHeaterInstallInCasingID = 3;
+export const intElecHeaterInstallInCasingFieldID = 3;
+export const intElecHeaterInstallInCasingFactoryID = 4;
+export const intElecHeaterInstallInCasingID = 5;
 
 export const intFluidTypeIdNA= 1;
 
@@ -147,5 +149,3 @@ export const strSoftwareVersion = 'Version 1.0.0.4'; //  2022-Feb-02
 
 export const strPricingVersion = 'Version 1.0.0.0';
 
-export const intElecHeaterInstallInCasingFieldID = 3;
-export const intElecHeaterInstallInCasingFactoryID = 4;
