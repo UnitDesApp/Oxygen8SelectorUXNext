@@ -63,7 +63,7 @@ export default function NewProjectDialog({
   const [submit, setSubmit] = useState(0);
   // const [edit, setEdit] = useState(false);
   // const [savedJobVals, setSavedJobVals] = useState<any[]>([])
-  const [savedJobVals, setSavedJobVals] = useState<any>([])
+  // const [savedJobVals, setSavedJobVals] = useState<any>([])
 
   const {
     dbtBasisOfDesign,

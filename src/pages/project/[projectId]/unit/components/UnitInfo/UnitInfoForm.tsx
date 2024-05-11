@@ -37,9 +37,6 @@ import {
   getElecHeaterVoltageInfo,
   getExhaustAirESP,
   getHeatPumpInfo,
-  getCoolingFluidTypeInfo,
-  getCoolingFluidConcenInfo,
-  // getItemsAddedOnIDDataTable,
   getLocation,
   getOrientation,
   getPreheatElecHeaterInstallationInfo,
@@ -659,7 +656,7 @@ export default function UnitInfoForm({
         info.defaultId = info.dtSelFluidType?.[0]?.id;
         setValue('ddlPreheatFluidType', info.dtSelFluidType?.[0]?.id);  
       }
-    }, [baseData, getValues('ddlPreheatComp')]);
+  }, [baseData, getValues('ddlPreheatComp')]);
 
 
   const [preheatFluidConcenInfo, setPreheatFluidConcenInfo] = useState<any>([])
@@ -707,7 +704,7 @@ export default function UnitInfoForm({
       setValue('txbReheatFluidEntTemp', getValues('txbPreheatFluidEntTemp'));
       setValue('txbReheatFluidLvgTemp', getValues('txbPreheatFluidLvgTemp'));
     }
-    },
+  },
   [getValues('ddlPreheatFluidType'), getValues('ddlPreheatFluidConcentration'), getValues('txbPreheatFluidEntTemp'), getValues('txbPreheatFluidLvgTemp')]);
 
 
@@ -733,7 +730,7 @@ export default function UnitInfoForm({
 
 
   const [coolingFluidConcenInfo, setCoolingFluidConcenInfo] = useState<any>([])
-  useMemo(() => {
+    useMemo(() => {
     const info: { dtSelFluidConcen: any; isVisible: boolean; defaultId: number} = { dtSelFluidConcen: [],  isVisible: false, defaultId: 0};
 
     let fluidConFluidTypLink: any = [];
@@ -754,9 +751,6 @@ export default function UnitInfoForm({
       setValue('ddlCoolingFluidConcentration', info.dtSelFluidConcen?.[0]?.id);
 
     }, [baseData, getValues('ddlCoolingComp'), getValues('ddlCoolingFluidType')]);
-
-
-
 
   
   const [heatingFluidTypeInfo, setHeatingFluidTypeInfo] = useState<any>([])
@@ -842,41 +836,41 @@ export default function UnitInfoForm({
       setValue('txbReheatFluidLvgTemp', getValues('txbHeatingFluidLvgTemp'));
     }
 
-    },
+  },
   [getValues('ddlHeatingFluidType'), getValues('ddlHeatingFluidConcentration'), getValues('txbHeatingFluidEntTemp'), getValues('txbHeatingFluidLvgTemp')]);
 
 
 
   const [reheatFluidTypeInfo, setReheatFluidTypeInfo] = useState<any>([])
-    useMemo(() => {
-      const info: { dtSelFluidType: any; isVisible: boolean; defaultId: number} = { dtSelFluidType: [],  isVisible: false, defaultId: 0};
-      info.dtSelFluidType = baseData?.fluidType;
+  useMemo(() => {
+    const info: { dtSelFluidType: any; isVisible: boolean; defaultId: number} = { dtSelFluidType: [],  isVisible: false, defaultId: 0};
+    info.dtSelFluidType = baseData?.fluidType;
   
-      if (Number(getValues('ddlReheatComp')) === IDs.intCompHWC_ID) {
-        info.dtSelFluidType = info.dtSelFluidType?.filter((item: { id: number }) => item.id !== IDs.intFluidTypeIdNA);
-      }
-      else {
-        info.dtSelFluidType = info.dtSelFluidType?.filter((item: { id: number }) => item.id === IDs.intFluidTypeIdNA);  
-      }
+    if (Number(getValues('ddlReheatComp')) === IDs.intCompHWC_ID) {
+      info.dtSelFluidType = info.dtSelFluidType?.filter((item: { id: number }) => item.id !== IDs.intFluidTypeIdNA);
+    }
+    else {
+      info.dtSelFluidType = info.dtSelFluidType?.filter((item: { id: number }) => item.id === IDs.intFluidTypeIdNA);  
+    }
 
-      setReheatFluidTypeInfo(info);
+    setReheatFluidTypeInfo(info);
 
-      if (Number(getValues('ddlReheatComp')) === IDs.intCompHWC_ID && Number(getValues('ddlPreheatComp')) === IDs.intCompHWC_ID) {
-        setValue('ddlReheatFluidType', getValues('ddlPreheatFluidType'));
-        setValue('ddlReheatFluidConcentration', getValues('ddlPreheatFluidConcentration'));
-        setValue('txbReheatFluidEntTemp', getValues('txbPreheatFluidEntTemp'));
-        setValue('txbReheatFluidLvgTemp', getValues('txbPreheatFluidLvgTemp'));
-      }
-      else if (Number(getValues('ddlReheatComp')) === IDs.intCompHWC_ID && Number(getValues('ddlHeatingComp')) === IDs.intCompHWC_ID) {
-        setValue('ddlReheatFluidType', getValues('ddlHeatingFluidType'));
-        setValue('ddlReheatFluidConcentration', getValues('ddlHeatingFluidConcentration'));
-        setValue('txbReheatFluidEntTemp', getValues('txbHeatingFluidEntTemp'));
-        setValue('txbReheatFluidLvgTemp', getValues('txbHeatingFluidLvgTemp'));
-      }
-      else {
-        info.defaultId = info.dtSelFluidType?.[0]?.id;
-        setValue('ddlReheatFluidType', info.dtSelFluidType?.[0]?.id);
-      }
+    if (Number(getValues('ddlReheatComp')) === IDs.intCompHWC_ID && Number(getValues('ddlPreheatComp')) === IDs.intCompHWC_ID) {
+      setValue('ddlReheatFluidType', getValues('ddlPreheatFluidType'));
+      setValue('ddlReheatFluidConcentration', getValues('ddlPreheatFluidConcentration'));
+      setValue('txbReheatFluidEntTemp', getValues('txbPreheatFluidEntTemp'));
+      setValue('txbReheatFluidLvgTemp', getValues('txbPreheatFluidLvgTemp'));
+    }
+    else if (Number(getValues('ddlReheatComp')) === IDs.intCompHWC_ID && Number(getValues('ddlHeatingComp')) === IDs.intCompHWC_ID) {
+      setValue('ddlReheatFluidType', getValues('ddlHeatingFluidType'));
+      setValue('ddlReheatFluidConcentration', getValues('ddlHeatingFluidConcentration'));
+      setValue('txbReheatFluidEntTemp', getValues('txbHeatingFluidEntTemp'));
+      setValue('txbReheatFluidLvgTemp', getValues('txbHeatingFluidLvgTemp'));
+    }
+    else {
+      info.defaultId = info.dtSelFluidType?.[0]?.id;
+      setValue('ddlReheatFluidType', info.dtSelFluidType?.[0]?.id);
+    }
   }, [baseData, getValues('ddlReheatComp')]);
 
 
@@ -933,11 +927,11 @@ export default function UnitInfoForm({
 
 
     /* ---------------------------- Start OnChange functions ---------------------------- */
-  const ddlLocationChanged = useCallback(
+  const ddlLocationChanged = useCallback (
     (e: any) => setValue('ddlLocation', Number(e.target.value)),
     [setValue]);
 
-  const ddlOrientationChanged = useCallback(
+  const ddlOrientationChanged = useCallback (
     (e: any) => setValue('ddlOrientation', Number(e.target.value)),
     [setValue]);
 
