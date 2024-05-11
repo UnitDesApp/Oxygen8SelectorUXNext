@@ -51,12 +51,12 @@ export const intFilterLocationReturnAirFilterID = 4;
 export const intFilterModel_NA_ID = 1;
 export const intFilterModel_2in_85_MERV_13_ID = 9;
 
-export const intCoilTypeHotWaterID = 1;
-export const intCoilTypeChilledWaterID = 2;
-export const intCoilTypeDX_ID = 3;
-export const intCoilTypeHotGasReheatID = 4;
-export const intCoilTypeCondenserID = 5;
-export const intCoilTypeSteamID = 6; // Not in use
+// export const intCoilTypeHotWaterID = 1;
+// export const intCoilTypeChilledWaterID = 2;
+// export const intCoilTypeDX_ID = 3;
+// export const intCoilTypeHotGasReheatID = 4;
+// export const intCoilTypeCondenserID = 5;
+// export const intCoilTypeSteamID = 6; // Not in use
 
 export const intCompNA_ID = 1;
 export const intCompElecHeaterID = 2;
@@ -72,7 +72,11 @@ export const intDamperActuatorInCasingID = 4;
 
 export const intElecHeaterInstallNA_ID = 1;
 export const intElecHeaterInstallDuctMountedID = 2;
-export const intElecHeaterInstallInCasingID = 3;
+export const intElecHeaterInstallInCasingFieldID = 3;
+export const intElecHeaterInstallInCasingFactoryID = 4;
+export const intElecHeaterInstallInCasingID = 5;
+
+export const intFluidTypeIdNA= 1;
 
 export const intNovaUnitModelID_A16IN = 1;
 export const intNovaUnitModelID_B20IN = 2;
@@ -145,5 +149,3 @@ export const strSoftwareVersion = 'Version 1.0.0.4'; //  2022-Feb-02
 
 export const strPricingVersion = 'Version 1.0.0.0';
 
-export const intElecHeaterInstallInCasingFieldID = 3;
-export const intElecHeaterInstallInCasingFactoryID = 4;

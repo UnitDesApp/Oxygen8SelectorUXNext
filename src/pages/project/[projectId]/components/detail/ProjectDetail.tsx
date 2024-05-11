@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 // @mui
 import { Box, Snackbar, Alert } from '@mui/material';
 // hooks
-import { useGetProjectById, useGetProjectInitInfo } from 'src/hooks/useApi';
+import { useGetJobById, useGetProjectInitInfo } from 'src/hooks/useApi';
 import { useRouter } from 'next/router';
 import CircularProgressLoading from 'src/components/loading/CircularProgressLoading';
 import ProjectDetailsForm from './ProjectDetailsForm';
@@ -18,7 +18,7 @@ export default function ProjectDetail() {
   const [openError, setOpenError] = useState<boolean>(false);
 
   const { data: projectInitInfo, isLoading: isLoadingProjectInitInfo } = useGetProjectInitInfo();
-  const { data: project, isLoading: isLoadingProject } = useGetProjectById({
+  const { data: project, isLoading: isLoadingProject } = useGetJobById({
     id: Number(projectId),
   });
 
