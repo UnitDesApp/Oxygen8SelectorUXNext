@@ -35,7 +35,7 @@ import { userInfo } from 'os';
 import { celsiusToFarenheit } from 'src/utils/convert';
 
 
-type NewProjectDialogProps = {
+type ProjectInfoDialogProps = {
   loadProjectStep: string;
   open: boolean;
   onClose: Function;
@@ -47,7 +47,7 @@ type NewProjectDialogProps = {
   savedJob: any;
 };
 
-export default function NewProjectDialog({
+export default function ProjectInfoDialog({
   loadProjectStep,
   open,
   onClose,
@@ -57,11 +57,11 @@ export default function NewProjectDialog({
   refetch,
   // projectList,
   savedJob,
-}: NewProjectDialogProps) {
+}: ProjectInfoDialogProps) {
   const api = useApiContext();
   const [step, setStep] = useState('');
   const [submit, setSubmit] = useState(0);
-  // const [edit, setEdit] = useState(false);
+  // const [edit, setdit] = useState(false);
   // const [savedJobVals, setSavedJobVals] = useState<any[]>([])
   // const [savedJobVals, setSavedJobVals] = useState<any>([])
 
@@ -605,6 +605,22 @@ useMemo(() => {
 
 
 
+  const [designCondInfo, setDesignCondInfo] = useState([])
+  useMemo(() => {
+    const dtSelDesignCond = dbtWeatherDesignConditions;
+    
+    setDesignCondInfo(dtSelDesignCond);  
+    
+    if (dtSelDesignCond?.length > 0) {
+      setValue('ddlAshareDesignConditions', dtSelDesignCond?.[0]?.id); // 
+    } else {
+      setValue('ddlAshareDesignConditions', 0); // 
+    }
+
+
+  }, [dbtWeatherDesignConditions, setValue])
+
+
   const [weatherDataCountryInfo, setWeatherDataCountryInfo] = useState([])
   useMemo(() => {
     const dtSelCountry = dbtWeatherData.map((e: any) => e.country,)?.filter((v:any, i:any, e: any) => e.indexOf(v) === i);
@@ -648,7 +664,7 @@ useMemo(() => {
     if (dtSelCity?.length > 0) {
       setValue('ddlCity', dtSelCity?.[0]?.id); // 
     } else {
-      setValue('ddlCity', ''); // 
+      setValue('ddlCity', 0); // 
     }
 
   }, [dbtWeatherData, formCurrValues.ddlCountry, formCurrValues.ddlProvState, getValues, setValue]);
@@ -673,7 +689,6 @@ useMemo(() => {
       dtSelStation = dbtWeatherData?.filter((e: { id: number }) => e.id === 1);
     }
 
-    setStationInfo(info);
 
     // setValue('txbAltitude', dtSelStation?.[0]?.elevation_foot);
     info.altitude= Number(dtSelStation?.[0]?.elevation_foot);
@@ -754,6 +769,7 @@ useMemo(() => {
       setWinterOaRhInfo(data)
     });
 
+    setStationInfo(info);
 
     setValue('txbAltitude', info.altitude);
     setValue('txbSummerOA_DB', info.summerOA_DB.toFixed(1));
@@ -930,32 +946,32 @@ useEffect(()=>{
 
 //   setValue('ddlBasisOfDesign',  dbtBasisOfDesign?.[0]?.Id);
 
-// }, [dbtBasisOfDesign, setValue]) // <-- empty dependency array - This will only trigger when the component mounts and no-render
+/// }, [dbtBasisOfDesign, setValue]) // <-- empty dependency array - This will only trigger when the component mounts and no-render
 
 
 // Load saved Values
 useEffect(()=>{
   if (savedJob !== null) {
 
-    if (savedJob?.intBasisOfDesignId > 0) {
-      setValue('ddlBasisOfDesign', savedJob?.intBasisOfDesignId);
-    }
+    // if (savedJob?.intBasisOfDesignId > 0) {
+      setValue('ddlBasisOfDesign', savedJob?.intBasisOfDesignId > 0 ? savedJob?.intBasisOfDesignId : getValues('ddlBasisOfDesign'));
+    // }
 
-    if (savedJob?.intCompanyNameId > 0) {
-      setValue('ddlCompanyName', savedJob?.intCompanyNameId);
-    }
+    // if (savedJob?.intCompanyNameId > 0) {
+      setValue('ddlCompanyName', savedJob?.intCompanyNameId > 0 ? savedJob?.intCompanyNameId : getValues('ddlCompanyName'));
+    // }
 
-    if (savedJob?.intCompanyContactNameId > 0) {
-      setValue('ddlCompanyContactName', savedJob?.intCompanyContactNameId);
-    }
+    // if (savedJob?.intCompanyContactNameId > 0) {
+      setValue('ddlCompanyContactName', savedJob?.intCompanyContactNameId > 0 ? savedJob?.intCompanyContactNameId : getValues('ddlCompanyContactName'));
+    // }
 
-    if (savedJob?.intApplicationId > 0) {
-      setValue('ddlApplication', savedJob?.intApplicationId);
-    }
+    // if (savedJob?.intApplicationId > 0) {
+      setValue('ddlApplication', savedJob?.intApplicationId > 0 ? savedJob?.intApplicationId : getValues('ddlApplication'));
+    // }
 
-    if (savedJob?.intUoMId > 0) {
-      setValue('ddlUoM', savedJob?.intUoMId);
-    }
+    // if (savedJob?.intUoMId > 0) {
+      setValue('ddlUoM', savedJob?.intUoMId > 0 ? savedJob?.intUoMId : getValues('ddlUoM'));
+    // }
 
     if (savedJob?.strCountry !== '') {
       setValue('ddlCountry', savedJob?.strCountry);
@@ -969,11 +985,11 @@ useEffect(()=>{
       setValue('ddlCity', savedJob?.intCityId);
     }
 
-    if (savedJob?.intDesignConditionsId > 0) {
-      setValue('ddlAshareDesignConditions', savedJob?.intDesignConditionsId);
-    }
+    // if (savedJob?.intDesignConditionsId > 0) {
+      setValue('ddlAshareDesignConditions', savedJob?.intDesignConditionsId > 0 ? savedJob?.intDesignConditionsId : getValues('ddlAshareDesignConditions'));
+    // }
 
-    setValue('txbAltitude', savedJob?.intAltitude);
+    setValue('txbAltitude',  Number(savedJob?.intAltitude) > 0 ? savedJob?.intAltitude : '0');
     setValue('txbSummerOA_DB', savedJob?.dblSummerOA_DB.toFixed(1));
     setValue('txbSummerOA_WB', savedJob?.dblSummerOA_WB.toFixed(1));
     setValue('txbSummerOA_RH', savedJob?.dblSummerOA_RH.toFixed(1));
@@ -989,9 +1005,29 @@ useEffect(()=>{
     setValue('txbWinterRA_DB', savedJob?.dblWinterRA_DB.toFixed(1));
     setValue('txbWinterRA_WB', savedJob?.dblWinterRA_WB.toFixed(1));
     setValue('txbWinterRA_RH', savedJob?.dblWinterRA_RH.toFixed(1));
+  } else {
+    // Keep these values in else statement rather than inline if statment
+    setValue('txbSummerOA_DB', '95.0'); 
+    setValue('txbSummerOA_WB', '78.0');
+    setValue('txbSummerOA_RH', '47.3');
+
+    setValue('txbWinterOA_DB', '35.0');
+    setValue('txbWinterOA_WB', '33.0');
+    setValue('txbWinterOA_RH', '81.9');
+
+    setValue('txbSummerRA_DB', '75.0');
+    setValue('txbSummerRA_WB', '63.0');
+    setValue('txbSummerRA_RH', '51.2');
+
+    setValue('txbWinterRA_DB', '70.0');
+    setValue('txbWinterRA_WB', '52.9');
+    setValue('txbWinterRA_RH', '30.0');
   }
 
-}, [savedJob, setValue]) // <-- empty dependency array - This will only trigger when the component mounts and no-render
+
+
+
+}, [getValues, savedJob, setValue]) // <-- empty dependency array - This will only trigger when the component mounts and no-render
 
 // useEffect(()=>{
 
@@ -1195,7 +1231,7 @@ useEffect(() => {
                       placeholder="Please select an share design conditions"
                     >
                       {/* <option value="" /> */}
-                      {dbtWeatherDesignConditions?.map((option: any, index: number) => (
+                      {designCondInfo?.map((option: any, index: number) => (
                         <option key={`${index}`} value={option.id}>
                           {option.items}
                         </option>

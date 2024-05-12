@@ -36,7 +36,7 @@ import ProjectTableRow from './components/table/ProjectTableRow';
 import { useSettingsContext } from '../../components/settings';
 import DashboardLayout from '../../layouts/dashboard';
 import TableHeadCustom from './components/table/TableHeadCustom';
-import NewProjectDialog from './components/newProjectDialog/ProjectInfoDialog';
+import ProjectInfoDialog from './components/newProjectDialog/ProjectInfoDialog';
 
 // ----------------------------------------------------------------------
 
@@ -270,7 +270,7 @@ export default function Project() {
                 
                 {/* {projects?.jobInitInfo && ( */}
         {jobSelTables && (
-          <NewProjectDialog
+          <ProjectInfoDialog
             loadProjectStep='SHOW_FIRST_DIALOG'
             open={newProjectDialogOpen}
             onClose={() => setNewProjectDialog(false)}

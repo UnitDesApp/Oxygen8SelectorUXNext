@@ -6,14 +6,15 @@ import { Box, Snackbar, Alert } from '@mui/material';
 import { useGetJobById, useGetProjectInitInfo, useGetJobSelTables } from 'src/hooks/useApi';
 import { useRouter } from 'next/router';
 import CircularProgressLoading from 'src/components/loading/CircularProgressLoading';
-import NewProjectDialog from './ProjectInfoDialog';
+import ProjectInfoDialog from './ProjectInfoDialog';
+// import ProjectInfoDialog from 'src/pages/project/components/newProjectDialog/ProjectInfoDialog';
+
 // paths
 
 //------------------------------------------------
 
 export default function NewProject() {
   const { projectId } = useRouter().query;
-
 
     const getSavedJob = () => {
       const oSavedJob = {
@@ -52,8 +53,6 @@ export default function NewProject() {
   // reset(defaultValues);
 
   setNewProjectDialog(true);
-
-
   
 }, []);
 
@@ -63,7 +62,7 @@ export default function NewProject() {
     {isLoadingProjectInitInfo || isLoadingProject ? (
         <CircularProgressLoading />
       ) : (
-        <NewProjectDialog
+        <ProjectInfoDialog
         // initialInfo={projectInitInfo}
         // open
         // onClose={handleClose} 
@@ -81,8 +80,6 @@ export default function NewProject() {
         // projectList={[]}
         refetch={refetch}
         savedJob={savedJob}
-        
-
         />
       )}
       <Snackbar open={openSuccess} autoHideDuration={6000} onClose={handleCloseSuccess}>
