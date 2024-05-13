@@ -37,9 +37,6 @@ import {
   getElecHeaterVoltageInfo,
   getExhaustAirESP,
   getHeatPumpInfo,
-  getCoolingFluidTypeInfo,
-  getCoolingFluidConcenInfo,
-  // getItemsAddedOnIDDataTable,
   getLocation,
   getOrientation,
   getPreheatElecHeaterInstallationInfo,
@@ -659,7 +656,7 @@ export default function UnitInfoForm({
         info.defaultId = info.dtSelFluidType?.[0]?.id;
         setValue('ddlPreheatFluidType', info.dtSelFluidType?.[0]?.id);  
       }
-    }, [baseData, getValues('ddlPreheatComp')]);
+  }, [baseData, getValues('ddlPreheatComp')]);
 
 
   const [preheatFluidConcenInfo, setPreheatFluidConcenInfo] = useState<any>([])
@@ -707,7 +704,7 @@ export default function UnitInfoForm({
       setValue('txbReheatFluidEntTemp', getValues('txbPreheatFluidEntTemp'));
       setValue('txbReheatFluidLvgTemp', getValues('txbPreheatFluidLvgTemp'));
     }
-    },
+  },
   [getValues('ddlPreheatFluidType'), getValues('ddlPreheatFluidConcentration'), getValues('txbPreheatFluidEntTemp'), getValues('txbPreheatFluidLvgTemp')]);
 
 
@@ -733,7 +730,7 @@ export default function UnitInfoForm({
 
 
   const [coolingFluidConcenInfo, setCoolingFluidConcenInfo] = useState<any>([])
-  useMemo(() => {
+    useMemo(() => {
     const info: { dtSelFluidConcen: any; isVisible: boolean; defaultId: number} = { dtSelFluidConcen: [],  isVisible: false, defaultId: 0};
 
     let fluidConFluidTypLink: any = [];
@@ -754,9 +751,6 @@ export default function UnitInfoForm({
       setValue('ddlCoolingFluidConcentration', info.dtSelFluidConcen?.[0]?.id);
 
     }, [baseData, getValues('ddlCoolingComp'), getValues('ddlCoolingFluidType')]);
-
-
-
 
   
   const [heatingFluidTypeInfo, setHeatingFluidTypeInfo] = useState<any>([])
@@ -842,41 +836,41 @@ export default function UnitInfoForm({
       setValue('txbReheatFluidLvgTemp', getValues('txbHeatingFluidLvgTemp'));
     }
 
-    },
+  },
   [getValues('ddlHeatingFluidType'), getValues('ddlHeatingFluidConcentration'), getValues('txbHeatingFluidEntTemp'), getValues('txbHeatingFluidLvgTemp')]);
 
 
 
   const [reheatFluidTypeInfo, setReheatFluidTypeInfo] = useState<any>([])
-    useMemo(() => {
-      const info: { dtSelFluidType: any; isVisible: boolean; defaultId: number} = { dtSelFluidType: [],  isVisible: false, defaultId: 0};
-      info.dtSelFluidType = baseData?.fluidType;
+  useMemo(() => {
+    const info: { dtSelFluidType: any; isVisible: boolean; defaultId: number} = { dtSelFluidType: [],  isVisible: false, defaultId: 0};
+    info.dtSelFluidType = baseData?.fluidType;
   
-      if (Number(getValues('ddlReheatComp')) === IDs.intCompHWC_ID) {
-        info.dtSelFluidType = info.dtSelFluidType?.filter((item: { id: number }) => item.id !== IDs.intFluidTypeIdNA);
-      }
-      else {
-        info.dtSelFluidType = info.dtSelFluidType?.filter((item: { id: number }) => item.id === IDs.intFluidTypeIdNA);  
-      }
+    if (Number(getValues('ddlReheatComp')) === IDs.intCompHWC_ID) {
+      info.dtSelFluidType = info.dtSelFluidType?.filter((item: { id: number }) => item.id !== IDs.intFluidTypeIdNA);
+    }
+    else {
+      info.dtSelFluidType = info.dtSelFluidType?.filter((item: { id: number }) => item.id === IDs.intFluidTypeIdNA);  
+    }
 
-      setReheatFluidTypeInfo(info);
+    setReheatFluidTypeInfo(info);
 
-      if (Number(getValues('ddlReheatComp')) === IDs.intCompHWC_ID && Number(getValues('ddlPreheatComp')) === IDs.intCompHWC_ID) {
-        setValue('ddlReheatFluidType', getValues('ddlPreheatFluidType'));
-        setValue('ddlReheatFluidConcentration', getValues('ddlPreheatFluidConcentration'));
-        setValue('txbReheatFluidEntTemp', getValues('txbPreheatFluidEntTemp'));
-        setValue('txbReheatFluidLvgTemp', getValues('txbPreheatFluidLvgTemp'));
-      }
-      else if (Number(getValues('ddlReheatComp')) === IDs.intCompHWC_ID && Number(getValues('ddlHeatingComp')) === IDs.intCompHWC_ID) {
-        setValue('ddlReheatFluidType', getValues('ddlHeatingFluidType'));
-        setValue('ddlReheatFluidConcentration', getValues('ddlHeatingFluidConcentration'));
-        setValue('txbReheatFluidEntTemp', getValues('txbHeatingFluidEntTemp'));
-        setValue('txbReheatFluidLvgTemp', getValues('txbHeatingFluidLvgTemp'));
-      }
-      else {
-        info.defaultId = info.dtSelFluidType?.[0]?.id;
-        setValue('ddlReheatFluidType', info.dtSelFluidType?.[0]?.id);
-      }
+    if (Number(getValues('ddlReheatComp')) === IDs.intCompHWC_ID && Number(getValues('ddlPreheatComp')) === IDs.intCompHWC_ID) {
+      setValue('ddlReheatFluidType', getValues('ddlPreheatFluidType'));
+      setValue('ddlReheatFluidConcentration', getValues('ddlPreheatFluidConcentration'));
+      setValue('txbReheatFluidEntTemp', getValues('txbPreheatFluidEntTemp'));
+      setValue('txbReheatFluidLvgTemp', getValues('txbPreheatFluidLvgTemp'));
+    }
+    else if (Number(getValues('ddlReheatComp')) === IDs.intCompHWC_ID && Number(getValues('ddlHeatingComp')) === IDs.intCompHWC_ID) {
+      setValue('ddlReheatFluidType', getValues('ddlHeatingFluidType'));
+      setValue('ddlReheatFluidConcentration', getValues('ddlHeatingFluidConcentration'));
+      setValue('txbReheatFluidEntTemp', getValues('txbHeatingFluidEntTemp'));
+      setValue('txbReheatFluidLvgTemp', getValues('txbHeatingFluidLvgTemp'));
+    }
+    else {
+      info.defaultId = info.dtSelFluidType?.[0]?.id;
+      setValue('ddlReheatFluidType', info.dtSelFluidType?.[0]?.id);
+    }
   }, [baseData, getValues('ddlReheatComp')]);
 
 
@@ -933,11 +927,11 @@ export default function UnitInfoForm({
 
 
     /* ---------------------------- Start OnChange functions ---------------------------- */
-  const ddlLocationChanged = useCallback(
+  const ddlLocationChanged = useCallback (
     (e: any) => setValue('ddlLocation', Number(e.target.value)),
     [setValue]);
 
-  const ddlOrientationChanged = useCallback(
+  const ddlOrientationChanged = useCallback (
     (e: any) => setValue('ddlOrientation', Number(e.target.value)),
     [setValue]);
 
@@ -1604,6 +1598,7 @@ export default function UnitInfoForm({
         Number(user?.UAL || 0),
         Number(formValues.ckbBypass)
       );
+
       setValue('txbSummerSupplyAirCFM', value);
       setValue('txbSummerReturnAirCFM', value);
     },
@@ -1653,267 +1648,268 @@ export default function UnitInfoForm({
 useEffect(()=>{
   if (unitInfo !== null) {
 
-    if (unitInfo?.oUnitCompOpt?.intHeatingFluidTypeId > 0) {
-      setValue('ddlLocation', unitInfo?.oUnit?.intLocationId);
-    }
+    // if () {
+      setValue('ddlLocation', unitInfo?.oUnitCompOpt?.intHeatingFluidTypeId > 0 ? unitInfo?.oUnit?.intLocationId : getValues('ddlLocation'));
+    // }
 
-    if (unitInfo?.oUnit?.intOrientationId > 0) {
-      setValue('ddlOrientation', unitInfo?.oUnit?.intOrientationId);
-    }
+    // if (unitInfo?.oUnit?.intOrientationId > 0) {
+      setValue('ddlOrientation', unitInfo?.oUnit?.intOrientationId > 0 ? unitInfo?.oUnit?.intOrientationId : getValues('ddlOrientation'));
+    // }
 
-    if (unitInfo?.oUnit?.intControlsPreferenceId > 0) {
-      setValue('ddlControlsPreference', unitInfo?.oUnit?.intControlsPreferenceId);
-    }
+    // if (unitInfo?.oUnit?.intControlsPreferenceId > 0) {
+    //   setValue('ddlControlsPreference', unitInfo?.oUnit?.intControlsPreferenceId);
+      setValue('ddlControlsPreference', unitInfo?.oUnit?.intControlsPreferenceId > 0 ? unitInfo?.oUnit?.intControlsPreferenceId : getValues('ddlControlsPreference'));
+    // }
 
-    setValue('txbSummerSupplyAirCFM', unitInfo?.oUnitAirflow?.intSummerSupplyAirCFM);
-    setValue('txbSummerReturnAirCFM', unitInfo?.oUnitAirflow?.intSummerReturnAirCFM);
-    setValue('txbSupplyAirESP', unitInfo?.oUnitAirflow?.dblSupplyAirESP);
-    setValue('txbExhaustAirESP', unitInfo?.oUnitAirflow?.dblExhaustAirESP);
+    setValue('txbSummerSupplyAirCFM', Number(unitInfo?.oUnitAirflow?.intSummerSupplyAirCFM) > 0 ? unitInfo?.oUnitAirflow?.intSummerSupplyAirCFM : '325');
+    setValue('txbSummerReturnAirCFM', Number(unitInfo?.oUnitAirflow?.intSummerReturnAirCFM) > 0 ? unitInfo?.oUnitAirflow?.intSummerReturnAirCFM : '325');
+    setValue('txbSupplyAirESP', Number.parseFloat(unitInfo?.oUnitAirflow?.dblSupplyAirESP) > 0.0 ? unitInfo?.oUnitAirflow?.dblSupplyAirESP : '0.75');
+    setValue('txbExhaustAirESP', Number.parseFloat(unitInfo?.oUnitAirflow?.dblExhaustAirESP) > 0.0 ? unitInfo?.oUnitAirflow?.dblExhaustAirESP : '0.75');
 
 
-    if (unitInfo?.oUnit?.intUnitModelId > 0) {
-      setValue('ddlUnitModel', unitInfo?.oUnit?.intUnitModelId);
-    }
+    // if (unitInfo?.oUnit?.intUnitModelId > 0) {
+      setValue('ddlUnitModel', unitInfo?.oUnit?.intUnitModelId > 0 ? unitInfo?.oUnit?.intUnitModelId : getValues('ddlUnitModel'));
+    // }
 
-    if (unitInfo?.oUnit?.intUnitVoltageId > 0) {
-      setValue('ddlUnitVoltage', unitInfo?.oUnit?.intUnitVoltageId);
-    }
+    // if (unitInfo?.oUnit?.intUnitVoltageId > 0) {
+      setValue('ddlUnitVoltage', unitInfo?.oUnit?.intUnitVoltageId > 0 ? unitInfo?.oUnit?.intUnitVoltageId : getValues('ddlUnitVoltage'));
+    // }
 
-    if (unitInfo?.oCompOpt?.intOAFilterModelId > 0) {
-      setValue('ddlOA_FilterModel', unitInfo?.oCompOpt?.intOAFilterModelId);
-    }
+    // if (unitInfo?.oCompOpt?.intOAFilterModelId > 0) {
+      setValue('ddlOA_FilterModel', unitInfo?.oCompOpt?.intOAFilterModelId > 0 ? unitInfo?.oCompOpt?.intOAFilterModelId : getValues('ddlOA_FilterModel'));
+    // }
 
-    if (unitInfo?.oCompOpt?.intRAFilterModelId > 0) {
-      setValue('ddlRA_FilterModel', unitInfo?.oCompOpt?.intRAFilterModelId);
-    }
+    // if (unitInfo?.oCompOpt?.intRAFilterModelId > 0) {
+      setValue('ddlRA_FilterModel', unitInfo?.oCompOpt?.intRAFilterModelId > 0 ? unitInfo?.oCompOpt?.intRAFilterModelId : getValues('ddlRA_FilterModel'));
+    // }
 
 
     // Preheat
-    if (unitInfo?.oUnitCompOpt?.intPreheatCompId > 0) {
-      setValue('ddlPreheatComp', unitInfo?.oUnitCompOpt?.intPreheatCompId);
-    }
+    // if (unitInfo?.oUnitCompOpt?.intPreheatCompId > 0) {
+      setValue('ddlPreheatComp', unitInfo?.oUnitCompOpt?.intPreheatCompId > 0 ? unitInfo?.oUnitCompOpt?.intPreheatCompId : getValues('ddlPreheatComp'));
+    // }
 
-    setValue('txbWinterPreheatSetpointDB', unitInfo?.oUnitCompOpt?.dblPreheatSetpointDB);
+    setValue('txbWinterPreheatSetpointDB', Number.parseFloat(unitInfo?.oUnitCompOpt?.dblPreheatSetpointDB) > 0.0 ? unitInfo?.oUnitCompOpt?.dblPreheatSetpointDB : '40');
 
-    if (unitInfo?.oUnitLayout?.intPreheatCoilHandingId > 0) {
-      setValue('ddlPreheatCoilHanding', unitInfo?.oUnitLayout?.intPreheatCoilHandingId);
-    }
+    // if (unitInfo?.oUnitLayout?.intPreheatCoilHandingId > 0) {
+      setValue('ddlPreheatCoilHanding', unitInfo?.oUnitLayout?.intPreheatCoilHandingId > 0 ? unitInfo?.oUnitLayout?.intPreheatCoilHandingId : getValues('ddlLocation'));
+    // }
 
-    if (unitInfo?.oUnitCompOpt?.intPreheatElecHeaterInstallationId > 0) {
-      setValue('ddlPreheatElecHeaterInstall', unitInfo?.oUnitCompOpt?.intPreheatElecHeaterInstallationId);
-    }
+    // if (unitInfo?.oUnitCompOpt?.intPreheatElecHeaterInstallationId > 0) {
+      setValue('ddlPreheatElecHeaterInstall', unitInfo?.oUnitCompOpt?.intPreheatElecHeaterInstallationId > 0 ? unitInfo?.oUnitCompOpt?.intPreheatElecHeaterInstallationId : getValues('ddlPreheatElecHeaterInstall'));
+    // }
 
-    if (unitInfo?.oUnitCompOpt?.intHeatingFluidTypeId > 0) {
-      setValue('ddlPreheatFluidType', unitInfo?.oUnitCompOpt?.intHeatingFluidTypeId);
-    }
+    // if (unitInfo?.oUnitCompOpt?.intHeatingFluidTypeId > 0) {
+      setValue('ddlPreheatFluidType', unitInfo?.oUnitCompOpt?.intHeatingFluidTypeId > 0 ? unitInfo?.oUnitCompOpt?.intHeatingFluidTypeId : getValues('ddlPreheatFluidType'));
+    // }
 
-    if (unitInfo?.oUnitCompOpt?.intHeatingFluidConcentId > 0) {
-      setValue('ddlPreheatFluidConcentration', unitInfo?.oUnitCompOpt?.intHeatingFluidConcentId);
-    }
+    // if (unitInfo?.oUnitCompOpt?.intHeatingFluidConcentId > 0) {
+      setValue('ddlPreheatFluidConcentration', unitInfo?.oUnitCompOpt?.intHeatingFluidConcentId > 0 ? unitInfo?.oUnitCompOpt?.intHeatingFluidConcentId : getValues('ddlPreheatFluidConcentration'));
+    // }
 
     // if (unitInfo?.oUnitCompOpt?.dblHeatingFluidEntTemp > 0) {
-      setValue('txbPreheatFluidEntTemp', unitInfo?.oUnitCompOpt?.dblHeatingFluidEntTemp);
+      setValue('txbPreheatFluidEntTemp', Number.parseFloat(unitInfo?.oUnitCompOpt?.dblHeatingFluidEntTemp) > 0.0 ? unitInfo?.oUnitCompOpt?.dblHeatingFluidEntTemp: '140');
     // }
 
     // if (unitInfo?.oUnitCompOpt?.dblHeatingFluidLvgTemp > 0) {
-      setValue('txbPreheatFluidLvgTemp', unitInfo?.oUnitCompOpt?.dblHeatingFluidLvgTemp);
+      setValue('txbPreheatFluidLvgTemp', Number.parseFloat(unitInfo?.oUnitCompOpt?.dblHeatingFluidLvgTemp) > 0.0 ? unitInfo?.oUnitCompOpt?.dblHeatingFluidLvgTemp: '120');
     // }
 
-    if (unitInfo?.oUnitCompOpt?.intIsPreheatHWCUseCap != null) {
-      setValue('ckbPreheatHWCUseCap', unitInfo?.oUnitCompOpt?.intIsPreheatHWCUseCap);
-    }
+    // if (unitInfo?.oUnitCompOpt?.intIsPreheatHWCUseCap != null) {
+      setValue('ckbPreheatHWCUseCap', unitInfo?.oUnitCompOpt?.intIsPreheatHWCUseCap > 0 ? unitInfo?.oUnitCompOpt?.intIsPreheatHWCUseCap : 0);
+    // }
     
-    setValue('txbPreheatHWCCap', unitInfo?.oUnitCompOpt?.dblPreheatHWCCap);
+    setValue('txbPreheatHWCCap', Number.parseFloat(unitInfo?.oUnitCompOpt?.dblPreheatHWCCap) > 0.0 ? unitInfo?.oUnitCompOpt?.dblPreheatHWCCap: '0');
 
-    if (unitInfo?.oUnitCompOpt?.intIsPreheatHWCUseFlowRate != null) {
-      setValue('ckbPreheatHWCUseFlowRate', unitInfo?.oUnitCompOpt?.intIsPreheatHWCUseFlowRate);
-    }
+    // if (unitInfo?.oUnitCompOpt?.intIsPreheatHWCUseFlowRate != null) {
+      setValue('ckbPreheatHWCUseFlowRate', unitInfo?.oUnitCompOpt?.intIsPreheatHWCUseFlowRate != null ? unitInfo?.oUnitCompOpt?.intIsPreheatHWCUseFlowRate : 0);
+    // }
 
-    setValue('txbPreheatHWCFlowRate', unitInfo?.oUnitCompOpt?.dblPreheatHWCFlowRate);
+    setValue('txbPreheatHWCFlowRate', Number.parseFloat(unitInfo?.oUnitCompOpt?.dblPreheatHWCFlowRate) > 0.0 ? unitInfo?.oUnitCompOpt?.dblPreheatHWCFlowRate: '0');
 
 
     // Cooling
-    if (unitInfo?.oUnitCompOpt?.intCoolingCompId > 0) {
-      setValue('ddlCoolingComp', unitInfo?.oUnitCompOpt?.intCoolingCompId);
-    }
+    // if (unitInfo?.oUnitCompOpt?.intCoolingCompId > 0) {
+      setValue('ddlCoolingComp', unitInfo?.oUnitCompOpt?.intCoolingCompId > 0 ? unitInfo?.oUnitCompOpt?.intCoolingCompId : getValues('ddlCoolingComp'));
+    // }
 
-    setValue('txbSummerCoolingSetpointDB', unitInfo?.oUnitCompOpt?.dblCoolingSetpointDB);
-    setValue('txbSummerCoolingSetpointWB', unitInfo?.oUnitCompOpt?.dblCoolingSetpointWB);
+    setValue('txbSummerCoolingSetpointDB', Number.parseFloat(unitInfo?.oUnitCompOpt?.dblCoolingSetpointDB) > 0.0 ? unitInfo?.oUnitCompOpt?.dblCoolingSetpointDB: '55');
+    setValue('txbSummerCoolingSetpointWB', Number.parseFloat(unitInfo?.oUnitCompOpt?.dblCoolingSetpointWB) > 0.0 ? unitInfo?.oUnitCompOpt?.dblCoolingSetpointWB: '54');
 
-    if (unitInfo?.oUnitCompOpt?.intIsHeatPump !== null) {
-      setValue('ckbHeatPump', unitInfo?.oUnitCompOpt?.intIsHeatPump);
-    }
+    // if (unitInfo?.oUnitCompOpt?.intIsHeatPump > 0 ) {
+      setValue('ckbHeatPump', unitInfo?.oUnitCompOpt?.intIsHeatPump > 0 ?  unitInfo?.oUnitCompOpt?.intIsHeatPump : 0);
+    // }
 
-    if (unitInfo?.oUnitCompOpt?.intIsDehumidification !== null) {
-      setValue('ckbDehumidification', unitInfo?.oUnitCompOpt?.intIsDehumidification);
-    }
+    // if (unitInfo?.oUnitCompOpt?.intIsDehumidification > 0) {
+      setValue('ckbDehumidification', unitInfo?.oUnitCompOpt?.intIsDehumidification > 0 ?  unitInfo?.oUnitCompOpt?.intIsDehumidification : 0);
+    // }
 
-    if (unitInfo?.oUnitLayout?.intCoolingCoilHandingId > 0) {
-      setValue('ddlCoolingCoilHanding', unitInfo?.oUnitLayout?.intCoolingCoilHandingId);
-    }
+    // if (unitInfo?.oUnitLayout?.intCoolingCoilHandingId > 0) {
+      setValue('ddlCoolingCoilHanding', unitInfo?.oUnitLayout?.intCoolingCoilHandingId > 0 ? unitInfo?.oUnitLayout?.intCoolingCoilHandingId : getValues('ddlCoolingCoilHanding'));
+    // }
 
-    if (unitInfo?.oUnitCompOpt?.intCoolingFluidTypeId > 0) {
-      setValue('ddlCoolingFluidType', unitInfo?.oUnitCompOpt?.intCoolingFluidTypeId);
-    }
+    // if (unitInfo?.oUnitCompOpt?.intCoolingFluidTypeId > 0) {
+      setValue('ddlCoolingFluidType', unitInfo?.oUnitCompOpt?.intCoolingFluidTypeId > 0 ? unitInfo?.oUnitCompOpt?.intCoolingFluidTypeId : getValues('ddlCoolingFluidType'));
+    // }
 
-    if (unitInfo?.oUnitCompOpt?.intCoolingFluidConcentId > 0) {
-      setValue('ddlCoolingFluidConcentration', unitInfo?.oUnitCompOpt?.intCoolingFluidConcentId);
-    }
+    // if (unitInfo?.oUnitCompOpt?.intCoolingFluidConcentId > 0) {
+      setValue('ddlCoolingFluidConcentration', unitInfo?.oUnitCompOpt?.intCoolingFluidConcentId > 0 ? unitInfo?.oUnitCompOpt?.intCoolingFluidConcentId : getValues('ddlCoolingFluidConcentration'));
+    // }
 
     // if (unitInfo?.oUnitCompOpt?.dblCoolingFluidEntTemp > 0) {
-      setValue('txbCoolingFluidEntTemp', unitInfo?.oUnitCompOpt?.dblCoolingFluidEntTemp);
+      setValue('txbCoolingFluidEntTemp', Number.parseFloat(unitInfo?.oUnitCompOpt?.dblCoolingFluidEntTemp) > 0.0 ? unitInfo?.oUnitCompOpt?.dblCoolingFluidEntTemp: '45');
     // }
 
     // if (unitInfo?.oUnitCompOpt?.dblCoolingFluidLvgTemp > 0) {
-      setValue('txbCoolingFluidLvgTemp', unitInfo?.oUnitCompOpt?.dblCoolingFluidLvgTemp);
+      setValue('txbCoolingFluidLvgTemp', Number.parseFloat(unitInfo?.oUnitCompOpt?.dblCoolingFluidLvgTemp) > 0.0 ? unitInfo?.oUnitCompOpt?.dblCoolingFluidLvgTemp: '55');
     // }
 
-    if (unitInfo?.oUnitCompOpt?.intIsCoolingHWCUseCap != null) {
-      setValue('ckbCoolingCWCUseCap', unitInfo?.oUnitCompOpt?.intIsCoolingCWCUseCap);
-    }
+    // if (unitInfo?.oUnitCompOpt?.intIsCoolingHWCUseCap != null) {
+      setValue('ckbCoolingCWCUseCap', unitInfo?.oUnitCompOpt?.intIsCoolingHWCUseCap != null ? unitInfo?.oUnitCompOpt?.intIsCoolingCWCUseCap : 0);
+    // }
 
-    setValue('txbCoolingCWCCap', unitInfo?.oUnitCompOpt?.dblCoolingWCCap);
+    setValue('txbCoolingCWCCap', Number.parseFloat(unitInfo?.oUnitCompOpt?.dblCoolingWCCap) > 0.0 ? unitInfo?.oUnitCompOpt?.dblCoolingWCCap: '0');
 
-    if (unitInfo?.oUnitCompOpt?.intIsCoolingCWCUseFlowRate != null) {
-      setValue('ckbCoolingCWCUseFlowRate', unitInfo?.oUnitCompOpt?.intIsCoolingCWCUseFlowRate);
-    }
+    // if (unitInfo?.oUnitCompOpt?.intIsCoolingCWCUseFlowRate != null) {
+      setValue('ckbCoolingCWCUseFlowRate', unitInfo?.oUnitCompOpt?.intIsCoolingCWCUseFlowRate != null ? unitInfo?.oUnitCompOpt?.intIsCoolingCWCUseFlowRate : 0);
+    // }
 
-    setValue('txbCoolingCWCFlowRate', unitInfo?.oUnitCompOpt?.dblCoolingCWCFlowRate);
+    setValue('txbCoolingCWCFlowRate', Number.parseFloat(unitInfo?.oUnitCompOpt?.dblCoolingCWCFlowRate) > 0.0 ? unitInfo?.oUnitCompOpt?.dblCoolingCWCFlowRate: '0');
 
-    setValue('txbRefrigSuctionTemp', unitInfo?.oUnitCompOpt?.dblRefrigSuctionTemp);
-    setValue('txbRefrigLiquidTemp', unitInfo?.oUnitCompOpt?.dblRefrigLiquidTemp);
-    setValue('txbRefrigSuperheatTemp', unitInfo?.oUnitCompOpt?.dblRefrigSuperheatTemp);
+    setValue('txbRefrigSuctionTemp', Number.parseFloat(unitInfo?.oUnitCompOpt?.dblRefrigSuctionTemp) > 0.0 ? unitInfo?.oUnitCompOpt?.dblRefrigSuctionTemp: '43');
+    setValue('txbRefrigLiquidTemp', Number.parseFloat(unitInfo?.oUnitCompOpt?.dblRefrigLiquidTemp) > 0.0 ? unitInfo?.oUnitCompOpt?.dblRefrigLiquidTemp: '77');
+    setValue('txbRefrigSuperheatTemp', Number.parseFloat(unitInfo?.oUnitCompOpt?.dblRefrigSuperheatTemp) > 0.0 ? unitInfo?.oUnitCompOpt?.dblRefrigSuperheatTemp: '9');
 
 
     // Heating
-    if (unitInfo?.oUnitCompOpt?.intHeatingCompId > 0) {
-      setValue('ddlHeatingComp', unitInfo?.oUnitCompOpt?.intHeatingCompId);
-    }
+    // if (unitInfo?.oUnitCompOpt?.intHeatingCompId > 0) {
+      setValue('ddlHeatingComp', unitInfo?.oUnitCompOpt?.intHeatingCompId > 0 ? unitInfo?.oUnitCompOpt?.intHeatingCompId : getValues('ddlHeatingComp'));
+    // }
 
-    setValue('txbWinterHeatingSetpointDB', unitInfo?.oUnitCompOpt?.dblHeatingSetpointDB);
+    setValue('txbWinterHeatingSetpointDB', Number.parseFloat(unitInfo?.oUnitCompOpt?.dblHeatingSetpointDB) > 0.0 ? unitInfo?.oUnitCompOpt?.dblHeatingSetpointDB: '72');
 
-    if (unitInfo?.oUnitLayout?.intHeatingCoilHandingId > 0) {
-      setValue('ddlHeatingCoilHanding', unitInfo?.oUnitLayout?.intHeatingCoilHandingId);
-    }
+    // if (unitInfo?.oUnitLayout?.intHeatingCoilHandingId > 0) {
+      setValue('ddlHeatingCoilHanding', unitInfo?.oUnitLayout?.intHeatingCoilHandingId > 0 ? unitInfo?.oUnitLayout?.intHeatingCoilHandingId : getValues('ddlHeatingCoilHanding'));
+    // }
 
-    if (unitInfo?.oUnitCompOpt?.intHeatingElecHeaterInstallationId > 0) {
-      setValue('ddlHeatingElecHeaterInstall', unitInfo?.oUnitCompOpt?.intHeatingElecHeaterInstallationId);
-    }
+    // if (unitInfo?.oUnitCompOpt?.intHeatingElecHeaterInstallationId > 0) {
+      setValue('ddlHeatingElecHeaterInstall', unitInfo?.oUnitCompOpt?.intHeatingElecHeaterInstallationId > 0 ? unitInfo?.oUnitCompOpt?.intHeatingElecHeaterInstallationId : getValues('ddlHeatingElecHeaterInstall'));
+    // }
 
-    if (unitInfo?.oUnitCompOpt?.intHeatingFluidTypeId > 0) {
-      setValue('ddlHeatingFluidType', unitInfo?.oUnitCompOpt?.intHeatingFluidTypeId);
-    }
+    // if (unitInfo?.oUnitCompOpt?.intHeatingFluidTypeId > 0) {
+      setValue('ddlHeatingFluidType', unitInfo?.oUnitCompOpt?.intHeatingFluidTypeId > 0 ? unitInfo?.oUnitCompOpt?.intHeatingFluidTypeId : getValues('ddlHeatingFluidType'));
+    // }
 
-    if (unitInfo?.oUnitCompOpt?.intHeatingFluidConcentId > 0) {
-      setValue('ddlHeatingFluidConcentration', unitInfo?.oUnitCompOpt?.intHeatingFluidConcentId);
-    }
+    // if (unitInfo?.oUnitCompOpt?.intHeatingFluidConcentId > 0) {
+      setValue('ddlHeatingFluidConcentration', unitInfo?.oUnitCompOpt?.intHeatingFluidConcentId > 0 ? unitInfo?.oUnitCompOpt?.intHeatingFluidConcentId : getValues('ddlHeatingFluidConcentration'));
+    // }
 
     // if (unitInfo?.oUnitCompOpt?.dblHeatingFluidEntTemp > 0) {
-      setValue('txbHeatingFluidEntTemp', unitInfo?.oUnitCompOpt?.dblHeatingFluidEntTemp);
+      setValue('txbHeatingFluidEntTemp', Number.parseFloat(unitInfo?.oUnitCompOpt?.dblHeatingFluidEntTemp) > 0.0 ? unitInfo?.oUnitCompOpt?.dblHeatingFluidEntTemp: '140');
     // }
 
     // if (unitInfo?.oUnitCompOpt?.dblHeatingFluidLvgTemp > 0) {
-      setValue('txbHeatingFluidLvgTemp', unitInfo?.oUnitCompOpt?.dblHeatingFluidLvgTemp);
+      setValue('txbHeatingFluidLvgTemp', Number.parseFloat(unitInfo?.oUnitCompOpt?.dblHeatingFluidLvgTemp) > 0.0 ? unitInfo?.oUnitCompOpt?.dblHeatingFluidLvgTemp: '120');
     // }
 
-    if (unitInfo?.oUnitCompOpt?.intIsHeatingHWCUseCap != null) {
-      setValue('ckbHeatingHWCUseCap', unitInfo?.oUnitCompOpt?.intIsHeatingHWCUseCap);
-    }
+    // if (unitInfo?.oUnitCompOpt?.intIsHeatingHWCUseCap != null) {
+      setValue('ckbHeatingHWCUseCap', unitInfo?.oUnitCompOpt?.intIsHeatingHWCUseCap != null ? unitInfo?.oUnitCompOpt?.intIsHeatingHWCUseCap : 0);
+    // }
 
-    setValue('txbHeatingHWCCap', unitInfo?.oUnitCompOpt?.dblHeatingHWCCap);
+    setValue('txbHeatingHWCCap', Number.parseFloat(unitInfo?.oUnitCompOpt?.dblHeatingHWCCap) > 0.0 ? unitInfo?.oUnitCompOpt?.dblHeatingHWCCap : '0');
 
-    if (unitInfo?.oUnitCompOpt?.intIsHeatingHWCUseFlowRate != null) {
-      setValue('ckbHeatingHWCUseFlowRate', unitInfo?.oUnitCompOpt?.intIsHeatingHWCUseFlowRate);
-    }
+    // if (unitInfo?.oUnitCompOpt?.intIsHeatingHWCUseFlowRate != null) {
+      setValue('ckbHeatingHWCUseFlowRate', unitInfo?.oUnitCompOpt?.intIsHeatingHWCUseFlowRate != null ? unitInfo?.oUnitCompOpt?.intIsHeatingHWCUseFlowRate : 0);
+    // }
 
-    setValue('txbHeatingHWCFlowRate', unitInfo?.oUnitCompOpt?.dblHeatingHWCFlowRate);
+    setValue('txbHeatingHWCFlowRate', Number.parseFloat(unitInfo?.oUnitCompOpt?.dblHeatingHWCFlowRate) > 0.0 ? unitInfo?.oUnitCompOpt?.dblHeatingHWCFlowRate: '0');
 
 
     // Reheat
-    if (unitInfo?.oUnitCompOpt?.intReheatCompId > 0) {
-      setValue('ddlReheatComp', unitInfo?.oUnitCompOpt?.intReheatCompId);
-    }
+    // if (unitInfo?.oUnitCompOpt?.intReheatCompId > 0) {
+      setValue('ddlReheatComp', unitInfo?.oUnitCompOpt?.intReheatCompId > 0 ? unitInfo?.oUnitCompOpt?.intReheatCompId : getValues('ddlReheatComp'));
+    // }
     
-    setValue('txbSummerReheatSetpointDB', unitInfo?.oUnitCompOpt?.dblReheatSetpointDB);
+    setValue('txbSummerReheatSetpointDB', Number.parseFloat(unitInfo?.oUnitCompOpt?.dblReheatSetpointDB) > 0.0 ? unitInfo?.oUnitCompOpt?.dblReheatSetpointDB: '70');
     
-    if (unitInfo?.oUnitLayout?.intHeatingCoilHandingId > 0) {
-      setValue('ddlReheatCoilHanding', unitInfo?.oUnitLayout?.intHeatingCoilHandingId);
-    }
+    // if (unitInfo?.oUnitLayout?.intHeatingCoilHandingId > 0) {
+      setValue('ddlReheatCoilHanding', unitInfo?.oUnitLayout?.intHeatingCoilHandingId > 0 ? unitInfo?.oUnitLayout?.intHeatingCoilHandingId : getValues('ddlReheatCoilHanding'));
+    // }
     
-    if (unitInfo?.oUnitCompOpt?.intHeatingElecHeaterInstallationId > 0) {
-      setValue('ddlReheatElecHeaterInstall', unitInfo?.oUnitCompOpt?.intHeatingElecHeaterInstallationId);
-    }
+    // if (unitInfo?.oUnitCompOpt?.intHeatingElecHeaterInstallationId > 0) {
+      setValue('ddlReheatElecHeaterInstall', unitInfo?.oUnitCompOpt?.intHeatingElecHeaterInstallationId > 0 ? unitInfo?.oUnitCompOpt?.intHeatingElecHeaterInstallationId : getValues('ddlReheatElecHeaterInstall'));
+    // }
     
-    if (unitInfo?.oUnitCompOpt?.intHeatingFluidTypeId > 0) {
-      setValue('ddlReheatFluidType', unitInfo?.oUnitCompOpt?.intHeatingFluidTypeId);
-    }
+    // if (unitInfo?.oUnitCompOpt?.intHeatingFluidTypeId > 0) {
+      setValue('ddlReheatFluidType', unitInfo?.oUnitCompOpt?.intHeatingFluidTypeId > 0 ? unitInfo?.oUnitCompOpt?.intHeatingFluidTypeId : getValues('ddlReheatFluidType'));
+    // }
     
-    if (unitInfo?.oUnitCompOpt?.intHeatingFluidConcentId > 0) {
-      setValue('ddlReheatFluidConcentration', unitInfo?.oUnitCompOpt?.intHeatingFluidConcentId);
-    }
+    // if (unitInfo?.oUnitCompOpt?.intHeatingFluidConcentId > 0) {
+      setValue('ddlReheatFluidConcentration', unitInfo?.oUnitCompOpt?.intHeatingFluidConcentId > 0 ? unitInfo?.oUnitCompOpt?.intHeatingFluidConcentId : getValues('ddlReheatFluidConcentration'));
+    // }
     
     // if (unitInfo?.oUnitCompOpt?.dblHeatingFluidEntTemp > 0) {
-      setValue('txbReheatFluidEntTemp', unitInfo?.oUnitCompOpt?.dblHeatingFluidEntTemp);
+      setValue('txbReheatFluidEntTemp', Number.parseFloat(unitInfo?.oUnitCompOpt?.dblHeatingFluidEntTemp) > 0.0 ? unitInfo?.oUnitCompOpt?.dblHeatingFluidEntTemp: '140');
     // }
     
     // if (unitInfo?.oUnitCompOpt?.dblHeatingFluidLvgTemp > 0) {
-      setValue('txbReheatFluidLvgTemp', unitInfo?.oUnitCompOpt?.dblHeatingFluidLvgTemp);
+      setValue('txbReheatFluidLvgTemp', Number.parseFloat(unitInfo?.oUnitCompOpt?.dblHeatingFluidLvgTemp) > 0.0 ? unitInfo?.oUnitCompOpt?.dblHeatingFluidLvgTemp: '120');
     // }
     
-    if (unitInfo?.oUnitCompOpt?.intIsReheatHWCUseCap != null) {
-      setValue('ckbReheatHWCUseCap', unitInfo?.oUnitCompOpt?.intIsReheatHWCUseCap);
-    }
+    // if (unitInfo?.oUnitCompOpt?.intIsReheatHWCUseCap > 0 ? ) {
+      setValue('ckbReheatHWCUseCap', unitInfo?.oUnitCompOpt?.intIsReheatHWCUseCap > 0 ?  unitInfo?.oUnitCompOpt?.intIsReheatHWCUseCap : 0);
+    // }
     
-    setValue('txbReheatHWCCap', unitInfo?.oUnitCompOpt?.dblReheatHWCCap);
+    setValue('txbReheatHWCCap', Number.parseFloat(unitInfo?.oUnitCompOpt?.dblReheatHWCCap) > 0.0 ? unitInfo?.oUnitCompOpt?.dblReheatHWCCap: '0');
     
-    if (unitInfo?.oUnitCompOpt?.intIsReheatHWCUseFlowRate != null) {
-      setValue('ckbReheatHWCUseFlowRate', unitInfo?.oUnitCompOpt?.intIsReheatHWCUseFlowRate);
-    }
+    // if (unitInfo?.oUnitCompOpt?.intIsReheatHWCUseFlowRate > 0 ? ) {
+      setValue('ckbReheatHWCUseFlowRate', unitInfo?.oUnitCompOpt?.intIsReheatHWCUseFlowRate > 0 ? unitInfo?.oUnitCompOpt?.intIsReheatHWCUseFlowRate : 0);
+    // }
     
-    setValue('txbReheatHWCFlowRate', unitInfo?.oUnitCompOpt?.dblReheatHWCFlowRate);
+    setValue('txbReheatHWCFlowRate', Number.parseFloat(unitInfo?.oUnitCompOpt?.dblReheatHWCFlowRate) > 0.0 ? unitInfo?.oUnitCompOpt?.dblReheatHWCFlowRate: '0');
     
 
-    setValue('txbRefrigCondensingTemp', unitInfo?.oUnitCompOpt?.dblRefrigCondensingTemp);
-    setValue('txbRefrigVaporTemp', unitInfo?.oUnitCompOpt?.dblRefrigVaporTemp);
-    setValue('txbRefrigSubcoolingTemp', unitInfo?.oUnitCompOpt?.dblRefrigSubcoolingTemp);
+    setValue('txbRefrigCondensingTemp', Number.parseFloat(unitInfo?.oUnitCompOpt?.dblRefrigCondensingTemp) > 0.0 ? unitInfo?.oUnitCompOpt?.dblRefrigCondensingTemp: '115');
+    setValue('txbRefrigVaporTemp', Number.parseFloat(unitInfo?.oUnitCompOpt?.dblRefrigVaporTemp) > 0.0 ? unitInfo?.oUnitCompOpt?.dblRefrigVaporTemp: '140');
+    setValue('txbRefrigSubcoolingTemp', Number.parseFloat(unitInfo?.oUnitCompOpt?.dblRefrigSubcoolingTemp) > 0.0 ? unitInfo?.oUnitCompOpt?.dblRefrigSubcoolingTemp: '5.4');
 
 
-    if (unitInfo?.oUnitCompOpt?.intDamperAndActuatorId > 0) {
-      setValue('ddlDamperAndActuator', unitInfo?.oUnitCompOpt?.intDamperAndActuatorId);
-    }
+    // if (unitInfo?.oUnitCompOpt?.intDamperAndActuatorId > 0) {
+      setValue('ddlDamperAndActuator', unitInfo?.oUnitCompOpt?.intDamperAndActuatorId > 0 ? unitInfo?.oUnitCompOpt?.intDamperAndActuatorId : getValues('ddlDamperAndActuator'));
+    // }
 
 
-    if (unitInfo?.oUnitCompOpt?.intElecHeaterVoltageId > 0) {
-      setValue('ddlElecHeaterVoltage', unitInfo?.oUnitCompOpt?.intElecHeaterVoltageId);
-    }
+    // if (unitInfo?.oUnitCompOpt?.intElecHeaterVoltageId > 0) {
+      setValue('ddlElecHeaterVoltage', unitInfo?.oUnitCompOpt?.intElecHeaterVoltageId > 0 ? unitInfo?.oUnitCompOpt?.intElecHeaterVoltageId : getValues('ddlElecHeaterVoltage'));
+    // }
 
-    if (unitInfo?.oUnitCompOpt?.intIsValveAndActuatorIncluded != null) {
-      setValue('ckbValveAndActuator', unitInfo?.oUnitCompOpt?.intIsValveAndActuatorIncluded);
-    }
+    // if (unitInfo?.oUnitCompOpt?.intIsValveAndActuatorIncluded > 0 ) {
+      setValue('ckbValveAndActuator', unitInfo?.oUnitCompOpt?.intIsValveAndActuatorIncluded > 0 ? unitInfo?.oUnitCompOpt?.intIsValveAndActuatorIncluded : 0);
+    // }
 
-    if (unitInfo?.oUnitCompOpt?.intValveTypeId > 0) {
-      setValue('ddlValveType', unitInfo?.oUnitCompOpt?.intValveTypeId);
-    }
+    // if (unitInfo?.oUnitCompOpt?.intValveTypeId > 0) {
+      setValue('ddlValveType', unitInfo?.oUnitCompOpt?.intValveTypeId > 0 ? unitInfo?.oUnitCompOpt?.intValveTypeId : getValues('ddlValveType'));
+    // }
 
-    if (unitInfo?.oUnitLayout?.intHandingId > 0) {
-      setValue('ddlHanding', unitInfo?.oUnitLayout?.intHandingId);
-    }
+    // if (unitInfo?.oUnitLayout?.intHandingId > 0) {
+      setValue('ddlHanding', unitInfo?.oUnitLayout?.intHandingId > 0 ? unitInfo?.oUnitLayout?.intHandingId : getValues('ddlHanding'));
+    // }
 
-    if (unitInfo?.oUnitLayout?.intSAOpeningId > 0) {
-      setValue('ddlSupplyAirOpening', unitInfo?.oUnitLayout?.intSAOpeningId);
-    }
+    // if (unitInfo?.oUnitLayout?.intSAOpeningId > 0) {
+      setValue('ddlSupplyAirOpening', unitInfo?.oUnitLayout?.intSAOpeningId > 0 ? unitInfo?.oUnitLayout?.intSAOpeningId : getValues('ddlSupplyAirOpening'));
+    // }
 
-    if (unitInfo?.oUnitLayout?.intEAOpeningId > 0) {
-      setValue('ddlExhaustAirOpening', unitInfo?.oUnitLayout?.intEAOpeningId);
-    }
+    // if (unitInfo?.oUnitLayout?.intEAOpeningId > 0) {
+      setValue('ddlExhaustAirOpening', unitInfo?.oUnitLayout?.intEAOpeningId > 0 ? unitInfo?.oUnitLayout?.intEAOpeningId : getValues('ddlExhaustAirOpening'));
+    // }
 
-    if (unitInfo?.oUnitLayout?.intOAOpeningId > 0) {
-      setValue('ddlOutdoorAirOpening', unitInfo?.oUnitLayout?.intOAOpeningId);
-    }
+    // if (unitInfo?.oUnitLayout?.intOAOpeningId > 0) {
+      setValue('ddlOutdoorAirOpening', unitInfo?.oUnitLayout?.intOAOpeningId > 0 ? unitInfo?.oUnitLayout?.intOAOpeningId : getValues('ddlOutdoorAirOpening'));
+    // }
 
-    if (unitInfo?.oUnitLayout?.intRAOpeningId > 0) {
-      setValue('ddlReturnAirOpening', unitInfo?.oUnitLayout?.intRAOpeningId);
-    }
+    // if (unitInfo?.oUnitLayout?.intRAOpeningId > 0) {
+      setValue('ddlReturnAirOpening', unitInfo?.oUnitLayout?.intRAOpeningId > 0 ? unitInfo?.oUnitLayout?.intRAOpeningId : getValues('ddlReturnAirOpening'));
+    // }
   }
 
 }, []) // <-- empty dependency array - This will only trigger when the component mounts and no-render
@@ -2004,7 +2000,7 @@ useEffect(()=>{
                     </RHFSelect>
                   )}
                   {isAvailable(baseData?.controlsPreference) && (
-                    <RHFSelect native size="small" name="ddlControlsPreferenceId" label="Control Preference" placeholder=""
+                    <RHFSelect native size="small" name="ddlControlsPreference" label="Control Preference" placeholder=""
                       onChange={(e: any) => {setValue('ddlControlsPreference', Number(e.target.value));}}
                     >
                       {baseData?.controlsPreference?.map((item: any, index: number) => (
