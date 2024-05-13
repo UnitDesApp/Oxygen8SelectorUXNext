@@ -195,8 +195,8 @@ export default function ProjectInfoDialog({
         
     oJob: {
       "intJobId" : savedJob ? savedJob?.intJobId : -1,
-      "intCreatedUserId" : localStorage.getItem('userId'),
-      "intRevisedUserId" : localStorage.getItem('userId'),
+      "intCreatedUserId" : typeof window !== "undefined"? localStorage.getItem('userId') : 0,
+      "intRevisedUserId" : typeof window !== "undefined"? localStorage.getItem('userId') : 0,
       "strJobName" : formCurrValues.txbJobName,
       "intBasisOfDesignId" : Number(formCurrValues.ddlBasisOfDesign),
       "strReferenceNo" :  formCurrValues.txbReferenceNo ,
@@ -241,7 +241,7 @@ export default function ProjectInfoDialog({
   const UalInfo = useMemo(() => {
     const info: { isDisabled: boolean; } = {  isDisabled: true,};
 
-    switch(Number(localStorage.getItem('UAL'))) {
+    switch(Number(typeof window !== "undefined"? localStorage.getItem('UAL') : 0)) {
       case Ids.intUAL_Admin:
       case Ids.intUAL_IntAdmin:
       case Ids.intUAL_IntLvl_2:
@@ -557,10 +557,10 @@ useMemo(() => {
 
   const [companyInfo, setCompanyInfo] = useState([]) 
   useMemo(() => {
-    const dtSelUser = dbtUsers?.filter((e: any) => e.id === Number(localStorage.getItem('userId')));
+    const dtSelUser = dbtUsers?.filter((e: any) => e.id === Number(typeof window !== "undefined"? localStorage.getItem('userId') : 0));
     let dtSelCompany;
 
-    switch(Number(localStorage.getItem('UAL'))) {
+    switch(typeof window !== "undefined"? Number(localStorage.getItem('UAL')) : 0) {
       case Ids?.intUAL_Admin:
       case Ids.intUAL_IntAdmin:
       case Ids.intUAL_IntLvl_2:
@@ -623,7 +623,7 @@ useMemo(() => {
 
   const [weatherDataCountryInfo, setWeatherDataCountryInfo] = useState([])
   useMemo(() => {
-    const dtSelCountry = dbtWeatherData.map((e: any) => e.country,)?.filter((v:any, i:any, e: any) => e.indexOf(v) === i);
+    const dtSelCountry = dbtWeatherData?.map((e: any) => e.country,)?.filter((v:any, i:any, e: any) => e.indexOf(v) === i);
     
     setWeatherDataCountryInfo(dtSelCountry);  
     
@@ -639,7 +639,7 @@ useMemo(() => {
 
   const [weatherDataProvStateInfo, setWeatherDataProvStateInfo] = useState([])
   useMemo(() => {
-    let dtSelProvState = dbtWeatherData.filter((e: any) => e.country === formValues.ddlCountry);
+    let dtSelProvState = dbtWeatherData?.filter((e: any) => e.country === formValues.ddlCountry);
     dtSelProvState = dtSelProvState?.map((e: any) => e.prov_state)?.filter((v:any, i:any, e: any) => e.indexOf(v) === i);
    
     setWeatherDataProvStateInfo(dtSelProvState);
@@ -655,8 +655,8 @@ useMemo(() => {
 
   const [weatherDataCityInfo, setWeatherDataCityInfo] = useState([])
   useMemo(() => {
-    let dtSelCity = dbtWeatherData.filter((e: any) => e.country === formCurrValues.ddlCountry);
-    dtSelCity = dtSelCity.filter((e: any) => e.prov_state === formCurrValues.ddlProvState);
+    let dtSelCity = dbtWeatherData?.filter((e: any) => e.country === formCurrValues.ddlCountry);
+    dtSelCity = dtSelCity?.filter((e: any) => e.prov_state === formCurrValues.ddlProvState);
     const provname = getValues('ddlProvState');
 
     setWeatherDataCityInfo(dtSelCity);
@@ -671,9 +671,9 @@ useMemo(() => {
 
 
   // useState<any>([])
-  const [stationInfo, setStationInfo] = useState<any>()
-  const [summerOaRhInfo, setSummerOaRhInfo] = useState(0)
-  const [winterOaRhInfo, setWinterOaRhInfo] = useState(0)
+  const [stationInfo, setStationInfo] = useState<any>();
+  const [summerOaRhInfo, setSummerOaRhInfo] = useState(0);
+  const [winterOaRhInfo, setWinterOaRhInfo] = useState(0);
    useMemo(() => {
     const info: {altitude: number; summerOA_DB: Number;  summerOA_WB: Number; summerOA_RH: Number; winterOA_DB: Number;  winterOA_WB: Number; winterOA_RH: Number;} = 
                 {altitude: 0, summerOA_DB: 0,  summerOA_WB: 0, summerOA_RH: 0, winterOA_DB: 0,  winterOA_WB: 0, winterOA_RH: 0};
@@ -682,7 +682,7 @@ useMemo(() => {
 
     if (formCurrValues.ddlCity > 0) {
      dtSelStation = dbtWeatherData?.filter((e: { id: number }) => e.id === Number(formCurrValues.ddlCity));
-    // let dtSelStation = dbtWeatherData.filter((e: any) => e.country === formValues.ddlCountry);
+    // let dtSelStation = dbtWeatherData?.filter((e: any) => e.country === formValues.ddlCountry);
     // dtSelStation = dtSelStation.filter((e: any) => e.prov_state === formValues.ddlProvState);
     // dtSelStation = dtSelStation.filter((e: { id: number }) => e.id === Number(formValues.ddlCity));
     } else {
@@ -1068,7 +1068,7 @@ useEffect(() => {
                     // onChange={ddlBasisOfDesignChanged}
                   >
                     {/* <option value="" /> */}
-                    {/* {['Budget', 'Basic of Design', 'Non-Basic of Design'].map(
+                    {/* {['Budget', 'Basic of Design', 'Non-Basic of Design']?.map(
                       (option: string, index: number) => (
                         <option key={`${index}basisOfDesign`} value={index + 2}>
                           {option}
@@ -1180,7 +1180,7 @@ useEffect(() => {
                     >
                       {/* <option value="0" id='Select' /> */}
                       {/* {weatherData?.map((option: any) => ( */}
-                      {weatherDataCountryInfo.map((option: any, idx: any) => (
+                      {weatherDataCountryInfo?.map((option: any, idx: any) => (
                         <option key={`${idx}`} value={option}>
                           {option}
                         </option>
@@ -1200,7 +1200,7 @@ useEffect(() => {
                           {option}
                         </option>
                       ))} */}
-                      {weatherDataProvStateInfo.map((option: any, idx: any) => (
+                      {weatherDataProvStateInfo?.map((option: any, idx: any) => (
                         <option key={`${idx}`} value={option}>
                           {option}
                         </option>

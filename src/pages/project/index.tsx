@@ -188,7 +188,6 @@ export default function Project() {
       <Head>
         <title> Project | Oxygen8 </title>
       </Head>
-
       <Container maxWidth={themeStretch ? false : 'xl'}>
         <Stack direction="row" alignItems="center" justifyContent="space-between">
           <Typography variant="h3" component="h1" paragraph>
@@ -231,9 +230,7 @@ export default function Project() {
                     }
                   />
                   <TableBody>
-                    {dataFiltered
-                      ?.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                      ?.map((row: any) => (
+                    {dataFiltered?.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)?.map((row: any) => (
                         <ProjectTableRow
                           key={row.id}
                           row={row}
