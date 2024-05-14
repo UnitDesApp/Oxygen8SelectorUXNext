@@ -13,17 +13,21 @@ import ProjectInfoDialog from './ProjectInfoDialog';
 
 //------------------------------------------------
 
-export default function NewProject() {
+interface NewProjectProps {
+  onClose: Function;
+}
+
+export default function NewProject({ onClose }: NewProjectProps) {
   const { projectId } = useRouter().query;
 
-    const getSavedJob = () => {
-      const oSavedJob = {
-            "intJobId" : projectId,
-         }
-      return oSavedJob;
+  const getSavedJob = () => {
+    const oSavedJob = {
+      intJobId: projectId,
     };
+    return oSavedJob;
+  };
 
-//   const [openSuccess, setOpenSuccess] = useState<boolean>(false);
+  //   const [openSuccess, setOpenSuccess] = useState<boolean>(false);
   const [openError, setOpenError] = useState<boolean>(false);
 
   const { data: jobSelTables, isLoading: isLoadingProjectInitInfo, refetch } = useGetJobSelTables();
@@ -34,7 +38,6 @@ export default function NewProject() {
   const [openFail, setOpenFail] = useState<boolean>(false);
   // const { data: projects, isLoading: isLoadingProjects, refetch } = useGetProjectInitInfo();
 
-
   const handleCloseSuccess = () => {
     setOpenSuccess(false);
   };
@@ -43,43 +46,44 @@ export default function NewProject() {
     setOpenSuccess(false);
   };
 
-//   const openDialogBox = () => {
-//     handleDisplay(true);
-//  };
+  //   const openDialogBox = () => {
+  //     handleDisplay(true);
+  //  };
 
-//  const handleClose = () => onClose();
+  //  const handleClose = () => onClose();
 
- useEffect(() => {
-  // reset(defaultValues);
+  useEffect(() => {
+    // reset(defaultValues);
 
-  setNewProjectDialog(true);
-  
-}, []);
-
+    setNewProjectDialog(true);
+  }, []);
 
   return (
     <Box>
-    {isLoadingProjectInitInfo || isLoadingProject ? (
+      {isLoadingProjectInitInfo || isLoadingProject ? (
         <CircularProgressLoading />
       ) : (
         <ProjectInfoDialog
-        // initialInfo={projectInitInfo}
-        // open
-        // onClose={handleClose} 
-        // setOpenSuccess={Function} 
-        // setOpenFail={Function} 
-        // refetch={Function} 
-        // projectList={[]} 
-        loadProjectStep='SHOW_ALL_DIALOG'
-        open={newProjectDialogOpen}
-        onClose={() => setNewProjectDialog(false)}
-        setOpenSuccess={() => setOpenSuccess(true)}
-        setOpenFail={() => setOpenFail(true)}
-        // initialInfo={projects?.jobInitInfo}
-        initialInfo={jobSelTables}
-        // projectList={[]}
-        refetch={refetch}
-        savedJob={savedJob}
+          // initialInfo={projectInitInfo}
+          // open
+          // onClose={handleClose}
+          // setOpenSuccess={Function}
+          // setOpenFail={Function}
+          // refetch={Function}
+          // projectList={[]}
+          loadProjectStep="SHOW_ALL_DIALOG"
+          open={newProjectDialogOpen}
+          onClose={() => {
+            onClose();
+            setNewProjectDialog(false);
+          }}
+          setOpenSuccess={() => setOpenSuccess(true)}
+          setOpenFail={() => setOpenFail(true)}
+          // initialInfo={projects?.jobInitInfo}
+          initialInfo={jobSelTables}
+          // projectList={[]}
+          refetch={refetch}
+          savedJob={savedJob}
         />
       )}
       <Snackbar open={openSuccess} autoHideDuration={6000} onClose={handleCloseSuccess}>

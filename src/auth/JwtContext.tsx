@@ -7,7 +7,6 @@ import { ActionMapType, AuthStateType, AuthUserType, JWTContextType } from './ty
 // utils
 import localStorageAvailable from '../utils/localStorageAvailable';
 
-
 // ----------------------------------------------------------------------
 
 // NOTE:
@@ -107,7 +106,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
   const [state, dispatch] = useReducer(reducer, initialState);
   const { user: userApi } = useApiContext();
 
-  const { push, query, pathname} = useRouter();
+  const { push, query, pathname } = useRouter();
 
   const storageAvailable = localStorageAvailable();
 
@@ -141,7 +140,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
           },
         });
       } else {
-        if(pathname!=='/login' && pathname!=='/reset-password'){
+        if (pathname !== '/login' && pathname !== '/reset-password') {
           push('/login');
         }
         dispatch({
@@ -279,9 +278,9 @@ export function AuthProvider({ children }: AuthProviderProps) {
       user: state.user,
       method: 'jwt',
       login,
-      loginWithGoogle: () => { },
-      loginWithGithub: () => { },
-      loginWithTwitter: () => { },
+      loginWithGoogle: () => {},
+      loginWithGithub: () => {},
+      loginWithTwitter: () => {},
       register,
       logout,
       updateUser,

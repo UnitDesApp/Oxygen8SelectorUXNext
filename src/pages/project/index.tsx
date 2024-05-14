@@ -66,9 +66,8 @@ export default function Project() {
   const [openFail, setOpenFail] = useState<boolean>(false);
 
   // const { data: projects, isLoading: isLoadingProjects, refetch } = useGetAllProjects();
-  const { data: projects, isLoading: isLoadingProjects, refetch } =   useGetAllProjects();;
-  const { data: jobSelTables } =   useGetJobSelTables();;
-
+  const { data: projects, isLoading: isLoadingProjects, refetch } = useGetAllProjects();
+  const { data: jobSelTables } = useGetJobSelTables();
 
   const {
     page,
@@ -183,6 +182,8 @@ export default function Project() {
     [dataFiltered?.length, filterName, filterRole, filterStatus]
   );
 
+  console.log(dataFiltered, isLoadingProjects);
+
   return (
     <>
       <Head>
@@ -267,11 +268,11 @@ export default function Project() {
             </Box>
           </Box>
         )}
-                
-                {/* {projects?.jobInitInfo && ( */}
+
+        {/* {projects?.jobInitInfo && ( */}
         {jobSelTables && (
           <ProjectInfoDialog
-            loadProjectStep='SHOW_FIRST_DIALOG'
+            loadProjectStep="SHOW_FIRST_DIALOG"
             open={newProjectDialogOpen}
             onClose={() => setNewProjectDialog(false)}
             setOpenSuccess={() => setOpenSuccess(true)}
