@@ -24,7 +24,12 @@ export default function NewProject({ projectId, onClose }: NewProjectProps) {
 
   const { data: jobSelTables, isLoading: isLoadingProjectInitInfo, refetch } = useGetJobSelTables();
   // const { data: project, isLoading: isLoadingProject } = useGetJobById({id: Number(projectId),});
-  const { data: savedJob, isLoading: isLoadingProject } = useGetJobById(
+  const {
+    data: savedJob,
+    isLoading: isLoadingProject,
+    refetch: refetchProject,
+    isRefetching: isRefetchingProject,
+  } = useGetJobById(
     { intJobId: projectId },
     {
       enabled: !!projectId,
@@ -55,11 +60,13 @@ export default function NewProject({ projectId, onClose }: NewProjectProps) {
     setNewProjectDialog(true);
   }, []);
 
-  console.log(savedJob);
-
   return (
     <Box>
-      {isLoadingProjectInitInfo || isLoadingProject || !projectId || !savedJob ? (
+      {isLoadingProjectInitInfo ||
+      isLoadingProject ||
+      !projectId ||
+      !savedJob ||
+      isRefetchingProject ? (
         <CircularProgressLoading />
       ) : (
         <ProjectInfoDialog
@@ -81,7 +88,10 @@ export default function NewProject({ projectId, onClose }: NewProjectProps) {
           // initialInfo={projects?.jobInitInfo}
           initialInfo={jobSelTables}
           // projectList={[]}
-          refetch={refetch}
+          refetch={() => {
+            refetch();
+            refetchProject();
+          }}
           savedJob={savedJob}
         />
       )}
