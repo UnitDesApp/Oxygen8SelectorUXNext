@@ -14,25 +14,22 @@ import ProjectInfoDialog from './ProjectInfoDialog';
 //------------------------------------------------
 
 interface NewProjectProps {
+  projectId?: string;
   onClose: Function;
 }
 
-export default function NewProject({ onClose }: NewProjectProps) {
-  const { projectId } = useRouter().query;
-
-  const getSavedJob = () => {
-    const oSavedJob = {
-      intJobId: projectId,
-    };
-    return oSavedJob;
-  };
-
+export default function NewProject({ projectId, onClose }: NewProjectProps) {
   //   const [openSuccess, setOpenSuccess] = useState<boolean>(false);
   const [openError, setOpenError] = useState<boolean>(false);
 
   const { data: jobSelTables, isLoading: isLoadingProjectInitInfo, refetch } = useGetJobSelTables();
   // const { data: project, isLoading: isLoadingProject } = useGetJobById({id: Number(projectId),});
-  const { data: savedJob, isLoading: isLoadingProject } = useGetJobById(getSavedJob());
+  const { data: savedJob, isLoading: isLoadingProject } = useGetJobById(
+    { intJobId: projectId },
+    {
+      enabled: !!projectId,
+    }
+  );
   const [newProjectDialogOpen, setNewProjectDialog] = useState<boolean>(false);
   const [openSuccess, setOpenSuccess] = useState<boolean>(false);
   const [openFail, setOpenFail] = useState<boolean>(false);
@@ -58,9 +55,11 @@ export default function NewProject({ onClose }: NewProjectProps) {
     setNewProjectDialog(true);
   }, []);
 
+  console.log(savedJob);
+
   return (
     <Box>
-      {isLoadingProjectInitInfo || isLoadingProject ? (
+      {isLoadingProjectInitInfo || isLoadingProject || !projectId || !savedJob ? (
         <CircularProgressLoading />
       ) : (
         <ProjectInfoDialog
