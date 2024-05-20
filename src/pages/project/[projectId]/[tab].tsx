@@ -60,7 +60,12 @@ export default function Project() {
       {
         value: PROJECT_DASHBOARD_TABS.PROJECT_DETAILS,
         title: 'Project Detail',
-        component: <ProjectDetail />,
+        component: (
+          <ProjectDetail
+            projectId={projectId?.toString()}
+            onClose={() => setCurrentTab(PROJECT_DASHBOARD_TABS.UNITLIST)}
+          />
+        ),
       },
       {
         value: PROJECT_DASHBOARD_TABS.QUOTE,
@@ -83,7 +88,7 @@ export default function Project() {
         component: <ProjectNote />,
       },
     ],
-    []
+    [projectId, setCurrentTab]
   );
 
   const onChangeTabHandle = useCallback(
