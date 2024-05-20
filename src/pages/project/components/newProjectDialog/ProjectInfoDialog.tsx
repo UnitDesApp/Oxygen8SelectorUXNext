@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { any, number, string } from 'prop-types';
+import { any, number, object, string } from 'prop-types';
 import * as Ids from 'src/utils/ids';
 
 // const ClsID = ids;
@@ -256,6 +256,7 @@ export default function ProjectInfoDialog({
     return info;
   }, []);
 
+
   // onChange handle for company Name
   const handleChangeCompanyName = (e: any) => {
     setValue('ddlCompanyName', e.target.value);
@@ -264,10 +265,12 @@ export default function ProjectInfoDialog({
     // setValue('txbContactName', '');
   };
 
+
   const handleChangeContactName = (e: any) => {
     setValue('ddlCompanyContactName', e.target.value);
     setValue('txbCompanyContactName', e.nativeEvent.target[e.target.selectedIndex].text);
   };
+
 
   const onSubmit = async (data: any) => {
     // try {
@@ -299,6 +302,7 @@ export default function ProjectInfoDialog({
     }
   };
 
+
   const onClickedBackBtn = () => {
     if (step === 'SHOW_FIRST_DIALOG' || step === 'SHOW_ALL_DIALOG' || step === 'CLOSE_DIALOG') {
       onClose();
@@ -313,10 +317,11 @@ export default function ProjectInfoDialog({
     }
   };
 
+
   const onClickedContinueBtn = () => {
     // handleSubmit(() => {});
     if (formValues.txbJobName === '') return;
-    if (formValues.txbReferenceNo === '' || formValues.txbReferenceNo === '0') return;
+    if (formValues.txbReferenceNo === '') return;
     // if (formValues.txbCompanyName === '') return;
     if (formValues.txbRevisionNo === '') return;
     // if (step === 0)
@@ -325,13 +330,18 @@ export default function ProjectInfoDialog({
     // }
   };
 
+
   const onClickedSubmitBtn = () => {
     setSubmit(1);
 
     handleSubmit(() => {});
   };
 
+  
   const handleClose = () => onClose && onClose();
+
+  const [isLoading, setIsLoading] = useState(0);
+
 
   const [projectDialogArrangement, setProjectDialogArrangement] = useState<any>();
   useMemo(() => {
@@ -385,6 +395,7 @@ export default function ProjectInfoDialog({
     setProjectDialogArrangement(returnInfo);
   }, [step]);
 
+
   // Do not delete - keep for reference
   // In form dialog this method is not working where the dependencies are directly set with getValues('').
   // In normal forms getValues('') form dependencies works. See UnitInfoForm.tsx
@@ -408,6 +419,7 @@ export default function ProjectInfoDialog({
     return inputs;
   }, [formCurrValues.txbAltitude, formCurrValues.txbSummerOA_DB, formCurrValues.txbSummerOA_WB]);
 
+
   const oSummerOA_WB = useMemo(() => {
     const inputs: any = {
       dblAlt: formCurrValues.txbAltitude || any,
@@ -416,6 +428,7 @@ export default function ProjectInfoDialog({
     };
     return inputs;
   }, [formCurrValues.txbAltitude, formCurrValues.txbSummerOA_DB, formCurrValues.txbSummerOA_RH]);
+
 
   const oWinterOA_RH = useMemo(() => {
     const inputs: any = {
@@ -426,6 +439,7 @@ export default function ProjectInfoDialog({
     return inputs;
   }, [formCurrValues.txbAltitude, formCurrValues.txbWinterOA_DB, formCurrValues.txbWinterOA_WB]);
 
+
   const oWinterOA_WB = useMemo(() => {
     const inputs: any = {
       dblAlt: formCurrValues.txbAltitude || any,
@@ -434,6 +448,7 @@ export default function ProjectInfoDialog({
     };
     return inputs;
   }, [formCurrValues.txbAltitude, formCurrValues.txbWinterOA_DB, formCurrValues.txbWinterOA_RH]);
+
 
   const oSummerRA_RH = useMemo(() => {
     const inputs: any = {
@@ -444,6 +459,7 @@ export default function ProjectInfoDialog({
     return inputs;
   }, [formCurrValues.txbAltitude, formCurrValues.txbSummerRA_DB, formCurrValues.txbSummerRA_WB]);
 
+
   const oSummerRA_WB = useMemo(() => {
     const inputs: any = {
       dblAlt: formCurrValues.txbAltitude || any,
@@ -452,6 +468,7 @@ export default function ProjectInfoDialog({
     };
     return inputs;
   }, [formCurrValues.txbAltitude, formCurrValues.txbSummerRA_DB, formCurrValues.txbSummerRA_RH]);
+
 
   const oWinterRA_RH = useMemo(() => {
     const inputs: any = {
@@ -462,6 +479,7 @@ export default function ProjectInfoDialog({
     return inputs;
   }, [formCurrValues.txbAltitude, formCurrValues.txbWinterRA_DB, formCurrValues.txbWinterRA_WB]);
 
+
   const oWinterRA_WB = useMemo(() => {
     const inputs: any = {
       dblAlt: formCurrValues.txbAltitude || any,
@@ -471,6 +489,7 @@ export default function ProjectInfoDialog({
 
     return inputs;
   }, [formCurrValues.txbAltitude, formCurrValues.txbWinterRA_DB, formCurrValues.txbWinterRA_RH]);
+
 
   const [basisOfDesignInfo, setBasisOfDesignInfo] = useState([]);
   useMemo(() => {
@@ -484,6 +503,7 @@ export default function ProjectInfoDialog({
     }
   }, [dbtBasisOfDesign, setValue]);
 
+
   const [applicationInfo, setApplicationInfo] = useState([]);
   useMemo(() => {
     const dtSelApplication = dbtApplication;
@@ -496,6 +516,7 @@ export default function ProjectInfoDialog({
     }
   }, [dbtApplication, setValue]);
 
+
   const [uomInfo, setUoM] = useState([]);
   useMemo(() => {
     const dtSelUoM = dbtUoM;
@@ -507,6 +528,7 @@ export default function ProjectInfoDialog({
       setValue('ddlUoM', 0);
     }
   }, [dbtUoM, setValue]);
+
 
   const [companyInfo, setCompanyInfo] = useState([]);
   useMemo(() => {
@@ -540,6 +562,7 @@ export default function ProjectInfoDialog({
     }
   }, [dbtCustomer, dbtUsers, setValue]);
 
+
   const [companyContactInfo, setCompanyContactInfo] = useState([]);
   useMemo(() => {
     const dtSelCompanyContacts = dbtUsers?.filter(
@@ -555,6 +578,7 @@ export default function ProjectInfoDialog({
     }
   }, [dbtUsers, formValues.ddlCompanyName, setValue]);
 
+
   const [designCondInfo, setDesignCondInfo] = useState([]);
   useMemo(() => {
     const dtSelDesignCond = dbtWeatherDesignConditions;
@@ -567,6 +591,7 @@ export default function ProjectInfoDialog({
       setValue('ddlAshareDesignConditions', 0); //
     }
   }, [dbtWeatherDesignConditions, setValue]);
+
 
   const [weatherDataCountryInfo, setWeatherDataCountryInfo] = useState([]);
   useMemo(() => {
@@ -581,6 +606,7 @@ export default function ProjectInfoDialog({
     }
   }, [dbtWeatherData, setValue]);
 
+
   const [weatherDataProvStateInfo, setWeatherDataProvStateInfo] = useState([]);
   useMemo(() => {
     let dtSelProvState = dbtWeatherData?.filter((e: any) => e.country === formValues.ddlCountry);
@@ -594,6 +620,7 @@ export default function ProjectInfoDialog({
       setValue('ddlProvState', '');
     }
   }, [dbtWeatherData, formValues.ddlCountry, setValue]);
+
 
   const [weatherDataCityInfo, setWeatherDataCityInfo] = useState([]);
   useMemo(() => {
@@ -610,13 +637,14 @@ export default function ProjectInfoDialog({
     }
   }, [dbtWeatherData, formCurrValues.ddlCountry, formCurrValues.ddlProvState, getValues, setValue]);
 
+
   // useState<any>([])
   const [stationInfo, setStationInfo] = useState<any>();
   const [summerOaRhInfo, setSummerOaRhInfo] = useState(0);
   const [winterOaRhInfo, setWinterOaRhInfo] = useState(0);
    useMemo(() => {
-    const info: {altitude: number; summerOA_DB: Number;  summerOA_WB: Number; summerOA_RH: Number; winterOA_DB: Number;  winterOA_WB: Number; winterOA_RH: Number;} = 
-                {altitude: 0, summerOA_DB: 0,  summerOA_WB: 0, summerOA_RH: 0, winterOA_DB: 0,  winterOA_WB: 0, winterOA_RH: 0};
+    const info: {isLoading: number; altitude: number; summerOA_DB: Number;  summerOA_WB: Number; summerOA_RH: Number; winterOA_DB: Number;  winterOA_WB: Number; winterOA_RH: Number;} = 
+                {isLoading: 0, altitude: 0, summerOA_DB: 0,  summerOA_WB: 0, summerOA_RH: 0, winterOA_DB: 0,  winterOA_WB: 0, winterOA_RH: 0};
 
     let dtSelStation;
 
@@ -649,20 +677,14 @@ export default function ProjectInfoDialog({
 
     switch (Number(formCurrValues.ddlAshareDesignConditions)) {
       case 1:
-        info.summerOA_DB =
-          Math.round(celsiusToFarenheit(dtSelStation?.[0]?.cooling_db010) * 10) / 10;
-        info.summerOA_WB =
-          Math.round(celsiusToFarenheit(dtSelStation?.[0]?.cooling_wb_db010) * 10) / 10;
-        info.winterOA_DB =
-          Math.round(celsiusToFarenheit(dtSelStation?.[0]?.heating_db990) * 10) / 10;
+        info.summerOA_DB = Math.round(celsiusToFarenheit(dtSelStation?.[0]?.cooling_db010) * 10) / 10;
+        info.summerOA_WB = Math.round(celsiusToFarenheit(dtSelStation?.[0]?.cooling_wb_db010) * 10) / 10;
+        info.winterOA_DB = Math.round(celsiusToFarenheit(dtSelStation?.[0]?.heating_db990) * 10) / 10;
         break;
       case 2:
-        info.summerOA_DB =
-          Math.round(celsiusToFarenheit(dtSelStation?.[0]?.cooling_db004) * 10) / 10;
-        info.summerOA_WB =
-          Math.round(celsiusToFarenheit(dtSelStation?.[0]?.cooling_wb_db004) * 10) / 10;
-        info.winterOA_DB =
-          Math.round(celsiusToFarenheit(dtSelStation?.[0]?.heating_db996) * 10) / 10;
+        info.summerOA_DB = Math.round(celsiusToFarenheit(dtSelStation?.[0]?.cooling_db004) * 10) / 10;
+        info.summerOA_WB = Math.round(celsiusToFarenheit(dtSelStation?.[0]?.cooling_wb_db004) * 10) / 10;
+        info.winterOA_DB = Math.round(celsiusToFarenheit(dtSelStation?.[0]?.heating_db996) * 10) / 10;
         break;
       default:
         break;
@@ -703,36 +725,26 @@ export default function ProjectInfoDialog({
     // api.project.getRH_By_DB_WB(inputsSummerOA_RH).then((data: any) => { setValue('txbSummerOA_RH', data)});
     // api.project.getRH_By_DB_WB(inputsWinterOA_RH).then((data: any) => { setValue('txbWinterOA_RH', data)});
 
-    api.project.getRH_By_DB_WB(inputsSummerOA_RH).then((data: any) => {
-      setSummerOaRhInfo(data);
-    });
-
-    api.project.getRH_By_DB_WB(inputsWinterOA_RH).then((data: any) => {
-      setWinterOaRhInfo(data);
-    });
+    api.project.getRH_By_DB_WB(inputsSummerOA_RH).then((data: any) => { setSummerOaRhInfo(data); });
+    api.project.getRH_By_DB_WB(inputsWinterOA_RH).then((data: any) => { setWinterOaRhInfo(data); });
 
     setStationInfo(info);
 
-    setValue('txbAltitude', info.altitude);
-    setValue('txbSummerOA_DB', info.summerOA_DB.toFixed(1));
-    setValue('txbSummerOA_WB', info.summerOA_WB.toFixed(1));
-    setValue('txbSummerOA_RH', summerOaRhInfo.toFixed(1));
+    if (isLoading === 0) {
+      setValue('txbAltitude', String(info.altitude));
+      setValue('txbSummerOA_DB', info.summerOA_DB.toFixed(1));
+      setValue('txbSummerOA_WB', info.summerOA_WB.toFixed(1));
+      setValue('txbSummerOA_RH', summerOaRhInfo.toFixed(1));
 
-    setValue('txbWinterOA_DB', info.winterOA_DB.toFixed(1));
-    setValue('txbWinterOA_WB', info.winterOA_WB.toFixed(1));
-    setValue('txbWinterOA_RH', winterOaRhInfo.toFixed(1));
+      setValue('txbWinterOA_DB', info.winterOA_DB.toFixed(1));
+      setValue('txbWinterOA_WB', info.winterOA_WB.toFixed(1));
+      setValue('txbWinterOA_RH', winterOaRhInfo.toFixed(1));
+    }
+
 
     // return dtSelStation;
-  }, [
-    api.project,
-    dbtWeatherData,
-    formCurrValues.ddlAshareDesignConditions,
-    formCurrValues.ddlCity,
-    getValues,
-    setValue,
-    summerOaRhInfo,
-    winterOaRhInfo,
-  ]);
+  }, [api.project, dbtWeatherData, formCurrValues.ddlAshareDesignConditions, formCurrValues.ddlCity, getValues, isLoading, setValue, summerOaRhInfo, winterOaRhInfo]);
+
 
   const handleChangeSummerOutdoorAirDBChanged = useCallback(
     (e: any) => {
@@ -743,6 +755,7 @@ export default function ProjectInfoDialog({
     },
     [api.project, oSummerOA_RH, setValue]
   );
+
 
   // Summer Outdoor Air WB
   const handleChangeSummerOutdoorAirWBChanged = useCallback(
@@ -755,6 +768,7 @@ export default function ProjectInfoDialog({
     [api.project, oSummerOA_RH, setValue]
   );
 
+
   // Summer Outdoor Air RH
   const handleChangeSummerOutdoorAirRHChanged = useCallback(
     (e: any) => {
@@ -765,6 +779,7 @@ export default function ProjectInfoDialog({
     },
     [api.project, oSummerOA_WB, setValue]
   );
+
 
   // Winter Outdoor Air DB
   const handleChangeWinterOutdoorAirDBChanged = useCallback(
@@ -777,6 +792,7 @@ export default function ProjectInfoDialog({
     [api.project, oWinterOA_RH, setValue]
   );
 
+
   // Winter Outdoor Air WB
   const handleChangeWinterOutdoorAirWBChanged = useCallback(
     (e: any) => {
@@ -787,6 +803,7 @@ export default function ProjectInfoDialog({
     },
     [api.project, oWinterOA_RH, setValue]
   );
+
 
   // Winter Outdoor Air RH
   const handleChangeWinterOutdoorAirRHChanged = useCallback(
@@ -799,6 +816,7 @@ export default function ProjectInfoDialog({
     [api.project, oWinterOA_WB, setValue]
   );
 
+
   // Summer Return Air DB
   const handleChangeSummerReturnAirDBChanged = useCallback(
     (e: any) => {
@@ -809,6 +827,7 @@ export default function ProjectInfoDialog({
     },
     [api.project, oSummerRA_RH, setValue]
   );
+
 
   // Summer Return Air WB
   const handleChangeSummerReturnAirWBChanged = useCallback(
@@ -821,6 +840,7 @@ export default function ProjectInfoDialog({
     [api.project, oSummerRA_RH, setValue]
   );
 
+
   // Summer Return Air RH
   const handleChangeSummerReturnAirRHChanged = useCallback(
     (e: any) => {
@@ -831,6 +851,7 @@ export default function ProjectInfoDialog({
     },
     [api.project, oSummerRA_WB, setValue]
   );
+
 
   // Winter Return Air DB
   const handleChangeWinterReturnAirDBChanged = useCallback(
@@ -843,6 +864,7 @@ export default function ProjectInfoDialog({
     [api.project, oWinterRA_RH, setValue]
   );
 
+
   // Winter Return Air WB
   const handleChangeWinterReturnAirWBChanged = useCallback(
     (e: any) => {
@@ -854,6 +876,7 @@ export default function ProjectInfoDialog({
     [api.project, oWinterRA_RH, setValue]
   );
 
+
   // Winter Return Air RH
   const handleChangeWinterReturnAirRHChanged = useCallback(
     (e: any) => {
@@ -864,6 +887,7 @@ export default function ProjectInfoDialog({
     },
     [api.project, oWinterRA_WB, setValue]
   );
+
 
   const setValueWithCheck = useCallback(
     (e: any, key: any) => {
@@ -880,6 +904,7 @@ export default function ProjectInfoDialog({
     },
     [setValue]
   );
+
 
   const setValueWithCheck1 = useCallback(
     (e: any, key: any) => {
@@ -906,46 +931,31 @@ export default function ProjectInfoDialog({
 
   //   setValue('ddlBasisOfDesign',  dbtBasisOfDesign?.[0]?.Id);
 
-  /// }, [dbtBasisOfDesign, setValue]) // <-- empty dependency array - This will only trigger when the component mounts and no-render
+  // / }, [dbtBasisOfDesign, setValue]) // <-- empty dependency array - This will only trigger when the component mounts and no-render
+
 
   // Load saved Values
   useEffect(() => {
     if (savedJob !== null) {
-      // if (savedJob?.intBasisOfDesignId > 0) {
-      setValue(
-        'ddlBasisOfDesign',
-        savedJob?.intBasisOfDesignId > 0
-          ? savedJob?.intBasisOfDesignId
-          : getValues('ddlBasisOfDesign')
-      );
-      // }
+      if (savedJob?.intBasisOfDesignId > 0) {
+        setValue('ddlBasisOfDesign', savedJob?.intBasisOfDesignId);
+      }
 
-      // if (savedJob?.intCompanyNameId > 0) {
-      setValue(
-        'ddlCompanyName',
-        savedJob?.intCompanyNameId > 0 ? savedJob?.intCompanyNameId : getValues('ddlCompanyName')
-      );
-      // }
+      if (savedJob?.intCompanyNameId > 0) {
+        setValue('ddlCompanyName', savedJob?.intCompanyNameId);
+      }
 
-      // if (savedJob?.intCompanyContactNameId > 0) {
-      setValue(
-        'ddlCompanyContactName',
-        savedJob?.intCompanyContactNameId > 0
-          ? savedJob?.intCompanyContactNameId
-          : getValues('ddlCompanyContactName')
-      );
-      // }
+      if (savedJob?.intCompanyContactNameId > 0) {
+        setValue('ddlCompanyContactName', savedJob?.intCompanyContactNameId);
+      }
 
-      // if (savedJob?.intApplicationId > 0) {
-      setValue(
-        'ddlApplication',
-        savedJob?.intApplicationId > 0 ? savedJob?.intApplicationId : getValues('ddlApplication')
-      );
-      // }
+      if (savedJob?.intApplicationId > 0) {
+        setValue('ddlApplication', savedJob?.intApplicationId);
+      }
 
-      // if (savedJob?.intUoMId > 0) {
-      setValue('ddlUoM', savedJob?.intUoMId > 0 ? savedJob?.intUoMId : getValues('ddlUoM'));
-      // }
+      if (savedJob?.intUoMId > 0) {
+        setValue('ddlUoM', savedJob?.intUoMId);
+      }
 
       if (savedJob?.strCountry !== '') {
         setValue('ddlCountry', savedJob?.strCountry);
@@ -959,33 +969,31 @@ export default function ProjectInfoDialog({
         setValue('ddlCity', savedJob?.intCityId);
       }
 
-      // if (savedJob?.intDesignConditionsId > 0) {
-      setValue(
-        'ddlAshareDesignConditions',
-        savedJob?.intDesignConditionsId > 0
-          ? savedJob?.intDesignConditionsId
-          : getValues('ddlAshareDesignConditions')
-      );
-      // }
-
+      if (savedJob?.intDesignConditionsId > 0) {
+        setValue('ddlAshareDesignConditions', savedJob?.intDesignConditionsId);
+      }
+      
       setValue('txbAltitude', Number(savedJob?.intAltitude) > 0 ? savedJob?.intAltitude : '0');
-      setValue('txbSummerOA_DB', savedJob?.dblSummerOA_DB.toFixed(1));
-      setValue('txbSummerOA_WB', savedJob?.dblSummerOA_WB.toFixed(1));
-      setValue('txbSummerOA_RH', savedJob?.dblSummerOA_RH.toFixed(1));
+      setValue('txbSummerOA_DB', savedJob?.dblSummerOA_DB?.toFixed(1));
+      setValue('txbSummerOA_WB', savedJob?.dblSummerOA_WB?.toFixed(1));
+      setValue('txbSummerOA_RH', savedJob?.dblSummerOA_RH?.toFixed(1));
 
-      setValue('txbWinterOA_DB', savedJob?.dblWinterOA_DB.toFixed(1));
-      setValue('txbWinterOA_WB', savedJob?.dblWinterOA_WB.toFixed(1));
-      setValue('txbWinterOA_RH', savedJob?.dblWinterOA_RH.toFixed(1));
+      setValue('txbWinterOA_DB', savedJob?.dblWinterOA_DB?.toFixed(1));
+      setValue('txbWinterOA_WB', savedJob?.dblWinterOA_WB?.toFixed(1));
+      setValue('txbWinterOA_RH', savedJob?.dblWinterOA_RH?.toFixed(1));
 
-      setValue('txbSummerRA_DB', savedJob?.dblSummerRA_DB.toFixed(1));
-      setValue('txbSummerRA_WB', savedJob?.dblSummerRA_WB.toFixed(1));
-      setValue('txbSummerRA_RH', savedJob?.dblSummerRA_RH.toFixed(1));
+      setValue('txbSummerRA_DB', savedJob?.dblSummerRA_DB?.toFixed(1));
+      setValue('txbSummerRA_WB', savedJob?.dblSummerRA_WB?.toFixed(1));
+      setValue('txbSummerRA_RH', savedJob?.dblSummerRA_RH?.toFixed(1));
 
-      setValue('txbWinterRA_DB', savedJob?.dblWinterRA_DB.toFixed(1));
+      setValue('txbWinterRA_DB', savedJob?.dblWinterRA_DB?.toFixed(1));
       setValue('txbWinterRA_WB', savedJob?.dblWinterRA_WB.toFixed(1));
-      setValue('txbWinterRA_RH', savedJob?.dblWinterRA_RH.toFixed(1));
+      setValue('txbWinterRA_RH', savedJob?.dblWinterRA_RH?.toFixed(1));
+      setIsLoading(1);
+
     } else {
       // Keep these values in else statement rather than inline if statment
+      setValue('txbAltitude', '0');
       setValue('txbSummerOA_DB', '95.0');
       setValue('txbSummerOA_WB', '78.0');
       setValue('txbSummerOA_RH', '47.3');
@@ -1002,19 +1010,80 @@ export default function ProjectInfoDialog({
       setValue('txbWinterRA_WB', '52.9');
       setValue('txbWinterRA_RH', '30.0');
     }
-  }, [getValues, savedJob, setValue]); // <-- empty dependency array - This will only trigger when the component mounts and no-render
+  }, [savedJob, setValue]); // <-- empty dependency array - This will only trigger when the component mounts and no-render
 
-  // useEffect(()=>{
 
-  // }, [savedJob]) // <-- empty dependency array
+  useMemo(() => {
 
-  // const ddlBasisOfDesignChanged = useCallback(
-  //   (e: any) => setValue('ddlBasisOfDesign', Number(e.target.value)),
-  //   [setValue]);
+    if (formCurrValues.ddlCountry !== null || formCurrValues.ddlProvState !== null || formCurrValues.ddlCity !== null || formCurrValues.ddlAshareDesignConditions !== null) {
+      setIsLoading(0);
+    }
 
-  useEffect(() => {}, [setValue]);
+  },[formCurrValues.ddlAshareDesignConditions, formCurrValues.ddlCity, formCurrValues.ddlCountry, formCurrValues.ddlProvState])
 
-  console.log(weatherDataCountryInfo);
+  // useMemo(() => {
+  //   if (newJobInfo !== null) {
+
+  //   if (newJobInfo?.intBasisOfDesignId > 0) {
+  //     setValue('ddlBasisOfDesign', newJobInfo?.intBasisOfDesignId);
+  //   }
+
+  //   if (newJobInfo?.intCompanyNameId > 0) {
+  //   setValue('ddlCompanyName', newJobInfo?.intCompanyNameId);
+  //   }
+
+  //   if (newJobInfo?.intCompanyContactNameId > 0) {
+  //   setValue('ddlCompanyContactName', newJobInfo?.intCompanyContactNameId);
+  //   }
+
+
+  //   if (newJobInfo?.intApplicationId > 0) {
+  //   setValue('ddlApplication', newJobInfo?.intApplicationId);
+  //   }
+
+  //   if (newJobInfo?.intUoMId > 0) {
+  //   setValue('ddlUoM', newJobInfo?.intUoMId);
+  //   }
+
+  //   if (newJobInfo?.strCountry !== '') {
+  //     setValue('ddlCountry', newJobInfo?.strCountry);
+  //   }
+
+  //   if (newJobInfo?.strProvState !== '') {
+  //     setValue('ddlProvState', newJobInfo?.strProvState);
+  //   }
+
+  //   if (newJobInfo?.intCityId > 0) {
+  //     setValue('ddlCity', newJobInfo?.intCityId);
+  //   }
+
+  //   if (newJobInfo?.intDesignConditionsId > 0) {
+  //     setValue('ddlAshareDesignConditions', newJobInfo?.intDesignConditionsId);
+  //   }
+
+  //   setValue('txbAltitude', Number(newJobInfo?.intAltitude) > 0 ? newJobInfo?.intAltitude : '0');
+  //   setValue('txbSummerOA_DB', newJobInfo?.dblSummerOA_DB?.toFixed(1));
+  //   setValue('txbSummerOA_WB', newJobInfo?.dblSummerOA_WB?.toFixed(1));
+  //   setValue('txbSummerOA_RH', newJobInfo?.dblSummerOA_RH?.toFixed(1));
+
+  //   setValue('txbWinterOA_DB', newJobInfo?.dblWinterOA_DB?.toFixed(1));
+  //   setValue('txbWinterOA_WB', newJobInfo?.dblWinterOA_WB?.toFixed(1));
+  //   setValue('txbWinterOA_RH', newJobInfo?.dblWinterOA_RH?.toFixed(1));
+
+  //   setValue('txbSummerRA_DB', newJobInfo?.dblSummerRA_DB?.toFixed(1));
+  //   setValue('txbSummerRA_WB', newJobInfo?.dblSummerRA_WB?.toFixed(1));
+  //   setValue('txbSummerRA_RH', newJobInfo?.dblSummerRA_RH?.toFixed(1));
+
+  //   setValue('txbWinterRA_DB', newJobInfo?.dblWinterRA_DB?.toFixed(1));
+  //   setValue('txbWinterRA_WB', newJobInfo?.dblWinterRA_WB?.toFixed(1));
+  //   setValue('txbWinterRA_RH', newJobInfo?.dblWinterRA_RH?.toFixed(1));
+  //   }
+  //   },[newJobInfo, setValue]);
+
+
+  // useEffect(() => {
+  //   setNewJobInfo(savedJob);
+  // },[savedJob]);
 
   return (
     <Dialog open={open} onClose={handleClose} maxWidth="lg">
