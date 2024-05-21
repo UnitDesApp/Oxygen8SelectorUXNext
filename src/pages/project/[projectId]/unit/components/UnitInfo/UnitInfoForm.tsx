@@ -2776,7 +2776,7 @@ useEffect(()=>{
                     onChange={(e: any) => { setValue('ddlEKEXVKitInstallation', Number(e.target.value));}}
                     placeholder=""
                   >
-                    {db.dbtSelEKEXVKitInstallation?.map(
+                    {db?.dbtSelEKEXVKitInstallation?.map(
                       (item: any, index: number) => (
                         <option key={index} value={item.id}>
                           {item.items}
