@@ -183,7 +183,7 @@ export default function ProjectInfoDialog({
     formCurrValues = getValues(); // Do not use watch, must use getValues with the function to get current values.
     let savedDate =  savedJob?.strCreatedDate;
     
-    if (savedDate.includes('/')) {
+    if (savedDate?.includes('/')) {
       const [month, day, year] =  savedDate.split('/');
       savedDate =`${year}-${month}-${day}`;
     }

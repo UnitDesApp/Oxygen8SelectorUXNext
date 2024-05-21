@@ -56,8 +56,12 @@ export default class ProjectApi extends AbstractApi {
   getSelectionInfo = (params: any): Promise<any> =>
     this.client.post(`/api/units/ViewSelection`, params).then((res: any) => res.data);
   
+  // getAllBaseData = (): Promise<any> =>
+  //   this.client.get(`/api/Selection/GetAll`).then((res: any) => JSON.parse(res.data));
+
   getAllBaseData = (): Promise<any> =>
-    this.client.get(`/api/Selection/GetAll`).then((res: any) => JSON.parse(res.data));
+    this.client.get(`/api/Selection/GetAllNew`).then((res: any) => JSON.parse(res.data));
+
 
   downloadAllSelection = (params: any, config?: any): Promise<AxiosResponse<any, any>> =>
     this.client.post('/api/units/DownloadAllSelection', params, {

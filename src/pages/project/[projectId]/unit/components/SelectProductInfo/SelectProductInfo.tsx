@@ -88,12 +88,14 @@ export default function SelectProductInfo(props: SelectProductInfoProps) {
             />
           </TabPanel>
           <TabPanel value={value} index={1}>
-            <ProductTypes productTypes={data?.prodType} onSelectItem={onSelectProductTypeValue} />
+            {/* <ProductTypes productTypes={data?.prodType} onSelectItem={onSelectProductTypeValue} /> */}
+            <ProductTypes productTypes={data?.dbtSelProdType} onSelectItem={onSelectProductTypeValue} />
           </TabPanel>
           <TabPanel value={value} index={2}>
             <UnitTypes
               productTypeID={productTypeID}
-              productTypeUnitTypeLinkDataTbl={data?.prodTypeUnitTypeLink}
+              // productTypeUnitTypeLinkDataTbl={data?.prodTypeUnitTypeLink}
+              productTypeUnitTypeLinkDataTbl={data?.dbtSelProdTypeUnitTypeLink}
               onSelectItem={onSelectUnitTypeValue}
             />
           </TabPanel>

@@ -8,5 +8,8 @@ export const POST_JWT_LOGIN = "/api/auth/signin";
 // Units
 export const GET_UNITINFO_API_URL = "/api/units/GetUnitInfo";
 
+// // Selection
+// export const GET_ALL_BASEDATA_API_URL = "/api/Selection/GetAll";
+
 // Selection
-export const GET_ALL_BASEDATA_API_URL = "/api/Selection/GetAll";
+export const GET_ALL_BASEDATA_API_URL = "/api/Selection/GetAllNew";
