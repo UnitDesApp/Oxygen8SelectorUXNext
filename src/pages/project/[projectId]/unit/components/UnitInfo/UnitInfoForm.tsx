@@ -407,7 +407,7 @@ export default function UnitInfoForm({
 
     switch (Number(intProductTypeID)) {
       case IDs.intProdTypeNovaID:
-        unitModel = db.dbtSelNovaUnitModelNew;
+        unitModel = db.dbtSelNovaUnitModel;
         break;
       case IDs.intProdTypeVentumID:
         unitModel = db.dbtSelVentumHUnitModel;
