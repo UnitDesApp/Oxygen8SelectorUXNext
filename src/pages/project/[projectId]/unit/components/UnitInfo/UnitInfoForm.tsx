@@ -624,6 +624,72 @@ export default function UnitInfoForm({
   },
   [getValues('ddlReheatElecHeaterInstall')]);
 
+
+  const [outdoorAirFilterInfo, setOutdoorAirFilterInfo] = useState<any>([])
+  useMemo(() => {
+    const info: { fdtOutdoorAirFilter: any; isVisible: boolean; defaultId: number} = { fdtOutdoorAirFilter: [],  isVisible: false, defaultId: 0};
+    info.fdtOutdoorAirFilter  = db?.dbtSelFilterModel;
+
+    switch (intProductTypeID) {
+      case IDs.intProdTypeNovaID:
+      case IDs.intProdTypeVentumID:
+      case IDs.intProdTypeVentumLiteID:
+        info.fdtOutdoorAirFilter = info.fdtOutdoorAirFilter?.filter((e: { depth: any }) => e.depth === 2) || [];
+        info.defaultId = IDs.intFilterModel_2in_85_MERV_13_ID;
+        break;
+      case IDs.intProdTypeTerraID:
+        // info.fdtOutdoorAirFilter = info.fdtOutdoorAirFilter?.filter((item: { depth: number }) => item.depth !== 2);
+        info.fdtOutdoorAirFilter = info.fdtOutdoorAirFilter?.filter((item: { id: number }) => item.id === IDs.intFilterModel_2in_85_MERV_13_ID);
+        info.defaultId = IDs.intFilterModel_2in_85_MERV_13_ID;
+        break;
+      case IDs.intProdTypeVentumPlusID:
+        info.fdtOutdoorAirFilter = info.fdtOutdoorAirFilter?.filter((item: { depth: number }) => item.depth === 4);
+        info.defaultId = IDs.intFilterModel_4in_85_MERV_13_Id;
+        break;
+      default:
+        break;
+    }
+
+    
+    // info1.fdtOutdoorAirFilter = dt;
+    setOutdoorAirFilterInfo(info);
+    
+    setValue('ddlOA_FilterModel', info.defaultId);
+
+}, [db, intProductTypeID]);
+
+
+const [returnAirFilterInfo, setReturnAirFilterInfo] = useState<any>([])
+useMemo(() => {
+  const info: { fdtReturnAirFilter: any; isVisible: boolean; defaultId: number} = { fdtReturnAirFilter: [],  isVisible: false, defaultId: 0};
+  info.fdtReturnAirFilter  = db?.dbtSelFilterModel;
+
+  switch (intProductTypeID) {
+    case IDs.intProdTypeNovaID:
+    case IDs.intProdTypeVentumID:
+    case IDs.intProdTypeVentumLiteID:
+      info.fdtReturnAirFilter = info.fdtReturnAirFilter?.filter((e: { depth: any }) => e.depth === 2) || [];
+      info.isVisible = true;
+      break;
+ case IDs.intProdTypeTerraID:
+  info.fdtReturnAirFilter = info.fdtReturnAirFilter?.filter((item: { id: number }) => item.id === IDs.intFilterModel_NA_ID);
+  info.isVisible = false;
+      break;
+    case IDs.intProdTypeVentumPlusID:
+      info.fdtReturnAirFilter = info.fdtReturnAirFilter?.filter((item: { depth: number }) => item.depth === 4) || [];
+      info.isVisible = true;
+      break;
+    default:
+      break;
+  }
+
+  
+  setReturnAirFilterInfo(info);
+  
+  setValue('ddlRA_FilterModel', info.fdtReturnAirFilter?.[0]?.id);
+
+}, [db, intProductTypeID]);
+
     
 
   const [preheatFluidTypeInfo, setPreheatFluidTypeInfo] = useState<any>([])
@@ -1167,9 +1233,9 @@ export default function UnitInfoForm({
   }, [db, intProductTypeID, strUnitModelValue, formValues.ddlUnitVoltage, setValue]);
 
   // ---------------------------- Get QAFilter Model DDL -----------------------------
-  const OAFilterModel = useMemo(
-    () => db?.dbtSelFilterModel?.filter((item: any) => item.outdoor_air === 1),
-    [db]);
+  // const OAFilterModel = useMemo(
+  //   () => db?.dbtSelFilterModel?.filter((item: any) => item.outdoor_air === 1),
+  //   [db]);
 
   // ---------------------------- Get RAFilter Model DDL -----------------------------
   const RAFilterModel = useMemo(() => {
@@ -1181,13 +1247,13 @@ export default function UnitInfoForm({
   },[db]);
 
   // ---------------------------- Initialize QAFilter Model --------------------------
-  useEffect(() => {
-    if ( OAFilterModel?.filter((item: any) => item?.id === formValues.ddlOA_FilterModel).length === 0) {
-      setValue('ddlOA_FilterModel', OAFilterModel[0].id);
-    }
+  // useEffect(() => {
+  //   if ( OAFilterModel?.filter((item: any) => item?.id === formValues.ddlOA_FilterModel).length === 0) {
+  //     setValue('ddlOA_FilterModel', OAFilterModel[0].id);
+  //   }
 
 
-  }, [setValue, OAFilterModel, formValues.ddlOA_FilterModel]);
+  // }, [setValue, OAFilterModel, formValues.ddlOA_FilterModel]);
 
   // ---------------------------- Initialize RAFilter Model --------------------------
   useEffect(() => {
@@ -1198,7 +1264,7 @@ export default function UnitInfoForm({
         setValue('ddlRA_FilterModel', defaultValues?.ddlRA_FilterModel);
       }
     }
-  }, [setValue, RAFilterModel, formValues.ddlOA_FilterModel]);
+  }, [setValue, RAFilterModel, formValues.ddlRA_FilterModel]);
 
   // ------------------------- Get each complete informaiton --------------------------
   const { dtPreheatComp, dtCoolingComp, dtHeatingComp } = useMemo(
@@ -2089,28 +2155,27 @@ useEffect(()=>{
                         sx={getDisplay(intProductTypeID === IDs.intProdTypeNovaID || intProductTypeID === IDs.intProdTypeVentumID ||
                           intProductTypeID === IDs.intProdTypeVentumPlusID || intProductTypeID === IDs.intProdTypeTerraID)}
                       />
-                  {isAvailable(OAFilterModel) && (
+                  {isAvailable(outdoorAirFilterInfo?.fdtOutdoorAirFilter) && (
                     <RHFSelect native size="small" name="ddlOA_FilterModel" label="OA Filter"
                       onChange={(e: any) => setValue('ddlOA_FilterModel', Number(e.target.value))}
                     >
-                      {OAFilterModel?.map((item: any, index: number) => (
+                      {outdoorAirFilterInfo?.fdtOutdoorAirFilter?.map((item: any, index: number) => (
                         <option key={index} value={item.id}>
                           {item.items}
                         </option>
                       ))}
                     </RHFSelect>
                   )}
-                  {isAvailable(RAFilterModel?.dataTable) && (
                     <RHFSelect native size="small" name="ddlRA_FilterModel" label="RA Filter"
+                      sx={getDisplay(returnAirFilterInfo?.isVisible)}
                       onChange={(e: any) => setValue('ddlRA_FilterModel', Number(e.target.value))}
                     >
-                      {RAFilterModel?.dataTable?.map((item: any, index: number) => (
+                      {returnAirFilterInfo?.fdtReturnAirFilter?.map((item: any, index: number) => (
                         <option key={index} value={item.id}>
                           {item.items}
                         </option>
                       ))}
                     </RHFSelect>
-                  )}
                 </Box>
               </Grid>
             </Grid>

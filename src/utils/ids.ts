@@ -50,6 +50,7 @@ export const intFilterLocationFinalFilterID = 3;
 export const intFilterLocationReturnAirFilterID = 4;
 export const intFilterModel_NA_ID = 1;
 export const intFilterModel_2in_85_MERV_13_ID = 9;
+export const intFilterModel_4in_85_MERV_13_Id = 10;
 
 // export const intCoilTypeHotWaterID = 1;
 // export const intCoilTypeChilledWaterID = 2;
