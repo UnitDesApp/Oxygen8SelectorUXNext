@@ -752,7 +752,7 @@ export default function ProjectInfoDialog({
 
   const handleChangeSummerOutdoorAirDBChanged = useCallback(
     (e: any) => {
-      setValue('txbSummerOA_DB', e.target.value);
+      setValue('txbSummerOA_DB', parseFloat(e.target.value).toFixed(1));
       api.project.getRH_By_DB_WB(oSummerOA_RH).then((data: any) => {
         setValue('txbSummerOA_RH', data.toFixed(1));
       });
@@ -764,7 +764,7 @@ export default function ProjectInfoDialog({
   // Summer Outdoor Air WB
   const handleChangeSummerOutdoorAirWBChanged = useCallback(
     (e: any) => {
-      setValue('txbSummerOA_WB', e.target.value);
+      setValue('txbSummerOA_WB', parseFloat(e.target.value).toFixed(1));
       api.project.getRH_By_DB_WB(oSummerOA_RH).then((data: any) => {
         setValue('txbSummerOA_RH', data.toFixed(1));
       });
@@ -776,7 +776,7 @@ export default function ProjectInfoDialog({
   // Summer Outdoor Air RH
   const handleChangeSummerOutdoorAirRHChanged = useCallback(
     (e: any) => {
-      setValue('txbSummerOA_RH', e.target.value);
+      setValue('txbSummerOA_RH', parseFloat(e.target.value).toFixed(1));
       api.project.getWB_By_DB_RH(oSummerOA_WB).then((data: any) => {
         setValue('txbSummerOA_WB', data.toFixed(1));
       });
@@ -788,7 +788,7 @@ export default function ProjectInfoDialog({
   // Winter Outdoor Air DB
   const handleChangeWinterOutdoorAirDBChanged = useCallback(
     (e: any) => {
-      setValue('txbWinterOA_DB', e.target.value);
+      setValue('txbWinterOA_DB', parseFloat(e.target.value).toFixed(1));
       api.project.getRH_By_DB_WB(oWinterOA_RH).then((data: any) => {
         setValue('txbWinterOA_RH', data.toFixed(1));
       });
@@ -800,7 +800,7 @@ export default function ProjectInfoDialog({
   // Winter Outdoor Air WB
   const handleChangeWinterOutdoorAirWBChanged = useCallback(
     (e: any) => {
-      setValue('txbWinterOA_WB', e.target.value);
+      setValue('txbWinterOA_WB', parseFloat(e.target.value).toFixed(1));
       api.project.getRH_By_DB_WB(oWinterOA_RH).then((data: any) => {
         setValue('txbWinterOA_RH', data.toFixed(1));
       });
@@ -812,7 +812,7 @@ export default function ProjectInfoDialog({
   // Winter Outdoor Air RH
   const handleChangeWinterOutdoorAirRHChanged = useCallback(
     (e: any) => {
-      setValue('txbWinterOA_RH', e.target.value);
+      setValue('txbWinterOA_RH', parseFloat(e.target.value).toFixed(1));
       api.project.getWB_By_DB_RH(oWinterOA_WB).then((data: any) => {
         setValue('txbWinterOA_WB', data.toFixed(1));
       });
@@ -824,7 +824,7 @@ export default function ProjectInfoDialog({
   // Summer Return Air DB
   const handleChangeSummerReturnAirDBChanged = useCallback(
     (e: any) => {
-      setValue('txbSummerRA_DB', e.target.value);
+      setValue('txbSummerRA_DB', parseFloat(e.target.value).toFixed(1));
       api.project.getRH_By_DB_WB(oSummerRA_RH).then((data: any) => {
         setValue('txbSummerRA_RH', data.toFixed(1));
       });
@@ -836,7 +836,7 @@ export default function ProjectInfoDialog({
   // Summer Return Air WB
   const handleChangeSummerReturnAirWBChanged = useCallback(
     (e: any) => {
-      setValue('txbSummerRA_WB', e.target.value);
+      setValue('txbSummerRA_WB', parseFloat(e.target.value).toFixed(1));
       api.project.getRH_By_DB_WB(oSummerRA_RH).then((data: any) => {
         setValue('txbSummerRA_RH', data.toFixed(1));
       });
@@ -848,7 +848,7 @@ export default function ProjectInfoDialog({
   // Summer Return Air RH
   const handleChangeSummerReturnAirRHChanged = useCallback(
     (e: any) => {
-      setValue('txbSummerRA_RH', e.target.value);
+      setValue('txbSummerRA_RH', parseFloat(e.target.value).toFixed(1));
       api.project.getWB_By_DB_RH(oSummerRA_WB).then((data: any) => {
         setValue('txbSummerRA_WB', data.toFixed(1));
       });
@@ -860,7 +860,7 @@ export default function ProjectInfoDialog({
   // Winter Return Air DB
   const handleChangeWinterReturnAirDBChanged = useCallback(
     (e: any) => {
-      setValue('txbWinterRA_DB', e.target.value);
+      setValue('txbWinterRA_DB', parseFloat(e.target.value).toFixed(1));
       api.project.getRH_By_DB_WB(oWinterRA_RH).then((data: any) => {
         setValue('txbWinterRA_RH', data.toFixed(1));
       });
@@ -872,7 +872,7 @@ export default function ProjectInfoDialog({
   // Winter Return Air WB
   const handleChangeWinterReturnAirWBChanged = useCallback(
     (e: any) => {
-      setValue('txbWinterRA_WB', e.target.value);
+      setValue('txbWinterRA_WB', parseFloat(e.target.value).toFixed(1));
       api.project.getRH_By_DB_WB(oWinterRA_RH).then((data: any) => {
         setValue('txbWinterRA_RH', data.toFixed(1));
       });
@@ -884,7 +884,7 @@ export default function ProjectInfoDialog({
   // Winter Return Air RH
   const handleChangeWinterReturnAirRHChanged = useCallback(
     (e: any) => {
-      setValue('txbWinterRA_RH', e.target.value);
+      setValue('txbWinterRA_RH', parseFloat(e.target.value).toFixed(1));
       api.project.getWB_By_DB_RH(oWinterRA_WB).then((data: any) => {
         setValue('txbWinterRA_WB', data.toFixed(1));
       });
