@@ -251,7 +251,7 @@ export default function UnitInfoForm({
           "intLocationId" : formCurrValues.ddlLocation,
           "intIsDownshot" : 0,
           "intOrientationId" : formCurrValues.ddlOrientation,
-          "intControlsPreferenceId" : formCurrValues.ddlControlsPreference,
+          "intControlsPreferenceId" : formCurrValues.ddlControlsPref,
           "intControlViaId" : 0,
         },
         oUnitAirflow : {
@@ -440,6 +440,128 @@ export default function UnitInfoForm({
   ]);
 
 
+  const [controlsPrefInfo, setControlsPrefInfo] = useState<any>([])
+  useMemo(() => {
+    const info: { fdtControlsPref: any; isVisible: boolean; defaultId: number} = { fdtControlsPref: [],  isVisible: false, defaultId: 0};
+    // let controlsPrefProdTypeLink: any = [];
+    let controlsPrefProdTypeLink: any = [];
+    controlsPrefProdTypeLink= db?.dbtSelControlsPrefProdTypeLink?.filter((item: { prod_type_id: number}) => item.prod_type_id === intProductTypeID);
+
+
+    info.fdtControlsPref = db?.dbtSelControlsPref?.filter((e: { id: any}) => controlsPrefProdTypeLink?.filter((e_link: { controls_id: any}) => e.id === e_link.controls_id)?.length > 0);
+  
+    setControlsPrefInfo(info);
+    info.defaultId = info.fdtControlsPref?.[0]?.id;
+    setValue('ddlControlsPref', info.fdtControlsPref?.[0]?.id);
+   
+  }, [db, intProductTypeID]);
+
+
+
+  const [controlViaInfo, setControlViaInfo] = useState<any>([])
+  useMemo(() => {
+    const info: { fdtControlVia: any; isVisible: boolean; defaultId: number} = { fdtControlVia: [],  isVisible: false, defaultId: 0};
+    // let controlsPrefProdTypeLink: any = [];
+    info.fdtControlVia  = db?.dbtSelControlVia;
+
+
+
+    switch (Number(intProductTypeID)) {
+      case IDs.intProdTypeNovaID:
+      case IDs.intProdTypeVentumID:
+      case IDs.intProdTypeVentumLiteID:
+      case IDs.intProdTypeVentumPlusID:
+        if (Number(getValues('ddlControlsPref')) === IDs.intControlsPrefDCV_CO2_ID) {
+          info.fdtControlVia = info.fdtControlVia?.filter((item: { id: number }) => item.id === IDs.intControlViaIdShipLooseCO2Sensor);
+        }
+        else {
+          info.fdtControlVia = info.fdtControlVia?.filter((item: { id: number }) => item.id === IDs.intControlViaIdNA);
+        }
+        break;
+      case IDs.intProdTypeTerraID:
+        info.fdtControlVia = info.fdtControlVia?.filter((item: { id: number }) => item.id !== IDs.intControlViaIdNA);
+        info.isVisible = true;
+        break;
+      default:
+        break;
+    }
+
+    setControlViaInfo(info);
+
+    info.defaultId = info.fdtControlVia?.[0]?.id;
+    setValue('ddlControlVia', info.fdtControlVia?.[0]?.id);
+   
+  }, [db, intProductTypeID, getValues('ddlControlsPref')]);
+
+
+
+  const [outdoorAirFilterInfo, setOutdoorAirFilterInfo] = useState<any>([])
+  useMemo(() => {
+    const info: { fdtOutdoorAirFilter: any; isVisible: boolean; defaultId: number} = { fdtOutdoorAirFilter: [],  isVisible: false, defaultId: 0};
+    info.fdtOutdoorAirFilter  = db?.dbtSelFilterModel;
+
+    switch (intProductTypeID) {
+      case IDs.intProdTypeNovaID:
+      case IDs.intProdTypeVentumID:
+      case IDs.intProdTypeVentumLiteID:
+        info.fdtOutdoorAirFilter = info.fdtOutdoorAirFilter?.filter((e: { depth: any }) => e.depth === 2) || [];
+        info.defaultId = IDs.intFilterModel_2in_85_MERV_13_ID;
+        break;
+      case IDs.intProdTypeTerraID:
+        // info.fdtOutdoorAirFilter = info.fdtOutdoorAirFilter?.filter((item: { depth: number }) => item.depth !== 2);
+        info.fdtOutdoorAirFilter = info.fdtOutdoorAirFilter?.filter((item: { id: number }) => item.id === IDs.intFilterModel_2in_85_MERV_13_ID);
+        info.defaultId = IDs.intFilterModel_2in_85_MERV_13_ID;
+        break;
+      case IDs.intProdTypeVentumPlusID:
+        info.fdtOutdoorAirFilter = info.fdtOutdoorAirFilter?.filter((item: { depth: number }) => item.depth === 4);
+        info.defaultId = IDs.intFilterModel_4in_85_MERV_13_Id;
+        break;
+      default:
+        break;
+    }
+
+    
+    // info1.fdtOutdoorAirFilter = dt;
+    setOutdoorAirFilterInfo(info);
+    
+    setValue('ddlOA_FilterModel', info.defaultId);
+
+}, [db, intProductTypeID]);
+
+
+const [returnAirFilterInfo, setReturnAirFilterInfo] = useState<any>([])
+useMemo(() => {
+  const info: { fdtReturnAirFilter: any; isVisible: boolean; defaultId: number} = { fdtReturnAirFilter: [],  isVisible: false, defaultId: 0};
+  info.fdtReturnAirFilter  = db?.dbtSelFilterModel;
+
+  switch (intProductTypeID) {
+    case IDs.intProdTypeNovaID:
+    case IDs.intProdTypeVentumID:
+    case IDs.intProdTypeVentumLiteID:
+      info.fdtReturnAirFilter = info.fdtReturnAirFilter?.filter((e: { depth: any }) => e.depth === 2) || [];
+      info.isVisible = true;
+      break;
+ case IDs.intProdTypeTerraID:
+      info.fdtReturnAirFilter = info.fdtReturnAirFilter?.filter((item: { id: number }) => item.id === IDs.intFilterModel_NA_ID);
+      info.isVisible = false;
+      break;
+    case IDs.intProdTypeVentumPlusID:
+      info.fdtReturnAirFilter = info.fdtReturnAirFilter?.filter((item: { depth: number }) => item.depth === 4) || [];
+      info.isVisible = true;
+      break;
+    default:
+      break;
+  }
+
+  
+  setReturnAirFilterInfo(info);
+  
+  setValue('ddlRA_FilterModel', info.fdtReturnAirFilter?.[0]?.id);
+
+}, [db, intProductTypeID]);
+
+
+
   // Keep preheat elec heater separate even if the logic is same as heating/reheat logic.
   const [preheatElecHeaterInfo, setPreheatElecHeaterInfo] = useState<any>([])
     useMemo(() => {
@@ -625,70 +747,7 @@ export default function UnitInfoForm({
   [getValues('ddlReheatElecHeaterInstall')]);
 
 
-  const [outdoorAirFilterInfo, setOutdoorAirFilterInfo] = useState<any>([])
-  useMemo(() => {
-    const info: { fdtOutdoorAirFilter: any; isVisible: boolean; defaultId: number} = { fdtOutdoorAirFilter: [],  isVisible: false, defaultId: 0};
-    info.fdtOutdoorAirFilter  = db?.dbtSelFilterModel;
 
-    switch (intProductTypeID) {
-      case IDs.intProdTypeNovaID:
-      case IDs.intProdTypeVentumID:
-      case IDs.intProdTypeVentumLiteID:
-        info.fdtOutdoorAirFilter = info.fdtOutdoorAirFilter?.filter((e: { depth: any }) => e.depth === 2) || [];
-        info.defaultId = IDs.intFilterModel_2in_85_MERV_13_ID;
-        break;
-      case IDs.intProdTypeTerraID:
-        // info.fdtOutdoorAirFilter = info.fdtOutdoorAirFilter?.filter((item: { depth: number }) => item.depth !== 2);
-        info.fdtOutdoorAirFilter = info.fdtOutdoorAirFilter?.filter((item: { id: number }) => item.id === IDs.intFilterModel_2in_85_MERV_13_ID);
-        info.defaultId = IDs.intFilterModel_2in_85_MERV_13_ID;
-        break;
-      case IDs.intProdTypeVentumPlusID:
-        info.fdtOutdoorAirFilter = info.fdtOutdoorAirFilter?.filter((item: { depth: number }) => item.depth === 4);
-        info.defaultId = IDs.intFilterModel_4in_85_MERV_13_Id;
-        break;
-      default:
-        break;
-    }
-
-    
-    // info1.fdtOutdoorAirFilter = dt;
-    setOutdoorAirFilterInfo(info);
-    
-    setValue('ddlOA_FilterModel', info.defaultId);
-
-}, [db, intProductTypeID]);
-
-
-const [returnAirFilterInfo, setReturnAirFilterInfo] = useState<any>([])
-useMemo(() => {
-  const info: { fdtReturnAirFilter: any; isVisible: boolean; defaultId: number} = { fdtReturnAirFilter: [],  isVisible: false, defaultId: 0};
-  info.fdtReturnAirFilter  = db?.dbtSelFilterModel;
-
-  switch (intProductTypeID) {
-    case IDs.intProdTypeNovaID:
-    case IDs.intProdTypeVentumID:
-    case IDs.intProdTypeVentumLiteID:
-      info.fdtReturnAirFilter = info.fdtReturnAirFilter?.filter((e: { depth: any }) => e.depth === 2) || [];
-      info.isVisible = true;
-      break;
- case IDs.intProdTypeTerraID:
-  info.fdtReturnAirFilter = info.fdtReturnAirFilter?.filter((item: { id: number }) => item.id === IDs.intFilterModel_NA_ID);
-  info.isVisible = false;
-      break;
-    case IDs.intProdTypeVentumPlusID:
-      info.fdtReturnAirFilter = info.fdtReturnAirFilter?.filter((item: { depth: number }) => item.depth === 4) || [];
-      info.isVisible = true;
-      break;
-    default:
-      break;
-  }
-
-  
-  setReturnAirFilterInfo(info);
-  
-  setValue('ddlRA_FilterModel', info.fdtReturnAirFilter?.[0]?.id);
-
-}, [db, intProductTypeID]);
 
     
 
@@ -1724,7 +1783,7 @@ useEffect(()=>{
 
     // if (unitInfo?.oUnit?.intControlsPreferenceId > 0) {
     //   setValue('ddlControlsPreference', unitInfo?.oUnit?.intControlsPreferenceId);
-      setValue('ddlControlsPreference', unitInfo?.oUnit?.intControlsPreferenceId > 0 ? unitInfo?.oUnit?.intControlsPreferenceId : getValues('ddlControlsPreference'));
+      setValue('ddlControlsPref', unitInfo?.oUnit?.intControlsPreferenceId > 0 ? unitInfo?.oUnit?.intControlsPreferenceId : getValues('ddlControlsPref'));
     // }
 
     setValue('txbSummerSupplyAirCFM', Number(unitInfo?.oUnitAirflow?.intSummerSupplyAirCFM) > 0 ? unitInfo?.oUnitAirflow?.intSummerSupplyAirCFM : '325');
@@ -2065,17 +2124,26 @@ useEffect(()=>{
                       ))}
                     </RHFSelect>
                   )}
-                  {isAvailable(db?.dbtSelControlsPreference) && (
-                    <RHFSelect native size="small" name="ddlControlsPreference" label="Control Preference" placeholder=""
-                      onChange={(e: any) => {setValue('ddlControlsPreference', Number(e.target.value));}}
+                    <RHFSelect native size="small" name="ddlControlsPref" label="Controls Preference" placeholder=""
+                      // sx={getDisplay(controlsPrefInfo?.isVisible)}
+                      onChange={(e: any) => {setValue('ddlControlsPref', Number(e.target.value));}}
                     >
-                      {db?.dbtSelControlsPreference?.map((item: any, index: number) => (
+                      {controlsPrefInfo?.fdtControlsPref?.map((item: any, index: number) => (
                         <option key={index} value={item.id}>
                           {item.items}
                         </option>
                       ))}
                     </RHFSelect>
-                  )}
+                    <RHFSelect native size="small" name="ddlControlVia" label="Control Via" placeholder=""
+                      sx={getDisplay(controlViaInfo?.isVisible)}
+                      onChange={(e: any) => {setValue('ddlControlVia', Number(e.target.value));}}
+                    >
+                      {controlViaInfo?.fdtControlVia?.map((item: any, index: number) => (
+                        <option key={index} value={item.id}>
+                          {item.items}
+                        </option>
+                      ))}
+                    </RHFSelect> 
                 </Box>
               </Grid>
               <Grid item xs={4} md={4}>

@@ -30,6 +30,9 @@ export const intControlsPrefVAV_ID = 2;
 export const intControlsPrefDCV_CO2_ID = 4;
 export const intControlPrefByOthersID = 6;
 
+export const intControlViaIdNA = 1;
+export const intControlViaIdShipLooseCO2Sensor = 2;
+
 export const intInstallationInteriorID = 1;
 export const intInstalaltionExteriorID = 2;
 
