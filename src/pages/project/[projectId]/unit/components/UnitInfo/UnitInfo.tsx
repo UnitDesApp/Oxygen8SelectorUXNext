@@ -6,10 +6,9 @@ import { styled } from '@mui/material/styles';
 import { useGetAllBaseData, useGetUnitInfo } from 'src/hooks/useApi';
 import CircularProgressLoading from 'src/components/loading/CircularProgressLoading';
 import { GetAllBaseData, GetUnitInfo } from 'src/api/website/backend_helper';
-// import { useApiContext } from 'src/contexts/ApiContext'; 
+// import { useApiContext } from 'src/contexts/ApiContext';
 
 import UnitInfoForm from './UnitInfoForm';
-
 
 //------------------------------------------------
 const RootStyle = styled('div')(({ theme }) => ({
@@ -54,12 +53,11 @@ export default function UnitInfo({
   txbUnitType,
   unitInfoData,
 }: UnitInfoProps) {
-
-  const [baseData, setbaseData] = useState(null)
-  const [unitData, setunitData] = useState(null)
-  const [isLoadingUnitInfo, setisLoadingUnitInfo] = useState(true)
-  const [isLoadingBaseData, setisLoadingBaseData] = useState(true)
-  const [unitInfo, setunitInfo] = useState<TUnitInfoData>({})
+  const [baseData, setbaseData] = useState(null);
+  const [unitData, setunitData] = useState(null);
+  const [isLoadingUnitInfo, setisLoadingUnitInfo] = useState(true);
+  const [isLoadingBaseData, setisLoadingBaseData] = useState(true);
+  const [unitInfo, setunitInfo] = useState<TUnitInfoData>({});
 
   useEffect(() => {
     GetUnitInfo({
@@ -69,23 +67,22 @@ export default function UnitInfo({
       intJobId: projectId,
       intUnitNo: edit ? unitId : -1,
     }).then((res: any) => {
- //     setunitData(JSON.parse(res)['unitInfo']);
- //     setunitInfo(JSON.parse(res)['unitInfo']);
+      //     setunitData(JSON.parse(res)['unitInfo']);
+      //     setunitInfo(JSON.parse(res)['unitInfo']);
       setunitData(JSON.parse(res).unitInfo);
       setunitInfo(JSON.parse(res).unitInfo);
 
       setisLoadingUnitInfo(false);
-    })
+    });
 
     GetAllBaseData().then((res: any) => {
       setbaseData(JSON.parse(res));
       setisLoadingBaseData(false);
-    })
+    });
     return () => {
       // second
-    }
-  }, [edit, projectId, unitId])
-
+    };
+  }, [edit, projectId, unitId]);
 
   // ----------------------- Success State and Handle Close ---------------------------
   const [openSuccess, setOpenSuccess] = useState(false);
@@ -98,16 +95,13 @@ export default function UnitInfo({
   const handleCloseError = () => {
     setOpenError(false);
   };
-  
+
   return (
     <RootStyle>
-      <Container>
-        {
-          (isLoadingBaseData || isLoadingUnitInfo) &&
-          (<CircularProgressLoading />)
-        }
+      <Container maxWidth="xl">
+        {(isLoadingBaseData || isLoadingUnitInfo) && <CircularProgressLoading />}
         <Box>
-          {(unitData && baseData && unitInfo) && (
+          {unitData && baseData && unitInfo && (
             <UnitInfoForm
               projectId={projectId}
               unitId={edit ? unitId : -1}

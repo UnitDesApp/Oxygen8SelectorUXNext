@@ -953,7 +953,7 @@ export default function Selection({ unitTypeData, intUnitNo }: SelectionProps) {
 
   return (
     <RootStyle>
-      <Container>
+      <Container maxWidth="xl">
         {error && (
           <Box sx={{ maringLeft: 'auto', marginRight: 'auto', marginTop: '50px' }}>
             Server Error!
@@ -987,7 +987,6 @@ export default function Selection({ unitTypeData, intUnitNo }: SelectionProps) {
                       direction={item.direction}
                       alignItems="stretch"
                       justifyContent="left"
-                      spacing={3}
                       sx={{ ...item.style }}
                     >
                       {item.subGroups.map((element: any, i: number) =>
@@ -1003,7 +1002,7 @@ export default function Selection({ unitTypeData, intUnitNo }: SelectionProps) {
                                       ? 'block'
                                       : 'none',
                                   width: 'auto',
-                                  m: '20px 30px!important',
+                                  m: '10px 10px!important',
                                   padding: '20px',
                                 }}
                                 titlesx={{
@@ -1052,7 +1051,7 @@ export default function Selection({ unitTypeData, intUnitNo }: SelectionProps) {
                                   ? 'block'
                                   : 'none',
                               width: 'auto',
-                              m: '20px 30px!important',
+                              m: '10px 10px!important',
                               padding: '20px',
                             }}
                             titlesx={{
