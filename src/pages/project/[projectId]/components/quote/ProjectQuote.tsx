@@ -72,7 +72,6 @@ function CustomGroupBox({ title, children, bordersx, titlesx }: CustomGroupBoxPr
 
 export default function ProjectQuote() {
   const { projectId } = useRouter().query;
-  const [isGenerate, setIsGenerate] = useState<boolean>(false);
   const [isNoUnit, setIsNoUnit] = useState<boolean>(false);
 
   const theme = useTheme();
@@ -110,47 +109,7 @@ export default function ProjectQuote() {
     pricingGeneral: {},
   };
 
-  const handleGenerate = () => {
-    setIsGenerate(true);
-  };
-
   if (isLoadingQuoteInfo) return <LinearProgress color="info" />;
-
-  if (!isGenerate)
-    return (
-      <Container>
-        <Stack direction="column" justifyContent="center" alignItems="center" spacing={5}>
-          <Typography variant="h5" sx={{ color: theme.palette.primary.main }}>
-            Select a stage to generate a quote
-          </Typography>
-          <Button
-            onClick={handleGenerate}
-            color="primary"
-            variant="contained"
-            endIcon={<Iconify icon="ooui:arrow-next-ltr" />}
-          >
-            Generate Group
-          </Button>
-        </Stack>
-        <Snackbar
-          open={isNoUnit}
-          autoHideDuration={6000}
-          onClose={() => {
-            setIsNoUnit(false);
-          }}
-        >
-          <Alert
-            onClose={() => {
-              setIsNoUnit(false);
-            }}
-            severity="error"
-            sx={{ width: '100%' }}
-          >
-            No Unit! Please add new unit to generate Quote!
-          </Alert>
-        </Snackbar>
-      </Container>
-    );
 
   return (
     <ProjectQuoteForm
