@@ -262,10 +262,12 @@ export default function ProjectQuoteForm({
 
   const oQuoteInputs = {
     oQuote: {
-      "intJobId" : projectId,
+      "intUserId" : typeof window !== 'undefined' && localStorage.getItem('userId'),
+      "intUAL" : typeof window !== 'undefined' && localStorage.getItem('UAL'),  
+      "intJobId" : Number(projectId),
       "intQuoteStageId" : Number(formCurrValues.ddlQuoteStage),
       "intRevisionNo" : formCurrValues.txbRevisionNo,
-      "intFOB_PointId" :  Number(formCurrValues.ddlFOBPoint),
+      "intFOBPointId" :  Number(formCurrValues.ddlFOBPoint),
       "intCountryId" : Number(formCurrValues.ddlCountry),
       "dblCurrencyRate" : formCurrValues.txbCurrencyRate,
       "dblShippingFactor" : formCurrValues.txbShippingFactor,
@@ -484,9 +486,6 @@ export default function ProjectQuoteForm({
   );
 
 
-
-
-
   // Load saved Values
   useEffect(() => {
     if (quoteInfo?.oQuote !== null) {
@@ -570,13 +569,48 @@ export default function ProjectQuoteForm({
 
 
 // Calculate pricing with default values when Quote not saved yet
-  const {data: quoteInfo1, } = useGetQuoteInfo({
-    intUserId: typeof window !== 'undefined' && localStorage.getItem('userId'),
-    intUAL: typeof window !== 'undefined' && localStorage.getItem('UAL'),
-    intJobId: Number(projectId),
-    oQuote: getQuoteInputs(),
-    // intUnitNo: 1,
-  },);
+// useGetQuoteInfo({
+//   intUserId: typeof window !== 'undefined' && localStorage.getItem('userId'),
+//   intUAL: typeof window !== 'undefined' && localStorage.getItem('UAL'),
+//   intJobId: Number(projectId),
+//   oQuote: getQuoteInputs(),
+//   // intUnitNo: 1,
+// },);
+
+// const {
+//   data: quoteInfo,
+//   isLoading: isLoadingQuoteInfo,
+//   refetch,
+// } = useGetQuoteInfo({
+//   intUserId: typeof window !== 'undefined' && localStorage.getItem('userId'),
+//   intUAL: typeof window !== 'undefined' && localStorage.getItem('UAL'),
+//   intJobId: Number(projectId),
+//   // intUnitNo: 1,
+// });
+
+
+
+  const quoteInfo1 = async (data: any) => {
+    try {
+      // const requestData = {
+      //   ...data,
+      //   intUserID: localStorage.getItem('userId'),
+      //   intUAL: localStorage.getItem('UAL'),
+      //   intJobID: projectId,
+      // };
+      const oQuoteInputs: any = getQuoteInputs();
+
+      const returnValue = await api.project.getProjectQuoteInfo(oQuoteInputs);
+      if (returnValue) {
+        setSuccess(true);
+        if (refetch) refetch();
+      } else {
+        setFail(true);
+      }
+    } catch (error) {
+      setFail(true);
+    }
+  };
 
 
 

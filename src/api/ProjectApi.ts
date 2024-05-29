@@ -135,13 +135,17 @@ export default class ProjectApi extends AbstractApi {
   deleteNotes = async (params: any): Promise<any> =>
     this.client.post(`/api/Quote/deleteNotes`, params).then((res: any) => res.data);
 
-  getProjectQuoteInfo = async (params: {
-    intUserId: number;
-    intUAL: number;
-    intJobId: number;
-    intUnitNo: number;
-  }): Promise<any> => this.client.post(`/api/quote/get`, params).then((res: any) => JSON.parse(res.data));
-  // Promise<any> => this.client.post(`/api/quote/get`, params).then((res: any) => res.data);
+  // getProjectQuoteInfo = async (params: {
+  //   intUserId: number;
+  //   intUAL: number;
+  //   intJobId: number;
+  //   intUnitNo: number;
+  // }): Promise<any> => this.client.post(`/api/quote/get`, params).then((res: any) => JSON.parse(res.data));
+  // // Promise<any> => this.client.post(`/api/quote/get`, params).then((res: any) => res.data);
+
+  getProjectQuoteInfo = async (params: JSON): Promise<any> =>
+    this.client.post(`/api/quote/get`, params).then((res: any) => JSON.parse(res.data));
+
   
   quoteExportPDF = (params: any, config?: any): Promise<AxiosResponse<any, any>> =>
     this.client.post('/api/quote/exportPdf', params, {
