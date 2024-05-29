@@ -82,10 +82,10 @@ export default function ProjectQuote() {
     isLoading: isLoadingQuoteInfo,
     refetch,
   } = useGetQuoteInfo({
-    intUserID: typeof window !== 'undefined' && localStorage.getItem('userId'),
+    intUserId: typeof window !== 'undefined' && localStorage.getItem('userId'),
     intUAL: typeof window !== 'undefined' && localStorage.getItem('UAL'),
-    intJobID: Number(projectId),
-    intUnitNo: 1,
+    intJobId: Number(projectId),
+    // intUnitNo: 1,
   });
 
   const {
@@ -116,90 +116,94 @@ export default function ProjectQuote() {
 
   if (isLoadingQuoteInfo) return <LinearProgress color="info" />;
 
-  if (!isGenerate)
+  // if (!isGenerate)
+    // return (
+    //   <Container maxWidth="xl">
+    //     <Stack direction="column" justifyContent="center" alignItems="center" spacing={5}>
+    //       <Typography variant="h5" sx={{ color: theme.palette.primary.main }}>
+    //         Select a stage to generate a quote
+    //       </Typography>
+    //       <Button
+    //         onClick={handleGenerate}
+    //         color="primary"
+    //         variant="contained"
+    //         endIcon={<Iconify icon="ooui:arrow-next-ltr" />}
+    //       >
+    //         Generate Group
+    //       </Button>
+    //     </Stack>
+    //     <Snackbar
+    //       open={isNoUnit}
+    //       autoHideDuration={6000}
+    //       onClose={() => {
+    //         setIsNoUnit(false);
+    //       }}
+    //     >
+    //       <Alert
+    //         onClose={() => {
+    //           setIsNoUnit(false);
+    //         }}
+    //         severity="error"
+    //         sx={{ width: '100%' }}
+    //       >
+    //         No Unit! Please add new unit to generate Quote!
+    //       </Alert>
+    //     </Snackbar>
+    //   </Container>
+    // );
+
     return (
-      <Container>
-        <Stack direction="column" justifyContent="center" alignItems="center" spacing={5}>
-          <Typography variant="h5" sx={{ color: theme.palette.primary.main }}>
-            Select a stage to generate a quote
-          </Typography>
-          <Button
-            onClick={handleGenerate}
-            color="primary"
-            variant="contained"
-            endIcon={<Iconify icon="ooui:arrow-next-ltr" />}
-          >
-            Generate Group
-          </Button>
-        </Stack>
-        <Snackbar
-          open={isNoUnit}
-          autoHideDuration={6000}
-          onClose={() => {
-            setIsNoUnit(false);
-          }}
-        >
-          <Alert
-            onClose={() => {
-              setIsNoUnit(false);
-            }}
-            severity="error"
-            sx={{ width: '100%' }}
-          >
-            No Unit! Please add new unit to generate Quote!
-          </Alert>
-        </Snackbar>
-      </Container>
+      <ProjectQuoteForm projectId={Number(projectId)} quoteInfo={quoteInfo} refetch={refetch} />
     );
 
-  return (
-    <ProjectQuoteForm
-      projectId={Number(projectId)}
-      quoteControlInfo={{
-        ddlCountry: initControlInfo.ddlCountry,
-        ddlFOB_Point: initControlInfo.ddlFOB_Point,
-        ddlQuoteStage: initControlInfo.ddlQuoteStage,
-        ddlCountryEnabled: quoteInfo.ddlCountryEnabled,
-        ddlFOB_PointEnabled: quoteInfo.ddlFOB_PointEnabled,
-        divFinalPricingVisible: quoteInfo.divFinalPricingVisible,
-        divMiscVisible: quoteInfo.divMiscVisible,
-        divNotesVisible: quoteInfo.divNotesVisible,
-        divPricingGeneralVisible: quoteInfo.divPricingGeneralVisible,
-        divPricingSettingsVisible: quoteInfo.divPricingSettingsVisible,
-        divPricingVisible: quoteInfo.divPricingVisible,
-        gvNotesVisible: quoteInfo.gvNotesVisible,
-        gvPricingMiscVisible: quoteInfo.gvPricingMiscVisible,
-      }}
-      quoteFormInfo={{
-        txbRevisionNo: controlInfo?.txbRevisionNo || '0',
-        txbProjectName: controlInfo.txbProjectName,
-        txbQuoteNo: controlInfo?.txbQuoteNo || '0',
-        txbTerms: 'Net 30',
-        txbCreatedDate: controlInfo?.txbCreatedDate || initControlInfo?.txbCreatedDate,
-        txbRevisedDate: controlInfo?.txbRevisedDate || initControlInfo?.txbRevisedDate,
-        txbValidDate: controlInfo?.txbValidDate || initControlInfo?.txbValidDate,
-        txbCurrencyRate: controlInfo?.txbCurrencyRate || '0',
-        txbShippingFactor: controlInfo?.txbShippingFactor || '0',
-        txbDiscountFactor: controlInfo?.txbDiscountFactor || '0',
-        txbPriceAllUnits: controlInfo.txbPriceAllUnits || pricingTotal?.txbPriceAllUnits || '0',
-        txbPriceMisc: controlInfo.txbPriceMisc || pricingTotal?.txbPriceMisc || '0',
-        txbPriceShipping: controlInfo.txbPriceShipping || pricingTotal?.txbPriceShipping || '0',
-        txbPriceSubtotal: controlInfo.txbPriceSubtotal || pricingTotal?.txbPriceSubtotal || '0',
-        txbPriceDiscount: controlInfo.txbPriceDiscount || pricingTotal?.txbPriceDiscount || '0',
-        txbPriceFinalTotal:
-          controlInfo.txbPriceFinalTotal || pricingTotal?.txbPriceFinalTotal || '0',
-        ddlQuoteStageVal: controlInfo.ddlQuoteStageVal || '1',
-        ddlFOB_PointVal: controlInfo.ddlFOB_PointVal || '1',
-        ddlCountryVal: controlInfo.ddlCountryVal || '2',
-        ddlShippingTypeVal: controlInfo.ddlShippingTypeVal || '1',
-        ddlDiscountTypeVal: controlInfo.ddlDiscountTypeVal || '2',
-      }}
-      gvPricingGeneral={gvPricingGeneral}
-      gvPricingUnits={gvPricingUnits}
-      gvPricingTotal={quoteInfo.pricingTotal}
-      gvMisc={gvMisc}
-      gvNotes={gvNotes}
-      refetch={refetch}
-    />
-  );
+    // return (
+    //   <ProjectQuoteForm
+    //     projectId={Number(projectId)}
+    //     quoteControlInfo={{
+    //       ddlCountry: initControlInfo?.ddlCountry,
+    //       ddlFOB_Point: initControlInfo?.ddlFOB_Point,
+    //       ddlQuoteStage: initControlInfo?.ddlQuoteStage,
+    //       ddlCountryEnabled: quoteInfo?.ddlCountryEnabled,
+    //       ddlFOB_PointEnabled: quoteInfo?.ddlFOB_PointEnabled,
+    //       divFinalPricingVisible: quoteInfo?.divFinalPricingVisible,
+    //       divMiscVisible: quoteInfo?.divMiscVisible,
+    //       divNotesVisible: quoteInfo?.divNotesVisible,
+    //       divPricingGeneralVisible: quoteInfo?.divPricingGeneralVisible,
+    //       divPricingSettingsVisible: quoteInfo?.divPricingSettingsVisible,
+    //       divPricingVisible: quoteInfo?.divPricingVisible,
+    //       gvNotesVisible: quoteInfo?.gvNotesVisible,
+    //       gvPricingMiscVisible: quoteInfo?.gvPricingMiscVisible,
+    //     }}
+    //     quoteFormInfo={{
+    //       txbRevisionNo: controlInfo?.txbRevisionNo || '0',
+    //       txbProjectName: controlInfo?.txbProjectName,
+    //       txbQuoteNo: controlInfo?.txbQuoteNo || '0',
+    //       txbTerms: 'Net 30',
+    //       txbCreatedDate: controlInfo?.txbCreatedDate || initControlInfo?.txbCreatedDate,
+    //       txbRevisedDate: controlInfo?.txbRevisedDate || initControlInfo?.txbRevisedDate,
+    //       txbValidDate: controlInfo?.txbValidDate || initControlInfo?.txbValidDate,
+    //       txbCurrencyRate: controlInfo?.txbCurrencyRate || '0',
+    //       txbShippingFactor: controlInfo?.txbShippingFactor || '0',
+    //       txbDiscountFactor: controlInfo?.txbDiscountFactor || '0',
+    //       txbPriceAllUnits: controlInfo?.txbPriceAllUnits || pricingTotal?.txbPriceAllUnits || '0',
+    //       txbPriceMisc: controlInfo?.txbPriceMisc || pricingTotal?.txbPriceMisc || '0',
+    //       txbPriceShipping: controlInfo?.txbPriceShipping || pricingTotal?.txbPriceShipping || '0',
+    //       txbPriceSubtotal: controlInfo?.txbPriceSubtotal || pricingTotal?.txbPriceSubtotal || '0',
+    //       txbPriceDiscount: controlInfo?.txbPriceDiscount || pricingTotal?.txbPriceDiscount || '0',
+    //       txbPriceFinalTotal:
+    //         controlInfo?.txbPriceFinalTotal || pricingTotal?.txbPriceFinalTotal || '0',
+    //       ddlQuoteStageVal: controlInfo?.ddlQuoteStageVal || '1',
+    //       ddlFOB_PointVal: controlInfo?.ddlFOB_PointVal || '1',
+    //       ddlCountryVal: controlInfo?.ddlCountryVal || '2',
+    //       ddlShippingTypeVal: controlInfo?.ddlShippingTypeVal || '1',
+    //       ddlDiscountTypeVal: controlInfo?.ddlDiscountTypeVal || '2',
+    //     }}
+    //     gvPricingGeneral={gvPricingGeneral}
+    //     gvPricingUnits={gvPricingUnits}
+    //     gvPricingTotal={quoteInfo?.pricingTotal}
+    //     gvMisc={gvMisc}
+    //     gvNotes={gvNotes}
+    //     refetch={refetch}
+    //   />
+    // );
 }

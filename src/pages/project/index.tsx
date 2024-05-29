@@ -182,8 +182,6 @@ export default function Project() {
     [dataFiltered?.length, filterName, filterRole, filterStatus]
   );
 
-  console.log(dataFiltered, isLoadingProjects);
-
   return (
     <>
       <Head>

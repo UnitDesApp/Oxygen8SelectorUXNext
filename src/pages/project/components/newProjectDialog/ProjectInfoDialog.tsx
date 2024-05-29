@@ -78,7 +78,7 @@ export default function ProjectInfoDialog({
 
   // let { oSavedjob } = null || {};
 
-  const NewUserSchema = Yup.object().shape({
+  const JobFormSchema = Yup.object().shape({
     txbJobName: Yup.string().required('Please enter a Project Name'),
     // ddlBasisOfDesign: Yup.string().required('Please enter a Basis Of Design'),
     ddlBasisOfDesign: Yup.number(),
@@ -152,7 +152,7 @@ export default function ProjectInfoDialog({
     [savedJob]
   );
 
-  const methods = useForm({ resolver: yupResolver(NewUserSchema), defaultValues });
+  const methods = useForm({ resolver: yupResolver(JobFormSchema), defaultValues });
 
   // const {
   //   setValue,
