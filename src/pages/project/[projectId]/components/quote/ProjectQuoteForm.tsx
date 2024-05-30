@@ -16,17 +16,20 @@ import {
   Snackbar,
   Alert,
 } from '@mui/material';
+import { yupResolver } from '@hookform/resolvers/yup';
+import { useForm } from 'react-hook-form';
 import { RHFSelect, RHFTextField } from 'src/components/hook-form';
 import FormProvider from 'src/components/hook-form/FormProvider';
 import Iconify from 'src/components/iconify/Iconify';
 import Scrollbar from 'src/components/scrollbar/Scrollbar';
-import { useCallback, useMemo, useState } from 'react';
-import { useForm } from 'react-hook-form';
-import { yupResolver } from '@hookform/resolvers/yup';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useApiContext } from 'src/contexts/ApiContext';
 import { LoadingButton } from '@mui/lab';
+import { useGetQuoteSelTables, useGetQuoteInfo } from 'src/hooks/useApi';
+import * as Ids from 'src/utils/ids';
 import QuoteMiscDataTable from './QuoteMiscDataTable';
 import QuoteNoteDataTable from './QuoteNoteDataTable';
+
 
 // --------------------------------------------------------------
 const CustomGroupBoxBorder = styled(Box)(({ theme }) => ({
@@ -82,111 +85,263 @@ function CustomGroupBox({ title, children, bordersx, titlesx }: CustomGroupBoxPr
   );
 }
 // -------------------------------------------------
+// type ProjectQuoteFormProps = {
+//   projectId?: number;
+//   quoteControlInfo?: any;
+//   quoteFormInfo?: any;
+//   gvPricingGeneral?: any;
+//   gvPricingUnits?: any;
+//   gvPricingTotal?: any;
+//   gvMisc?: any;
+//   gvNotes?: any;
+//   refetch?: Function;
+// };
+
+// export default function ProjectQuoteForm({
+//   projectId,
+//   quoteControlInfo,
+//   quoteFormInfo,
+//   gvPricingGeneral,
+//   gvPricingUnits,
+//   gvPricingTotal,
+//   gvMisc,
+//   gvNotes,
+//   refetch,
+// }: ProjectQuoteFormProps) {
+//   const api = useApiContext();
+
+
 type ProjectQuoteFormProps = {
   projectId?: number;
-  quoteControlInfo?: any;
-  quoteFormInfo?: any;
-  gvPricingGeneral?: any;
-  gvPricingUnits?: any;
-  gvPricingTotal?: any;
-  gvMisc?: any;
-  gvNotes?: any;
+  quoteInfo?: any;
   refetch?: Function;
 };
 
 export default function ProjectQuoteForm({
-  projectId,
-  quoteControlInfo,
-  quoteFormInfo,
-  gvPricingGeneral,
-  gvPricingUnits,
-  gvPricingTotal,
-  gvMisc,
-  gvNotes,
-  refetch,
-}: ProjectQuoteFormProps) {
-  const api = useApiContext();
+    projectId,
+    quoteInfo,
+    refetch,
+  }: ProjectQuoteFormProps) {
+    const api = useApiContext();
 
   // status
   const [success, setSuccess] = useState<boolean>(false);
   const [fail, setFail] = useState<boolean>(false);
+  const { data: db } = useGetQuoteSelTables();  // useGetQuoteSelTables api call returns data and stores in db
 
-  // Form Schema
-  const UpdateJobInfoSchema = Yup.object().shape({
+
+
+
+  // Form Schemar
+  const QuoteFormSchema = Yup.object().shape({
     txbRevisionNo: Yup.string().required('This field is required!'),
+    ddlQuoteStage: Yup.number().required('This field is required!'),
     txbProjectName: Yup.string().required('This field is required!'),
     txbQuoteNo: Yup.string().required('This field is required!'),
+    ddlFOBPoint: Yup.number(),
     txbTerms: Yup.string(),
     txbCreatedDate: Yup.string(),
     txbRevisedDate: Yup.string(),
     txbValidDate: Yup.string(),
-    txbCurrencyRate: Yup.string().required('This field is required!'),
-    txbShippingFactor: Yup.string().required('This field is required!'),
-    txbPriceShipping: Yup.string().required('This field is required!'),
-    txbDiscountFactor: Yup.string().required('This field is required!'),
-    txbPriceDiscount: Yup.string().required('This field is required!'),
-    txbPriceAllUnits: Yup.string().required('This field is required!'),
-    txbPriceMisc: Yup.string().required('This field is required!'),
-    txbPriceSubtotal: Yup.string().required('This field is required!'),
-    txbPriceFinalTotal: Yup.string().required('This field is required!'),
-    ddlQuoteStageVal: Yup.string().required('This field is required!'),
-    ddlFOB_PointVal: Yup.string().required('This field is required!'),
-    ddlCountryVal: Yup.string().required('This field is required!'),
-    ddlShippingTypeVal: Yup.string().required('This field is required!'),
-    ddlDiscountTypeVal: Yup.string().required('This field is required!'),
+    ddlCountry: Yup.number(),
+    txbCurrencyRate: Yup.number().required('This field is required!'),
+    txbShippingFactor: Yup.number().required('This field is required!'),
+    ddlShippingType: Yup.number(),
+    txbDiscountFactor: Yup.number().required('This field is required!'),
+    ddlDiscountType: Yup.number(),
+    txbPriceAllUnits: Yup.number().required('This field is required!'),
+    txbPriceMisc: Yup.number().required('This field is required!'),
+    txbPriceShipping: Yup.number().required('This field is required!'),
+    txbPriceSubtotal: Yup.number().required('This field is required!'),
+    txbPriceDiscount: Yup.number().required('This field is required!'),
+    txbPriceFinalTotal: Yup.number().required('This field is required!'),
   });
 
-  // default values for form depend on redux
+  // // default values for form depend on redux
+  // const defaultValues = useMemo(
+  //   () => ({
+  //     txbRevisionNo: quoteInfo?.oQuote ? quoteInfo?.oQuote?.intRevisionNo : '0',
+  //     ddlQuoteStage: quoteInfo?.oQuote ? quoteInfo?.oQuote?.intQuoteStageId : 0,
+  //     txbProjectName: quoteInfo?.oQuote ? quoteInfo?.oQuote?.strProjectName : '',
+  //     txbQuoteNo: quoteInfo?.oQuote ? quoteInfo?.oQuote?.intQuoteId : '0',
+  //     ddlFOBPoint: quoteInfo?.oQuote ? quoteInfo?.oQuote?.intFOBPointId : 0,
+  //     txbTerms: quoteInfo?.oQuote ? quoteInfo?.oQuote?.strTerms : 'Net 30',
+  //     // txbCreatedDate: quoteInfo?.oQuote ? quoteInfo?.oQuote?.oQuote?.strCreatedDate : `${today.getFullYear()}-${today.getMonth()}-${today.getDate()}`,
+  //     // txbRevisedDate: quoteInfo?.oQuote ? quoteInfo?.oQuote?.strRevisedDate : `${today.getFullYear()}-${today.getMonth()}-${today.getDate()}`,
+  //     // txbValidDate: quoteInfo?.oQuote ? quoteInfo?.oQuote?.strValidDate : `${today.getFullYear()}-${today.getMonth()}-${today.getDate() + 60}`,
+  //     txbCreatedDate: quoteInfo?.oQuote?.strCreatedDate ? quoteInfo?.oQuote?.oQuote?.strCreatedDate : '',
+  //     txbRevisedDate: quoteInfo?.oQuote?.strRevisedDate ? quoteInfo?.oQuote?.strRevisedDate : '',
+  //     txbValidDate: quoteInfo?.oQuote?.strValidDate ? quoteInfo?.oQuote?.strValidDate : '',
+  //     ddlCountry: quoteInfo?.oQuote ? quoteInfo?.oQuote?.intCountryId : 0,
+  //     txbCurrencyRate: quoteInfo?.oQuote ? quoteInfo?.oQuote?.dblCurrencyRate : '0.00',
+  //     txbShippingFactor: quoteInfo?.oQuote ? quoteInfo?.oQuote?.dblShippingFactor : '0.00',
+  //     ddlShippingType: quoteInfo?.oQuote ? quoteInfo?.oQuote?.intShippingTypeId : 0,
+  //     txbDiscountFactor: quoteInfo?.oQuote ? quoteInfo?.oQuote?.dblDiscountFactor : '0.00',
+  //     ddlDiscountType: quoteInfo?.oQuote ? quoteInfo?.oQuote?.intDiscountTypeId : 0,
+  //     txbPriceAllUnits: quoteInfo?.oQuote ? quoteInfo?.oQuote?.dblPriceAllUnits : '0.00',
+  //     txbPriceMisc: quoteInfo?.oQuote ? quoteInfo?.oQuote?.dblPriceMisc : '0.00',
+  //     txbPriceShipping: quoteInfo?.oQuote ? quoteInfo?.oQuote?.dblPriceShipping : '0.00',
+  //     txbPriceSubtotal: quoteInfo?.oQuote ? quoteInfo?.oQuote?.dblPriceSubtotal : '0.00',
+  //     txbPriceDiscount: quoteInfo?.oQuote ? quoteInfo?.oQuote?.dblPriceDiscount : '0.00',
+  //     txbPriceFinalTotal: quoteInfo?.oQuote ? quoteInfo?.oQuote?.dblPriceFinalTotal : '0.00',
+  //   }),
+  //   [quoteInfo?.oQuote]
+  // );
+
+
   const defaultValues = useMemo(
     () => ({
-      txbRevisionNo: quoteFormInfo?.txbRevisionNo || '',
-      txbProjectName: quoteFormInfo?.txbProjectName || '',
-      txbQuoteNo: quoteFormInfo?.txbQuoteNo || '',
-      txbTerms: quoteFormInfo?.txbTerms || '',
-      txbCreatedDate: quoteFormInfo?.txbCreatedDate || '',
-      txbRevisedDate: quoteFormInfo?.txbRevisedDate || '',
-      txbValidDate: quoteFormInfo?.txbValidDate || '',
-      txbCurrencyRate: quoteFormInfo?.txbCurrencyRate || '',
-      txbShippingFactor: quoteFormInfo?.txbShippingFactor || '',
-      txbPriceShipping: quoteFormInfo?.txbPriceShipping || '',
-      txbDiscountFactor: quoteFormInfo?.txbDiscountFactor || '',
-      txbPriceDiscount: quoteFormInfo?.txbPriceDiscount || '',
-      txbPriceAllUnits: quoteFormInfo?.txbPriceAllUnits || '',
-      txbPriceMisc: quoteFormInfo?.txbPriceMisc || '',
-      txbPriceSubtotal: quoteFormInfo?.txbPriceSubtotal || '',
-      txbPriceFinalTotal: quoteFormInfo?.txbPriceFinalTotal || '',
-      ddlQuoteStageVal: quoteFormInfo?.ddlQuoteStageVal || '',
-      ddlFOB_PointVal: quoteFormInfo?.ddlFOB_PointVal || '',
-      ddlCountryVal: quoteFormInfo?.ddlCountryVal || '',
-      ddlShippingTypeVal: quoteFormInfo?.ddlShippingTypeVal || '',
-      ddlDiscountTypeVal: quoteFormInfo?.ddlDiscountTypeVal || '',
+      txbRevisionNo: '0',
+      ddlQuoteStage: -1,
+      txbProjectName: '',
+      txbQuoteNo: '0',
+      ddlFOBPoint: 0,
+      txbTerms: 'Net 30',
+      // txbCreatedDate: `${today.getFullYear()}-${today.getMonth()}-${today.getDate()}`,
+      // txbRevisedDate: `${today.getFullYear()}-${today.getMonth()}-${today.getDate()}`,
+      // txbValidDate: `${today.getFullYear()}-${today.getMonth()}-${today.getDate() + 60}`,
+      txbCreatedDate: '',
+      txbRevisedDate: '',
+      txbValidDate: '',
+      ddlCountry: 0,
+      txbCurrencyRate: '1.00',
+      txbShippingFactor: '9.8',
+      ddlShippingType: 0,
+      txbDiscountFactor: '0.0',
+      ddlDiscountType: 0,
+      txbPriceAllUnits: '0.00',
+      txbPriceMisc: '0.00',
+      txbPriceShipping: '0.00',
+      txbPriceSubtotal: '0.00',
+      txbPriceDiscount: '0.00',
+      txbPriceFinalTotal: '0.00',
     }),
-    [quoteFormInfo]
+    []
   );
+
+
 
   // form setting using useForm
   const methods = useForm({
-    resolver: yupResolver(UpdateJobInfoSchema),
+    resolver: yupResolver(QuoteFormSchema),
     defaultValues,
   });
 
   const {
+    setValue,
+    getValues,
+    reset,
     handleSubmit,
+    watch,
     formState: { isSubmitting },
   } = methods;
 
-  // submmit function
-  const onQuoteSubmit = useCallback(
-    async (data: any) => {
+
+
+  let formCurrValues = getValues();
+
+  const getQuoteInputs = () => {
+    // const jsonData = '{"name":"John", "age":30, "city":"London"}';
+    // let oUnitInputs;
+
+
+    formCurrValues = getValues(); // Do not use watch, must use getValues with the function to get current values.
+    let savedDate =  quoteInfo?.oQuote?.strCreatedDate;
+    
+    if (savedDate?.includes('/')) {
+      const [month, day, year] =  savedDate.split('/');
+      savedDate =`${year}-${month}-${day}`;
+    }
+
+    const today = new Date();
+    const newValidDate = new Date();
+    newValidDate.setDate(newValidDate.getMonth() + 1);
+    newValidDate.setDate(newValidDate.getDate() + 60);
+
+
+
+  const oQuoteInputs = {
+    oQuote: {
+      "intUserId" : typeof window !== 'undefined' && localStorage.getItem('userId'),
+      "intUAL" : typeof window !== 'undefined' && localStorage.getItem('UAL'),  
+      "intJobId" : Number(projectId),
+      "intQuoteStageId" : Number(formCurrValues.ddlQuoteStage),
+      "intRevisionNo" : formCurrValues.txbRevisionNo,
+      "intFOBPointId" :  Number(formCurrValues.ddlFOBPoint),
+      "intCountryId" : Number(formCurrValues.ddlCountry),
+      "dblCurrencyRate" : formCurrValues.txbCurrencyRate,
+      "dblShippingFactor" : formCurrValues.txbShippingFactor,
+      "intShippingTypeId" : Number(formCurrValues.ddlShippingType),
+      "dblDiscountFactor" : formCurrValues.txbDiscountFactor,
+      "intDiscountTypeId" : Number(formCurrValues.ddlDiscountType),
+      "dblPriceAllUnits" : formCurrValues.txbPriceAllUnits,
+      "dblPriceMisc" : formCurrValues.txbPriceMisc,
+      "dblPriceShipping" : formCurrValues.txbPriceShipping,
+      "dblPriceSubtotal" : formCurrValues.txbPriceSubtotal,
+      "dblPriceDiscount" : formCurrValues.txbPriceDiscount,
+      "dblPriceFinalTotal" : formCurrValues.txbPriceFinalTotal,
+      "strCreatedDate" : quoteInfo?.oQuote?.strCreatedDate ? savedDate : formCurrValues.txbCreatedDate,
+      "strRevisedDate" : `${today.getFullYear()}-${today.getMonth()}-${today.getDate()}`,
+      "strValidDate" : `${newValidDate.getFullYear()}-${newValidDate.getMonth()}-${newValidDate.getDate()}`,
+    },
+  }
+  
+  return oQuoteInputs;
+  };
+
+
+
+
+  // useEffect(() => {
+  //   const today = new Date();
+  //   const newValidDate = new Date();
+  //   newValidDate.setDate(newValidDate.getDate() + 60);
+
+  //   setValue('txbCreatedDate', `${today.getFullYear()}-${today.getMonth() + 1}-${today.getDate()}`);
+  //   setValue('txbRevisedDate', `${today.getFullYear()}-${today.getMonth() + 1}-${today.getDate()}`);
+  //   setValue('txbValidDate', `${newValidDate.getFullYear()}-${newValidDate.getMonth() + 1}-${newValidDate.getDate()}`);
+
+  //  }, [setValue]) 
+
+
+  // // submmit function
+  // const onQuoteSubmit = useCallback(
+  //   async (data: any) => {
+  //     try {
+  //       const quoteData = {
+  //         ...data,
+  //         intUserID: localStorage.getItem('userId'),
+  //         intUAL: localStorage.getItem('UAL'),
+  //         intJobID: projectId,
+  //       };
+  //       const result = await api.project.saveQuoteInfo(quoteData);
+  //       if (result.status === 'success') {
+  //         setSuccess(true);
+  //         if (refetch) refetch();
+  //       } else {
+  //         setFail(true);
+  //       }
+  //     } catch (error) {
+  //       setFail(true);
+  //     }
+  //   },
+  //   [api.project, projectId, refetch]
+  // );
+
+
+    // submmit function
+    const onQuoteSubmit = async (data: any) => {
       try {
-        const quoteData = {
-          ...data,
-          intUserID: localStorage.getItem('userId'),
-          intUAL: localStorage.getItem('UAL'),
-          intJobID: projectId,
-        };
-        const result = await api.project.saveQuoteInfo(quoteData);
-        if (result.status === 'success') {
+        // const requestData = {
+        //   ...data,
+        //   intUserID: localStorage.getItem('userId'),
+        //   intUAL: localStorage.getItem('UAL'),
+        //   intJobID: projectId,
+        // };
+        const oQuote: any = getQuoteInputs();
+
+        const returnValue = await api.project.saveQuoteInfo(oQuote);
+        if (returnValue) {
           setSuccess(true);
           if (refetch) refetch();
         } else {
@@ -195,9 +350,64 @@ export default function ProjectQuoteForm({
       } catch (error) {
         setFail(true);
       }
-    },
-    [api.project, projectId, refetch]
-  );
+    };
+
+
+
+
+   const [dateInfo, setDateInfo] = useState<any>();
+   useEffect(() => {
+    const today = new Date();
+    const newValidDate = new Date();
+    newValidDate.setDate(newValidDate.getDate() + 60);
+
+    setValue('txbCreatedDate', `${today.getFullYear()}-${today.getMonth() + 1}-${today.getDate()}`);
+    setValue('txbRevisedDate', `${today.getFullYear()}-${today.getMonth() + 1}-${today.getDate()}`);
+    setValue('txbValidDate', `${newValidDate.getFullYear()}-${newValidDate.getMonth() + 1}-${newValidDate.getDate()}`);
+
+   }, [setValue]) 
+
+
+    const [quoteStageInfo, setQuoteStageInfo] = useState<any>([])
+    useEffect(() => {
+      const info: { fdtQuoteStage: any; isVisible: boolean; defaultId: number} = { fdtQuoteStage: [],  isVisible: false, defaultId: 0};
+  
+      info.fdtQuoteStage = db?.dbtSelQuoteStage;
+    
+      setQuoteStageInfo(info);
+      info.defaultId = info.fdtQuoteStage?.[0]?.id;
+      // setValue('ddlQuoteStage', info.fdtQuoteStage?.[0]?.id);
+     
+    }, [db, setValue]);
+
+
+    const [fobPointInfo, setFOBPointInfo] = useState<any>([])
+    useEffect(() => {
+      const info: { fdtFOBPoint: any; isVisible: boolean; defaultId: number} = { fdtFOBPoint: [],  isVisible: false, defaultId: 0};
+  
+      info.fdtFOBPoint = db?.dbtSelFOBPoint;
+    
+      setFOBPointInfo(info);
+      info.defaultId = Ids.intFOB_PointVancouverID;
+      // setValue('ddlFOBPoint', info.fdtFOBPoint?.[0]?.id);
+      setValue('ddlFOBPoint', Ids.intFOB_PointVancouverID);
+
+    }, [db, setValue]);
+
+
+    const [countryInfo, setCountryInfo] = useState<any>([])
+    useEffect(() => {
+      const info: { fdtCountry: any; isVisible: boolean; defaultId: number} = { fdtCountry: [],  isVisible: false, defaultId: 0};
+  
+      info.fdtCountry = db?.dbtSelCountry;
+    
+      setCountryInfo(info);
+      info.defaultId = Ids.intCountryUSA_ID
+      // setValue('ddlCountry', info.fdtCountry?.[0]?.id);
+      setValue('ddlCountry', Ids.intCountryUSA_ID);
+
+    }, [db, setValue]);
+
 
   // Event handler for addding misc
   const addMisc = useCallback(
@@ -275,8 +485,137 @@ export default function ProjectQuoteForm({
     [api.project, projectId, refetch]
   );
 
+
+  // Load saved Values
+  useEffect(() => {
+    if (quoteInfo?.oQuote !== null) {
+
+      if (quoteInfo?.oQuote?.intRevisionNo > 0) {
+        setValue('txbRevisionNo', quoteInfo?.oQuote?.intRevisionNo);
+      }
+
+      if (quoteInfo?.oQuote?.intQuoteStageId > 0) {
+        setValue('ddlQuoteStage', quoteInfo?.oQuote?.intQuoteStageId);
+      }
+
+      if (quoteInfo?.oQuote?.intFOBPointId > 0) {
+        setValue('ddlFOBPoint', quoteInfo?.oQuote?.intFOBPointId);
+      }
+
+      // setValue('txbTerms', quoteInfo?.oQuote?.strTerms);
+
+      if (quoteInfo?.oQuote?.strCreatedDate !== null && quoteInfo?.oQuote?.strCreatedDate !== '') {
+        setValue('txbCreatedDate', quoteInfo?.oQuote?.oQuote?.strCreatedDate);
+      }
+
+      if (quoteInfo?.oQuote?.strRevisedDate !== null && quoteInfo?.oQuote?.strRevisedDate !== '') {
+        setValue('txbRevisedDate', quoteInfo?.oQuote?.strRevisedDate);
+      }
+
+      if (quoteInfo?.oQuote?.strValidDate !== null && quoteInfo?.oQuote?.strValidDate !== '') {
+        setValue('txbValidDate', quoteInfo?.oQuote?.strValidDate);
+      }
+
+      if (quoteInfo?.oQuote?.intCountryId > 0) {
+        setValue('ddlCountry', quoteInfo?.oQuote?.intCountryId);
+      }
+
+      if (quoteInfo?.oQuote?.dblCurrencyRate !== null && quoteInfo?.oQuote?.dblCurrencyRate > 0) {
+        setValue('txbCurrencyRate', quoteInfo?.oQuote?.dblCurrencyRate?.toFixed(2));
+      }
+
+      if (quoteInfo?.oQuote?.dblShippingFactor !== null && quoteInfo?.oQuote?.dblShippingFactor > 0) {
+        setValue('txbShippingFactor', quoteInfo?.oQuote?.dblShippingFactor?.toFixed(1));
+      }
+
+
+      if (quoteInfo?.oQuote?.intShippingTypeId > 0) {
+        setValue('ddlShippingType', quoteInfo?.oQuote?.intShippingTypeId);
+      }
+
+      if (quoteInfo?.oQuote?.dblDiscountFactor !== null && quoteInfo?.oQuote?.dblDiscountFactor > 0) {
+        setValue('txbDiscountFactor', quoteInfo?.oQuote?.dblDiscountFactor?.toFixed(1));
+      }
+
+      if (quoteInfo?.oQuote?.intDiscountTypeId > 0) {
+        setValue('ddlDiscountType', quoteInfo?.oQuote?.intDiscountTypeId);
+      }
+
+      if (quoteInfo?.oQuote?.dblPriceAllUnits !== null && quoteInfo?.oQuote?.dblPriceAllUnits > 0) {
+        setValue('txbPriceAllUnits', quoteInfo?.oQuote?.dblPriceAllUnits?.toFixed(2));
+      }
+
+      if (quoteInfo?.oQuote?.dblPriceMisc !== null && quoteInfo?.oQuote?.dblPriceMisc > 0) {
+        setValue('txbPriceMisc', quoteInfo?.oQuote?.dblPriceMisc?.toFixed(2));
+      }
+
+      if (quoteInfo?.oQuote?.dblPriceShipping !== null && quoteInfo?.oQuote?.dblPriceShipping > 0) {
+        setValue('txbPriceShipping', quoteInfo?.oQuote?.dblPriceShipping?.toFixed(2));
+      }
+
+      if (quoteInfo?.oQuote?.dblPriceSubtotal !== null && quoteInfo?.oQuote?.dblPriceSubtotal > 0) {
+        setValue('txbPriceSubtotal', quoteInfo?.oQuote?.dblPriceSubtotal?.toFixed(2));
+      }
+
+      if (quoteInfo?.oQuote?.dblPriceDiscount !== null && quoteInfo?.oQuote?.dblPriceDiscount > 0) {
+        setValue('txbPriceDiscount', quoteInfo?.oQuote?.dblPriceDiscount?.toFixed(2));
+      }
+
+      if (quoteInfo?.oQuote?.dblPriceFinalTotal !== null && quoteInfo?.oQuote?.dblPriceFinalTotal > 0) {
+        setValue('txbPriceFinalTotal', quoteInfo?.oQuote?.dblPriceFinalTotal?.toFixed(2));
+      }
+    }
+  }, [quoteInfo?.oQuote, setValue]); // <-- empty dependency array - This will only trigger when the component mounts and no-render
+
+
+// Calculate pricing with default values when Quote not saved yet
+// useGetQuoteInfo({
+//   intUserId: typeof window !== 'undefined' && localStorage.getItem('userId'),
+//   intUAL: typeof window !== 'undefined' && localStorage.getItem('UAL'),
+//   intJobId: Number(projectId),
+//   oQuote: getQuoteInputs(),
+//   // intUnitNo: 1,
+// },);
+
+// const {
+//   data: quoteInfo,
+//   isLoading: isLoadingQuoteInfo,
+//   refetch,
+// } = useGetQuoteInfo({
+//   intUserId: typeof window !== 'undefined' && localStorage.getItem('userId'),
+//   intUAL: typeof window !== 'undefined' && localStorage.getItem('UAL'),
+//   intJobId: Number(projectId),
+//   // intUnitNo: 1,
+// });
+
+
+
+  const quoteInfo1 = async (data: any) => {
+    try {
+      // const requestData = {
+      //   ...data,
+      //   intUserID: localStorage.getItem('userId'),
+      //   intUAL: localStorage.getItem('UAL'),
+      //   intJobID: projectId,
+      // };
+      const oQuoteInputs: any = getQuoteInputs();
+
+      const returnValue = await api.project.getProjectQuoteInfo(oQuoteInputs);
+      if (returnValue) {
+        setSuccess(true);
+        if (refetch) refetch();
+      } else {
+        setFail(true);
+      }
+    } catch (error) {
+      setFail(true);
+    }
+  };
+
+
+
   return (
-    <Container sx={{ mb: '50px' }}>
+    <Container maxWidth="xl" sx={{ mb: '50px' }}>
       <FormProvider methods={methods} onSubmit={handleSubmit(onQuoteSubmit)}>
         <Grid container spacing={3}>
           <Grid item xs={12}>
@@ -288,31 +627,31 @@ export default function ProjectQuoteForm({
                     <RHFSelect
                       native
                       size="small"
-                      name="ddlQuoteStageVal"
+                      name="ddlQuoteStage"
                       label="Stage"
                       placeholder=""
                     >
-                      <option value="" />
-                      {quoteControlInfo?.ddlQuoteStage?.map((ele: any, index: number) => (
-                        <option key={index + ele.id} value={ele.id}>
-                          {ele.items}
+                      <option value="" selected>Select a Stage</option>
+                      {quoteStageInfo?.fdtQuoteStage?.map((e: any, index: number) => (
+                        <option key={index} value={e.id}>
+                          {e.items}
                         </option>
-                      ))}
-                      <option value="2">USA</option>
+                      
+                    ))}
+                      {/* <option value="2">USA</option> */}
                     </RHFSelect>
                     <RHFTextField size="small" name="txbProjectName" label="Project Name" />
                     <RHFTextField size="small" name="txbQuoteNo" label="Quote No" disabled />
                     <RHFSelect
                       native
                       size="small"
-                      name="ddlFOB_PointVal"
+                      name="ddlFOBPoint"
                       label="F.O.B. Point"
                       placeholder=""
                     >
-                      <option value="" />
-                      {quoteControlInfo?.ddlFOB_Point?.map((ele: any, index: number) => (
-                        <option key={index + ele.id} value={ele.id}>
-                          {ele.items}
+                      {fobPointInfo?.fdtFOBPoint?.map((e: any, index: number) => (
+                        <option key={index} value={e.id}>
+                          {e.items}
                         </option>
                       ))}
                     </RHFSelect>
@@ -339,16 +678,15 @@ export default function ProjectQuoteForm({
                     <RHFSelect
                       native
                       size="small"
-                      name="ddlCountryVal"
+                      name="ddlCountry"
                       label="Country"
                       placeholder=""
                     >
-                      <option value="" />
-                      {quoteControlInfo?.ddlCountry?.map((ele: any, index: number) => (
-                        <option key={index + ele.id} value={ele.id}>
-                          {ele.items}
-                        </option>
-                      ))}{' '}
+                      {countryInfo?.fdtCountry?.map((e: any, index: number) => (
+                        <option key={index} value={e.id}>
+                        {e.items}
+                      </option>
+                    ))}
                     </RHFSelect>
                     <RHFTextField size="small" name="txbCurrencyRate" label="Currency Rate" />
                     <Stack direction="row">
@@ -360,8 +698,7 @@ export default function ProjectQuoteForm({
                         label="Unit"
                         placeholder=""
                       >
-                        <option value="" />
-                        <option value="1">%</option>
+                        <option value="1" selected>%</option>
                         <option value="2">$</option>
                       </RHFSelect>
                     </Stack>
@@ -374,9 +711,8 @@ export default function ProjectQuoteForm({
                         label="Unit"
                         placeholder=""
                       >
-                        <option value="" />
                         <option value="1">%</option>
-                        <option value="2">$</option>
+                        <option value="2" selected>$</option>
                       </RHFSelect>
                     </Stack>
                   </Box>
@@ -419,7 +755,9 @@ export default function ProjectQuoteForm({
                       </TableRow>
                     </TableHead>
                     <TableBody>
-                      {gvPricingGeneral?.gvPricingGeneralDataSource?.map((item: any, i: number) => (
+                    {/* {gvPricingGeneral?.gvPricingGeneralDataSource?.map((item: any, i: number) => ( */}
+
+                      {quoteInfo?.dtPricingUnits?.map((item: any, i: number) => (
                         <TableRow
                           key={i}
                           sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
@@ -451,7 +789,7 @@ export default function ProjectQuoteForm({
             </CustomGroupBox>
           </Grid>
           <Grid item xs={12}>
-            {gvPricingUnits?.gvPricingErrMsgDataSource?.map((msg: any) => (
+            {quoteInfo?.dtPricingUnits?.dtPricingErrMsg?.map((msg: any) => (
               <Typography sx={{ color: 'red' }} key={msg.price_error_msg_no}>
                 {msg.price_error_msg}
               </Typography>
@@ -491,7 +829,7 @@ export default function ProjectQuoteForm({
                       </TableRow>
                     </TableHead>
                     <TableBody>
-                      {gvPricingUnits?.gvPricingDataSource?.map((item: any, i: number) => (
+                      {quoteInfo?.dbtPricingUnits?.dtPricing?.map((item: any, i: number) => (
                         <TableRow
                           key={i}
                           sx={{
@@ -538,7 +876,7 @@ export default function ProjectQuoteForm({
           </Grid>
           <Grid item xs={12}>
             <CustomGroupBox>
-              {gvPricingTotal?.gvAddInfoDataSource?.map((item: any, i: number) => (
+              {quoteInfo?.dtPricingTotal?.map((item: any, i: number) => (
                 <Typography key={i} sx={{ fontWeight: item.is_add_info_bold ? 600 : 300 }}>
                   {item.add_info}
                 </Typography>
@@ -548,7 +886,8 @@ export default function ProjectQuoteForm({
           <Grid item xs={12}>
             <CustomGroupBox title="Added Miscellaneous">
               <QuoteMiscDataTable
-                tableData={gvMisc?.gvMiscDataSource}
+                // tableData={gvMisc?.gvMiscDataSource}
+                tableData={quoteInfo?.dtMisc}
                 addRow={addMisc}
                 updateRow={updateMisc}
                 deleteRow={deleteMisc}
@@ -558,7 +897,8 @@ export default function ProjectQuoteForm({
           <Grid item xs={12}>
             <CustomGroupBox title="Added Note">
               <QuoteNoteDataTable
-                tableData={gvNotes?.gvNotesDataSource}
+                // tableData={gvNotes?.gvNotesDataSource}
+                tableData={quoteInfo?.dtNotes}
                 addRow={addNotes}
                 updateRow={updateNotes}
                 deleteRow={deleteNotes}

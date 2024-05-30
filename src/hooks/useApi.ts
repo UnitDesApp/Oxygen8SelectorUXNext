@@ -89,3 +89,9 @@ export const useGetAccountInfo = (config?: UseQueryOptions<any, any, any, any>) 
   const api = useApiContext();
   return useQuery<any>([`get-account-info`], () => api.account.getAccountInfo(), config);
 };
+
+
+export const useGetQuoteSelTables = (config?: UseQueryOptions<any, any, any, any>) => {
+  const api = useApiContext();
+  return useQuery<any>(`get-quote-sel-tables`, () => api.project.getQuoteSelTables(), config);
+};

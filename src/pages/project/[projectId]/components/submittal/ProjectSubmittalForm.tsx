@@ -92,20 +92,30 @@ export default function ProjectSubmittalForm({
   });
 
   // Form Schema
-  const UpdateProjectInfoSchema = Yup.object().shape({
+  const SubmittalFormSchema = Yup.object().shape({
     txbJobName: Yup.string(),
     txbRepName: Yup.string(),
     txbSalesEngineer: Yup.string(),
-    txbLeadTime: Yup.string().required('Please enter a Lead Time'),
+    // txbLeadTime: Yup.string().required('Please enter a Lead Time'),
+    // txbRevisionNo: Yup.number().required('Please enter a Revision No'),
+    // txbPONumber: Yup.number().required('Please enter a PO Number'),
+    // txbShipName: Yup.string().required('Please enter a Ship Name'),
+    // txbShippingStreetAddress: Yup.string().required('Please enter a Street Address'),
+    // txbShippingCity: Yup.string().required('Please enter a City'),
+    // txbShippingProvince: Yup.string().required('Please enter a State'),
+    // txbShippingPostalCode: Yup.string().required('Please enter a Zip'),
+    // ddlCountry: Yup.string().required('Please Select a Country'),
+    // ddlDockType: Yup.string().required('Please Select a Dock type'),
+    txbLeadTime: Yup.string(),
     txbRevisionNo: Yup.number().required('Please enter a Revision No'),
-    txbPONumber: Yup.number().required('Please enter a PO Number'),
-    txbShipName: Yup.string().required('Please enter a Ship Name'),
-    txbShippingStreetAddress: Yup.string().required('Please enter a Street Address'),
-    txbShippingCity: Yup.string().required('Please enter a City'),
-    txbShippingProvince: Yup.string().required('Please enter a State'),
-    txbShippingPostalCode: Yup.string().required('Please enter a Zip'),
-    ddlCountry: Yup.string().required('Please Select a Country'),
-    ddlDockType: Yup.string().required('Please Select a Dock type'),
+    txbPONumber: Yup.string(),
+    txbShipName: Yup.string(),
+    txbShippingStreetAddress: Yup.string(),
+    txbShippingCity: Yup.string(),
+    txbShippingProvince: Yup.string(),
+    txbShippingPostalCode: Yup.string(),
+    ddlCountry: Yup.number(),
+    ddlDockType: Yup.number(),
     ckbBACNetPointList: Yup.boolean(),
     ckbBackdraftDamper: Yup.boolean(),
     ckbBypassDefrost: Yup.boolean(),
@@ -122,45 +132,50 @@ export default function ProjectSubmittalForm({
   // default values for form depend on redux
   const defaultValues = useMemo(
     () => ({
-      txbJobName: submittalInfo?.txbProjectNameText || '',
-      txbRepName: submittalInfo?.txbRepNameText || '',
-      txbSalesEngineer: submittalInfo?.txbSalesEngineerText || '',
-      txbLeadTime: submittalInfo?.txbLeadTimeText || '',
-      txbRevisionNo: submittalInfo?.txbRevisionNoText || '',
-      txbPONumber: submittalInfo?.txbPO_NumberText || '',
-      txbShipName: submittalInfo?.txbShippingNameText || '',
-      txbShippingStreetAddress: submittalInfo?.txbShippingStreetAddressText || '',
-      txbShippingCity: submittalInfo?.txbShippingCityText || '',
-      txbShippingProvince: submittalInfo?.txbShippingProvinceText || '',
-      txbShippingPostalCode: submittalInfo?.txbShippingPostalCodeText || '',
-      ddlCountry: submittalInfo?.ddlShippingCountryValue || '',
-      ddlDockType: submittalInfo?.intDockTypeID || '',
-      ckbBACNetPointList: false,
-      ckbBackdraftDamper: false,
-      ckbBypassDefrost: false,
-      ckbConstantVolume: false,
-      ckbFireAlarm: false,
-      ckbHumidification: false,
-      ckbHydronicPreheat: false,
-      ckbOJHMISpec: false,
-      ckbTemControl: false,
-      ckbTerminalWiring: false,
-      ckbVoltageTable: false,
+      txbJobName: submittalInfo?.strProjectName ? submittalInfo?.strProjectName : '',
+      txbRepName: submittalInfo?.strRepName ? submittalInfo?.strRepName : '',
+      txbSalesEngineer: submittalInfo?.strSalesEngineer ? submittalInfo?.strSalesEngineer : '',
+      txbLeadTime: submittalInfo.strLeadTime ? submittalInfo?.strLeadTime : '',
+      txbRevisionNo: submittalInfo?.intRevisionNo ? submittalInfo?.intRevisionNo : '0',
+      txbPONumber: submittalInfo?.strPO_Number ? submittalInfo?.strPO_Number : '',
+      txbShippingName: submittalInfo?.strShippingName ? submittalInfo?.strShippingName : '',
+      txbShippingStreetAddress: submittalInfo ? submittalInfo?.strShippingStreetAddress : '',
+      txbShippingCity: submittalInfo?.strShippingCity ? submittalInfo?.strShippingCity : '',
+      txbShippingProvince: submittalInfo?.strShippingProvince ? submittalInfo?.strShippingProvince : '',
+      txbShippingPostalCode: submittalInfo?.strShippingPostalCode ? submittalInfo?.strShippingPostalCode : '',
+      ddlShippingCountry: submittalInfo?.intShippingCountryId ? submittalInfo?.intShippingCountryId : 0,
+      ddlDockType: submittalInfo?.intDockTypeId ? submittalInfo?.intDockTypeId : 0,
+      ckbVoltageTable: submittalInfo?.intIsVoltageTable ? submittalInfo?.intIsVoltageTable: 0,
+      ckbBACNetPointList: submittalInfo?.intIsBACNetPoints ? submittalInfo?.intIsBACNetPoints : 0,
+      ckbOJHMISpec: submittalInfo?.intIsOJ_HMI_Spec ? submittalInfo?.intIsOJ_HMI_Spec : 0,
+      ckbTerminalWiring: submittalInfo?.intIsTerminalWiringDiagram ? submittalInfo?.intIsTerminalWiringDiagram : 0,
+      ckbFireAlarm: submittalInfo?.intIsFireAlarm ? submittalInfo?.intIsFireAlarm : 0,
+      ckbBackdraftDamper: submittalInfo?.intIsBackdraftDampers ? submittalInfo?.intIsBackdraftDampers : 0,
+      ckbBypassDefrost: submittalInfo?.intIsBypassDefrost ? submittalInfo?.intIsBypassDefrost : 0,
+      ckbConstantVolume: submittalInfo?.intIsConstantVolume  ? submittalInfo?.intIsConstantVolume : 0,
+      ckbHydronicPreheat: submittalInfo?.intIsHydronicPreheat ? submittalInfo?.intIsHydronicPreheat : 0,
+      ckbHumidification: submittalInfo?.intIsHumidification  ? submittalInfo?.intIsHumidification : 0,
+      ckbTemControl: submittalInfo?.intIsTempControl ? submittalInfo?.intIsTempControl : 0,
     }),
     [submittalInfo]
   );
 
+
   // form setting using useForm
   const methods = useForm({
-    resolver: yupResolver(UpdateProjectInfoSchema),
+    resolver: yupResolver(SubmittalFormSchema),
     defaultValues,
   });
 
   const {
-    handleSubmit,
+    setValue,
+    getValues,
     reset,
+    handleSubmit,
+    watch,
     formState: { isSubmitting },
   } = methods;
+
 
   // event handler for addding note
   const addNoteClicked = useCallback(() => {
@@ -175,6 +190,7 @@ export default function ProjectSubmittalForm({
     setNote('');
   }, [api, note, projectId]);
 
+
   // event handler for adding shipping note
   const addShippingInstructionClicked = useCallback(() => {
     if (shippingNote === '') return;
@@ -188,31 +204,110 @@ export default function ProjectSubmittalForm({
     setShippingNote('');
   }, [api.project, projectId, shippingNote]);
 
-  // submmit function
-  const onProjectInfoSubmit = useCallback(
-    async (data: any) => {
-      try {
-        const requestData = {
-          ...data,
-          intUserID: localStorage.getItem('userId'),
-          intUAL: localStorage.getItem('UAL'),
-          intJobID: projectId,
-        };
-        const returnValue = await api.project.saveSubmittalInfo(requestData);
-        if (returnValue) {
-          setSuccess(true);
-        } else {
+
+  let formCurrValues = getValues();
+  const today = new Date();
+
+  const getSubmittalInputs = () => {
+    // const jsonData = '{"name":"John", "age":30, "city":"London"}';
+    // let oUnitInputs;
+    formCurrValues = getValues(); // Do not use watch, must use getValues with the function to get current values.
+    // let savedDate =  savedJob?.strCreatedDate;
+    
+    // if (savedDate?.includes('/')) {
+    //   const [month, day, year] =  savedDate.split('/');
+    //   savedDate =`${year}-${month}-${day}`;
+    // }
+
+
+  const oSubmittalInputs = {
+        
+    oSubm: {
+      "intUserId": localStorage.getItem('userId'),
+      "intUAL": localStorage.getItem('UAL'),
+      "intJobId" : projectId,
+      "strLeadTime" : formCurrValues.txbLeadTime,
+      "intRevisionNo" : formCurrValues.txbRevisionNo,
+      "strPO_Number" :  formCurrValues.txbPONumber,
+      "strShippingName" : formCurrValues.txbShippingName,
+      "strShippingStreetAddress" : formCurrValues.txbShippingStreetAddress,
+      "strShippingCity" : formCurrValues.txbShippingCity,
+      "strShippingProvince" : formCurrValues.txbShippingProvince,
+      "intShippingCountryId" : Number(formCurrValues.ddlShippingCountry),
+      "strShippingPostalCode" : formCurrValues.txbShippingPostalCode,
+      "intDockTypeId" : Number(formCurrValues.ddlDockType),
+      "intIsVoltageTable" : Number(formCurrValues.ckbVoltageTable) === 1 ? 1 : 0,
+      "intIsBACNetPoints" : Number(formCurrValues.ckbBACNetPointList) === 1 ? 1 : 0,
+      "intIsOJ_HMI_Spec" : Number(formCurrValues.ckbOJHMISpec) === 1 ? 1 : 0,
+      "intIsTerminalWiringDiagram" : Number(formCurrValues.ckbTerminalWiring) === 1 ? 1 : 0,
+      "intIsFireAlarm" : Number(formCurrValues.ckbFireAlarm) === 1 ? 1 : 0,
+      "intIsBackdraftDampers" : Number(formCurrValues.ckbBackdraftDamper) === 1 ? 1 : 0,
+      "intIsBypassDefrost" : Number(formCurrValues.ckbBypassDefrost) === 1 ? 1 : 0,
+      "intIsConstantVolume" : Number(formCurrValues.ckbConstantVolume) === 1 ? 1 : 0,
+      "IsHydronicPreheat" : Number(formCurrValues.ckbHydronicPreheat) === 1 ? 1 : 0,
+      "IsHumidification" : Number(formCurrValues.ckbHumidification) === 1 ? 1 : 0,
+      "IsTempControl" : Number(formCurrValues.ckbTemControl) === 1 ? 1 : 0,
+    },
+  }
+  
+  return oSubmittalInputs;
+  };
+
+
+  
+  // // submmit function
+  // const onProjectInfoSubmit = useCallback(
+  //   async (data: any) => {
+  //     try {
+  //       const requestData = {
+  //         ...data,
+  //         intUserID: localStorage.getItem('userId'),
+  //         intUAL: localStorage.getItem('UAL'),
+  //         intJobID: projectId,
+  //       };
+  //       const returnValue = await api.project.saveSubmittalInfo(requestData);
+  //       if (returnValue) {
+  //         setSuccess(true);
+  //       } else {
+  //         setFail(true);
+  //       }
+  //     } catch (error) {
+  //       setFail(true);
+  //     }
+  //   },
+  //   [api.project, projectId]
+  // );
+
+
+
+
+    // submmit function
+    const onProjectInfoSubmit = async (data: any) => {
+        try {
+          // const requestData = {
+          //   ...data,
+          //   intUserID: localStorage.getItem('userId'),
+          //   intUAL: localStorage.getItem('UAL'),
+          //   intJobID: projectId,
+          // };
+          const oSubm: any = getSubmittalInputs(); // JC: Job Container
+
+          const returnValue = await api.project.saveSubmittalInfo(oSubm);
+          if (returnValue) {
+            setSuccess(true);
+            // if (refetch) refetch();
+          } else {
+            setFail(true);
+          }
+        } catch (error) {
           setFail(true);
         }
-      } catch (error) {
-        setFail(true);
-      }
-    },
-    [api.project, projectId]
-  );
+      };
+
+
 
   return (
-    <Container sx={{ mt: '20px' }}>
+    <Container  maxWidth="xl" sx={{ mt: '20px' }}>
       <FormProvider methods={methods} onSubmit={handleSubmit(onProjectInfoSubmit)}>
         <Grid container spacing={3} sx={{ mb: 5 }}>
           <Grid item xs={12}>
@@ -251,7 +346,7 @@ export default function ProjectSubmittalForm({
                     disabled
                   />
                   <RHFTextField size="small" name="txbLeadTime" label="Lead Time" />
-                  <RHFTextField size="small" name="txbRevisionNo" label="revisionNo" />
+                  <RHFTextField size="small" name="txbRevisionNo" label="revisionNo" value={0} />
                   <RHFTextField size="small" name="txbPONumber" label="PO Number" />
                 </BoxStyles>
               </AccordionDetails>
@@ -273,7 +368,7 @@ export default function ProjectSubmittalForm({
               </AccordionSummary>
               <AccordionDetails>
                 <BoxStyles>
-                  <RHFTextField size="small" name="txbShipName" label="Name" />
+                  <RHFTextField size="small" name="txbShippingName" label="Name" />
                   <RHFTextField
                     size="small"
                     name="txbShippingStreetAddress"
@@ -286,9 +381,8 @@ export default function ProjectSubmittalForm({
                     name="txbShippingPostalCode"
                     label="Zip / Postal Code"
                   />
-                  <RHFSelect native size="small" name="ddlCountry" label="Country" placeholder="">
-                    <option value="" />
-                    <option value="1">Canada</option>
+                  <RHFSelect native size="small" name="ddlShippingCountry" label="Country" placeholder="">
+                    <option value="1" selected>Canada</option>
                     <option value="2">USA</option>
                   </RHFSelect>
                   <RHFSelect
@@ -298,7 +392,6 @@ export default function ProjectSubmittalForm({
                     label="Dock Type"
                     placeholder=""
                   >
-                    <option value="" />
                     <option value="1">Type1</option>
                     <option value="2">Type2</option>
                   </RHFSelect>

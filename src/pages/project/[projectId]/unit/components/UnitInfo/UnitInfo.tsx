@@ -53,11 +53,11 @@ export default function UnitInfo({
   txbUnitType,
   unitInfoData,
 }: UnitInfoProps) {
-  const [baseData, setbaseData] = useState(null);
-  const [unitData, setunitData] = useState(null);
-  const [isLoadingUnitInfo, setisLoadingUnitInfo] = useState(true);
-  const [isLoadingBaseData, setisLoadingBaseData] = useState(true);
-  const [unitInfo, setunitInfo] = useState<TUnitInfoData>({});
+  const [baseData, setbaseData] = useState(null)
+  const [unitData, setunitData] = useState(null)
+  const [isLoadingUnitInfo, setisLoadingUnitInfo] = useState(true)
+  const [isLoadingBaseData, setisLoadingBaseData] = useState(true)
+  const [unitInfo, setunitInfo] = useState<TUnitInfoData>({})
 
   useEffect(() => {
     GetUnitInfo({
@@ -81,8 +81,9 @@ export default function UnitInfo({
     });
     return () => {
       // second
-    };
+    }
   }, [edit, projectId, unitId]);
+
 
   // ----------------------- Success State and Handle Close ---------------------------
   const [openSuccess, setOpenSuccess] = useState(false);
@@ -99,7 +100,8 @@ export default function UnitInfo({
   return (
     <RootStyle>
       <Container maxWidth="xl">
-        {(isLoadingBaseData || isLoadingUnitInfo) && <CircularProgressLoading />}
+        {(isLoadingBaseData || isLoadingUnitInfo) &&
+          <CircularProgressLoading />}
         <Box>
           {unitData && baseData && unitInfo && (
             <UnitInfoForm

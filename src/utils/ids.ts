@@ -70,9 +70,10 @@ export const intCompDX_ID = 5;
 export const intCompHGRH_ID = 6;
 export const intCompAutoID = 7;
 
-export const intDamperActuatorNA_ID = 1;
-export const intDamperActuatorNoCasingID = 2;
-export const intDamperActuatorInCasingID = 4;
+export const intDamperActuatorIdNA = 1;
+export const intDamperActIdFieldInstAndWired = 2;
+export const intDamperActIdFieldMountedAndWired = 4;
+export const intDamperActIdFactMountedAndWired = 5;
 
 export const intElecHeaterInstallNA_ID = 1;
 export const intElecHeaterInstallDuctMountedID = 2;

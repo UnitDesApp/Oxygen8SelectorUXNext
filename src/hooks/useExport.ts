@@ -30,6 +30,7 @@ export const useExport = () => {
     });
   };
 
+
   const ExportSelectionPDF = async (projectId: string, unitInfo: any) => {
     const data = {
       intProjectID: projectId,
@@ -55,6 +56,7 @@ export const useExport = () => {
       saveAs(response.data, `${filename}.pdf`);
     });
   };
+
 
   const ExportSelectionExcel = async (projectId: number, unitInfo: any) => {
     const data = {
@@ -86,6 +88,7 @@ export const useExport = () => {
     });
   };
 
+
   const ExportSubmittal = async (intProjectID: number) => {
     const data = {
       intJobID: intProjectID,
@@ -113,6 +116,7 @@ export const useExport = () => {
     saveAs(response.data, `${filename}`);
     return true;
   };
+
   // export pdf of form data
   const ExportSubmittalEpicor = async (intProjectId: number) => {
     const data = {
@@ -142,8 +146,11 @@ export const useExport = () => {
     return true;
   };
 
+
   const ExportSchedule = (projectInfo: any) => {};
+
   const ExportRevit = (projectInfo: any) => {};
+
   const ExportQuote = async (intProjectID: number) => {
     const data = {
       intJobID: intProjectID,
@@ -173,6 +180,7 @@ export const useExport = () => {
     return true;
   };
 
+  
   return {
     ExportAllSelectionPDF,
     ExportSelectionPDF,
