@@ -30,7 +30,6 @@ import * as Ids from 'src/utils/ids';
 import QuoteMiscDataTable from './QuoteMiscDataTable';
 import QuoteNoteDataTable from './QuoteNoteDataTable';
 
-
 // --------------------------------------------------------------
 const CustomGroupBoxBorder = styled(Box)(({ theme }) => ({
   display: 'inline-flex',
@@ -110,27 +109,19 @@ function CustomGroupBox({ title, children, bordersx, titlesx }: CustomGroupBoxPr
 // }: ProjectQuoteFormProps) {
 //   const api = useApiContext();
 
-
 type ProjectQuoteFormProps = {
   projectId?: number;
   quoteInfo?: any;
   refetch?: Function;
 };
 
-export default function ProjectQuoteForm({
-    projectId,
-    quoteInfo,
-    refetch,
-  }: ProjectQuoteFormProps) {
-    const api = useApiContext();
+export default function ProjectQuoteForm({ projectId, quoteInfo, refetch }: ProjectQuoteFormProps) {
+  const api = useApiContext();
 
   // status
   const [success, setSuccess] = useState<boolean>(false);
   const [fail, setFail] = useState<boolean>(false);
-  const { data: db } = useGetQuoteSelTables();  // useGetQuoteSelTables api call returns data and stores in db
-
-
-
+  const { data: db } = useGetQuoteSelTables(); // useGetQuoteSelTables api call returns data and stores in db
 
   // Form Schemar
   const QuoteFormSchema = Yup.object().shape({
@@ -188,14 +179,13 @@ export default function ProjectQuoteForm({
   //   [quoteInfo?.oQuote]
   // );
 
-
   const defaultValues = useMemo(
     () => ({
       txbRevisionNo: '0',
-      ddlQuoteStage: -1,
+      ddlQuoteStage: 1,
       txbProjectName: '',
       txbQuoteNo: '0',
-      ddlFOBPoint: 0,
+      ddlFOBPoint: 1,
       txbTerms: 'Net 30',
       // txbCreatedDate: `${today.getFullYear()}-${today.getMonth()}-${today.getDate()}`,
       // txbRevisedDate: `${today.getFullYear()}-${today.getMonth()}-${today.getDate()}`,
@@ -203,12 +193,12 @@ export default function ProjectQuoteForm({
       txbCreatedDate: '',
       txbRevisedDate: '',
       txbValidDate: '',
-      ddlCountry: 0,
+      ddlCountry: 1,
       txbCurrencyRate: '1.00',
       txbShippingFactor: '9.8',
-      ddlShippingType: 0,
+      ddlShippingType: 1,
       txbDiscountFactor: '0.0',
-      ddlDiscountType: 0,
+      ddlDiscountType: 2,
       txbPriceAllUnits: '0.00',
       txbPriceMisc: '0.00',
       txbPriceShipping: '0.00',
@@ -218,8 +208,6 @@ export default function ProjectQuoteForm({
     }),
     []
   );
-
-
 
   // form setting using useForm
   const methods = useForm({
@@ -236,21 +224,20 @@ export default function ProjectQuoteForm({
     formState: { isSubmitting },
   } = methods;
 
-
-
   let formCurrValues = getValues();
 
   const getQuoteInputs = () => {
     // const jsonData = '{"name":"John", "age":30, "city":"London"}';
     // let oUnitInputs;
 
-
     formCurrValues = getValues(); // Do not use watch, must use getValues with the function to get current values.
-    let savedDate =  quoteInfo?.oQuote?.strCreatedDate;
-    
+    let savedDate = quoteInfo?.oQuote?.strCreatedDate;
+
+    console.log(formCurrValues)
+
     if (savedDate?.includes('/')) {
-      const [month, day, year] =  savedDate.split('/');
-      savedDate =`${year}-${month}-${day}`;
+      const [month, day, year] = savedDate.split('/');
+      savedDate = `${year}-${month}-${day}`;
     }
 
     const today = new Date();
@@ -258,39 +245,36 @@ export default function ProjectQuoteForm({
     newValidDate.setDate(newValidDate.getMonth() + 1);
     newValidDate.setDate(newValidDate.getDate() + 60);
 
+    const oQuoteInputs = {
+      oQuote: {
+        intUserId: typeof window !== 'undefined' && localStorage.getItem('userId'),
+        intUAL: typeof window !== 'undefined' && localStorage.getItem('UAL'),
+        intJobId: Number(projectId),
+        intQuoteStageId: Number(formCurrValues.ddlQuoteStage),
+        intRevisionNo: formCurrValues.txbRevisionNo,
+        intFOBPointId: Number(formCurrValues.ddlFOBPoint),
+        intCountryId: Number(formCurrValues.ddlCountry),
+        dblCurrencyRate: formCurrValues.txbCurrencyRate,
+        dblShippingFactor: formCurrValues.txbShippingFactor,
+        intShippingTypeId: Number(formCurrValues.ddlShippingType),
+        dblDiscountFactor: formCurrValues.txbDiscountFactor,
+        intDiscountTypeId: Number(formCurrValues.ddlDiscountType),
+        dblPriceAllUnits: formCurrValues.txbPriceAllUnits,
+        dblPriceMisc: formCurrValues.txbPriceMisc,
+        dblPriceShipping: formCurrValues.txbPriceShipping,
+        dblPriceSubtotal: formCurrValues.txbPriceSubtotal,
+        dblPriceDiscount: formCurrValues.txbPriceDiscount,
+        dblPriceFinalTotal: formCurrValues.txbPriceFinalTotal,
+        strCreatedDate: quoteInfo?.oQuote?.strCreatedDate
+          ? savedDate
+          : formCurrValues.txbCreatedDate,
+        strRevisedDate: `${today.getFullYear()}-${today.getMonth()}-${today.getDate()}`,
+        strValidDate: `${newValidDate.getFullYear()}-${newValidDate.getMonth()}-${newValidDate.getDate()}`,
+      },
+    };
 
-
-  const oQuoteInputs = {
-    oQuote: {
-      "intUserId" : typeof window !== 'undefined' && localStorage.getItem('userId'),
-      "intUAL" : typeof window !== 'undefined' && localStorage.getItem('UAL'),  
-      "intJobId" : Number(projectId),
-      "intQuoteStageId" : Number(formCurrValues.ddlQuoteStage),
-      "intRevisionNo" : formCurrValues.txbRevisionNo,
-      "intFOBPointId" :  Number(formCurrValues.ddlFOBPoint),
-      "intCountryId" : Number(formCurrValues.ddlCountry),
-      "dblCurrencyRate" : formCurrValues.txbCurrencyRate,
-      "dblShippingFactor" : formCurrValues.txbShippingFactor,
-      "intShippingTypeId" : Number(formCurrValues.ddlShippingType),
-      "dblDiscountFactor" : formCurrValues.txbDiscountFactor,
-      "intDiscountTypeId" : Number(formCurrValues.ddlDiscountType),
-      "dblPriceAllUnits" : formCurrValues.txbPriceAllUnits,
-      "dblPriceMisc" : formCurrValues.txbPriceMisc,
-      "dblPriceShipping" : formCurrValues.txbPriceShipping,
-      "dblPriceSubtotal" : formCurrValues.txbPriceSubtotal,
-      "dblPriceDiscount" : formCurrValues.txbPriceDiscount,
-      "dblPriceFinalTotal" : formCurrValues.txbPriceFinalTotal,
-      "strCreatedDate" : quoteInfo?.oQuote?.strCreatedDate ? savedDate : formCurrValues.txbCreatedDate,
-      "strRevisedDate" : `${today.getFullYear()}-${today.getMonth()}-${today.getDate()}`,
-      "strValidDate" : `${newValidDate.getFullYear()}-${newValidDate.getMonth()}-${newValidDate.getDate()}`,
-    },
-  }
-  
-  return oQuoteInputs;
+    return oQuoteInputs;
   };
-
-
-
 
   // useEffect(() => {
   //   const today = new Date();
@@ -301,8 +285,7 @@ export default function ProjectQuoteForm({
   //   setValue('txbRevisedDate', `${today.getFullYear()}-${today.getMonth() + 1}-${today.getDate()}`);
   //   setValue('txbValidDate', `${newValidDate.getFullYear()}-${newValidDate.getMonth() + 1}-${newValidDate.getDate()}`);
 
-  //  }, [setValue]) 
-
+  //  }, [setValue])
 
   // // submmit function
   // const onQuoteSubmit = useCallback(
@@ -328,86 +311,89 @@ export default function ProjectQuoteForm({
   //   [api.project, projectId, refetch]
   // );
 
+  // submmit function
+  const onQuoteSubmit = async (data: any) => {
+    try {
+      // const requestData = {
+      //   ...data,
+      //   intUserID: localStorage.getItem('userId'),
+      //   intUAL: localStorage.getItem('UAL'),
+      //   intJobID: projectId,
+      // };
+      const oQuote: any = getQuoteInputs();
 
-    // submmit function
-    const onQuoteSubmit = async (data: any) => {
-      try {
-        // const requestData = {
-        //   ...data,
-        //   intUserID: localStorage.getItem('userId'),
-        //   intUAL: localStorage.getItem('UAL'),
-        //   intJobID: projectId,
-        // };
-        const oQuote: any = getQuoteInputs();
-
-        const returnValue = await api.project.saveQuoteInfo(oQuote);
-        if (returnValue) {
-          setSuccess(true);
-          if (refetch) refetch();
-        } else {
-          setFail(true);
-        }
-      } catch (error) {
+      const returnValue = await api.project.saveQuoteInfo(oQuote);
+      if (returnValue) {
+        setSuccess(true);
+        if (refetch) refetch();
+      } else {
         setFail(true);
       }
-    };
+    } catch (error) {
+      setFail(true);
+    }
+  };
 
-
-
-
-   const [dateInfo, setDateInfo] = useState<any>();
-   useEffect(() => {
+  const [dateInfo, setDateInfo] = useState<any>();
+  useEffect(() => {
     const today = new Date();
     const newValidDate = new Date();
     newValidDate.setDate(newValidDate.getDate() + 60);
 
     setValue('txbCreatedDate', `${today.getFullYear()}-${today.getMonth() + 1}-${today.getDate()}`);
     setValue('txbRevisedDate', `${today.getFullYear()}-${today.getMonth() + 1}-${today.getDate()}`);
-    setValue('txbValidDate', `${newValidDate.getFullYear()}-${newValidDate.getMonth() + 1}-${newValidDate.getDate()}`);
+    setValue(
+      'txbValidDate',
+      `${newValidDate.getFullYear()}-${newValidDate.getMonth() + 1}-${newValidDate.getDate()}`
+    );
+  }, [setValue]);
 
-   }, [setValue]) 
+  const [quoteStageInfo, setQuoteStageInfo] = useState<any>([]);
+  useEffect(() => {
+    const info: { fdtQuoteStage: any; isVisible: boolean; defaultId: number } = {
+      fdtQuoteStage: [],
+      isVisible: false,
+      defaultId: 0,
+    };
 
+    info.fdtQuoteStage = db?.dbtSelQuoteStage;
 
-    const [quoteStageInfo, setQuoteStageInfo] = useState<any>([])
-    useEffect(() => {
-      const info: { fdtQuoteStage: any; isVisible: boolean; defaultId: number} = { fdtQuoteStage: [],  isVisible: false, defaultId: 0};
-  
-      info.fdtQuoteStage = db?.dbtSelQuoteStage;
-    
-      setQuoteStageInfo(info);
-      info.defaultId = info.fdtQuoteStage?.[0]?.id;
-      // setValue('ddlQuoteStage', info.fdtQuoteStage?.[0]?.id);
-     
-    }, [db, setValue]);
+    setQuoteStageInfo(info);
+    info.defaultId = info.fdtQuoteStage?.[0]?.id;
+    // setValue('ddlQuoteStage', info.fdtQuoteStage?.[0]?.id);
+  }, [db, setValue]);
 
+  const [fobPointInfo, setFOBPointInfo] = useState<any>([]);
+  useEffect(() => {
+    const info: { fdtFOBPoint: any; isVisible: boolean; defaultId: number } = {
+      fdtFOBPoint: [],
+      isVisible: false,
+      defaultId: 0,
+    };
 
-    const [fobPointInfo, setFOBPointInfo] = useState<any>([])
-    useEffect(() => {
-      const info: { fdtFOBPoint: any; isVisible: boolean; defaultId: number} = { fdtFOBPoint: [],  isVisible: false, defaultId: 0};
-  
-      info.fdtFOBPoint = db?.dbtSelFOBPoint;
-    
-      setFOBPointInfo(info);
-      info.defaultId = Ids.intFOB_PointVancouverID;
-      // setValue('ddlFOBPoint', info.fdtFOBPoint?.[0]?.id);
-      setValue('ddlFOBPoint', Ids.intFOB_PointVancouverID);
+    info.fdtFOBPoint = db?.dbtSelFOBPoint;
 
-    }, [db, setValue]);
+    setFOBPointInfo(info);
+    info.defaultId = Ids.intFOB_PointVancouverID;
+    // setValue('ddlFOBPoint', info.fdtFOBPoint?.[0]?.id);
+    setValue('ddlFOBPoint', Ids.intFOB_PointVancouverID);
+  }, [db, setValue]);
 
+  const [countryInfo, setCountryInfo] = useState<any>([]);
+  useEffect(() => {
+    const info: { fdtCountry: any; isVisible: boolean; defaultId: number } = {
+      fdtCountry: [],
+      isVisible: false,
+      defaultId: 0,
+    };
 
-    const [countryInfo, setCountryInfo] = useState<any>([])
-    useEffect(() => {
-      const info: { fdtCountry: any; isVisible: boolean; defaultId: number} = { fdtCountry: [],  isVisible: false, defaultId: 0};
-  
-      info.fdtCountry = db?.dbtSelCountry;
-    
-      setCountryInfo(info);
-      info.defaultId = Ids.intCountryUSA_ID
-      // setValue('ddlCountry', info.fdtCountry?.[0]?.id);
-      setValue('ddlCountry', Ids.intCountryUSA_ID);
+    info.fdtCountry = db?.dbtSelCountry;
 
-    }, [db, setValue]);
-
+    setCountryInfo(info);
+    info.defaultId = Ids.intCountryUSA_ID;
+    // setValue('ddlCountry', info.fdtCountry?.[0]?.id);
+    setValue('ddlCountry', Ids.intCountryUSA_ID);
+  }, [db, setValue]);
 
   // Event handler for addding misc
   const addMisc = useCallback(
@@ -485,11 +471,9 @@ export default function ProjectQuoteForm({
     [api.project, projectId, refetch]
   );
 
-
   // Load saved Values
   useEffect(() => {
     if (quoteInfo?.oQuote !== null) {
-
       if (quoteInfo?.oQuote?.intRevisionNo > 0) {
         setValue('txbRevisionNo', quoteInfo?.oQuote?.intRevisionNo);
       }
@@ -524,16 +508,21 @@ export default function ProjectQuoteForm({
         setValue('txbCurrencyRate', quoteInfo?.oQuote?.dblCurrencyRate?.toFixed(2));
       }
 
-      if (quoteInfo?.oQuote?.dblShippingFactor !== null && quoteInfo?.oQuote?.dblShippingFactor > 0) {
+      if (
+        quoteInfo?.oQuote?.dblShippingFactor !== null &&
+        quoteInfo?.oQuote?.dblShippingFactor > 0
+      ) {
         setValue('txbShippingFactor', quoteInfo?.oQuote?.dblShippingFactor?.toFixed(1));
       }
-
 
       if (quoteInfo?.oQuote?.intShippingTypeId > 0) {
         setValue('ddlShippingType', quoteInfo?.oQuote?.intShippingTypeId);
       }
 
-      if (quoteInfo?.oQuote?.dblDiscountFactor !== null && quoteInfo?.oQuote?.dblDiscountFactor > 0) {
+      if (
+        quoteInfo?.oQuote?.dblDiscountFactor !== null &&
+        quoteInfo?.oQuote?.dblDiscountFactor > 0
+      ) {
         setValue('txbDiscountFactor', quoteInfo?.oQuote?.dblDiscountFactor?.toFixed(1));
       }
 
@@ -561,58 +550,56 @@ export default function ProjectQuoteForm({
         setValue('txbPriceDiscount', quoteInfo?.oQuote?.dblPriceDiscount?.toFixed(2));
       }
 
-      if (quoteInfo?.oQuote?.dblPriceFinalTotal !== null && quoteInfo?.oQuote?.dblPriceFinalTotal > 0) {
+      if (
+        quoteInfo?.oQuote?.dblPriceFinalTotal !== null &&
+        quoteInfo?.oQuote?.dblPriceFinalTotal > 0
+      ) {
         setValue('txbPriceFinalTotal', quoteInfo?.oQuote?.dblPriceFinalTotal?.toFixed(2));
       }
     }
   }, [quoteInfo?.oQuote, setValue]); // <-- empty dependency array - This will only trigger when the component mounts and no-render
 
+  // Calculate pricing with default values when Quote not saved yet
+  const quoteInfoData = useGetQuoteInfo({
+    intUserId: typeof window !== 'undefined' && localStorage.getItem('userId'),
+    intUAL: typeof window !== 'undefined' && localStorage.getItem('UAL'),
+    intJobId: Number(projectId),
+    oQuote: getQuoteInputs(),
+    // intUnitNo: 1,
+  });
 
-// Calculate pricing with default values when Quote not saved yet
-// useGetQuoteInfo({
-//   intUserId: typeof window !== 'undefined' && localStorage.getItem('userId'),
-//   intUAL: typeof window !== 'undefined' && localStorage.getItem('UAL'),
-//   intJobId: Number(projectId),
-//   oQuote: getQuoteInputs(),
-//   // intUnitNo: 1,
-// },);
+  // const {
+  //   data: quoteInfo,
+  //   isLoading: isLoadingQuoteInfo,
+  //   refetch,
+  // } = useGetQuoteInfo({
+  //   intUserId: typeof window !== 'undefined' && localStorage.getItem('userId'),
+  //   intUAL: typeof window !== 'undefined' && localStorage.getItem('UAL'),
+  //   intJobId: Number(projectId),
+  //   // intUnitNo: 1,
+  // });
 
-// const {
-//   data: quoteInfo,
-//   isLoading: isLoadingQuoteInfo,
-//   refetch,
-// } = useGetQuoteInfo({
-//   intUserId: typeof window !== 'undefined' && localStorage.getItem('userId'),
-//   intUAL: typeof window !== 'undefined' && localStorage.getItem('UAL'),
-//   intJobId: Number(projectId),
-//   // intUnitNo: 1,
-// });
+  // const quoteInfo1 = async (data: any) => {
+  //   try {
+  //     // const requestData = {
+  //     //   ...data,
+  //     //   intUserID: localStorage.getItem('userId'),
+  //     //   intUAL: localStorage.getItem('UAL'),
+  //     //   intJobID: projectId,
+  //     // };
+  //     const oQuoteInputs: any = getQuoteInputs();
 
-
-
-  const quoteInfo1 = async (data: any) => {
-    try {
-      // const requestData = {
-      //   ...data,
-      //   intUserID: localStorage.getItem('userId'),
-      //   intUAL: localStorage.getItem('UAL'),
-      //   intJobID: projectId,
-      // };
-      const oQuoteInputs: any = getQuoteInputs();
-
-      const returnValue = await api.project.getProjectQuoteInfo(oQuoteInputs);
-      if (returnValue) {
-        setSuccess(true);
-        if (refetch) refetch();
-      } else {
-        setFail(true);
-      }
-    } catch (error) {
-      setFail(true);
-    }
-  };
-
-
+  //     const returnValue = await api.project.getProjectQuoteInfo(oQuoteInputs);
+  //     if (returnValue) {
+  //       setSuccess(true);
+  //       if (refetch) refetch();
+  //     } else {
+  //       setFail(true);
+  //     }
+  //   } catch (error) {
+  //     setFail(true);
+  //   }
+  // };
 
   return (
     <Container maxWidth="xl" sx={{ mb: '50px' }}>
@@ -631,13 +618,14 @@ export default function ProjectQuoteForm({
                       label="Stage"
                       placeholder=""
                     >
-                      <option value="" selected>Select a Stage</option>
+                      <option value="" selected>
+                        Select a Stage
+                      </option>
                       {quoteStageInfo?.fdtQuoteStage?.map((e: any, index: number) => (
                         <option key={index} value={e.id}>
                           {e.items}
                         </option>
-                      
-                    ))}
+                      ))}
                       {/* <option value="2">USA</option> */}
                     </RHFSelect>
                     <RHFTextField size="small" name="txbProjectName" label="Project Name" />
@@ -675,18 +663,12 @@ export default function ProjectQuoteForm({
               <Grid item xs={12} sm={6} md={4}>
                 <CustomGroupBox title="Price Setting">
                   <Box sx={{ display: 'grid', rowGap: 1, columnGap: 1 }}>
-                    <RHFSelect
-                      native
-                      size="small"
-                      name="ddlCountry"
-                      label="Country"
-                      placeholder=""
-                    >
+                    <RHFSelect native size="small" name="ddlCountry" label="Country" placeholder="">
                       {countryInfo?.fdtCountry?.map((e: any, index: number) => (
                         <option key={index} value={e.id}>
-                        {e.items}
-                      </option>
-                    ))}
+                          {e.items}
+                        </option>
+                      ))}
                     </RHFSelect>
                     <RHFTextField size="small" name="txbCurrencyRate" label="Currency Rate" />
                     <Stack direction="row">
@@ -698,7 +680,9 @@ export default function ProjectQuoteForm({
                         label="Unit"
                         placeholder=""
                       >
-                        <option value="1" selected>%</option>
+                        <option value="1" selected>
+                          %
+                        </option>
                         <option value="2">$</option>
                       </RHFSelect>
                     </Stack>
@@ -712,7 +696,9 @@ export default function ProjectQuoteForm({
                         placeholder=""
                       >
                         <option value="1">%</option>
-                        <option value="2" selected>$</option>
+                        <option value="2" selected>
+                          $
+                        </option>
                       </RHFSelect>
                     </Stack>
                   </Box>
@@ -755,7 +741,7 @@ export default function ProjectQuoteForm({
                       </TableRow>
                     </TableHead>
                     <TableBody>
-                    {/* {gvPricingGeneral?.gvPricingGeneralDataSource?.map((item: any, i: number) => ( */}
+                      {/* {gvPricingGeneral?.gvPricingGeneralDataSource?.map((item: any, i: number) => ( */}
 
                       {quoteInfo?.dtPricingUnits?.map((item: any, i: number) => (
                         <TableRow
