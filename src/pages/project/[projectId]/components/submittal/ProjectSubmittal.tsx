@@ -48,9 +48,9 @@ export default function SubmittalInternal() {
   const isResetCalled = useRef(false);
 
   const { data: submittalInfo, isLoading: isLoadingSubmittalInfo } = useGetSubmittalInfo({
-    intUserID: typeof window !== 'undefined' && localStorage.getItem('userId'),
+    intUserId: typeof window !== 'undefined' && localStorage.getItem('userId'),
     intUAL: typeof window !== 'undefined' && localStorage.getItem('UAL'),
-    intJobID: projectId,
+    intJobId: projectId,
   });
 
   if (isLoadingSubmittalInfo) return <LinearProgress color="info" />;

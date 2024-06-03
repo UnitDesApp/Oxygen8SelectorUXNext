@@ -30,13 +30,13 @@ import { any, number } from 'prop-types';
 import {
   getBypass,
   getComponentInfo,
-  getDXCoilRefrigDesignCondInfo,
-  getDamperAndActuatorInfo,
-  getDehumidificationInfo,
+  // getDXCoilRefrigDesignCondInfo,
+  // getDamperAndActuatorInfo,
+  // getDehumidificationInfo,
   getDrainPanInfo,
   getElecHeaterVoltageInfo,
   getExhaustAirESP,
-  getHeatPumpInfo,
+  // getHeatPumpInfo,
   getLocation,
   getOrientation,
   getPreheatElecHeaterInstallationInfo,
@@ -391,7 +391,7 @@ export default function UnitInfoForm({
       // formValues = getValues();
       // const oUC = getAllFormData1(formValues);
       const oUC: any = getUnitInputs();
-      const data = await api.project.saveUnitInfo(oUC);
+      const data = await api.project.saveUnit(oUC);
       if (onSuccess) onSuccess(true);
       if (setIsSavedUnit) setIsSavedUnit(data?.intUnitNo || 0);
     } catch (e) {
@@ -1454,10 +1454,6 @@ const setValueWithCheck1 = useCallback(
   }, [edit, db, setValue, intProductTypeID, formValues.ddlLocation, formValues.ddlPreheatComp]);
 
 
-
-
-
-
   const preheatHWCCapInfo = useMemo(() => {
     const info: {resetCapacity: number;  isDisabled: boolean;} = {  resetCapacity: 0,  isDisabled: true, };
      
@@ -1585,27 +1581,27 @@ const setValueWithCheck1 = useCallback(
 
 
   // -------------- Get Heating Pump Information ----------------
-  const heatPumpInfo = useMemo(() => {
-    const result = getHeatPumpInfo(Number(formValues.ddlCoolingComp));
-    // ckbHeatPumpChanged();
-    return result;
-  }, [formValues.ddlCoolingComp]);
+  // const heatPumpInfo = useMemo(() => {
+  //   const result = getHeatPumpInfo(Number(formValues.ddlCoolingComp));
+  //   // ckbHeatPumpChanged();
+  //   return result;
+  // }, [formValues.ddlCoolingComp]);
 
 
   // -------------- Get Dehumidification Information ----------------
-  const dehumidificationInfo = useMemo(
-    () => getDehumidificationInfo(Number(formValues.ddlCoolingComp)),
-    [formValues.ddlCoolingComp]);
+  // const dehumidificationInfo = useMemo(
+  //   () => getDehumidificationInfo(Number(formValues.ddlCoolingComp)),
+  //   [formValues.ddlCoolingComp]);
 
 
   // -------------- Get Coil Refrigerate Design Condition Information ----------------
-  const dxCoilRefrigDesignCondInfo = useMemo(
-    () =>
-      getDXCoilRefrigDesignCondInfo(
-        Number(typeof window !== 'undefined' && localStorage.getItem('UAL')),
-        Number(formValues.ddlCoolingComp)
-      ),
-    [formValues.ddlCoolingComp]);
+  // const dxCoilRefrigDesignCondInfo = useMemo(
+  //   () =>
+  //     getDXCoilRefrigDesignCondInfo(
+  //       Number(typeof window !== 'undefined' && localStorage.getItem('UAL')),
+  //       Number(formValues.ddlCoolingComp)
+  //     ),
+  //   [formValues.ddlCoolingComp]);
 
 
   // const heatElecHeaterInstallationInfo = useMemo(

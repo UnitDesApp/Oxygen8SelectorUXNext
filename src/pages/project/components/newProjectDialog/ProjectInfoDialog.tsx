@@ -289,7 +289,7 @@ export default function ProjectInfoDialog({
     if (submit === 1) {
       try {
         const oJC: any = getJobInputs(); // JC: Job Container
-        await api.project.addNewProject(oJC);
+        await api.project.saveJob(oJC);
         setOpenSuccess();
         refetch();
         reset(defaultValues);

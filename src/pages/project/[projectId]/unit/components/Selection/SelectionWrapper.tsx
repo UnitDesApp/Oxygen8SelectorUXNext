@@ -1,4 +1,4 @@
-import { useGetUnitInfo } from 'src/hooks/useApi';
+import { useGetSavedUnit } from 'src/hooks/useApi';
 import { any } from 'prop-types';
 import Selection from './Selection';
 
@@ -8,7 +8,7 @@ interface SelectionWrapperProps {
 }
 
 export default function SelectionWrapper({ projectId, unitId }: SelectionWrapperProps) {
-  const { data: unitData, isLoading: isLoadingUnitInfo } = useGetUnitInfo(
+  const { data: unitData, isLoading: isLoadingUnitInfo } = useGetSavedUnit(
     {
       intUserId: typeof window !== 'undefined' && localStorage.getItem('userId'),
       intUAL: typeof window !== 'undefined' && localStorage.getItem('UAL'),

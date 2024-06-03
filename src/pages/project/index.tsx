@@ -26,7 +26,7 @@ import {
 import { ROLE_OPTIONS } from 'src/utils/constants';
 import { useAuthContext } from 'src/auth/useAuthContext';
 import CircularProgressLoading from 'src/components/loading/CircularProgressLoading';
-import { useGetAllProjects, useGetJobSelTables } from 'src/hooks/useApi';
+import { useGetSavedJobs, useGetJobSelTables } from 'src/hooks/useApi';
 import { PATH_APP } from 'src/routes/paths';
 import Scrollbar from 'src/components/scrollbar/Scrollbar';
 import ConfirmDialog from 'src/components/dialog/ConfirmDialog';
@@ -66,7 +66,7 @@ export default function Project() {
   const [openFail, setOpenFail] = useState<boolean>(false);
 
   // const { data: projects, isLoading: isLoadingProjects, refetch } = useGetAllProjects();
-  const { data: projects, isLoading: isLoadingProjects, refetch } = useGetAllProjects();
+  const { data: projects, isLoading: isLoadingProjects, refetch } = useGetSavedJobs();
   const { data: jobSelTables } = useGetJobSelTables();
 
   const {
@@ -119,7 +119,7 @@ export default function Project() {
   };
 
   const handleDeleteRow = () => {
-    project.deleteProject({ action: 'DELETE_ONE', projectId: deleteRowID }).then(() => {
+    project.deleteJob({ action: 'DELETE_ONE', projectId: deleteRowID }).then(() => {
       refetch();
     });
     setSelected([]);
@@ -145,7 +145,7 @@ export default function Project() {
   };
 
   const handleDeleteRows = () => {
-    project.deleteProject({ action: 'DELETE_MULTIPUL', projectIdData: selected }).then(() => {
+    project.deleteJob({ action: 'DELETE_MULTIPUL', projectIdData: selected }).then(() => {
       refetch();
     });
     setSelected([]);
@@ -153,7 +153,7 @@ export default function Project() {
   };
 
   const handleDuplicate = (row: any) => {
-    project.duplicateProject(row).then(() => refetch());
+    project.duplicateJob(row).then(() => refetch());
     setOpenDuplicateSuccess(true);
   };
 

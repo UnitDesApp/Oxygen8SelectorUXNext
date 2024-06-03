@@ -20,7 +20,7 @@ import {
 } from '@mui/material';
 // lodash
 import { isEmpty } from 'lodash';
-import { useGetSelectionInfo } from 'src/hooks/useApi';
+import { useGetUnitSelection } from 'src/hooks/useApi';
 import { useRouter } from 'next/router';
 import Iconify from 'src/components/iconify';
 import Image from 'src/components/image';
@@ -119,7 +119,7 @@ export default function Selection({ unitTypeData, intUnitNo }: SelectionProps) {
     panel20: true,
   });
 
-  const { data: selectionData, isLoading: isLoadingSelectionInfo } = useGetSelectionInfo({
+  const { data: selectionData, isLoading: isLoadingSelectionInfo } = useGetUnitSelection({
     intUserId: typeof window !== 'undefined' && localStorage.getItem('userId'),
     intUAL: typeof window !== 'undefined' && localStorage.getItem('UAL'),
     intJobId: projectId,

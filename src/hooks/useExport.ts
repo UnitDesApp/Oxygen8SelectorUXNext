@@ -10,7 +10,7 @@ export const useExport = () => {
       intUserID: localStorage.getItem('userId'),
     };
 
-    await api.project.downloadAllSelection(data).then((response) => {
+    await api.project.downloadAllUnitsSelectionPdf(data).then((response) => {
       if (!response?.data?.size || response?.data?.size === 0) {
         return;
       }
@@ -39,7 +39,7 @@ export const useExport = () => {
       intUserID: localStorage.getItem('userId'),
     };
 
-    await api.project.downloadSelection(data).then((response) => {
+    await api.project.downloadUnitSelectionPdf(data).then((response) => {
       console.log(response);
       // Get File Name
       let filename = '';
@@ -66,7 +66,7 @@ export const useExport = () => {
       intUserID: localStorage.getItem('userId'),
     };
 
-    await api.project.downloadSelectionWithExcel(data).then((response) => {
+    await api.project.downloadUnitSelectionExcel(data).then((response) => {
       // Extract the filename from the response headers
       const disposition = response.headers['content-disposition'];
       const regex = /filename="(.+)"/;
@@ -96,7 +96,7 @@ export const useExport = () => {
       intUserID: localStorage.getItem('userId'),
     };
 
-    const response = await api.project.submittalExportPDF(data);
+    const response = await api.project.downloadSubmittalPdf(data);
     if (response.data.type === 'application/json') {
       return false;
     }
@@ -125,7 +125,7 @@ export const useExport = () => {
       intUserID: localStorage.getItem('userId'),
     };
 
-    const response = await api.project.exportEpicor(data);
+    const response = await api.project.downloadSubmittalEpicorExcel(data);
     if (response.data.type === 'application/json') {
       return false;
     }
@@ -158,7 +158,7 @@ export const useExport = () => {
       intUserID: localStorage.getItem('userId'),
     };
 
-    const response = await api.project.quoteExportPDF(data);
+    const response = await api.project.downloadQuotePdf(data);
     if (response.data.type === 'application/json') {
       if (!response.data.success) return 'fail';
       return 'server_error';
