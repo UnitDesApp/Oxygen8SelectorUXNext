@@ -146,7 +146,7 @@ export default function ProjectSubmittalForm({
       txbJobName: submittalInfo?.strProjectName ? submittalInfo?.strProjectName : '',
       txbRepName: submittalInfo?.strRepName ? submittalInfo?.strRepName : '',
       txbSalesEngineer: submittalInfo?.strSalesEngineer ? submittalInfo?.strSalesEngineer : '',
-      txbLeadTime: submittalInfo.strLeadTime ? submittalInfo?.strLeadTime : '',
+      txbLeadTime: submittalInfo?.strLeadTime ? submittalInfo?.strLeadTime : '',
       txbRevisionNo: submittalInfo?.intRevisionNo ? submittalInfo?.intRevisionNo : '0',
       txbPONumber: submittalInfo?.strPO_Number ? submittalInfo?.strPO_Number : '',
       txbShippingName: submittalInfo?.strShippingName ? submittalInfo?.strShippingName : '',
