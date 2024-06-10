@@ -124,7 +124,7 @@ export default function AddNewUnit() {
       <Head>
         <title> New Unit | Oxygen8 </title>
       </Head>
-      <Container>
+      <Container maxWidth="xl">
         <CustomBreadcrumbs
           heading={`New: ${STEP_PAGE_NAME[currentStep]}`}
           links={[

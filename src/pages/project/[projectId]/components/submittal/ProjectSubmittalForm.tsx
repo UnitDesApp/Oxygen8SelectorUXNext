@@ -33,6 +33,8 @@ import Iconify from 'src/components/iconify';
 import { useApiContext } from 'src/contexts/ApiContext';
 import { RHFSelect, RHFTextField } from 'src/components/hook-form';
 import Scrollbar from 'src/components/scrollbar/Scrollbar';
+import CircularProgressLoading from 'src/components/loading/CircularProgressLoading';
+
 // components
 
 // ----------------------------------------------------------------------
@@ -80,10 +82,11 @@ export default function ProjectSubmittalForm({
   const api = useApiContext();
 
   // State
+  const [isProcessingData, setIsProcessingData] = useState(false)
   const [scheduleInfo, setScheduleInfo] = useState <any>([]);
-  const [noteInfo, setNoteInfo] = useState('');
+  const [notesNo, setNotesNo] = useState('');
   const [notesListInfo, setNotesListInfo] = useState <any>([]);
-  const [shippingNoteInfo, setShippingNoteInfo] = useState('');
+  const [shippingNotesNo, setShippingNotesNo] = useState('');
   const [shippingNotesListInfo, setShippingNotesListInfo] = useState <any>([]); 
   const [success, setSuccess] = useState(false);
   const [fail, setFail] = useState(false);
@@ -297,6 +300,7 @@ export default function ProjectSubmittalForm({
     // submmit function
     const onProjectInfoSubmit = async (data: any) => {
         try {
+          setIsProcessingData(true);
           // const requestData = {
           //   ...data,
           //   intUserID: localStorage.getItem('userId'),
@@ -309,52 +313,183 @@ export default function ProjectSubmittalForm({
           if (returnValue) {
             setSuccess(true);
             // if (refetch) refetch();
+
           } else {
             setFail(true);
           }
         } catch (error) {
           setFail(true);
+        } finally {
+      
+          setIsProcessingData(false);
         }
-      };
+    };
 
   // event handler for adding shipping note
-  const addShippingInstructionClicked = useCallback(async () => {
+  const addShippingNotesClicked = useCallback(async () => {
     if (getValues('txbShippingNotes') === '') return;
+
+    setIsProcessingData(true);
+
     const data: any = {
-      intUserId: typeof window !== 'undefined' && localStorage.getItem('userId'),
-      intUAL: localStorage.getItem('UAL'),
+      // intUserId: typeof window !== 'undefined' && localStorage.getItem('userId'),
+      // intUAL: localStorage.getItem('UAL'),
       intJobId: projectId,
-      strShippingNote: getValues('txbShippingNotes'),
+      intShippingNotesNo: 0,
+      strShippingNotes: getValues('txbShippingNotes'),
     };
-    const result = await api.project.SaveSubmittalShippingNote(data);
+    const result = await api.project.saveSubmittalShippingNotes(data);
 
     const info: { fdtShippingNotes: any} = { fdtShippingNotes: []};
     info.fdtShippingNotes = result;
     setShippingNotesListInfo(info);
 
-  }, [api.project, getValues, projectId]);
+    setValue('txbShippingNotes', '');
+
+    setIsProcessingData(false);
+
+  }, [api.project, getValues, projectId, setValue]);
+
+
+  const updateShippingNotesClicked = useCallback(async () => {
+    if (getValues('txbShippingNotes') === '') return;
+
+    setIsProcessingData(true);
+
+    const data: any = {
+      // intUserId: typeof window !== 'undefined' && localStorage.getItem('userId'),
+      // intUAL: localStorage.getItem('UAL'),
+      intJobId: projectId,
+      intShippingNotesNo: shippingNotesNo,
+      strShippingNotes: getValues('txbShippingNotes'),
+    };
+    const result = await api.project.saveSubmittalShippingNotes(data);
+
+    const info: { fdtShippingNotes: any} = { fdtShippingNotes: []};
+    info.fdtShippingNotes = result;
+    setShippingNotesListInfo(info);
+
+    setValue('txbShippingNotes', '');
+
+    setIsProcessingData(false);
+
+  }, [api.project, getValues, projectId, setValue, shippingNotesNo]);
+
+
+
+  const editShippingNotesClicked = useCallback((row: any) => {
+    setShippingNotesNo(row?.shipping_notes_no);
+    setValue('txbShippingNotes', row?.notes);
+
+  }, [setValue]);
+
+
+  const deleteShippingNotesClicked = useCallback(async (row: any) => {
+
+    setIsProcessingData(true);
+
+    const data: any = {
+      // intUAL: localStorage.getItem('UAL'),
+      intJobId: projectId,
+      intShippingNotesNo: row?.shipping_notes_no,
+    };
+    const result = await api.project.deleteSubmittalShippingNotes(data);
+
+    const info: { fdtShippingNotes: any;} = { fdtShippingNotes: []};
+    info.fdtShippingNotes = result;
+    setShippingNotesListInfo(info);
+
+    setValue('txbShippingNotes', '');
+
+    setIsProcessingData(false);
+
+  }, [api.project, projectId, setValue]);
 
 
   // event handler for addding note
-  const addNoteClicked = useCallback(async () => {
+  const addNotesClicked = useCallback(async () => {
     if (getValues('txbNotes') === '') return;
+
+    setIsProcessingData(true);
+
     const data: any = {
-      intUserId: localStorage.getItem('userId'),
-      intUAL: localStorage.getItem('UAL'),
+      // intUserId: localStorage.getItem('userId'),
+      // intUAL: localStorage.getItem('UAL'),
       intJobId: projectId,
-      strNote: getValues('txbNotes'),
+      strNotes: getValues('txbNotes'),
     };
-    const result = await api.project.SaveSubmittalNote(data);
+    const result = await api.project.saveSubmittalNotes(data);
 
     const info: { fdtNotes: any;} = { fdtNotes: []};
     info.fdtNotes = result;
     setNotesListInfo(info);
 
-  }, [api.project, getValues, projectId]);
+    setValue('txbNotes', '');
+
+    setIsProcessingData(false);
+
+  }, [api.project, getValues, projectId, setValue]);
+  
+
+  const updateNotesClicked = useCallback(async () => {
+    if (getValues('txbNotes') === '') return;
+
+    setIsProcessingData(true);
+
+    const data: any = {
+      // intUserId: localStorage.getItem('userId'),
+      // intUAL: localStorage.getItem('UAL'),
+      intJobId: projectId,
+      intNotesNo: notesNo,
+      strNotes: getValues('txbNotes'),
+    };
+    const result = await api.project.saveSubmittalNotes(data);
+
+    const info: { fdtNotes: any;} = { fdtNotes: []};
+    info.fdtNotes = result;
+    setNotesListInfo(info);
+
+    setValue('txbNotes', '');
+
+    setIsProcessingData(false);
+
+  }, [api.project, getValues, notesNo, projectId, setValue]);
+
+
+  const editNotesClicked = useCallback((row: any) => {
+    setNotesNo(row?.notes_no);
+    setValue('txbNotes', row?.notes);
+
+  }, [setValue]);
+
+
+  const deleteNotesClicked = useCallback(async (row: any) => {
+
+    setIsProcessingData(true);
+
+    const data: any = {
+      // intUAL: localStorage.getItem('UAL'),
+      intJobId: projectId,
+      intNotesNo: row?.notes_no,
+    };
+    const result = await api.project.deleteSubmittalNotes(data);
+
+    const info: { fdtNotes: any;} = { fdtNotes: []};
+    info.fdtNotes = result;
+    setNotesListInfo(info);
+
+    setValue('txbNotes', '');
+
+    setIsProcessingData(false);
+
+  }, [api.project, projectId, setValue]);
 
 
   return (
     <Container  maxWidth="xl" sx={{ mt: '20px' }}>
+    {isProcessingData ? ( 
+      <CircularProgressLoading /> 
+    ) : (
       <FormProvider methods={methods} onSubmit={handleSubmit(onProjectInfoSubmit)}>
         <Grid container spacing={3} sx={{ mb: 5 }}>
           <Grid item xs={12}>
@@ -499,14 +634,14 @@ export default function ProjectSubmittalForm({
                   <Button
                     sx={{ width: '20%', borderRadius: '5px', mt: '1px' }}
                     variant="contained"
-                    onClick={addShippingInstructionClicked}
+                    onClick={addShippingNotesClicked}
                   >
                     Add Shipping Instruction
                   </Button>
                   <Button
                     sx={{ width: '20%', borderRadius: '5px', mt: '1px' }}
                     variant="contained"
-                    // onClick={updateShippingInstructionClicked}
+                    onClick={updateShippingNotesClicked}
                   >
                     Update Shipping Instruction
                   </Button>
@@ -541,14 +676,14 @@ export default function ProjectSubmittalForm({
                             <TableCell component="th" scope="row" align="center" sx={{ width: '10%' }}>                    
                             <IconButton
                               sx={{ color: theme.palette.success.main }}
-                              // onClick={() => selectRowClicked(row)}
+                              onClick={() => editShippingNotesClicked(row)}
                                 >
                                 <Iconify icon="material-symbols:edit-square-outline" />
                             </IconButton>
                           </TableCell>
                           <TableCell component="th" scope="row" align="center" sx={{ width: '10%' }} >
                             <IconButton sx={{ color: theme.palette.warning.main }}
-                            // onClick={() => deleteRow(row.misc_no)}
+                            onClick={() => deleteShippingNotesClicked(row)}
                             >
                               <Iconify icon="ion:trash-outline" />
                             </IconButton>
@@ -582,7 +717,7 @@ export default function ProjectSubmittalForm({
                   <RHFTextField
                     sx={{ width: '60%' }}
                     size="small"
-                    name="txbNotes"
+                    name="txbNote"
                     label="Enter Notes"
                     // value={noteInfo}
                     // onChange={(e) => setNote(e.target.value)}
@@ -590,14 +725,14 @@ export default function ProjectSubmittalForm({
                   <Button
                     sx={{ width: '20%', borderRadius: '5px', mt: '1px' }}
                     variant="contained"
-                    onClick={addNoteClicked}
+                    onClick={addNotesClicked}
                   >
                     Add Note
                   </Button>
                   <Button
                     sx={{ width: '20%', borderRadius: '5px', mt: '1px' }}
                     variant="contained"
-                    // onClick={updateNoteClicked}
+                    onClick={updateNotesClicked}
                   >
                     Update Note
                   </Button>
@@ -624,14 +759,14 @@ export default function ProjectSubmittalForm({
                           <TableCell component="th" scope="row" align="center" sx={{ width: '10%' }}>                    
                             <IconButton
                               sx={{ color: theme.palette.success.main }}
-                              // onClick={() => selectRowClicked(row)}
+                              onClick={() => editNotesClicked(row)}
                                 >
                                 <Iconify icon="material-symbols:edit-square-outline" />
                             </IconButton>
                           </TableCell>
                           <TableCell component="th" scope="row" align="center" sx={{ width: '10%' }} >
                             <IconButton sx={{ color: theme.palette.warning.main }}
-                            // onClick={() => deleteRow(row.misc_no)}
+                            onClick={() => deleteNotesClicked(row)}
                             >
                               <Iconify icon="ion:trash-outline" />
                             </IconButton>
@@ -647,6 +782,7 @@ export default function ProjectSubmittalForm({
           </Grid>
         </Grid>
       </FormProvider>
+       )}   
       <Snackbar
         open={success}
         autoHideDuration={6000}

@@ -34,8 +34,10 @@ import { useApiContext } from 'src/contexts/ApiContext';
 import { LoadingButton } from '@mui/lab';
 import { useGetQuoteSelTables, useGetSavedQuote } from 'src/hooks/useApi';
 import * as Ids from 'src/utils/ids';
-import QuoteMiscDataTable from './QuoteMiscDataTable';
-import QuoteNoteDataTable from './QuoteNoteDataTable';
+import CircularProgressLoading from 'src/components/loading/CircularProgressLoading';
+
+// import QuoteMiscDataTable from './QuoteMiscDataTable';
+// import QuoteNoteDataTable from './QuoteNoteDataTable';
 
 
 // --------------------------------------------------------------
@@ -144,9 +146,10 @@ export default function ProjectQuoteForm({
   const [fail, setFail] = useState<boolean>(false);
   const [currQuoteInfo, setCurrQuoteInfo] = useState <any>([]);
   const [isLoadingQuoteInfo, setIsLoadingQuoteInfo] = useState(true)
-  const [miscInfo, setMiscInfo] = useState('');
+  const [isProcessingData, setIsProcessingData] = useState(false)
+  const [miscNo, setMiscNo] = useState('');
   const [miscListInfo, setMiscListInfo] = useState <any>([]); 
-  const [noteInfo, setNoteInfo] = useState('');
+  const [notesNo, setNotesNo] = useState('');
   const [notesListInfo, setNotesListInfo] = useState <any>([]);
   const theme = useTheme();
 
@@ -159,7 +162,7 @@ export default function ProjectQuoteForm({
   const QuoteFormSchema = Yup.object().shape({
     txbRevisionNo: Yup.string().required('This field is required!'),
     ddlQuoteStage: Yup.number().required('This field is required!'),
-    txbProjectName: Yup.string().required('This field is required!'),
+    txbProjectName: Yup.string(),
     txbQuoteNo: Yup.string().required('This field is required!'),
     ddlFOBPoint: Yup.number(),
     txbTerms: Yup.string(),
@@ -181,7 +184,7 @@ export default function ProjectQuoteForm({
     txbMisc: Yup.string(),
     txbMiscQty: Yup.string(),
     txbMiscPrice: Yup.string(),
-    txbNote: Yup.string(),
+    txbNotes: Yup.string(),
   });
 
 
@@ -214,7 +217,7 @@ export default function ProjectQuoteForm({
       txbMisc: '',
       txbMiscQty: '1',
       txbMiscPrice: '0.00',
-      txbNote: '',
+      txbNotes: '',
     }),
     []
   );
@@ -250,7 +253,7 @@ export default function ProjectQuoteForm({
 
 
     formCurrValues = getValues(); // Do not use watch, must use getValues with the function to get current values.
-    let savedDate =  quoteInfo?.oQuote?.strCreatedDate;
+    let savedDate =  quoteInfo?.oQuoteInputs?.strCreatedDate;
     
     if (savedDate?.includes('/')) {
       const [month, day, year] =  savedDate.split('/');
@@ -264,10 +267,11 @@ export default function ProjectQuoteForm({
 
 
     const oQuoteInputs = {
-      oQuote: {
+      oQuoteSaveInputs: {
         "intUserId" : typeof window !== 'undefined' && localStorage.getItem('userId'),
         "intUAL" : typeof window !== 'undefined' && localStorage.getItem('UAL'),  
         "intJobId" : Number(projectId),
+        "intQuoteId" : Number(formCurrValues.txbQuoteNo),
         "intQuoteStageId" : formCurrValues.ddlQuoteStage,
         "intRevisionNo" : formCurrValues.txbRevisionNo,
         "intFOBPointId" :  Number(formCurrValues.ddlFOBPoint),
@@ -283,7 +287,7 @@ export default function ProjectQuoteForm({
         "dblPriceSubtotal" : formCurrValues.txbPriceSubtotal,
         "dblPriceDiscount" : formCurrValues.txbPriceDiscount,
         "dblPriceFinalTotal" : formCurrValues.txbPriceFinalTotal,
-        "strCreatedDate" : quoteInfo?.oQuote?.strCreatedDate ? savedDate : formCurrValues.txbCreatedDate,
+        "strCreatedDate" : currQuoteInfo?.oQuoteSaveInputs?.strCreatedDate ? savedDate : formCurrValues.txbCreatedDate,
         "strRevisedDate" : `${today.getFullYear()}-${today.getMonth()}-${today.getDate()}`,
         "strValidDate" : `${newValidDate.getFullYear()}-${newValidDate.getMonth()}-${newValidDate.getDate()}`,
       },
@@ -335,28 +339,7 @@ export default function ProjectQuoteForm({
   // );
 
 
-  // submmit function
-  const onQuoteSubmit = async (data: any) => {
-    try {
-      // const requestData = {
-      //   ...data,
-      //   intUserID: localStorage.getItem('userId'),
-      //   intUAL: localStorage.getItem('UAL'),
-      //   intJobID: projectId,
-      // };
-      const oQuote: any = getQuoteInputs();
 
-      const returnValue = await api.project.saveQuote(oQuote);
-      if (returnValue) {
-        setSuccess(true);
-        if (refetch) refetch();
-      } else {
-        setFail(true);
-      }
-    } catch (error) {
-      setFail(true);
-    }
-  };
 
 
   useEffect(() => {
@@ -376,13 +359,13 @@ export default function ProjectQuoteForm({
 
 
 
-  useEffect(() => {
-    const info: { fdtNotes: any;} = { fdtNotes: []};
+  // useEffect(() => {
+  //   const info: { fdtNotes: any;} = { fdtNotes: []};
 
-    info.fdtNotes = currQuoteInfo?.dtNotes;
-    setNotesListInfo(info);
-  },
-  [currQuoteInfo]);
+  //   info.fdtNotes = notesListInfo?.dtNotes;
+  //   setNotesListInfo(info);
+  // },
+  // [notesListInfo]);
 
 
    const [dateInfo, setDateInfo] = useState<any>();
@@ -394,6 +377,8 @@ export default function ProjectQuoteForm({
     setValue('txbCreatedDate', `${today.getFullYear()}-${today.getMonth() + 1}-${today.getDate()}`);
     setValue('txbRevisedDate', `${today.getFullYear()}-${today.getMonth() + 1}-${today.getDate()}`);
     setValue('txbValidDate', `${newValidDate.getFullYear()}-${newValidDate.getMonth() + 1}-${newValidDate.getDate()}`);
+    setValue('ddlShippingType', 1);
+    setValue('ddlDiscountType', 2);
 
    }, [setValue]) 
 
@@ -440,245 +425,301 @@ export default function ProjectQuoteForm({
 
 
   // // Event handler for addding misc
-  // const addMisc = useCallback(
-  //   async (objMisc: any) => {
-  //     const data = {
-  //       ...objMisc,
-  //       intJobID: projectId,
-  //     };
-  //     await api.project.saveQuoteMisc(data);
-  //     if (refetch) refetch();
-  //   },
-  //   [api.project, projectId, refetch]
-  // );
 
 
-  // const updateMisc = useCallback(
-  //   async (objMisc: any, miscNo: number) => {
-  //     const data = {
-  //       ...objMisc,
-  //       intJobID: projectId,
-  //       miscNo,
-  //     };
-  //     await api.project.saveQuoteMisc(data);
-  //     if (refetch) refetch();
-  //   },
-  //   [api.project, projectId, refetch]
-  // );
 
+  // submmit function
+  const onQuoteSubmit = async (data: any) => {
+    try {
 
-  // const deleteMisc = useCallback(
-  //   async (miscNo: number) => {
-  //     const data = {
-  //       intJobID: projectId,
-  //       miscNo,
-  //     };
-  //     await api.project.deleteQuoteMisc(data);
-  //     if (refetch) refetch();
-  //   },
-  //   [api.project, projectId, refetch]
-  // );
+      setIsProcessingData(true);
 
+      // const requestData = {
+      //   ...data,
+      //   intUserID: localStorage.getItem('userId'),
+      //   intUAL: localStorage.getItem('UAL'),
+      //   intJobID: projectId,
+      // };
+      const oQuoteInputs: any = getQuoteInputs();
 
-  // // Event handler for adding notes
-  // const addNotes = useCallback(
-  //   async (txbNotes: any) => {
-  //     const data = {
-  //       intJobID: projectId,
-  //       txbNotes,
-  //     };
-  //     await api.project.saveQuoteNote(data);
-  //     if (refetch) refetch();
-  //   },
-  //   [api.project, projectId, refetch]
-  // );
+      const returnValue = await api.project.saveQuote(oQuoteInputs);
+      if (returnValue) {
+        setCurrQuoteInfo(returnValue);
 
+        setSuccess(true);
 
-  // const updateNotes = useCallback(
-  //   async (txbNotes: any, notesNo: number) => {
-  //     const data = {
-  //       intJobID: projectId,
-  //       txbNotes,
-  //       notesNo,
-  //     };
-  //     await api.project.saveQuoteNote(data);
-  //     if (refetch) refetch();
-  //   },
-  //   [api.project, projectId, refetch]
-  // );
+        if (refetch) refetch();
 
+      } else {
+        setFail(true);
+      }
+    } catch (error) {
+      setFail(true);
+    } finally {
 
-  // const deleteNotes = useCallback(
-  //   async (notesNo: number) => {
-  //     const data = {
-  //       intJobID: projectId,
-  //       notesNo,
-  //     };
-  //     await api.project.deleteQuoteNote(data);
-  //     if (refetch) refetch();
-  //   },
-  //   [api.project, projectId, refetch]
-  // );
+      setIsProcessingData(false);
+    }
+  };
 
 
     // event handler for adding shipping note
     const addMiscClicked = useCallback(async () => {
       if (getValues('txbMisc') === '' || getValues('txbMiscQty') === '' || getValues('txbMiscPrice') === '') return;
+
+      setIsProcessingData(true);
+
       const data: any = {
-        intUserId: typeof window !== 'undefined' && localStorage.getItem('userId'),
-        intUAL: localStorage.getItem('UAL'),
+        // intUserId: typeof window !== 'undefined' && localStorage.getItem('userId'),
+        // intUAL: localStorage.getItem('UAL'),
         intJobId: projectId,
-        intQuoteMiscNo: 0,
+        intMiscNo: 0,
         strMisc: getValues('txbMisc'),
         intMiscQty: Number(getValues('txbMiscQty')),
         dblMiscPrice: getValues('txbMiscPrice'),
       };
       const result = await api.project.saveQuoteMisc(data);
+      setCurrQuoteInfo(result);
+
+      setValue('txbMisc', '');
+      setValue('txbMiscQty', '1');
+      setValue('txbMiscPrice', '0.00');
+
+      setIsProcessingData(false);
   
-      const info: { fdtShippingNotes: any} = { fdtShippingNotes: []};
-      info.fdtShippingNotes = result;
-      setMiscListInfo(info);
-  
-    }, [api.project, getValues, projectId]);
+    }, [api.project, getValues, projectId, setValue]);
 
 
     const updateMiscClicked = useCallback(async () => {
       if (getValues('txbMisc') === '' || getValues('txbMiscQty') === '' || getValues('txbMiscPrice') === '') return;
+
+      setIsProcessingData(true);
+    
       const data: any = {
-        intUserId: typeof window !== 'undefined' && localStorage.getItem('userId'),
-        intUAL: localStorage.getItem('UAL'),
+        // intUserId: typeof window !== 'undefined' && localStorage.getItem('userId'),
+        // intUAL: localStorage.getItem('UAL'),
         intJobId: projectId,
-        intMiscNo: typeof window !== 'undefined' && localStorage.getItem('quoteMiscNo'),
+        intMiscNo: miscNo,
         strMisc: getValues('txbMisc'),
         intMiscQty: Number(getValues('txbMiscQty')),
         dblMiscPrice: getValues('txbMiscPrice'),
       };
       const result = await api.project.saveQuoteMisc(data);
-  
+      setCurrQuoteInfo(result);
 
-      const info: { fdtShippingNotes: any} = { fdtShippingNotes: []};
-      info.fdtShippingNotes = result;
-      setMiscListInfo(info);
+      setValue('txbMisc', '');
+      setValue('txbMiscQty', '1');
+      setValue('txbMiscPrice', '0.00');
+
+      setIsProcessingData(false);
+
+    }, [api.project, getValues, miscNo, projectId, setValue]);
+
+
+    const deleteMiscClicked = useCallback(async (row: any) => {
+
+      setIsProcessingData(true);
+
+      const data: any = {
+        // intUAL: localStorage.getItem('UAL'),
+        intJobId: projectId,
+        intMiscNo: row?.misc_no,
+      };
+      const result = await api.project.deleteQuoteMisc(data);
+      setCurrQuoteInfo(result);
+
+      setValue('txbMisc', '');
+      setValue('txbMiscQty', '1');
+      setValue('txbMiscPrice', '0.00');
+
+      setIsProcessingData(false);
+
+    }, [api.project, projectId, setValue]);
   
-    }, [api.project, getValues, projectId]);
   
+    const editMiscClicked = useCallback((row: any) => {
+      setMiscNo(row?.misc_no);
+      setValue('txbMisc', row?.misc);
+      setValue('txbMiscQty', row?.qty);
+      setValue('txbMiscPrice', row?.price);
   
+    }, [setValue]);
+
+
     // event handler for addding note
-    const addNoteClicked = useCallback(async () => {
-      if (getValues('txbNote') === '') return;
+    const addNotesClicked = useCallback(async () => {
+      if (getValues('txbNotes') === '') return;
+
+      setIsProcessingData(true);
+
       const data: any = {
-        intUserId: localStorage.getItem('userId'),
-        intUAL: localStorage.getItem('UAL'),
+        // intUserId: localStorage.getItem('userId'),
+        // intUAL: localStorage.getItem('UAL'),
         intJobId: projectId,
-        intNoteNo: 0,
-        strNote: getValues('txbNote'),
+        intNotesNo: 0,
+        strNotes: getValues('txbNotes'),
       };
-      const result = await api.project.saveQuoteNote(data);
+      const result = await api.project.saveQuoteNotes(data);
   
       const info: { fdtNotes: any;} = { fdtNotes: []};
       info.fdtNotes = result;
       setNotesListInfo(info);
-  
-    }, [api.project, getValues, projectId]);
+
+      setValue('txbNotes', '');
+
+      setIsProcessingData(false);
+      
+    }, [api.project, getValues, projectId, setValue]);
 
 
-    const updateNoteClicked = useCallback(async () => {
-      if (getValues('txbNote') === '') return;
+    const updateNotesClicked = useCallback(async () => {
+      if (getValues('txbNotes') === '') return;
+
+      setIsProcessingData(true);
+
       const data: any = {
-        intUserId: localStorage.getItem('userId'),
-        intUAL: localStorage.getItem('UAL'),
+        // intUserId: localStorage.getItem('userId'),
+        // intUAL: localStorage.getItem('UAL'),
         intJobId: projectId,
-        intQuoteNoteNo: typeof window !== 'undefined' && localStorage.getItem('quoteNoteNo'),
-        strNote: getValues('txbNote'),
+        intNotesNo: notesNo,
+        strNotes: getValues('txbNotes'),
       };
-      const result = await api.project.saveQuoteNote(data);
+      const result = await api.project.saveQuoteNotes(data);
   
       const info: { fdtNotes: any;} = { fdtNotes: []};
       info.fdtNotes = result;
       setNotesListInfo(info);
+
+      setValue('txbNotes', '');
+
+      setIsProcessingData(false);
+
+    }, [api.project, getValues, notesNo, projectId, setValue]);
+
+
+    const editNotesClicked = useCallback((row: any) => {
+      setNotesNo(row?.notes_no);
+      setValue('txbNotes', row?.notes);
   
-    }, [api.project, getValues, projectId]);
+    }, [setValue]);
+
+
+    const deleteNotesClicked = useCallback(async (row: any) => {
+
+      setIsProcessingData(true);
+
+      const data: any = {
+        // intUAL: localStorage.getItem('UAL'),
+        intJobId: projectId,
+        intNotesNo: row?.notes_no,
+      };
+      const result = await api.project.deleteQuoteNotes(data);
+
+      const info: { fdtNotes: any;} = { fdtNotes: []};
+      info.fdtNotes = result;
+      setNotesListInfo(info);
+
+      setValue('txbNotes', '');
+
+      setIsProcessingData(false);
+
+    }, [api.project, projectId, setValue]);
+  
+  
+
+
+
 
   // Load saved Values
   useEffect(() => {
-    if (quoteInfo?.oQuote !== null) {
+    if (currQuoteInfo !== undefined && currQuoteInfo !== null) {
 
-      if (quoteInfo?.oQuote?.intRevisionNo > 0) {
-        setValue('txbRevisionNo', quoteInfo?.oQuote?.intRevisionNo);
+      if (currQuoteInfo?.oQuoteSaveInputs !== undefined && currQuoteInfo?.oQuoteSaveInputs !== null && currQuoteInfo?.oQuoteSaveInputs?.intQuoteId > 0) {
+
+        if (currQuoteInfo?.oQuoteSaveInputs?.intQuoteId > 0) {
+          setValue('txbQuoteNo', currQuoteInfo?.oQuoteSaveInputs?.intQuoteId);
+        }
+
+        if (currQuoteInfo?.oQuoteSaveInputs?.intRevisionNo > 0) {
+          setValue('txbRevisionNo', currQuoteInfo?.oQuoteSaveInputs?.intRevisionNo);
+        }
+
+        if (currQuoteInfo?.oQuoteSaveInputs?.intQuoteStageId > 0) {
+          setValue('ddlQuoteStage', currQuoteInfo?.oQuoteSaveInputs?.intQuoteStageId);
+        }
+
+        if (currQuoteInfo?.oQuoteSaveInputs?.intFOBPointId > 0) {
+          setValue('ddlFOBPoint', currQuoteInfo?.oQuoteSaveInputs?.intFOBPointId);
+        }
+
+        if (currQuoteInfo?.oQuoteSaveInputs?.strTerms !== null && currQuoteInfo?.oQuoteSaveInputs?.strTerms !== '') {
+          setValue('txbTerms', currQuoteInfo?.oQuoteSaveInputs?.strTerms);
+        }
+
+        if (currQuoteInfo?.oQuoteSaveInputs?.strCreatedDate !== null && currQuoteInfo?.oQuoteSaveInputs?.strCreatedDate !== '') {
+          setValue('txbCreatedDate', currQuoteInfo?.oQuoteSaveInputs?.strCreatedDate);
+        }
+
+        if (currQuoteInfo?.oQuoteSaveInputs?.strRevisedDate !== null && currQuoteInfo?.oQuoteSaveInputs?.strRevisedDate !== '') {
+          setValue('txbRevisedDate', currQuoteInfo?.oQuoteSaveInputs?.strRevisedDate);
+        }
+
+        if (currQuoteInfo?.oQuoteSaveInputs?.strValidDate !== null && currQuoteInfo?.oQuoteSaveInputs?.strValidDate !== '') {
+          setValue('txbValidDate', currQuoteInfo?.oQuoteSaveInputs?.strValidDate);
+        }
+
+        if (currQuoteInfo?.oQuoteSaveInputs?.intCountryId > 0) {
+          setValue('ddlCountry', currQuoteInfo?.oQuoteSaveInputs?.intCountryId);
+        }
+
+        if (currQuoteInfo?.oQuoteSaveInputs?.dblCurrencyRate !== null && currQuoteInfo?.oQuoteSaveInputs?.dblCurrencyRate > 0) {
+          setValue('txbCurrencyRate', currQuoteInfo?.oQuoteSaveInputs?.dblCurrencyRate?.toFixed(2));
+        }
+
+        if (currQuoteInfo?.oQuoteSaveInputs?.intShippingTypeId > 0) {
+          setValue('ddlShippingType', currQuoteInfo?.oQuoteSaveInputs?.intShippingTypeId);
+        }
+
+
+        if (currQuoteInfo?.oQuoteSaveInputs?.dblShippingFactor !== null && currQuoteInfo?.oQuoteSaveInputs?.dblShippingFactor > 0) {
+          setValue('txbShippingFactor', currQuoteInfo?.oQuoteSaveInputs?.dblShippingFactor?.toFixed(1));
+        }
+
+
+        if (currQuoteInfo?.oQuoteSaveInputs?.intDiscountTypeId > 0) {
+          setValue('ddlDiscountType', currQuoteInfo?.oQuoteSaveInputs?.intDiscountTypeId);
+        }
+
+
+        if (currQuoteInfo?.oQuoteSaveInputs?.dblDiscountFactor !== null && currQuoteInfo?.oQuoteSaveInputs?.dblDiscountFactor > 0) {
+          setValue('txbDiscountFactor', currQuoteInfo?.oQuoteSaveInputs?.dblDiscountFactor?.toFixed(1));
+        }
       }
 
-      if (quoteInfo?.oQuote?.intQuoteStageId > 0) {
-        setValue('ddlQuoteStage', quoteInfo?.oQuote?.intQuoteStageId);
+      if (currQuoteInfo?.oQuoteSaveInputs?.dblPriceAllUnits !== null && currQuoteInfo?.oQuoteSaveInputs?.dblPriceAllUnits > 0) {
+        setValue('txbPriceAllUnits', currQuoteInfo?.oQuoteSaveInputs?.dblPriceAllUnits?.toFixed(2));
       }
 
-      if (quoteInfo?.oQuote?.intFOBPointId > 0) {
-        setValue('ddlFOBPoint', quoteInfo?.oQuote?.intFOBPointId);
+      if (currQuoteInfo?.oQuoteSaveInputs?.dblPriceMisc !== null && currQuoteInfo?.oQuoteSaveInputs?.dblPriceMisc > 0) {
+        setValue('txbPriceMisc', currQuoteInfo?.oQuoteSaveInputs?.dblPriceMisc?.toFixed(2));
       }
 
-      // setValue('txbTerms', quoteInfo?.oQuote?.strTerms);
-
-      if (quoteInfo?.oQuote?.strCreatedDate !== null && quoteInfo?.oQuote?.strCreatedDate !== '') {
-        setValue('txbCreatedDate', quoteInfo?.oQuote?.oQuote?.strCreatedDate);
+      if (currQuoteInfo?.oQuoteSaveInputs?.dblPriceShipping !== null && currQuoteInfo?.oQuoteSaveInputs?.dblPriceShipping > 0) {
+        setValue('txbPriceShipping', currQuoteInfo?.oQuoteSaveInputs?.dblPriceShipping?.toFixed(2));
       }
 
-      if (quoteInfo?.oQuote?.strRevisedDate !== null && quoteInfo?.oQuote?.strRevisedDate !== '') {
-        setValue('txbRevisedDate', quoteInfo?.oQuote?.strRevisedDate);
+      if (currQuoteInfo?.oQuoteSaveInputs?.dblPriceSubtotal !== null && currQuoteInfo?.oQuoteSaveInputs?.dblPriceSubtotal > 0) {
+        setValue('txbPriceSubtotal', currQuoteInfo?.oQuoteSaveInputs?.dblPriceSubtotal?.toFixed(2));
       }
 
-      if (quoteInfo?.oQuote?.strValidDate !== null && quoteInfo?.oQuote?.strValidDate !== '') {
-        setValue('txbValidDate', quoteInfo?.oQuote?.strValidDate);
+      if (currQuoteInfo?.oQuoteSaveInputs?.dblPriceDiscount !== null && currQuoteInfo?.oQuoteSaveInputs?.dblPriceDiscount > 0) {
+        setValue('txbPriceDiscount', currQuoteInfo?.oQuoteSaveInputs?.dblPriceDiscount?.toFixed(2));
       }
 
-      if (quoteInfo?.oQuote?.intCountryId > 0) {
-        setValue('ddlCountry', quoteInfo?.oQuote?.intCountryId);
-      }
-
-      if (quoteInfo?.oQuote?.dblCurrencyRate !== null && quoteInfo?.oQuote?.dblCurrencyRate > 0) {
-        setValue('txbCurrencyRate', quoteInfo?.oQuote?.dblCurrencyRate?.toFixed(2));
-      }
-
-      if (quoteInfo?.oQuote?.dblShippingFactor !== null && quoteInfo?.oQuote?.dblShippingFactor > 0) {
-        setValue('txbShippingFactor', quoteInfo?.oQuote?.dblShippingFactor?.toFixed(1));
-      }
-
-
-      if (quoteInfo?.oQuote?.intShippingTypeId > 0) {
-        setValue('ddlShippingType', quoteInfo?.oQuote?.intShippingTypeId);
-      }
-
-      if (quoteInfo?.oQuote?.dblDiscountFactor !== null && quoteInfo?.oQuote?.dblDiscountFactor > 0) {
-        setValue('txbDiscountFactor', quoteInfo?.oQuote?.dblDiscountFactor?.toFixed(1));
-      }
-
-      if (quoteInfo?.oQuote?.intDiscountTypeId > 0) {
-        setValue('ddlDiscountType', quoteInfo?.oQuote?.intDiscountTypeId);
-      }
-
-      if (quoteInfo?.oQuote?.dblPriceAllUnits !== null && quoteInfo?.oQuote?.dblPriceAllUnits > 0) {
-        setValue('txbPriceAllUnits', quoteInfo?.oQuote?.dblPriceAllUnits?.toFixed(2));
-      }
-
-      if (quoteInfo?.oQuote?.dblPriceMisc !== null && quoteInfo?.oQuote?.dblPriceMisc > 0) {
-        setValue('txbPriceMisc', quoteInfo?.oQuote?.dblPriceMisc?.toFixed(2));
-      }
-
-      if (quoteInfo?.oQuote?.dblPriceShipping !== null && quoteInfo?.oQuote?.dblPriceShipping > 0) {
-        setValue('txbPriceShipping', quoteInfo?.oQuote?.dblPriceShipping?.toFixed(2));
-      }
-
-      if (quoteInfo?.oQuote?.dblPriceSubtotal !== null && quoteInfo?.oQuote?.dblPriceSubtotal > 0) {
-        setValue('txbPriceSubtotal', quoteInfo?.oQuote?.dblPriceSubtotal?.toFixed(2));
-      }
-
-      if (quoteInfo?.oQuote?.dblPriceDiscount !== null && quoteInfo?.oQuote?.dblPriceDiscount > 0) {
-        setValue('txbPriceDiscount', quoteInfo?.oQuote?.dblPriceDiscount?.toFixed(2));
-      }
-
-      if (quoteInfo?.oQuote?.dblPriceFinalTotal !== null && quoteInfo?.oQuote?.dblPriceFinalTotal > 0) {
-        setValue('txbPriceFinalTotal', quoteInfo?.oQuote?.dblPriceFinalTotal?.toFixed(2));
+      if (currQuoteInfo?.oQuoteSaveInputs?.dblPriceFinalTotal !== null && currQuoteInfo?.oQuoteSaveInputs?.dblPriceFinalTotal > 0) {
+        setValue('txbPriceFinalTotal', currQuoteInfo?.oQuoteSaveInputs?.dblPriceFinalTotal?.toFixed(2));
       }
     }
-  }, [quoteInfo?.oQuote, setValue]); // <-- empty dependency array - This will only trigger when the component mounts and no-render
+  }, [currQuoteInfo, currQuoteInfo?.oQuoteSaveInputs, setValue]); // <-- empty dependency array - This will only trigger when the component mounts and no-render
 
 
 // Calculate pricing with default values when Quote not saved yet
@@ -690,7 +731,7 @@ useEffect(() => {
   async function fetchData() {
     
     const oQuoteInputs : any = {
-      oQuote: {
+      oQuoteSaveInputs: {
         "intUserId" : typeof window !== 'undefined' && localStorage.getItem('userId'),
         "intUAL" : typeof window !== 'undefined' && localStorage.getItem('UAL'),  
         "intJobId" : Number(projectId),
@@ -712,6 +753,7 @@ useEffect(() => {
         "strCreatedDate" : '',
         "strRevisedDate" : '',
         "strValidDate" : '',
+        "intIsCalcFinalPrice": 0, // not used now
       },
     }
 
@@ -719,13 +761,33 @@ useEffect(() => {
         const returnValue = await api.project.getSavedQuote(oQuoteInputs);
         setCurrQuoteInfo(returnValue);
 
-        setValue('txbPriceAllUnits', returnValue?.oQuote?.dblPriceAllUnits?.toFixed(2));
-        setValue('txbPriceMisc', returnValue?.oQuote?.dblPriceMisc?.toFixed(2));
-        setValue('txbPriceShipping', returnValue?.oQuote?.dblPriceShipping?.toFixed(2));
-        setValue('txbPriceSubtotal', returnValue?.oQuote?.dblPriceSubtotal?.toFixed(2));
-        setValue('txbPriceDiscount', returnValue?.oQuote?.dblPriceDiscount?.toFixed(2));
-        setValue('txbPriceFinalTotal', returnValue?.oQuote?.dblPriceFinalTotal?.toFixed(2));
+        //   if (returnValue?.oQuote?.intQuoteId > 0) {
+        //   setValue('txbQuoteNo', returnValue?.oQuote?.intQuoteId);
+        //   setValue('txbRevisionNo', returnValue?.oQuote?.intRevisionNo);
+        //   if (returnValue?.oQuote?.intQuoteStageId > 0) { setValue('ddlQuoteStage', returnValue?.oQuote?.intQuoteStageId);}
+        //   setValue('txbProjectName', returnValue?.oQuote?.strProjectName);
+        //   if (returnValue?.oQuote?.intFOBPoint > 0) { setValue('ddlFOBPoint', returnValue?.oQuote?.intFOBPointId);}
+        //   setValue('txbTerms', returnValue?.oQuote?.strTerms);
+        //   setValue('txbCreatedDate', returnValue?.oQuote?.strCreatedDate);
+        //   setValue('txbRevisedDate', returnValue?.oQuote?.strRevisedDate);
+        //   setValue('txbValidDate', returnValue?.oQuote?.strValidDate);
+        //   if (returnValue?.oQuote?.intCountryId > 0) { setValue('ddlCountry', returnValue?.oQuote?.intCountryId);}
+        //   setValue('txbCurrencyRate', returnValue?.oQuote?.dblCurrencyRate?.toFixed(2));
+        //   if (returnValue?.oQuote?.intShippingTypeId > 0) { setValue('ddlShippingType', returnValue?.oQuote?.intShippingTypeId);}
+        //   setValue('txbShippingFactor', returnValue?.oQuote?.dblShippingFactor?.toFixed(2));
+        //   if (returnValue?.oQuote?.intDiscountTypeId > 0) { setValue('ddlDiscountType', returnValue?.oQuote?.intDiscountTypeId);}
+        //   setValue('txbDiscountFactor', returnValue?.oQuote?.dblDiscountFactor?.toFixed(2));
+        // }
+
+        //   setValue('txbPriceAllUnits', returnValue?.oQuote?.dblPriceAllUnits?.toFixed(2));
+        //   setValue('txbPriceMisc', returnValue?.oQuote?.dblPriceMisc?.toFixed(2));
+        //   setValue('txbPriceShipping', returnValue?.oQuote?.dblPriceShipping?.toFixed(2));
+        //   setValue('txbPriceSubtotal', returnValue?.oQuote?.dblPriceSubtotal?.toFixed(2));
+        //   setValue('txbPriceDiscount', returnValue?.oQuote?.dblPriceDiscount?.toFixed(2));
+        //   setValue('txbPriceFinalTotal', returnValue?.oQuote?.dblPriceFinalTotal?.toFixed(2));
+        
         setIsLoadingQuoteInfo(false);
+
     }
       // if (returnValue) {
       //   setSuccess(true);
@@ -741,13 +803,34 @@ useEffect(() => {
     }, [api.project, getValues, projectId, setValue]);
 
 
+useEffect(() => {
+  async function fetchData() {
+        
+    const data: any = {
+      intJobId: projectId,
+    };
+    
+    if (data !== undefined && data !== null) {
+      const returnValue = await api.project.getSavedQuoteNotes(data);
 
+      const info: { fdtNotes: any;} = { fdtNotes: []};
+      info.fdtNotes = returnValue;
+
+      setNotesListInfo(info);
+    }
+  }
+    
+  fetchData();
+}, [api.project, projectId]);
 
 
   if (isLoadingQuoteInfo) return <LinearProgress color="info" />;
 
   return (
     <Container maxWidth="xl" sx={{ mb: '50px' }}>
+    {isProcessingData ? ( 
+      <CircularProgressLoading /> 
+    ) : (
       <FormProvider methods={methods} onSubmit={handleSubmit(onQuoteSubmit)}>
         <Grid container spacing={3}>
           <Grid item xs={12}>
@@ -762,7 +845,6 @@ useEffect(() => {
                         <option key={index} value={e.id}>
                           {e.items}
                         </option>
-                      
                     ))}
                       {/* <option value="2">USA</option> */}
                     </RHFSelect>
@@ -795,14 +877,18 @@ useEffect(() => {
                     <RHFTextField size="small" name="txbCurrencyRate" label="Currency Rate" />
                     <Stack direction="row">
                       <RHFTextField size="small" name="txbShippingFactor" label="Shipping" />
-                      <RHFSelect native size="small" name="ddlShippingTypeVal" label="Unit" placeholder="" >
+                      <RHFSelect native size="small" name="ddlShippingType" label="Unit" placeholder="" 
+                        onChange={(e: any) => {setValue('ddlShippingType', Number(e.target.value));}}
+                      >
                         <option value="1" selected>%</option>
                         <option value="2">$</option>
                       </RHFSelect>
                     </Stack>
                     <Stack direction="row">
                       <RHFTextField size="small" name="txbDiscountFactor" label="Discount" />
-                      <RHFSelect native size="small" name="ddlDiscountTypeVal" label="Unit" placeholder="" >
+                      <RHFSelect native size="small" name="ddlDiscountType" label="Unit" placeholder="" 
+                        onChange={(e: any) => {setValue('ddlDiscountType', Number(e.target.value));}}
+                      >
                         <option value="1">%</option>
                         <option value="2" selected>$</option>
                       </RHFSelect>
@@ -908,10 +994,10 @@ useEffect(() => {
                         <TableCell component="th" scope="row" align="left">
                           DESCRIPTION
                         </TableCell>
-                        <TableCell component="th" scope="row" align="left">
+                        <TableCell component="th" scope="row" align="right">
                           UNIT PRICE
                         </TableCell>
-                        <TableCell component="th" scope="row" align="left">
+                        <TableCell component="th" scope="row" align="right">
                           AMOUNT
                         </TableCell>
                       </TableRow>
@@ -946,18 +1032,48 @@ useEffect(() => {
                             dangerouslySetInnerHTML={{ __html: item.description }}
                             component="th" scope="row" align="left"
                           />
-                          <TableCell component="th" scope="row" align="left">
+                          <TableCell component="th" scope="row" align="right">
                             {item.unit_price}
                           </TableCell>
-                          <TableCell component="th" scope="row" align="left">
+                          <TableCell component="th" scope="row" align="right">
                             {item.unit_price}
                           </TableCell>
                         </TableRow>
                       ))}
                     </TableBody>
-
                     <TableBody>
-                      {quoteInfo?.dbtPricingShipping?.map((item: any, i: number) => (
+                      {currQuoteInfo?.dtPricingMisc?.map((item: any, i: number) => (
+                        <TableRow>
+                          <TableCell component="th" scope="row" align="left">
+                            {i + 1}
+                          </TableCell>
+                          <TableCell component="th" scope="row" align="left">
+                            {item.tag}
+                          </TableCell>
+                          <TableCell component="th" scope="row" align="left">
+                            {item.qty}
+                          </TableCell>
+                          <TableCell component="th" scope="row" align="left">
+                            {item.unit_type}
+                          </TableCell>
+                          <TableCell component="th" scope="row" align="left">
+                            {item.unit_model}
+                          </TableCell>
+                          <TableCell
+                            dangerouslySetInnerHTML={{ __html: item.description }}
+                            component="th" scope="row" align="left"
+                          />
+                          <TableCell component="th" scope="row" align="right">
+                            {item.unit_price}
+                          </TableCell>
+                          <TableCell component="th" scope="row" align="right">
+                            {item.unit_price}
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                    <TableBody>
+                      {currQuoteInfo?.dtPricingShipping?.map((item: any, i: number) => (
                         <TableRow
                           key={i}
                           sx={{
@@ -986,10 +1102,10 @@ useEffect(() => {
                             dangerouslySetInnerHTML={{ __html: item.description }}
                             component="th" scope="row" align="left"
                           />
-                          <TableCell component="th" scope="row" align="left">
+                          <TableCell component="th" scope="row" align="right">
                             {item.unit_price}
                           </TableCell>
-                          <TableCell component="th" scope="row" align="left">
+                          <TableCell component="th" scope="row" align="right">
                             {item.unit_price}
                           </TableCell>
                         </TableRow>
@@ -1000,14 +1116,57 @@ useEffect(() => {
               </TableContainer>
             </CustomGroupBox>
           </Grid>
-          <Grid item xs={12}>
-            <CustomGroupBox>
-              {quoteInfo?.dtPricingTotal?.map((item: any, i: number) => (
-                <Typography key={i} sx={{ fontWeight: item.is_add_info_bold ? 600 : 300 }}>
+          <Grid item xs={9}>
+            {/* <CustomGroupBox> */}
+              {currQuoteInfo?.dtPricingAddInfo?.map((item: any, i: number) => (
+                <Typography key={i} sx={{ fontWeight: item.is_add_info_bold ? 600 : 300}}>
                   {item.add_info}
                 </Typography>
               ))}
-            </CustomGroupBox>
+            {/* </CustomGroupBox> */}
+          </Grid>
+          <Grid item xs={3}>
+            {/* <CustomGroupBox> */}
+              {/* {currQuoteInfo?.dtPricingTotal?.map((item: any, i: number) => (
+                <Typography key={i} sx={{ fontWeight: 600 }}>
+                  {item.price_label} {item.price} {item.currency} 
+                </Typography>
+              ))} */}
+            {/* </CustomGroupBox> */}
+            <TableContainer component={Paper}>
+                <Scrollbar>
+                  <Table size="small">
+                    <TableBody>
+                      {currQuoteInfo?.dtPricingTotal?.map((item: any, i: number) => (
+                        <TableRow key={i} sx={{'&:last-child td, &:last-child th': {border: 0,}, fontWeight: 600, fontStyle: 'bold'}}>
+                          <TableCell component="th" scope="row" align="right" sx={{fontWeight: 600, fontStyle: 'bold'}}>
+                            {item.price_label}
+                          </TableCell>
+                          <TableCell component="th" scope="row" align="right" sx={{fontWeight: 600, fontStyle: 'bold'}}>
+                            {item.price}
+                          </TableCell>
+                          <TableCell component="th" scope="row" align="right" sx={{fontWeight: 600, fontStyle: 'bold'}}>
+                            {item.currency}
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </Scrollbar>
+              </TableContainer>
+
+          </Grid>
+          <Grid item xs={12}>
+            <Stack direction="row" justifyContent="flex-end">
+              <LoadingButton
+                type="submit"
+                startIcon={<Iconify icon="fluent:save-24-regular" />}
+                loading={isSubmitting}
+                sx={{ width: '150px' }}
+              >
+                Save Changes
+              </LoadingButton>
+            </Stack>
           </Grid>
           <Grid item xs={12}>
             {/* <CustomGroupBox title="Added Miscellaneous">
@@ -1039,14 +1198,16 @@ useEffect(() => {
                   <RHFTextField size="small" name="txbMiscPrice" label="Enter Price" sx={{ width: '10%' }}/>
                   <Button
                     sx={{ width: '15%', borderRadius: '5px', mt: '1px' }}
-                    variant="contained"
+                    // variant="contained"
+                    startIcon={<Iconify icon="fluent:save-24-regular" />}
                     onClick={addMiscClicked}
                   >
                     Add Misc
                   </Button>
                   <Button
                     sx={{ width: '15%', borderRadius: '5px', mt: '1px' }}
-                    variant="contained"
+                    // variant="contained"
+                    startIcon={<Iconify icon="fluent:save-24-regular" />}
                     onClick={updateMiscClicked}
                   >
                     Update Misc
@@ -1062,7 +1223,6 @@ useEffect(() => {
                         <TableHeaderCellStyled component="th" scope="row" align="center" sx={{ width: '10%' }}>Price</TableHeaderCellStyled>
                         <TableHeaderCellStyled component="th" scope="row" align="center" sx={{ width: '10%' }}>Edit</TableHeaderCellStyled>
                         <TableHeaderCellStyled component="th" scope="row" align="center" sx={{ width: '10%' }}>Delete</TableHeaderCellStyled>
-
                       </TableRow>
                     </TableHead>
                     <TableBody>
@@ -1083,14 +1243,14 @@ useEffect(() => {
                           <TableCell component="th" scope="row" align="center" sx={{ width: '10%' }}>                    
                             <IconButton
                               sx={{ color: theme.palette.success.main }}
-                              // onClick={() => selectRowClicked(row)}
+                              onClick={() => editMiscClicked(row)}
                                 >
                                 <Iconify icon="material-symbols:edit-square-outline" />
                             </IconButton>
                           </TableCell>
                           <TableCell component="th" scope="row" align="center" sx={{ width: '10%' }} >
                             <IconButton sx={{ color: theme.palette.warning.main }}
-                            // onClick={() => deleteRow(row.misc_no)}
+                            onClick={() => deleteMiscClicked(row)}
                             >
                               <Iconify icon="ion:trash-outline" />
                             </IconButton>
@@ -1128,21 +1288,23 @@ useEffect(() => {
               </AccordionSummary>
               <AccordionDetails>
                 <Stack direction="row" spacing={2} sx={{ mt: 1.5 }}>
-                  <RHFTextField size="small" name="txbNote" label="Enter Notes"  sx={{ width: '70%' }}
+                  <RHFTextField size="small" name="txbNotes" label="Enter Notes"  sx={{ width: '70%' }}
                     // value={noteInfo}
                     // onChange={(e) => setNote(e.target.value)}
                   />
                   <Button
                     sx={{ width: '15%', borderRadius: '5px', mt: '1px' }}
-                    variant="contained"
-                    onClick={addNoteClicked}
+                    // variant="contained"
+                    startIcon={<Iconify icon="fluent:save-24-regular" />}
+                    onClick={addNotesClicked}
                   >
                     Add Note
                   </Button>
                   <Button
                     sx={{ width: '15%', borderRadius: '5px', mt: '1px' }}
-                    variant="contained"
-                    onClick={updateNoteClicked}
+                    // variant="contained"
+                    startIcon={<Iconify icon="fluent:save-24-regular" />}
+                    onClick={updateNotesClicked}
                   >
                     Update Note
                   </Button>
@@ -1169,14 +1331,15 @@ useEffect(() => {
                           <TableCell component="th" scope="row" align="center" sx={{ width: '10%' }}>                    
                             <IconButton
                               sx={{ color: theme.palette.success.main }}
-                              // onClick={() => selectRowClicked(row)}
-                                >
-                                <Iconify icon="material-symbols:edit-square-outline" />
+                              onClick={() => editNotesClicked(row)}
+                            >
+                              <Iconify icon="material-symbols:edit-square-outline" />
                             </IconButton>
                           </TableCell>
                           <TableCell component="th" scope="row" align="center" sx={{ width: '10%' }} >
-                            <IconButton sx={{ color: theme.palette.warning.main }}
-                            // onClick={() => deleteRow(row.misc_no)}
+                            <IconButton 
+                              sx={{ color: theme.palette.warning.main }}
+                              onClick={() => deleteNotesClicked(row)}
                             >
                               <Iconify icon="ion:trash-outline" />
                             </IconButton>
@@ -1189,20 +1352,9 @@ useEffect(() => {
               </AccordionDetails>
             {/* </Accordion> */}
           </Grid>
-          <Grid item xs={12}>
-            <Stack direction="row" justifyContent="flex-end">
-              <LoadingButton
-                type="submit"
-                startIcon={<Iconify icon="fluent:save-24-regular" />}
-                loading={isSubmitting}
-                sx={{ width: '150px' }}
-              >
-                Save Changes
-              </LoadingButton>
-            </Stack>
-          </Grid>
         </Grid>
       </FormProvider>
+    )}
       <Snackbar
         open={success}
         autoHideDuration={6000}
