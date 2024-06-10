@@ -25,12 +25,14 @@ export default function SelectionWrapper({ projectId, unitId }: SelectionWrapper
 const unitInfo: any = unitData || {};
 
   return !isLoadingUnitInfo ? (
-    <Selection
-      unitTypeData={{
-        intProductTypeID: unitInfo?.productTypeID,
-        intUnitTypeID: unitInfo?.unitTypeID,
-      }}
-      intUnitNo={unitId}
-    />
+    // <Selection
+    //   unitTypeData={{
+    //     intProductTypeID: unitInfo?.productTypeID,
+    //     intUnitTypeID: unitInfo?.unitTypeID,
+    //   }}
+    //   intUnitNo={unitId}
+    // />
+
+    <Selection intJobId={unitInfo?.intProjectID} intUnitNo={unitId} intProdTypeId={unitInfo?.productTypeID}/>
   ) : null;
 }

@@ -39,6 +39,7 @@ type UnitInfoProps = {
   txbProductType?: string;
   txbUnitType?: string;
   unitInfoData?: any;
+  setCurrentStep?: Function;
 };
 
 export default function UnitInfo({
@@ -53,6 +54,7 @@ export default function UnitInfo({
   txbProductType,
   txbUnitType,
   unitInfoData,
+  setCurrentStep,
 }: UnitInfoProps) {
   const [baseData, setbaseData] = useState(null)
   const [unitData, setunitData] = useState(null)
@@ -120,6 +122,7 @@ export default function UnitInfo({
               setFunction={setFunction}
               txbProductType={txbProductType}
               txbUnitType={txbUnitType}
+              setCurrentStep={setCurrentStep}
             />
           )}
         </Box>

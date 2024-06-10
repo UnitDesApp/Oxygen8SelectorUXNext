@@ -106,11 +106,13 @@ function CustomGroupBox({ title, children, bordersx, titlesx }: CustomGroupBoxPr
 
 //------------------------------------------------
 interface SelectionProps {
-  unitTypeData: any;
+  intJobId: any;
   intUnitNo: number;
+  intProdTypeId: number;
 }
 
-export default function Selection({ unitTypeData, intUnitNo }: SelectionProps) {
+// export default function Selection({ unitTypeData, intUnitNo }: SelectionProps) {
+export default function Selection({ intJobId, intUnitNo, intProdTypeId }: SelectionProps) {
   const { projectId } = useRouter().query;
   const [error, setError] = useState(null);
   const [expanded, setExpanded] = React.useState<{ [key: string]: boolean }>({
@@ -140,9 +142,9 @@ export default function Selection({ unitTypeData, intUnitNo }: SelectionProps) {
     intUserId: typeof window !== 'undefined' && localStorage.getItem('userId'),
     intUAL: typeof window !== 'undefined' && localStorage.getItem('UAL'),
     intJobId: projectId,
-    intProdTypeId: unitTypeData?.intProductTypeID,
-    intUnitTypeId: unitTypeData?.intUnitTypeID,
     intUnitNo,
+    intProdTypeId,
+    // intUnitTypeId: unitTypeData?.intUnitTypeID,
   });
 
   // const viewSelectionInfo = useMemo(
@@ -2038,7 +2040,8 @@ export default function Selection({ unitTypeData, intUnitNo }: SelectionProps) {
             </Grid>
 
 
-            <Grid item xs={12} sx={{display: selectionData?.dtHeatingCondCoil_Data?.length > 0 ? 'block' : 'none' }}>
+            <Grid item xs={12} sx={{display: selectionData?.dtHeatingCondCoil_Data !== undefined && 
+                                             selectionData?.dtHeatingCondCoil_Data?.length > 0 ? 'block' : 'none' }}>
               <AccordionSummary
                         // expandIcon={<Iconify icon="il:arrow-down" />}
                         // aria-controls="panel1a-content"
@@ -2481,7 +2484,7 @@ export default function Selection({ unitTypeData, intUnitNo }: SelectionProps) {
                         <CustomGroupBox title="Graph">
                         <Image
                                 src={
-                                  unitTypeData?.intProductTypeID === 3
+                                  intProdTypeId === 3
                                     ? `/${selectionData?.dtSF_Graph?.[0]?.cValue}`
                                     : `data:image/jpeg;base64,${selectionData?.dtSF_Graph?.[0]?.cValue}`
                                 }
@@ -2579,7 +2582,7 @@ export default function Selection({ unitTypeData, intUnitNo }: SelectionProps) {
                         <CustomGroupBox title="Graph">
                         <Image
                                 src={
-                                  unitTypeData?.intProductTypeID === 3
+                                    intProdTypeId === 3
                                     ? `/${selectionData?.dtEF_Graph?.[0]?.cValue}`
                                     : `data:image/jpeg;base64,${selectionData?.dtEF_Graph?.[0]?.cValue}`
                                 }

@@ -62,7 +62,8 @@ export default class ProjectApi extends AbstractApi {
   //   this.client.post(`/api/Unit/GetUnitSelection`, params).then((res: any) => res.data);
   
   getUnitSelection = (params: any): Promise<any> =>
-    this.client.post(`/api/Unit/GetUnitSelection`, params).then((res: any) => JSON.parse(res.data));
+    this.client.post(`/api/Unit/GetUnitSelection`, params).then((
+      res: any) => JSON.parse(res.data));
 
 
   // getAllBaseData = (): Promise<any> =>
