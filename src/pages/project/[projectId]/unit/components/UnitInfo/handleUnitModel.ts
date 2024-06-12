@@ -1557,57 +1557,57 @@ export const getReheatInfo = (
 
 
 
-export const getCoolingFluidTypeInfo = (
-  db: { dbtSelFluidType: any; dbtSelFluidConcentration: any },
-  intCoolingCompID: any,
-) => {
-  const returnInfo: {
-    isVisible?: boolean;
-    dataTable?: any;
-    defaultId?: number;
-    // FluidConcenData?: any;
-    // FluidConcenId?: number;
-  } = {};
+// export const getCoolingFluidTypeInfo = (
+//   db: { dbtSelFluidType: any; dbtSelFluidConcentration: any },
+//   intCoolingCompID: any,
+// ) => {
+//   const returnInfo: {
+//     isVisible?: boolean;
+//     dataTable?: any;
+//     defaultId?: number;
+//     // FluidConcenData?: any;
+//     // FluidConcenId?: number;
+//   } = {};
 
-  // returnInfo.divHeatingFluidDesignCondVisible = !!(
-  //   intPreheatCompID === ClsID.intCompHWC_ID ||
-  //   intHeatingCompID === ClsID.intCompHWC_ID ||
-  //   intReheatCompID === ClsID.intCompHWC_ID
-  // );
+//   // returnInfo.divHeatingFluidDesignCondVisible = !!(
+//   //   intPreheatCompID === ClsID.intCompHWC_ID ||
+//   //   intHeatingCompID === ClsID.intCompHWC_ID ||
+//   //   intReheatCompID === ClsID.intCompHWC_ID
+//   // );
 
-  let dataTableSel = db?.dbtSelFluidType;
-  dataTableSel = dataTableSel?.filter((item: { id: number }) => item.id !== 1);
+//   let dataTableSel = db?.dbtSelFluidType;
+//   dataTableSel = dataTableSel?.filter((item: { id: number }) => item.id !== 1);
   
-  returnInfo.dataTable = dataTableSel;
-  returnInfo.defaultId = dataTableSel?.[0]?.id;
-  // returnInfo.FluidConcenData = getItemsAddedOnIDDataTable(data?.fluidConcentration,'fluid_type_id',returnInfo.FluidTypeId || 0);
-  // returnInfo.FluidConcenId = returnInfo.FluidConcenData?.[0]?.id;
+//   returnInfo.dataTable = dataTableSel;
+//   returnInfo.defaultId = dataTableSel?.[0]?.id;
+//   // returnInfo.FluidConcenData = getItemsAddedOnIDDataTable(data?.fluidConcentration,'fluid_type_id',returnInfo.FluidTypeId || 0);
+//   // returnInfo.FluidConcenId = returnInfo.FluidConcenData?.[0]?.id;
 
-  return returnInfo;
-};
+//   return returnInfo;
+// };
 
 
-export const getCoolingFluidConcenInfo = (
-  db: { dbtSelFluidConcentration: any },
-  FluidTypeId: any,
-) => {
-  const returnInfo: {
-    isVisible?: boolean;
-    dataTable?: any;
-    defaultId?: number;
-  } = {};
+// export const getCoolingFluidConcenInfo = (
+//   db: { dbtSelFluidConcentration: any },
+//   FluidTypeId: any,
+// ) => {
+//   const returnInfo: {
+//     isVisible?: boolean;
+//     dataTable?: any;
+//     defaultId?: number;
+//   } = {};
 
-  let dataTableSel = db?.dbtSelFluidConcentration;
-  // DataSel = DataSel?.filter((item: { id: number }) => item.id !== 1);
+//   let dataTableSel = db?.dbtSelFluidConcentration;
+//   // DataSel = DataSel?.filter((item: { id: number }) => item.id !== 1);
 
-  // dataTableSel = getItemsAddedOnIDDataTable(dataTableSel,'fluid_type_id', FluidTypeId || 0);
-  dataTableSel = dataTableSel?.filter((item: { fluid_type_id: number }) => item.fluid_type_id === FluidTypeId);
+//   // dataTableSel = getItemsAddedOnIDDataTable(dataTableSel,'fluid_type_id', FluidTypeId || 0);
+//   dataTableSel = dataTableSel?.filter((item: { fluid_type_id: number }) => item.fluid_type_id === FluidTypeId);
 
-  returnInfo.dataTable = dataTableSel;
-  returnInfo.defaultId = dataTableSel?.[0]?.id;
+//   returnInfo.dataTable = dataTableSel;
+//   returnInfo.defaultId = dataTableSel?.[0]?.id;
 
-  return returnInfo;
-};
+//   return returnInfo;
+// };
 
 export const getDamperAndActuatorInfo = (
   db: { dbtSelDamperActuator: any },

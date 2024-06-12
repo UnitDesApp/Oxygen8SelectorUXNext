@@ -78,7 +78,7 @@ export default function ProjectInfoDialog({
 
   // let { oSavedjob } = null || {};
 
-  const NewUserSchema = Yup.object().shape({
+  const JobFormSchema = Yup.object().shape({
     txbJobName: Yup.string().required('Please enter a Project Name'),
     // ddlBasisOfDesign: Yup.string().required('Please enter a Basis Of Design'),
     ddlBasisOfDesign: Yup.number(),
@@ -123,11 +123,11 @@ export default function ProjectInfoDialog({
       txbJobName: savedJob ? savedJob?.strJobName : '',
       ddlBasisOfDesign: savedJob ? savedJob?.intBasisOfDesignId : 0,
       txbReferenceNo: savedJob ? savedJob?.strReferenceNo : '0',
-      txbRevisionNo: savedJob ? savedJob?.intRevisionNo : '0',
+      txbRevisionNo: savedJob ? String(savedJob?.intRevisionNo) : '0',
       ddlCompanyName: savedJob ? savedJob?.intCompanyNameId : 0,
       txbCompanyName: savedJob ? savedJob?.strCompanyName : '',
       ddlCompanyContactName: savedJob ? savedJob?.intCompanyContactNameId : 0,
-      txbCompanyContactName: savedJob ? savedJob?.intCompanyContactNameId : '',
+      txbCompanyContactName: savedJob ? savedJob?.strCompanyContactName : '',
       ddlApplication: savedJob ? savedJob?.intApplicationId : 0,
       ddlUoM: savedJob ? savedJob?.intUoMId : 0,
       ddlCountry: savedJob ? savedJob?.strCountry : '',
@@ -135,12 +135,12 @@ export default function ProjectInfoDialog({
       ddlCity: savedJob ? savedJob?.intCityId : 0,
       ddlAshareDesignConditions: savedJob ? savedJob?.intDesignConditionsId : 0,
       txbAltitude: savedJob ? savedJob?.intAltitude : '0',
-      txbSummerOA_DB: savedJob ? savedJob?.dblSummerOA_DB : 95.0,
-      txbSummerOA_WB: savedJob ? savedJob?.dblSummerOA_WB : 78.0,
-      txbSummerOA_RH: savedJob ? savedJob?.dblSummerOA_RH : 47.3,
-      txbWinterOA_DB: savedJob ? savedJob?.dblWinterOA_DB : 35.0,
-      txbWinterOA_WB: savedJob ? savedJob?.dblWinterOA_WB : 33.0,
-      txbWinterOA_RH: savedJob ? savedJob?.dblWinterOA_RH : 81.9,
+      txbSummerOA_DB: savedJob ? savedJob?.dblSummerOA_DB : '95.0',
+      txbSummerOA_WB: savedJob ? savedJob?.dblSummerOA_WB : '78.0',
+      txbSummerOA_RH: savedJob ? savedJob?.dblSummerOA_RH : '47.3',
+      txbWinterOA_DB: savedJob ? savedJob?.dblWinterOA_DB : '35.0',
+      txbWinterOA_WB: savedJob ? savedJob?.dblWinterOA_WB : '33.0',
+      txbWinterOA_RH: savedJob ? savedJob?.dblWinterOA_RH : '81.9',
       txbSummerRA_DB: savedJob ? savedJob?.dblSummerRA_DB : '75.0',
       txbSummerRA_WB: savedJob ? savedJob?.dblSummerRA_WB : '63.0',
       txbSummerRA_RH: savedJob ? savedJob?.dblSummerRA_RH : '51.17',
@@ -152,7 +152,7 @@ export default function ProjectInfoDialog({
     [savedJob]
   );
 
-  const methods = useForm({ resolver: yupResolver(NewUserSchema), defaultValues });
+  const methods = useForm({ resolver: yupResolver(JobFormSchema), defaultValues });
 
   // const {
   //   setValue,
@@ -289,7 +289,7 @@ export default function ProjectInfoDialog({
     if (submit === 1) {
       try {
         const oJC: any = getJobInputs(); // JC: Job Container
-        await api.project.addNewProject(oJC);
+        await api.project.saveJob(oJC);
         setOpenSuccess();
         refetch();
         reset(defaultValues);
@@ -597,8 +597,9 @@ export default function ProjectInfoDialog({
   useMemo(() => {
     const dtSelCountry = dbtWeatherData?.map((e: any) => e.country,)?.filter((v:any, i:any, e: any) => e.indexOf(v) === i);
     
+
     setWeatherDataCountryInfo(dtSelCountry);  
-    
+ 
     if (dtSelCountry?.length > 0) {
       setValue('ddlCountry', String(dtSelCountry?.[0]));
     } else {
@@ -612,6 +613,7 @@ export default function ProjectInfoDialog({
     let dtSelProvState = dbtWeatherData?.filter((e: any) => e.country === formValues.ddlCountry);
     dtSelProvState = dtSelProvState?.map((e: any) => e.prov_state)?.filter((v:any, i:any, e: any) => e.indexOf(v) === i);
    
+
     setWeatherDataProvStateInfo(dtSelProvState);
 
     if (dtSelProvState?.length > 0) {
@@ -626,7 +628,8 @@ export default function ProjectInfoDialog({
   useMemo(() => {
     let dtSelCity = dbtWeatherData?.filter((e: any) => e.country === formCurrValues.ddlCountry);
     dtSelCity = dtSelCity?.filter((e: any) => e.prov_state === formCurrValues.ddlProvState);
-    const provname = getValues('ddlProvState');
+    // const provname = getValues('ddlProvState');
+
 
     setWeatherDataCityInfo(dtSelCity);
 
@@ -635,7 +638,7 @@ export default function ProjectInfoDialog({
     } else {
       setValue('ddlCity', 0); //
     }
-  }, [dbtWeatherData, formCurrValues.ddlCountry, formCurrValues.ddlProvState, getValues, setValue]);
+  }, [dbtWeatherData, formCurrValues.ddlCountry, formCurrValues.ddlProvState, setValue]);
 
 
   // useState<any>([])
@@ -643,10 +646,11 @@ export default function ProjectInfoDialog({
   const [summerOaRhInfo, setSummerOaRhInfo] = useState(0);
   const [winterOaRhInfo, setWinterOaRhInfo] = useState(0);
    useMemo(() => {
-    const info: {isLoading: number; altitude: number; summerOA_DB: Number;  summerOA_WB: Number; summerOA_RH: Number; winterOA_DB: Number;  winterOA_WB: Number; winterOA_RH: Number;} = 
-                {isLoading: 0, altitude: 0, summerOA_DB: 0,  summerOA_WB: 0, summerOA_RH: 0, winterOA_DB: 0,  winterOA_WB: 0, winterOA_RH: 0};
+    const info: {altitude: number; summerOA_DB: Number;  summerOA_WB: Number; summerOA_RH: Number; winterOA_DB: Number;  winterOA_WB: Number; winterOA_RH: Number;} = 
+                {altitude: 0, summerOA_DB: 0,  summerOA_WB: 0, summerOA_RH: 0, winterOA_DB: 0,  winterOA_WB: 0, winterOA_RH: 0};
 
     let dtSelStation;
+
 
     if (formCurrValues.ddlCity > 0) {
      dtSelStation = dbtWeatherData?.filter((e: { id: number }) => e.id === Number(formCurrValues.ddlCity));
@@ -700,7 +704,7 @@ export default function ProjectInfoDialog({
     //     break;
     // }
 
-    switch (getValues('ddlCountry')) {
+    switch (formCurrValues.ddlCountry) {
       case 'CAN':
       case 'USA':
         info.winterOA_WB = Number(info.winterOA_DB) - Number(0.1);
@@ -743,12 +747,12 @@ export default function ProjectInfoDialog({
 
 
     // return dtSelStation;
-  }, [api.project, dbtWeatherData, formCurrValues.ddlAshareDesignConditions, formCurrValues.ddlCity, getValues, isLoading, setValue, summerOaRhInfo, winterOaRhInfo]);
+  }, [api.project, dbtWeatherData, formCurrValues.ddlAshareDesignConditions, formCurrValues.ddlCity, formCurrValues.ddlCountry, isLoading, setValue, summerOaRhInfo, winterOaRhInfo]);
 
 
   const handleChangeSummerOutdoorAirDBChanged = useCallback(
     (e: any) => {
-      setValue('txbSummerOA_DB', e.target.value);
+      setValue('txbSummerOA_DB', parseFloat(e.target.value).toFixed(1));
       api.project.getRH_By_DB_WB(oSummerOA_RH).then((data: any) => {
         setValue('txbSummerOA_RH', data.toFixed(1));
       });
@@ -760,7 +764,7 @@ export default function ProjectInfoDialog({
   // Summer Outdoor Air WB
   const handleChangeSummerOutdoorAirWBChanged = useCallback(
     (e: any) => {
-      setValue('txbSummerOA_WB', e.target.value);
+      setValue('txbSummerOA_WB', parseFloat(e.target.value).toFixed(1));
       api.project.getRH_By_DB_WB(oSummerOA_RH).then((data: any) => {
         setValue('txbSummerOA_RH', data.toFixed(1));
       });
@@ -772,7 +776,7 @@ export default function ProjectInfoDialog({
   // Summer Outdoor Air RH
   const handleChangeSummerOutdoorAirRHChanged = useCallback(
     (e: any) => {
-      setValue('txbSummerOA_RH', e.target.value);
+      setValue('txbSummerOA_RH', parseFloat(e.target.value).toFixed(1));
       api.project.getWB_By_DB_RH(oSummerOA_WB).then((data: any) => {
         setValue('txbSummerOA_WB', data.toFixed(1));
       });
@@ -784,7 +788,7 @@ export default function ProjectInfoDialog({
   // Winter Outdoor Air DB
   const handleChangeWinterOutdoorAirDBChanged = useCallback(
     (e: any) => {
-      setValue('txbWinterOA_DB', e.target.value);
+      setValue('txbWinterOA_DB', parseFloat(e.target.value).toFixed(1));
       api.project.getRH_By_DB_WB(oWinterOA_RH).then((data: any) => {
         setValue('txbWinterOA_RH', data.toFixed(1));
       });
@@ -796,7 +800,7 @@ export default function ProjectInfoDialog({
   // Winter Outdoor Air WB
   const handleChangeWinterOutdoorAirWBChanged = useCallback(
     (e: any) => {
-      setValue('txbWinterOA_WB', e.target.value);
+      setValue('txbWinterOA_WB', parseFloat(e.target.value).toFixed(1));
       api.project.getRH_By_DB_WB(oWinterOA_RH).then((data: any) => {
         setValue('txbWinterOA_RH', data.toFixed(1));
       });
@@ -808,7 +812,7 @@ export default function ProjectInfoDialog({
   // Winter Outdoor Air RH
   const handleChangeWinterOutdoorAirRHChanged = useCallback(
     (e: any) => {
-      setValue('txbWinterOA_RH', e.target.value);
+      setValue('txbWinterOA_RH', parseFloat(e.target.value).toFixed(1));
       api.project.getWB_By_DB_RH(oWinterOA_WB).then((data: any) => {
         setValue('txbWinterOA_WB', data.toFixed(1));
       });
@@ -820,7 +824,7 @@ export default function ProjectInfoDialog({
   // Summer Return Air DB
   const handleChangeSummerReturnAirDBChanged = useCallback(
     (e: any) => {
-      setValue('txbSummerRA_DB', e.target.value);
+      setValue('txbSummerRA_DB', parseFloat(e.target.value).toFixed(1));
       api.project.getRH_By_DB_WB(oSummerRA_RH).then((data: any) => {
         setValue('txbSummerRA_RH', data.toFixed(1));
       });
@@ -832,7 +836,7 @@ export default function ProjectInfoDialog({
   // Summer Return Air WB
   const handleChangeSummerReturnAirWBChanged = useCallback(
     (e: any) => {
-      setValue('txbSummerRA_WB', e.target.value);
+      setValue('txbSummerRA_WB', parseFloat(e.target.value).toFixed(1));
       api.project.getRH_By_DB_WB(oSummerRA_RH).then((data: any) => {
         setValue('txbSummerRA_RH', data.toFixed(1));
       });
@@ -844,7 +848,7 @@ export default function ProjectInfoDialog({
   // Summer Return Air RH
   const handleChangeSummerReturnAirRHChanged = useCallback(
     (e: any) => {
-      setValue('txbSummerRA_RH', e.target.value);
+      setValue('txbSummerRA_RH', parseFloat(e.target.value).toFixed(1));
       api.project.getWB_By_DB_RH(oSummerRA_WB).then((data: any) => {
         setValue('txbSummerRA_WB', data.toFixed(1));
       });
@@ -856,7 +860,7 @@ export default function ProjectInfoDialog({
   // Winter Return Air DB
   const handleChangeWinterReturnAirDBChanged = useCallback(
     (e: any) => {
-      setValue('txbWinterRA_DB', e.target.value);
+      setValue('txbWinterRA_DB', parseFloat(e.target.value).toFixed(1));
       api.project.getRH_By_DB_WB(oWinterRA_RH).then((data: any) => {
         setValue('txbWinterRA_RH', data.toFixed(1));
       });
@@ -868,7 +872,7 @@ export default function ProjectInfoDialog({
   // Winter Return Air WB
   const handleChangeWinterReturnAirWBChanged = useCallback(
     (e: any) => {
-      setValue('txbWinterRA_WB', e.target.value);
+      setValue('txbWinterRA_WB', parseFloat(e.target.value).toFixed(1));
       api.project.getRH_By_DB_WB(oWinterRA_RH).then((data: any) => {
         setValue('txbWinterRA_RH', data.toFixed(1));
       });
@@ -880,7 +884,7 @@ export default function ProjectInfoDialog({
   // Winter Return Air RH
   const handleChangeWinterReturnAirRHChanged = useCallback(
     (e: any) => {
-      setValue('txbWinterRA_RH', e.target.value);
+      setValue('txbWinterRA_RH', parseFloat(e.target.value).toFixed(1));
       api.project.getWB_By_DB_RH(oWinterRA_WB).then((data: any) => {
         setValue('txbWinterRA_WB', data.toFixed(1));
       });
@@ -973,7 +977,12 @@ export default function ProjectInfoDialog({
         setValue('ddlAshareDesignConditions', savedJob?.intDesignConditionsId);
       }
       
-      setValue('txbAltitude', Number(savedJob?.intAltitude) > 0 ? savedJob?.intAltitude : '0');
+      setValue('txbJobName', savedJob?.strJobName);
+      setValue('txbReferenceNo', savedJob?.strReferenceNo);
+      setValue('txbRevisionNo', String(savedJob?.intRevisionNo));
+      setValue('txbCompanyName', savedJob?.strCompanyName);
+      setValue('txbCompanyContactName', savedJob?.strCompanyContactName);
+      setValue('txbAltitude', String(savedJob?.intAltitude));
       setValue('txbSummerOA_DB', savedJob?.dblSummerOA_DB?.toFixed(1));
       setValue('txbSummerOA_WB', savedJob?.dblSummerOA_WB?.toFixed(1));
       setValue('txbSummerOA_RH', savedJob?.dblSummerOA_RH?.toFixed(1));
@@ -1015,11 +1024,14 @@ export default function ProjectInfoDialog({
 
   useMemo(() => {
 
-    if (formCurrValues.ddlCountry !== null || formCurrValues.ddlProvState !== null || formCurrValues.ddlCity !== null || formCurrValues.ddlAshareDesignConditions !== null) {
+    if (formCurrValues?.ddlCountry !== null || formCurrValues?.ddlProvState !== null || formCurrValues?.ddlCity !== null || formCurrValues?.ddlAshareDesignConditions !== null) {
       setIsLoading(0);
     }
 
-  },[formCurrValues.ddlAshareDesignConditions, formCurrValues.ddlCity, formCurrValues.ddlCountry, formCurrValues.ddlProvState])
+  },[formCurrValues?.ddlAshareDesignConditions, formCurrValues?.ddlCity, formCurrValues?.ddlCountry, formCurrValues?.ddlProvState])
+
+
+
 
   // useMemo(() => {
   //   if (newJobInfo !== null) {
@@ -1134,14 +1146,11 @@ export default function ProjectInfoDialog({
                     ))}
                   </RHFSelect>
                   <RHFTextField size="small" name="txbReferenceNo" label="Reference #" />
-                  <RHFTextField
-                    size="small"
+                  <RHFTextField size="small"
                     // type="number"
                     name="txbRevisionNo"
                     label="Revision #"
-                    onChange={(e: any) => {
-                      setValueWithCheck(e, 'txbRevisionNo');
-                    }}
+                    onChange={(e: any) => { setValueWithCheck(e, 'txbRevisionNo');}}
                   />
                   <RHFSelect
                     native

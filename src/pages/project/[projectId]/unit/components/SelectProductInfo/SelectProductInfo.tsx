@@ -5,7 +5,7 @@ import { useState, useCallback } from 'react';
 import { Container, CardContent, Card, Box, Tabs, Tab } from '@mui/material';
 
 // components
-import { useGetAllBaseData } from 'src/hooks/useApi';
+import { useGetUnitSelTables } from 'src/hooks/useApi';
 import { ProductTypes, Applications, SideDescription, UnitTypes } from './index';
 
 const productInfomation = {
@@ -22,7 +22,7 @@ type SelectProductInfoProps = {
 };
 
 export default function SelectProductInfo(props: SelectProductInfoProps) {
-  const { data, isLoading } = useGetAllBaseData();
+  const { data, isLoading } = useGetUnitSelTables();
   const { onSelectAppliaionItem, onSelectProductTypeItem, onSelectUnitTypeItem } = props;
   const [applicationValue, setApplicationValue] = useState('Application');
   const [productTypeValue, setProductTypeValue] = useState('Product type');
@@ -67,7 +67,7 @@ export default function SelectProductInfo(props: SelectProductInfoProps) {
   );
 
   return (
-    <Container>
+    <Container maxWidth="xl">
       <Card sx={{ minWidth: 500, mb: '100px' }}>
         <Tabs
           value={value}

@@ -30,6 +30,9 @@ export const intControlsPrefVAV_ID = 2;
 export const intControlsPrefDCV_CO2_ID = 4;
 export const intControlPrefByOthersID = 6;
 
+export const intControlViaIdNA = 1;
+export const intControlViaIdShipLooseCO2Sensor = 2;
+
 export const intInstallationInteriorID = 1;
 export const intInstalaltionExteriorID = 2;
 
@@ -50,6 +53,7 @@ export const intFilterLocationFinalFilterID = 3;
 export const intFilterLocationReturnAirFilterID = 4;
 export const intFilterModel_NA_ID = 1;
 export const intFilterModel_2in_85_MERV_13_ID = 9;
+export const intFilterModel_4in_85_MERV_13_Id = 10;
 
 // export const intCoilTypeHotWaterID = 1;
 // export const intCoilTypeChilledWaterID = 2;
@@ -66,9 +70,10 @@ export const intCompDX_ID = 5;
 export const intCompHGRH_ID = 6;
 export const intCompAutoID = 7;
 
-export const intDamperActuatorNA_ID = 1;
-export const intDamperActuatorNoCasingID = 2;
-export const intDamperActuatorInCasingID = 4;
+export const intDamperActuatorIdNA = 1;
+export const intDamperActIdFieldInstAndWired = 2;
+export const intDamperActIdFieldMountedAndWired = 4;
+export const intDamperActIdFactMountedAndWired = 5;
 
 export const intElecHeaterInstallNA_ID = 1;
 export const intElecHeaterInstallDuctMountedID = 2;

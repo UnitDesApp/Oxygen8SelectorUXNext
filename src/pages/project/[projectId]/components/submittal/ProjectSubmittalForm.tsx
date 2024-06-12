@@ -1,7 +1,7 @@
-import { useState, useMemo, useCallback } from 'react';
+import { useState, useMemo, useEffect, useCallback } from 'react';
 import * as Yup from 'yup';
 // @mui
-import { styled } from '@mui/material/styles';
+import { useTheme, styled } from '@mui/material/styles';
 import {
   Container,
   Box,
@@ -21,6 +21,7 @@ import {
   Accordion,
   AccordionSummary,
   AccordionDetails,
+  IconButton,
 } from '@mui/material';
 import TableCell from '@mui/material/TableCell';
 import { LoadingButton } from '@mui/lab';
@@ -32,6 +33,8 @@ import Iconify from 'src/components/iconify';
 import { useApiContext } from 'src/contexts/ApiContext';
 import { RHFSelect, RHFTextField } from 'src/components/hook-form';
 import Scrollbar from 'src/components/scrollbar/Scrollbar';
+import CircularProgressLoading from 'src/components/loading/CircularProgressLoading';
+
 // components
 
 // ----------------------------------------------------------------------
@@ -79,8 +82,12 @@ export default function ProjectSubmittalForm({
   const api = useApiContext();
 
   // State
-  const [note, setNote] = useState('');
-  const [shippingNote, setShippingNote] = useState('');
+  const [isProcessingData, setIsProcessingData] = useState(false)
+  const [scheduleInfo, setScheduleInfo] = useState <any>([]);
+  const [notesNo, setNotesNo] = useState('');
+  const [notesListInfo, setNotesListInfo] = useState <any>([]);
+  const [shippingNotesNo, setShippingNotesNo] = useState('');
+  const [shippingNotesListInfo, setShippingNotesListInfo] = useState <any>([]); 
   const [success, setSuccess] = useState(false);
   const [fail, setFail] = useState(false);
   const [expanded, setExpanded] = useState({
@@ -90,22 +97,34 @@ export default function ProjectSubmittalForm({
     panel4: true,
     panel5: true,
   });
+  const theme = useTheme();
+
 
   // Form Schema
-  const UpdateProjectInfoSchema = Yup.object().shape({
+  const SubmittalFormSchema = Yup.object().shape({
     txbJobName: Yup.string(),
     txbRepName: Yup.string(),
     txbSalesEngineer: Yup.string(),
-    txbLeadTime: Yup.string().required('Please enter a Lead Time'),
+    // txbLeadTime: Yup.string().required('Please enter a Lead Time'),
+    // txbRevisionNo: Yup.number().required('Please enter a Revision No'),
+    // txbPONumber: Yup.number().required('Please enter a PO Number'),
+    // txbShipName: Yup.string().required('Please enter a Ship Name'),
+    // txbShippingStreetAddress: Yup.string().required('Please enter a Street Address'),
+    // txbShippingCity: Yup.string().required('Please enter a City'),
+    // txbShippingProvince: Yup.string().required('Please enter a State'),
+    // txbShippingPostalCode: Yup.string().required('Please enter a Zip'),
+    // ddlCountry: Yup.string().required('Please Select a Country'),
+    // ddlDockType: Yup.string().required('Please Select a Dock type'),
+    txbLeadTime: Yup.string(),
     txbRevisionNo: Yup.number().required('Please enter a Revision No'),
-    txbPONumber: Yup.number().required('Please enter a PO Number'),
-    txbShipName: Yup.string().required('Please enter a Ship Name'),
-    txbShippingStreetAddress: Yup.string().required('Please enter a Street Address'),
-    txbShippingCity: Yup.string().required('Please enter a City'),
-    txbShippingProvince: Yup.string().required('Please enter a State'),
-    txbShippingPostalCode: Yup.string().required('Please enter a Zip'),
-    ddlCountry: Yup.string().required('Please Select a Country'),
-    ddlDockType: Yup.string().required('Please Select a Dock type'),
+    txbPONumber: Yup.string(),
+    txbShipName: Yup.string(),
+    txbShippingStreetAddress: Yup.string(),
+    txbShippingCity: Yup.string(),
+    txbShippingProvince: Yup.string(),
+    txbShippingPostalCode: Yup.string(),
+    ddlCountry: Yup.number(),
+    ddlDockType: Yup.number(),
     ckbBACNetPointList: Yup.boolean(),
     ckbBackdraftDamper: Yup.boolean(),
     ckbBypassDefrost: Yup.boolean(),
@@ -117,102 +136,360 @@ export default function ProjectSubmittalForm({
     ckbTemControl: Yup.boolean(),
     ckbTerminalWiring: Yup.boolean(),
     ckbVoltageTable: Yup.boolean(),
+    txbNotes: Yup.string(),
+    txbShippingNotes: Yup.string(),
   });
 
   // default values for form depend on redux
   const defaultValues = useMemo(
     () => ({
-      txbJobName: submittalInfo?.txbProjectNameText || '',
-      txbRepName: submittalInfo?.txbRepNameText || '',
-      txbSalesEngineer: submittalInfo?.txbSalesEngineerText || '',
-      txbLeadTime: submittalInfo?.txbLeadTimeText || '',
-      txbRevisionNo: submittalInfo?.txbRevisionNoText || '',
-      txbPONumber: submittalInfo?.txbPO_NumberText || '',
-      txbShipName: submittalInfo?.txbShippingNameText || '',
-      txbShippingStreetAddress: submittalInfo?.txbShippingStreetAddressText || '',
-      txbShippingCity: submittalInfo?.txbShippingCityText || '',
-      txbShippingProvince: submittalInfo?.txbShippingProvinceText || '',
-      txbShippingPostalCode: submittalInfo?.txbShippingPostalCodeText || '',
-      ddlCountry: submittalInfo?.ddlShippingCountryValue || '',
-      ddlDockType: submittalInfo?.intDockTypeID || '',
-      ckbBACNetPointList: false,
-      ckbBackdraftDamper: false,
-      ckbBypassDefrost: false,
-      ckbConstantVolume: false,
-      ckbFireAlarm: false,
-      ckbHumidification: false,
-      ckbHydronicPreheat: false,
-      ckbOJHMISpec: false,
-      ckbTemControl: false,
-      ckbTerminalWiring: false,
-      ckbVoltageTable: false,
-    }),
+      txbJobName: submittalInfo?.strProjectName ? submittalInfo?.strProjectName : '',
+      txbRepName: submittalInfo?.strRepName ? submittalInfo?.strRepName : '',
+      txbSalesEngineer: submittalInfo?.strSalesEngineer ? submittalInfo?.strSalesEngineer : '',
+      txbLeadTime: submittalInfo?.strLeadTime ? submittalInfo?.strLeadTime : '',
+      txbRevisionNo: submittalInfo?.intRevisionNo ? submittalInfo?.intRevisionNo : '0',
+      txbPONumber: submittalInfo?.strPO_Number ? submittalInfo?.strPO_Number : '',
+      txbShippingName: submittalInfo?.strShippingName ? submittalInfo?.strShippingName : '',
+      txbShippingStreetAddress: submittalInfo ? submittalInfo?.strShippingStreetAddress : '',
+      txbShippingCity: submittalInfo?.strShippingCity ? submittalInfo?.strShippingCity : '',
+      txbShippingProvince: submittalInfo?.strShippingProvince ? submittalInfo?.strShippingProvince : '',
+      txbShippingPostalCode: submittalInfo?.strShippingPostalCode ? submittalInfo?.strShippingPostalCode : '',
+      ddlShippingCountry: submittalInfo?.intShippingCountryId ? submittalInfo?.intShippingCountryId : 0,
+      ddlDockType: submittalInfo?.intDockTypeId ? submittalInfo?.intDockTypeId : 0,
+      ckbVoltageTable: submittalInfo?.intIsVoltageTable ? submittalInfo?.intIsVoltageTable: 0,
+      ckbBACNetPointList: submittalInfo?.intIsBACNetPoints ? submittalInfo?.intIsBACNetPoints : 0,
+      ckbOJHMISpec: submittalInfo?.intIsOJ_HMI_Spec ? submittalInfo?.intIsOJ_HMI_Spec : 0,
+      ckbTerminalWiring: submittalInfo?.intIsTerminalWiringDiagram ? submittalInfo?.intIsTerminalWiringDiagram : 0,
+      ckbFireAlarm: submittalInfo?.intIsFireAlarm ? submittalInfo?.intIsFireAlarm : 0,
+      ckbBackdraftDamper: submittalInfo?.intIsBackdraftDampers ? submittalInfo?.intIsBackdraftDampers : 0,
+      ckbBypassDefrost: submittalInfo?.intIsBypassDefrost ? submittalInfo?.intIsBypassDefrost : 0,
+      ckbConstantVolume: submittalInfo?.intIsConstantVolume  ? submittalInfo?.intIsConstantVolume : 0,
+      ckbHydronicPreheat: submittalInfo?.intIsHydronicPreheat ? submittalInfo?.intIsHydronicPreheat : 0,
+      ckbHumidification: submittalInfo?.intIsHumidification  ? submittalInfo?.intIsHumidification : 0,
+      ckbTemControl: submittalInfo?.intIsTempControl ? submittalInfo?.intIsTempControl : 0,
+      txbNotes: '',
+      txbShippingNotes: '',
+      }),
     [submittalInfo]
   );
 
+
   // form setting using useForm
   const methods = useForm({
-    resolver: yupResolver(UpdateProjectInfoSchema),
+    resolver: yupResolver(SubmittalFormSchema),
     defaultValues,
   });
 
   const {
-    handleSubmit,
+    setValue,
+    getValues,
     reset,
+    handleSubmit,
+    watch,
     formState: { isSubmitting },
   } = methods;
 
-  // event handler for addding note
-  const addNoteClicked = useCallback(() => {
-    if (note === '') return;
-    const data = {
-      intUserID: localStorage.getItem('userId'),
-      intUAL: localStorage.getItem('UAL'),
-      intJobID: projectId,
-      txbNote: note,
+
+
+
+
+
+
+
+  let formCurrValues = getValues();
+  const today = new Date();
+
+  const getSubmittalInputs = () => {
+    // const jsonData = '{"name":"John", "age":30, "city":"London"}';
+    // let oUnitInputs;
+    formCurrValues = getValues(); // Do not use watch, must use getValues with the function to get current values.
+    // let savedDate =  savedJob?.strCreatedDate;
+    
+    // if (savedDate?.includes('/')) {
+    //   const [month, day, year] =  savedDate.split('/');
+    //   savedDate =`${year}-${month}-${day}`;
+    // }
+
+
+  const oSubmittalInputs = {
+        
+    oSubm: {
+      "intUserId": localStorage.getItem('userId'),
+      "intUAL": localStorage.getItem('UAL'),
+      "intJobId" : projectId,
+      "strLeadTime" : formCurrValues.txbLeadTime,
+      "intRevisionNo" : formCurrValues.txbRevisionNo,
+      "strPO_Number" :  formCurrValues.txbPONumber,
+      "strShippingName" : formCurrValues.txbShippingName,
+      "strShippingStreetAddress" : formCurrValues.txbShippingStreetAddress,
+      "strShippingCity" : formCurrValues.txbShippingCity,
+      "strShippingProvince" : formCurrValues.txbShippingProvince,
+      "intShippingCountryId" : Number(formCurrValues.ddlShippingCountry),
+      "strShippingPostalCode" : formCurrValues.txbShippingPostalCode,
+      "intDockTypeId" : Number(formCurrValues.ddlDockType),
+      "intIsVoltageTable" : Number(formCurrValues.ckbVoltageTable) === 1 ? 1 : 0,
+      "intIsBACNetPoints" : Number(formCurrValues.ckbBACNetPointList) === 1 ? 1 : 0,
+      "intIsOJ_HMI_Spec" : Number(formCurrValues.ckbOJHMISpec) === 1 ? 1 : 0,
+      "intIsTerminalWiringDiagram" : Number(formCurrValues.ckbTerminalWiring) === 1 ? 1 : 0,
+      "intIsFireAlarm" : Number(formCurrValues.ckbFireAlarm) === 1 ? 1 : 0,
+      "intIsBackdraftDampers" : Number(formCurrValues.ckbBackdraftDamper) === 1 ? 1 : 0,
+      "intIsBypassDefrost" : Number(formCurrValues.ckbBypassDefrost) === 1 ? 1 : 0,
+      "intIsConstantVolume" : Number(formCurrValues.ckbConstantVolume) === 1 ? 1 : 0,
+      "IsHydronicPreheat" : Number(formCurrValues.ckbHydronicPreheat) === 1 ? 1 : 0,
+      "IsHumidification" : Number(formCurrValues.ckbHumidification) === 1 ? 1 : 0,
+      "IsTempControl" : Number(formCurrValues.ckbTemControl) === 1 ? 1 : 0,
+    },
+  }
+  
+  return oSubmittalInputs;
+  };
+
+
+  
+  // // submmit function
+  // const onProjectInfoSubmit = useCallback(
+  //   async (data: any) => {
+  //     try {
+  //       const requestData = {
+  //         ...data,
+  //         intUserID: localStorage.getItem('userId'),
+  //         intUAL: localStorage.getItem('UAL'),
+  //         intJobID: projectId,
+  //       };
+  //       const returnValue = await api.project.saveSubmittalInfo(requestData);
+  //       if (returnValue) {
+  //         setSuccess(true);
+  //       } else {
+  //         setFail(true);
+  //       }
+  //     } catch (error) {
+  //       setFail(true);
+  //     }
+  //   },
+  //   [api.project, projectId]
+  // );
+
+
+  useEffect(() => {
+    const info: { fdtSchedule: any} = { fdtSchedule: []};
+
+    info.fdtSchedule = submittalInfo?.dtSchedule;
+    setScheduleInfo(info);
+  },
+  [submittalInfo]);
+
+
+  useEffect(() => {
+    const info: { fdtNotes: any;} = { fdtNotes: []};
+
+    info.fdtNotes = submittalInfo?.dtNotes;
+    setNotesListInfo(info);
+  },
+  [submittalInfo]);
+
+
+  useEffect(() => {
+    const info: { fdtShippingNotes: any} = { fdtShippingNotes: []};
+
+    info.fdtShippingNotes = submittalInfo?.dtShippingNotes;
+    setShippingNotesListInfo(info);
+  },
+  [submittalInfo]);
+
+
+    // submmit function
+    const onProjectInfoSubmit = async (data: any) => {
+        try {
+          setIsProcessingData(true);
+          // const requestData = {
+          //   ...data,
+          //   intUserID: localStorage.getItem('userId'),
+          //   intUAL: localStorage.getItem('UAL'),
+          //   intJobID: projectId,
+          // };
+          const oSubm: any = getSubmittalInputs(); // JC: Job Container
+
+          const returnValue = await api.project.saveSubmittal(oSubm);
+          if (returnValue) {
+            setSuccess(true);
+            // if (refetch) refetch();
+
+          } else {
+            setFail(true);
+          }
+        } catch (error) {
+          setFail(true);
+        } finally {
+      
+          setIsProcessingData(false);
+        }
     };
-    api.project.addNewNote(data);
-    setNote('');
-  }, [api, note, projectId]);
 
   // event handler for adding shipping note
-  const addShippingInstructionClicked = useCallback(() => {
-    if (shippingNote === '') return;
-    const data = {
-      intUserID: localStorage.getItem('userId'),
-      intUAL: localStorage.getItem('UAL'),
-      intJobID: projectId,
-      txbShippingNote: shippingNote,
-    };
-    api.project.addNewShippingNote(data);
-    setShippingNote('');
-  }, [api.project, projectId, shippingNote]);
+  const addShippingNotesClicked = useCallback(async () => {
+    if (getValues('txbShippingNotes') === '') return;
 
-  // submmit function
-  const onProjectInfoSubmit = useCallback(
-    async (data: any) => {
-      try {
-        const requestData = {
-          ...data,
-          intUserID: localStorage.getItem('userId'),
-          intUAL: localStorage.getItem('UAL'),
-          intJobID: projectId,
-        };
-        const returnValue = await api.project.saveSubmittalInfo(requestData);
-        if (returnValue) {
-          setSuccess(true);
-        } else {
-          setFail(true);
-        }
-      } catch (error) {
-        setFail(true);
-      }
-    },
-    [api.project, projectId]
-  );
+    setIsProcessingData(true);
+
+    const data: any = {
+      // intUserId: typeof window !== 'undefined' && localStorage.getItem('userId'),
+      // intUAL: localStorage.getItem('UAL'),
+      intJobId: projectId,
+      intShippingNotesNo: 0,
+      strShippingNotes: getValues('txbShippingNotes'),
+    };
+    const result = await api.project.saveSubmittalShippingNotes(data);
+
+    const info: { fdtShippingNotes: any} = { fdtShippingNotes: []};
+    info.fdtShippingNotes = result;
+    setShippingNotesListInfo(info);
+
+    setValue('txbShippingNotes', '');
+
+    setIsProcessingData(false);
+
+  }, [api.project, getValues, projectId, setValue]);
+
+
+  const updateShippingNotesClicked = useCallback(async () => {
+    if (getValues('txbShippingNotes') === '') return;
+
+    setIsProcessingData(true);
+
+    const data: any = {
+      // intUserId: typeof window !== 'undefined' && localStorage.getItem('userId'),
+      // intUAL: localStorage.getItem('UAL'),
+      intJobId: projectId,
+      intShippingNotesNo: shippingNotesNo,
+      strShippingNotes: getValues('txbShippingNotes'),
+    };
+    const result = await api.project.saveSubmittalShippingNotes(data);
+
+    const info: { fdtShippingNotes: any} = { fdtShippingNotes: []};
+    info.fdtShippingNotes = result;
+    setShippingNotesListInfo(info);
+
+    setValue('txbShippingNotes', '');
+
+    setIsProcessingData(false);
+
+  }, [api.project, getValues, projectId, setValue, shippingNotesNo]);
+
+
+
+  const editShippingNotesClicked = useCallback((row: any) => {
+    setShippingNotesNo(row?.shipping_notes_no);
+    setValue('txbShippingNotes', row?.notes);
+
+  }, [setValue]);
+
+
+  const deleteShippingNotesClicked = useCallback(async (row: any) => {
+
+    setIsProcessingData(true);
+
+    const data: any = {
+      // intUAL: localStorage.getItem('UAL'),
+      intJobId: projectId,
+      intShippingNotesNo: row?.shipping_notes_no,
+    };
+    const result = await api.project.deleteSubmittalShippingNotes(data);
+
+    const info: { fdtShippingNotes: any;} = { fdtShippingNotes: []};
+    info.fdtShippingNotes = result;
+    setShippingNotesListInfo(info);
+
+    setValue('txbShippingNotes', '');
+
+    setIsProcessingData(false);
+
+  }, [api.project, projectId, setValue]);
+
+
+  // event handler for addding note
+  const addNotesClicked = useCallback(async () => {
+    if (getValues('txbNotes') === '') return;
+
+    setIsProcessingData(true);
+
+    const data: any = {
+      // intUserId: localStorage.getItem('userId'),
+      // intUAL: localStorage.getItem('UAL'),
+      intJobId: projectId,
+      strNotes: getValues('txbNotes'),
+    };
+    const result = await api.project.saveSubmittalNotes(data);
+
+    const info: { fdtNotes: any;} = { fdtNotes: []};
+    info.fdtNotes = result;
+    setNotesListInfo(info);
+
+    setValue('txbNotes', '');
+
+    setIsProcessingData(false);
+
+  }, [api.project, getValues, projectId, setValue]);
+  
+
+  const updateNotesClicked = useCallback(async () => {
+    if (getValues('txbNotes') === '') return;
+
+    setIsProcessingData(true);
+
+    const data: any = {
+      // intUserId: localStorage.getItem('userId'),
+      // intUAL: localStorage.getItem('UAL'),
+      intJobId: projectId,
+      intNotesNo: notesNo,
+      strNotes: getValues('txbNotes'),
+    };
+    const result = await api.project.saveSubmittalNotes(data);
+
+    const info: { fdtNotes: any;} = { fdtNotes: []};
+    info.fdtNotes = result;
+    setNotesListInfo(info);
+
+    setValue('txbNotes', '');
+
+    setIsProcessingData(false);
+
+  }, [api.project, getValues, notesNo, projectId, setValue]);
+
+
+  const editNotesClicked = useCallback((row: any) => {
+    setNotesNo(row?.notes_no);
+    setValue('txbNotes', row?.notes);
+
+  }, [setValue]);
+
+
+  const deleteNotesClicked = useCallback(async (row: any) => {
+
+    setIsProcessingData(true);
+
+    const data: any = {
+      // intUAL: localStorage.getItem('UAL'),
+      intJobId: projectId,
+      intNotesNo: row?.notes_no,
+    };
+    const result = await api.project.deleteSubmittalNotes(data);
+
+    const info: { fdtNotes: any;} = { fdtNotes: []};
+    info.fdtNotes = result;
+    setNotesListInfo(info);
+
+    setValue('txbNotes', '');
+
+    setIsProcessingData(false);
+
+  }, [api.project, projectId, setValue]);
+
 
   return (
-    <Container sx={{ mt: '20px' }}>
+    <Container  maxWidth="xl" sx={{ mt: '20px' }}>
+    {isProcessingData ? ( 
+      <CircularProgressLoading /> 
+    ) : (
       <FormProvider methods={methods} onSubmit={handleSubmit(onProjectInfoSubmit)}>
         <Grid container spacing={3} sx={{ mb: 5 }}>
           <Grid item xs={12}>
@@ -244,14 +521,9 @@ export default function ProjectSubmittalForm({
                 <BoxStyles>
                   <RHFTextField size="small" name="txbJobName" label="Project Name" disabled />
                   <RHFTextField size="small" name="txbRepName" label="Rep Name" disabled />
-                  <RHFTextField
-                    size="small"
-                    name="txbSalesEngineer"
-                    label="Sales Engineer"
-                    disabled
-                  />
+                  <RHFTextField size="small" name="txbSalesEngineer" label="Sales Engineer" disabled />
                   <RHFTextField size="small" name="txbLeadTime" label="Lead Time" />
-                  <RHFTextField size="small" name="txbRevisionNo" label="revisionNo" />
+                  <RHFTextField size="small" name="txbRevisionNo" label="revisionNo" value={0} />
                   <RHFTextField size="small" name="txbPONumber" label="PO Number" />
                 </BoxStyles>
               </AccordionDetails>
@@ -273,32 +545,16 @@ export default function ProjectSubmittalForm({
               </AccordionSummary>
               <AccordionDetails>
                 <BoxStyles>
-                  <RHFTextField size="small" name="txbShipName" label="Name" />
-                  <RHFTextField
-                    size="small"
-                    name="txbShippingStreetAddress"
-                    label="Street Address"
-                  />
+                  <RHFTextField size="small" name="txbShippingName" label="Name" />
+                  <RHFTextField size="small" name="txbShippingStreetAddress" label="Street Address"/>
                   <RHFTextField size="small" name="txbShippingCity" label="City" />
                   <RHFTextField size="small" name="txbShippingProvince" label="State / Province" />
-                  <RHFTextField
-                    size="small"
-                    name="txbShippingPostalCode"
-                    label="Zip / Postal Code"
-                  />
-                  <RHFSelect native size="small" name="ddlCountry" label="Country" placeholder="">
-                    <option value="" />
-                    <option value="1">Canada</option>
+                  <RHFTextField size="small" name="txbShippingPostalCode" label="Zip / Postal Code" />
+                  <RHFSelect native size="small" name="ddlShippingCountry" label="Country" placeholder="">
+                    <option value="1" selected>Canada</option>
                     <option value="2">USA</option>
                   </RHFSelect>
-                  <RHFSelect
-                    native
-                    size="small"
-                    name="ddlDockType"
-                    label="Dock Type"
-                    placeholder=""
-                  >
-                    <option value="" />
+                  <RHFSelect native size="small" name="ddlDockType" label="Dock Type" placeholder="" >
                     <option value="1">Type1</option>
                     <option value="2">Type2</option>
                   </RHFSelect>
@@ -323,7 +579,7 @@ export default function ProjectSubmittalForm({
               <AccordionDetails>
                 <TableContainer component={Paper} sx={{ mt: 1.5 }}>
                   <Scrollbar>
-                    <Table size="small">
+                    <Table  sx={{ pt: '5px' }}>
                       <TableHead>
                         <TableRow>
                           {PROJECT_INFO_TABLE_HEADER.map((item, index) => (
@@ -338,9 +594,8 @@ export default function ProjectSubmittalForm({
                           ))}
                         </TableRow>
                       </TableHead>
-
-                      <TableBody>
-                        {submittalInfo?.gvSubmittals?.gvSubmittalDetailsDataSource?.map(
+                      <TableBody sx={{ pt: '10px' }}>
+                        {scheduleInfo?.fdtSchedule?.map(
                           (row: any, index: number) => (
                             <Row row={row} key={index} />
                           )
@@ -368,20 +623,27 @@ export default function ProjectSubmittalForm({
               </AccordionSummary>
               <AccordionDetails>
                 <Stack direction="row" spacing={2} sx={{ mt: 1.5 }}>
-                  <TextField
-                    sx={{ width: '70%' }}
+                <RHFTextField 
+                    sx={{ width: '60%' }}
                     size="small"
-                    name="shipping"
+                    name="txbShippingNotes"
                     label="Enter Shipping"
-                    value={shippingNote}
-                    onChange={(e) => setShippingNote(e.target.value)}
+                    // value={shippingNoteInfo}
+                    // onBlur={(e) => setShippingNote(e.target.value)}
                   />
                   <Button
-                    sx={{ width: '30%', borderRadius: '5px', mt: '1px' }}
+                    sx={{ width: '20%', borderRadius: '5px', mt: '1px' }}
                     variant="contained"
-                    onClick={addShippingInstructionClicked}
+                    onClick={addShippingNotesClicked}
                   >
                     Add Shipping Instruction
+                  </Button>
+                  <Button
+                    sx={{ width: '20%', borderRadius: '5px', mt: '1px' }}
+                    variant="contained"
+                    onClick={updateShippingNotesClicked}
+                  >
+                    Update Shipping Instruction
                   </Button>
                 </Stack>
                 <Box sx={{ pt: '10px' }}>
@@ -395,24 +657,38 @@ export default function ProjectSubmittalForm({
                           },
                         }}
                       >
-                        <TableHeaderCellStyled component="th" sx={{ width: '20%' }} align="center">
-                          No
-                        </TableHeaderCellStyled>
-                        <TableHeaderCellStyled component="th" sx={{ width: '80%' }} align="center">
-                          Shipping Instruction
-                        </TableHeaderCellStyled>
+                        <TableHeaderCellStyled component="th" sx={{ width: '20%' }} align="center">No</TableHeaderCellStyled>
+                        <TableHeaderCellStyled component="th" sx={{ width: '80%' }} align="left">Shipping Instruction</TableHeaderCellStyled>
+                        <TableHeaderCellStyled component="th" scope="row" align="center" sx={{ width: '10%' }}>Edit</TableHeaderCellStyled>
+                        <TableHeaderCellStyled component="th" scope="row" align="center" sx={{ width: '10%' }}>Delete</TableHeaderCellStyled>
                       </TableRow>
                     </TableHead>
                     <TableBody>
-                      {submittalInfo?.gvShippingNotes?.gvShippingNotesDataSource?.map(
+                      {shippingNotesListInfo?.fdtShippingNotes?.map(
                         (row: any, index: number) => (
                           <TableRow key={index}>
                             <TableCell component="th" scope="row" align="center">
                               {index + 1}
                             </TableCell>
-                            <TableCell component="th" scope="row" align="center">
+                            <TableCell component="th" scope="row" align="left">
                               {row.shipping_notes}
                             </TableCell>
+                            <TableCell component="th" scope="row" align="center" sx={{ width: '10%' }}>                    
+                            <IconButton
+                              sx={{ color: theme.palette.success.main }}
+                              onClick={() => editShippingNotesClicked(row)}
+                                >
+                                <Iconify icon="material-symbols:edit-square-outline" />
+                            </IconButton>
+                          </TableCell>
+                          <TableCell component="th" scope="row" align="center" sx={{ width: '10%' }} >
+                            <IconButton sx={{ color: theme.palette.warning.main }}
+                            onClick={() => deleteShippingNotesClicked(row)}
+                            >
+                              <Iconify icon="ion:trash-outline" />
+                            </IconButton>
+                          </TableCell>
+
                           </TableRow>
                         )
                       )}
@@ -438,53 +714,64 @@ export default function ProjectSubmittalForm({
               </AccordionSummary>
               <AccordionDetails>
                 <Stack direction="row" spacing={2} sx={{ mt: 1.5 }}>
-                  <TextField
-                    sx={{ width: '70%' }}
+                  <RHFTextField
+                    sx={{ width: '60%' }}
                     size="small"
-                    name="notes"
+                    name="txbNote"
                     label="Enter Notes"
-                    value={note}
-                    onChange={(e) => setNote(e.target.value)}
+                    // value={noteInfo}
+                    // onChange={(e) => setNote(e.target.value)}
                   />
                   <Button
-                    sx={{ width: '30%', borderRadius: '5px', mt: '1px' }}
+                    sx={{ width: '20%', borderRadius: '5px', mt: '1px' }}
                     variant="contained"
-                    onClick={addNoteClicked}
+                    onClick={addNotesClicked}
                   >
                     Add Note
+                  </Button>
+                  <Button
+                    sx={{ width: '20%', borderRadius: '5px', mt: '1px' }}
+                    variant="contained"
+                    onClick={updateNotesClicked}
+                  >
+                    Update Note
                   </Button>
                 </Stack>
                 <Box sx={{ pt: '10px' }}>
                   <Table size="small">
                     <TableHead>
                       <TableRow>
-                        <TableHeaderCellStyled
-                          component="th"
-                          sx={{ width: '20%' }}
-                          scope="row"
-                          align="center"
-                        >
-                          No
-                        </TableHeaderCellStyled>
-                        <TableHeaderCellStyled
-                          component="th"
-                          sx={{ width: '80%' }}
-                          scope="row"
-                          align="center"
-                        >
-                          Note
-                        </TableHeaderCellStyled>
-                      </TableRow>
+                        <TableHeaderCellStyled component="th" sx={{ width: '20%' }} scope="row" align="center">No</TableHeaderCellStyled>
+                        <TableHeaderCellStyled component="th" sx={{ width: '80%' }} scope="row" align="left">Note</TableHeaderCellStyled>
+                        <TableHeaderCellStyled component="th" align="center" sx={{ width: '10%' }}>Edit</TableHeaderCellStyled>
+                        <TableHeaderCellStyled component="th" align="center" sx={{ width: '10%' }}>Delete</TableHeaderCellStyled>
+                     </TableRow>
                     </TableHead>
                     <TableBody>
-                      {submittalInfo?.gvNotes?.gvNotesDataSource.map((row: any, index: number) => (
+                      {notesListInfo?.fdtNotes?.map((row: any, index: number) => (
                         <TableRow key={index}>
                           <TableCell component="th" scope="row" align="center">
                             {index + 1}
                           </TableCell>
-                          <TableCell component="th" scope="row" align="center">
+                          <TableCell component="th" scope="row" align="left">
                             {row.notes}
                           </TableCell>
+                          <TableCell component="th" scope="row" align="center" sx={{ width: '10%' }}>                    
+                            <IconButton
+                              sx={{ color: theme.palette.success.main }}
+                              onClick={() => editNotesClicked(row)}
+                                >
+                                <Iconify icon="material-symbols:edit-square-outline" />
+                            </IconButton>
+                          </TableCell>
+                          <TableCell component="th" scope="row" align="center" sx={{ width: '10%' }} >
+                            <IconButton sx={{ color: theme.palette.warning.main }}
+                            onClick={() => deleteNotesClicked(row)}
+                            >
+                              <Iconify icon="ion:trash-outline" />
+                            </IconButton>
+                          </TableCell>
+
                         </TableRow>
                       ))}
                     </TableBody>
@@ -495,6 +782,7 @@ export default function ProjectSubmittalForm({
           </Grid>
         </Grid>
       </FormProvider>
+       )}   
       <Snackbar
         open={success}
         autoHideDuration={6000}

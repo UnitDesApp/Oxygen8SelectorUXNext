@@ -3,7 +3,7 @@ import React, { useCallback, useState, useEffect } from 'react';
 import { Alert, Box, Container, Snackbar } from '@mui/material';
 import { styled } from '@mui/material/styles';
 // hooks
-import { useGetAllBaseData, useGetUnitInfo } from 'src/hooks/useApi';
+import { useGetUnitSelTables, useGetSavedUnit } from 'src/hooks/useApi';
 import CircularProgressLoading from 'src/components/loading/CircularProgressLoading';
 import { GetAllBaseData, GetUnitInfo } from 'src/api/website/backend_helper';
 // import { useApiContext } from 'src/contexts/ApiContext'; 
@@ -39,6 +39,7 @@ type UnitInfoProps = {
   txbProductType?: string;
   txbUnitType?: string;
   unitInfoData?: any;
+  setCurrentStep?: Function;
 };
 
 export default function UnitInfo({
@@ -53,8 +54,8 @@ export default function UnitInfo({
   txbProductType,
   txbUnitType,
   unitInfoData,
+  setCurrentStep,
 }: UnitInfoProps) {
-
   const [baseData, setbaseData] = useState(null)
   const [unitData, setunitData] = useState(null)
   const [isLoadingUnitInfo, setisLoadingUnitInfo] = useState(true)
@@ -75,16 +76,16 @@ export default function UnitInfo({
       setunitInfo(JSON.parse(res).unitInfo);
 
       setisLoadingUnitInfo(false);
-    })
+    });
 
     GetAllBaseData().then((res: any) => {
       setbaseData(JSON.parse(res));
       setisLoadingBaseData(false);
-    })
+    });
     return () => {
       // second
     }
-  }, [edit, projectId, unitId])
+  }, [edit, projectId, unitId]);
 
 
   // ----------------------- Success State and Handle Close ---------------------------
@@ -101,13 +102,11 @@ export default function UnitInfo({
   
   return (
     <RootStyle>
-      <Container>
-        {
-          (isLoadingBaseData || isLoadingUnitInfo) &&
-          (<CircularProgressLoading />)
-        }
+      <Container maxWidth="xl">
+        {(isLoadingBaseData || isLoadingUnitInfo) &&
+          <CircularProgressLoading />}
         <Box>
-          {(unitData && baseData && unitInfo) && (
+          {unitData && baseData && unitInfo && (
             <UnitInfoForm
               projectId={projectId}
               unitId={edit ? unitId : -1}
@@ -123,6 +122,7 @@ export default function UnitInfo({
               setFunction={setFunction}
               txbProductType={txbProductType}
               txbUnitType={txbUnitType}
+              setCurrentStep={setCurrentStep}
             />
           )}
         </Box>

@@ -14,7 +14,7 @@ export default function ProductType(props: ProductTypeProps) {
   const { productTypes, onSelectItem } = props;
 
   return (
-    <Container>
+    <Container maxWidth="xl">
       <Box
         sx={{
           display: 'grid',

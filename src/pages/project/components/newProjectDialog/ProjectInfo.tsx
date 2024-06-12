@@ -3,7 +3,9 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 // @mui
 import { Box, Snackbar, Alert } from '@mui/material';
 // hooks
-import { useGetJobById, useGetProjectInitInfo, useGetJobSelTables } from 'src/hooks/useApi';
+// import { useGetJobById, useGetProjectInitInfo, useGetJobSelTables } from 'src/hooks/useApi';
+import { useGetSavedJob, useGetJobSelTables } from 'src/hooks/useApi';
+
 import { useRouter } from 'next/router';
 import CircularProgressLoading from 'src/components/loading/CircularProgressLoading';
 import ProjectInfoDialog from './ProjectInfoDialog';
@@ -29,7 +31,7 @@ export default function NewProject({ projectId, onClose }: NewProjectProps) {
     isLoading: isLoadingProject,
     refetch: refetchProject,
     isRefetching: isRefetchingProject,
-  } = useGetJobById(
+  } = useGetSavedJob(
     { intJobId: projectId },
     {
       enabled: !!projectId,
