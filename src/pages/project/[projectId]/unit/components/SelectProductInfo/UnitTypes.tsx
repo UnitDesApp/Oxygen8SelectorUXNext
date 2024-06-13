@@ -18,7 +18,7 @@ export default function UnitTypes(props: UnitTypesProps) {
     ) || [];
 
   return (
-    <Container>
+    <Container maxWidth="xl">
       <Box
         sx={{
           display: 'grid',

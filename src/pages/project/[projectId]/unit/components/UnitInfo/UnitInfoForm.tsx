@@ -18,8 +18,11 @@ import {
 } from '@mui/material';
 // hooks
 import { yupResolver } from '@hookform/resolvers/yup';
+import { useRouter } from 'next/router';
+
 import { useForm } from 'react-hook-form';
 import { unitEditFormSchema, useGetDefaultValue } from 'src/hooks/useUnit';
+import { PATH_APP } from 'src/routes/paths';
 import * as IDs from 'src/utils/ids';
 import { useAuthContext } from 'src/auth/useAuthContext';
 import FormProvider from 'src/components/hook-form/FormProvider';
@@ -30,13 +33,13 @@ import { any, number } from 'prop-types';
 import {
   getBypass,
   getComponentInfo,
-  getDXCoilRefrigDesignCondInfo,
-  getDamperAndActuatorInfo,
-  getDehumidificationInfo,
+  // getDXCoilRefrigDesignCondInfo,
+  // getDamperAndActuatorInfo,
+  // getDehumidificationInfo,
   getDrainPanInfo,
   getElecHeaterVoltageInfo,
   getExhaustAirESP,
-  getHeatPumpInfo,
+  // getHeatPumpInfo,
   getLocation,
   getOrientation,
   getPreheatElecHeaterInstallationInfo,
@@ -70,6 +73,7 @@ type UnitInfoFormProps = {
   onError?: Function;
   txbProductType?: string;
   txbUnitType?: string;
+  setCurrentStep?: Function;
 };
 
 
@@ -88,6 +92,7 @@ export default function UnitInfoForm({
   intUnitTypeID,
   txbProductType,
   txbUnitType,
+  setCurrentStep,
 }: UnitInfoFormProps) {
   const api = useApiContext();
   const [isLoading, setIsLoading] = useState(true);
@@ -128,6 +133,9 @@ export default function UnitInfoForm({
     panel7: true,
     panel8: true,
   });
+
+
+  const { push, query } = useRouter();
 
   // ---------------------- Initalize Default Values ---------------------
   const defaultValues = useGetDefaultValue(edit, unitInfo, db);
@@ -391,9 +399,12 @@ export default function UnitInfoForm({
       // formValues = getValues();
       // const oUC = getAllFormData1(formValues);
       const oUC: any = getUnitInputs();
-      const data = await api.project.saveUnitInfo(oUC);
+      const data = await api.project.saveUnit(oUC);
       if (onSuccess) onSuccess(true);
+      if (setCurrentStep) setCurrentStep(2);
       if (setIsSavedUnit) setIsSavedUnit(data?.intUnitNo || 0);
+      push(PATH_APP.editUnit(projectId?.toString() || '0', unitId?.toString() || '0'));
+
     } catch (e) {
       console.log(e);
       if (onError) onError(true);
@@ -1045,6 +1056,29 @@ const HeatingElecHeaterInfo = useMemo(() => {
   [getValues('ddlReheatFluidType'), getValues('ddlReheatFluidConcentration'), getValues('txbReheatFluidEntTemp'), getValues('txbReheatFluidLvgTemp')]);
 
 
+
+  const [heatPumpInfo, setHeatPumpInfo] = useState<any>([])
+    useMemo(() => {
+    const info: { isChecked: boolean; isVisible: boolean; defaultId: number} = { isChecked: false,  isVisible: false,  defaultId: 0};
+
+    if (Number(getValues('ddlCoolingComp')) === IDs.intCompDX_ID) {
+      info.isChecked = true;
+      info.isVisible = true;
+    }
+    else {
+      info.isChecked = false;
+      info.isVisible = false;
+    }
+
+    setHeatPumpInfo(info);
+
+    setValue('ckbHeatPump', info.isChecked);  
+
+  }, [db, getValues('ddlCoolingComp')]);
+
+
+
+
   const [damperActuatorInfo, setDamperActuatorInfo] = useState<any>([])
   useMemo(() => {
     const info: { fdtDamperActuator: any; isVisible: boolean;} = { fdtDamperActuator: [],  isVisible: false};
@@ -1454,10 +1488,6 @@ const setValueWithCheck1 = useCallback(
   }, [edit, db, setValue, intProductTypeID, formValues.ddlLocation, formValues.ddlPreheatComp]);
 
 
-
-
-
-
   const preheatHWCCapInfo = useMemo(() => {
     const info: {resetCapacity: number;  isDisabled: boolean;} = {  resetCapacity: 0,  isDisabled: true, };
      
@@ -1585,27 +1615,27 @@ const setValueWithCheck1 = useCallback(
 
 
   // -------------- Get Heating Pump Information ----------------
-  const heatPumpInfo = useMemo(() => {
-    const result = getHeatPumpInfo(Number(formValues.ddlCoolingComp));
-    // ckbHeatPumpChanged();
-    return result;
-  }, [formValues.ddlCoolingComp]);
+  // const heatPumpInfo = useMemo(() => {
+  //   const result = getHeatPumpInfo(Number(formValues.ddlCoolingComp));
+  //   // ckbHeatPumpChanged();
+  //   return result;
+  // }, [formValues.ddlCoolingComp]);
 
 
   // -------------- Get Dehumidification Information ----------------
-  const dehumidificationInfo = useMemo(
-    () => getDehumidificationInfo(Number(formValues.ddlCoolingComp)),
-    [formValues.ddlCoolingComp]);
+  // const dehumidificationInfo = useMemo(
+  //   () => getDehumidificationInfo(Number(formValues.ddlCoolingComp)),
+  //   [formValues.ddlCoolingComp]);
 
 
   // -------------- Get Coil Refrigerate Design Condition Information ----------------
-  const dxCoilRefrigDesignCondInfo = useMemo(
-    () =>
-      getDXCoilRefrigDesignCondInfo(
-        Number(typeof window !== 'undefined' && localStorage.getItem('UAL')),
-        Number(formValues.ddlCoolingComp)
-      ),
-    [formValues.ddlCoolingComp]);
+  // const dxCoilRefrigDesignCondInfo = useMemo(
+  //   () =>
+  //     getDXCoilRefrigDesignCondInfo(
+  //       Number(typeof window !== 'undefined' && localStorage.getItem('UAL')),
+  //       Number(formValues.ddlCoolingComp)
+  //     ),
+  //   [formValues.ddlCoolingComp]);
 
 
   // const heatElecHeaterInstallationInfo = useMemo(
@@ -2517,21 +2547,26 @@ useEffect(()=>{
                   sx={getDisplay(Number(formValues.ddlCoolingComp) === IDs.intCompCWC_ID || Number(formValues.ddlCoolingComp) === IDs.intCompDX_ID)}
                   onChange={(e: any) => {setValueWithCheck1(e, 'txbSummerCoolingSetpointWB');}}
                 />
+
                 {/* <FormControlLabel
                   sx={getInlineDisplay(formValues.ddlCoolingCompId === IDs.intCompDX_ID)}
                   control={ */}
                     <RHFCheckbox label="Heat Pump" name="ckbHeatPump"
-                    sx={getInlineDisplay(formValues.ddlCoolingComp === IDs.intCompDX_ID)}
-                      checked={formValues.ckbHeatPump}
+                    sx={{display: heatPumpInfo?.isVisible ? 'block' : 'none' }}
+                      // checked={formValues.ckbHeatPump}
+                      checked={heatPumpInfo?.isChecked}
+
                       // onChange={ckbHeatPumpChanged}
                       onChange={(e: any) => setValue('ckbHeatPump', Number(e.target.checked))}
                     />
+
                     <RHFCheckbox label="Dehumidification" name="ckbDehumidification"
                       sx={getInlineDisplay(formValues.ddlCoolingComp === IDs.intCompCWC_ID || formValues.ddlCoolingComp === IDs.intCompDX_ID)}
                       checked={formValues.ckbDehumidification}
                       // onChange={(e: any) => setCkbDehumidificationVal(e.target.checked)}
                       onChange={(e: any) => setValue('ckbDehumidification', Number(e.target.checked))}
                     />
+
                 {isAvailable(db?.dbtSelHanding) && (
                   <RHFSelect native size="small" name="ddlCoolingCoilHanding" label="Cooling Coil Handing"
                     sx={getDisplay(Number(formValues.ddlCoolingComp) > 1)}
@@ -2549,12 +2584,15 @@ useEffect(()=>{
                 <RHFTextField size="small" name="txbRefrigSuctionTemp" label="Suction Temp (F)"
                   onChange={(e: any) => {setValueWithCheck1(e, 'txbRefrigSuctionTemp');}}
                 />
+
                 <RHFTextField size="small" name="txbRefrigLiquidTemp" label="Liquid Temp (F)"
                   onChange={(e: any) => {setValueWithCheck1(e, 'txbRefrigLiquidTemp');}}
                 />
+
                 <RHFTextField size="small" name="txbRefrigSuperheatTemp" label="Superheat Temp (F)"
                   onChange={(e: any) => {setValueWithCheck1(e, 'txbRefrigSuperheatTemp');}}
                 />
+
               </Stack>
               <Stack spacing={1} sx={{ ...getDisplay(Number(formValues.ddlCoolingComp) === IDs.intCompCWC_ID) }}>
                 {isAvailable(db?.dbtSelFluidType) && (

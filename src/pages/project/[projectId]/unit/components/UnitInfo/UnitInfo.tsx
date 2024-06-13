@@ -3,7 +3,7 @@ import React, { useCallback, useState, useEffect } from 'react';
 import { Alert, Box, Container, Snackbar } from '@mui/material';
 import { styled } from '@mui/material/styles';
 // hooks
-import { useGetAllBaseData, useGetUnitInfo } from 'src/hooks/useApi';
+import { useGetUnitSelTables, useGetSavedUnit } from 'src/hooks/useApi';
 import CircularProgressLoading from 'src/components/loading/CircularProgressLoading';
 import { GetAllBaseData, GetUnitInfo } from 'src/api/website/backend_helper';
 // import { useApiContext } from 'src/contexts/ApiContext';
@@ -38,6 +38,7 @@ type UnitInfoProps = {
   txbProductType?: string;
   txbUnitType?: string;
   unitInfoData?: any;
+  setCurrentStep?: Function;
 };
 
 export default function UnitInfo({
@@ -52,6 +53,7 @@ export default function UnitInfo({
   txbProductType,
   txbUnitType,
   unitInfoData,
+  setCurrentStep,
 }: UnitInfoProps) {
   const [baseData, setbaseData] = useState(null)
   const [unitData, setunitData] = useState(null)
@@ -119,6 +121,7 @@ export default function UnitInfo({
               setFunction={setFunction}
               txbProductType={txbProductType}
               txbUnitType={txbUnitType}
+              setCurrentStep={setCurrentStep}
             />
           )}
         </Box>

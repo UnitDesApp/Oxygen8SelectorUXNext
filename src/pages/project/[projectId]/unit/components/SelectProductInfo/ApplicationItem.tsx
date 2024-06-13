@@ -26,9 +26,7 @@ export default function ApplicationItem({ label, onSelectItem, id, active }: App
       <BoxStyle
         id={id}
         onClick={() => onSelectItem && onSelectItem(id)}
-        sx={{
-          borderColor: active ? 'primary.main' : '#a3a3a3',
-        }}
+        sx={{ borderColor: active ? 'primary.main' : '#a3a3a3', }}
       >
         <img src="/assets/Images/img_nova_1.png" width="100%" height="100%" alt={label} />
       </BoxStyle>

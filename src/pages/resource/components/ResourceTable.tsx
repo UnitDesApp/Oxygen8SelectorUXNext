@@ -19,7 +19,7 @@ const ResourceTable = ({ objResources, title, resourceType, sx }: propTypes) => 
   const onDownload = useCallback(
     (fileName: string) => {
       api.project
-        .downloadResource(
+        .downloadResourceFile(
           { resourceType, fileName },
           {
             responseType: 'blob',

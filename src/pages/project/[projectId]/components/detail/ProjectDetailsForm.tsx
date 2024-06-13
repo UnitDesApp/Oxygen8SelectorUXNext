@@ -20,7 +20,7 @@ import { LoadingButton } from '@mui/lab';
 // hooks
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useForm } from 'react-hook-form';
-import { useGetOutdoorInfo } from 'src/hooks/useApi';
+// import { useGetOutdoorInfo } from 'src/hooks/useApi';
 import { useApiContext } from 'src/contexts/ApiContext';
 import { useRouter } from 'next/router';
 import FormProvider from 'src/components/hook-form/FormProvider';
@@ -188,172 +188,174 @@ export default function ProjectDetailsForm({
 
   const formState = watch();
 
-  const { data: outdoorInfo } = useGetOutdoorInfo(
-    {
-      action: 'GET_ALL_DATA',
-      country: formState?.country,
-      cityId: formState?.city,
-      designCondition: formState?.ashareDesignConditions,
-    },
-    {
-      enabled: mounted,
-    }
-  );
+  // const { data: outdoorInfo } = useGetOutdoorInfo(
+  //   {
+  //     action: 'GET_ALL_DATA',
+  //     country: formState?.country,
+  //     cityId: formState?.city,
+  //     designCondition: formState?.ashareDesignConditions,
+  //   },
+  //   {
+  //     enabled: mounted,
+  //   }
+  // );
 
-  useEffect(() => {
-    if (mounted && outdoorInfo) {
-      setValue('altitude', outdoorInfo.altitude as never);
-      setValue('summer_air_db', outdoorInfo.summerOutdoorAirDB as never);
-      setValue('summer_air_wb', outdoorInfo.summerOutdoorAirWB as never);
-      setValue('summer_air_rh', outdoorInfo.summerOutdoorAirRH as never);
-      setValue('winter_air_db', outdoorInfo.winterOutdoorAirDB as never);
-      setValue('winter_air_wb', outdoorInfo.winterOutdoorAirWB as never);
-      setValue('winter_air_rh', outdoorInfo.winterOutdoorAirRH as never);
-    } else {
-      setMounted(true);
-    }
-  }, [outdoorInfo, setValue, mounted]);
+  
+  // useEffect(() => {
+  //   if (mounted && outdoorInfo) {
+  //     setValue('altitude', outdoorInfo.altitude as never);
+  //     setValue('summer_air_db', outdoorInfo.summerOutdoorAirDB as never);
+  //     setValue('summer_air_wb', outdoorInfo.summerOutdoorAirWB as never);
+  //     setValue('summer_air_rh', outdoorInfo.summerOutdoorAirRH as never);
+  //     setValue('winter_air_db', outdoorInfo.winterOutdoorAirDB as never);
+  //     setValue('winter_air_wb', outdoorInfo.winterOutdoorAirWB as never);
+  //     setValue('winter_air_rh', outdoorInfo.winterOutdoorAirRH as never);
+  //   } else {
+  //     setMounted(true);
+  //   }
+  // }, [outdoorInfo, setValue, mounted]);
 
-  const get_RH_By_DBWB = useCallback(
-    (first: string, second: string, setValueId: any) => {
-      if (first === '' || second === '') return;
-      api.project
-        .getOutdoorInfo({
-          action: 'GET_RH_BY_DB_WB',
-          first,
-          second,
-          altitude: formState.altitude,
-        })
-        .then((data: any) => {
-          setValue(setValueId, data as never);
-        });
-    },
-    [api.project, formState.altitude, setValue]
-  );
+
+  // const get_RH_By_DBWB = useCallback(
+  //   (first: string, second: string, setValueId: any) => {
+  //     if (first === '' || second === '') return;
+  //     api.project
+  //       .getOutdoorInfo({
+  //         action: 'GET_RH_BY_DB_WB',
+  //         first,
+  //         second,
+  //         altitude: formState.altitude,
+  //       })
+  //       .then((data: any) => {
+  //         setValue(setValueId, data as never);
+  //       });
+  //   },
+  //   [api.project, formState.altitude, setValue]
+  // );
 
   // get WB value from server
-  const get_WB_By_DBRH = useCallback(
-    (first: string, second: string, setValueId: any) => {
-      if (first === '' || second === '') return;
-      api.project
-        .getOutdoorInfo({
-          action: 'GET_WB_BY_DB_HR',
-          first,
-          second,
-          altitude: formState.altitude,
-        })
-        .then((data: any) => {
-          setValue(setValueId, data as never);
-        });
-    },
-    [api.project, formState.altitude, setValue]
-  );
+  // const get_WB_By_DBRH = useCallback(
+  //   (first: string, second: string, setValueId: any) => {
+  //     if (first === '' || second === '') return;
+  //     api.project
+  //       .getOutdoorInfo({
+  //         action: 'GET_WB_BY_DB_HR',
+  //         first,
+  //         second,
+  //         altitude: formState.altitude,
+  //       })
+  //       .then((data: any) => {
+  //         setValue(setValueId, data as never);
+  //       });
+  //   },
+  //   [api.project, formState.altitude, setValue]
+  // );
 
   const handleChangeSummerOutdoorAirDBChanged = useCallback(
     (e: any) => {
       setValue('summer_air_db', e.target.value as never);
-      get_RH_By_DBWB(formState.summer_air_db, formState.summer_air_wb, 'summer_air_rh');
+      // get_RH_By_DBWB(formState.summer_air_db, formState.summer_air_wb, 'summer_air_rh');
     },
-    [get_RH_By_DBWB, setValue, formState.summer_air_db, formState.summer_air_wb]
+    [setValue]
   );
 
   // Summer Outdoor Air WB
   const handleChangeSummerOutdoorAirWBChanged = useCallback(
     (e: any) => {
       setValue('summer_air_wb', e.target.value as never);
-      get_RH_By_DBWB(formState.summer_air_db, formState.summer_air_wb, 'summer_air_rh');
+      // get_RH_By_DBWB(formState.summer_air_db, formState.summer_air_wb, 'summer_air_rh');
     },
-    [get_RH_By_DBWB, formState.summer_air_db, formState.summer_air_wb, setValue]
+    [setValue]
   );
 
   // Summer Outdoor Air RH
   const handleChangeSummerOutdoorAirRHChanged = useCallback(
     (e: any) => {
       setValue('summer_air_rh', e.target.value as never);
-      get_WB_By_DBRH(formState.summer_air_db, formState.summer_air_rh, 'summer_air_wb');
+      // get_WB_By_DBRH(formState.summer_air_db, formState.summer_air_rh, 'summer_air_wb');
     },
-    [get_WB_By_DBRH, setValue, formState.summer_air_db, formState.summer_air_rh]
+    [setValue]
   );
 
   // Winter Outdoor Air DB
   const handleChangeWinterOutdoorAirDBChanged = useCallback(
     (e: any) => {
       setValue('winter_air_db', e.target.value as never);
-      get_RH_By_DBWB(formState.winter_air_db, formState.winter_air_wb, 'winter_air_rh');
+      // get_RH_By_DBWB(formState.winter_air_db, formState.winter_air_wb, 'winter_air_rh');
     },
-    [get_RH_By_DBWB, setValue, formState.winter_air_db, formState.winter_air_wb]
+    [setValue]
   );
 
   // Winter Outdoor Air WB
   const handleChangeWinterOutdoorAirWBChanged = useCallback(
     (e: any) => {
       setValue('winter_air_wb', e.target.value as never);
-      get_RH_By_DBWB(formState.winter_air_db, formState.winter_air_wb, 'winter_air_rh');
+      // get_RH_By_DBWB(formState.winter_air_db, formState.winter_air_wb, 'winter_air_rh');
     },
-    [get_RH_By_DBWB, setValue, formState.winter_air_db, formState.winter_air_wb]
+    [setValue]
   );
 
   // Winter Outdoor Air RH
   const handleChangeWinterOutdoorAirRHChanged = useCallback(
     (e: any) => {
       setValue('winter_air_rh', e.target.value as never);
-      get_WB_By_DBRH(formState.winter_air_db, formState.winter_air_rh, 'winter_air_wb');
+      // get_WB_By_DBRH(formState.winter_air_db, formState.winter_air_rh, 'winter_air_wb');
     },
-    [get_WB_By_DBRH, setValue, formState.winter_air_db, formState.winter_air_rh]
+    [setValue]
   );
 
   // Summer Return Air DB
   const handleChangeSummerReturnAirDBChanged = useCallback(
     (e: any) => {
       setValue('summer_return_db', e.target.value as never);
-      get_RH_By_DBWB(formState.summer_return_db, formState.summer_return_wb, 'summer_return_rh');
+      // get_RH_By_DBWB(formState.summer_return_db, formState.summer_return_wb, 'summer_return_rh');
     },
-    [get_RH_By_DBWB, setValue, formState.summer_return_db, formState.summer_return_wb]
+    [setValue]
   );
 
   // Summer Return Air WB
   const handleChangeSummerReturnAirWBChanged = useCallback(
     (e: any) => {
       setValue('summer_return_wb', e.target.value as never);
-      get_RH_By_DBWB(formState.summer_return_db, formState.summer_return_wb, 'summer_return_rh');
+      // get_RH_By_DBWB(formState.summer_return_db, formState.summer_return_wb, 'summer_return_rh');
     },
-    [get_RH_By_DBWB, setValue, formState.summer_return_db, formState.summer_return_wb]
+    [setValue]
   );
 
   // Summer Return Air RH
   const handleChangeSummerReturnAirRHChanged = useCallback(
     (e: any) => {
       setValue('summer_return_rh', e.target.value as never);
-      get_WB_By_DBRH(formState.summer_return_db, formState.summer_return_rh, 'summer_return_wb');
+      // get_WB_By_DBRH(formState.summer_return_db, formState.summer_return_rh, 'summer_return_wb');
     },
-    [get_WB_By_DBRH, setValue, formState.summer_return_db, formState.summer_return_rh]
+    [setValue]
   );
 
   // Winter Return Air DB
   const handleChangeWinterReturnAirDBChanged = useCallback(
     (e: any) => {
       setValue('winter_return_db', e.target.value as never);
-      get_RH_By_DBWB(formState.winter_return_db, formState.winter_return_wb, 'winter_return_rh');
+      // get_RH_By_DBWB(formState.winter_return_db, formState.winter_return_wb, 'winter_return_rh');
     },
-    [get_RH_By_DBWB, setValue, formState.winter_return_db, formState.winter_return_wb]
+    [setValue]
   );
 
   // Winter Return Air WB
   const handleChangeWinterReturnAirWBChanged = useCallback(
     (e: any) => {
       setValue('winter_return_wb', e.target.value as never);
-      get_RH_By_DBWB(formState.winter_return_db, formState.winter_return_wb, 'winter_return_rh');
+      // get_RH_By_DBWB(formState.winter_return_db, formState.winter_return_wb, 'winter_return_rh');
     },
-    [get_RH_By_DBWB, setValue, formState.winter_return_db, formState.winter_return_wb]
+    [setValue]
   );
 
   // Winter Return Air RH
   const handleChangeWinterReturnAirRHChanged = useCallback(
     (e: any) => {
       setValue('winter_return_rh', e.target.value as never);
-      get_WB_By_DBRH(formState.winter_return_db, formState.winter_return_rh, 'winter_return_wb');
+      // get_WB_By_DBRH(formState.winter_return_db, formState.winter_return_rh, 'winter_return_wb');
     },
-    [get_WB_By_DBRH, setValue, formState.winter_return_db, formState.winter_return_rh]
+    [setValue]
   );
 
   const provStateInfo = useMemo(() => {
@@ -445,7 +447,7 @@ export default function ProjectDetailsForm({
           revisedUserId: localStorage.getItem('userId'),
           applicationOther: '',
         };
-        await api.project.updateProject(formData);
+        await api.project.saveJob(formData);
         if (onSuccess) {
           onSuccess();
         }

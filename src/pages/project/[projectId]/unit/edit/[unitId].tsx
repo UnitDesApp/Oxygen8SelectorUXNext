@@ -13,6 +13,7 @@ import {
   Typography,
   Box,
 } from '@mui/material';
+import CircularProgressLoading from 'src/components/loading/CircularProgressLoading';
 import { useRouter } from 'next/router';
 import CustomBreadcrumbs from 'src/components/custom-breadcrumbs';
 import { PATH_APP } from 'src/routes/paths';
@@ -22,6 +23,7 @@ import DashboardLayout from 'src/layouts/dashboard/DashboardLayout';
 import UnitInfo from '../components/UnitInfo/UnitInfo';
 import SelectionReportDialog from '../../components/dialog/SelectionReportDialog';
 import SelectionWrapper from '../components/Selection/SelectionWrapper';
+import Selection from '../components/Selection/Selection';
 
 // ----------------------------------------------------------------------
 
@@ -55,6 +57,7 @@ export default function EditUnit() {
   const [currentStep, setCurrentStep] = useState(1);
   const [isSavedUnit, setIsSavedUnit] = useState(false);
   const [openRPDialog, setOpenRPDialog] = useState(false);
+  const [isProcessingData, setIsProcessingData] = useState(false)
 
   const closeDialog = useCallback(() => {
     setOpenRPDialog(false);
@@ -64,11 +67,27 @@ export default function EditUnit() {
     setOpenRPDialog(true);
   }, []);
 
+
+  const onClickUnitInfo = () => {
+      setCurrentStep(1);
+      push(PATH_APP.editUnit(projectId?.toString() || '0', unitId?.toString() || '0'));
+  };
+
   const onClickNextStep = () => {
-    if (currentStep < 2) setCurrentStep(currentStep + 1);
+    if (currentStep < 2) {
+      setCurrentStep(currentStep + 1);
+    }
     else if (currentStep === 2 && projectId)
       push(`/project/${projectId?.toString() || '0'}/unitlist`);
+      // push(PATH_APP.editUnit(projectId?.toString() || '0', unitId?.toString() || '0'));
   };
+
+
+  // const handleEditRow = (row: any) => {
+  //   setIntProductTypeID(Number(row.prod_type_id));
+  //   setIntUnitTypeID(Number(row.unit_type_id));
+  //   push(PATH_APP.editUnit(projectId?.toString() || '0', row.unit_no));
+  // };
 
   const validateContinue = () => {
     if (currentStep === 1 && isSavedUnit) return false;
@@ -82,6 +101,10 @@ export default function EditUnit() {
       <Head>
         <title> New Unit | Oxygen8 </title>
       </Head>
+      {isProcessingData ? ( 
+      <CircularProgressLoading /> 
+      ) : (
+
       <Container maxWidth="xl">
         <CustomBreadcrumbs
           heading={`Edit: ${STEP_PAGE_NAME[currentStep]}`}
@@ -107,25 +130,31 @@ export default function EditUnit() {
           }
         />
         <Box sx={{ my: 3 }}>
-          {currentStep === 1 && unitId && projectId && (
+          {currentStep === 1 && projectId && unitId && (
             <UnitInfo
               projectId={Number(projectId)}
               unitId={Number(unitId)}
               isSavedUnit={isSavedUnit}
               setIsSavedUnit={(no: number) => {
-                setIsSavedUnit(true);
-              }}
+              setIsSavedUnit(true);
+            }}
               edit
             />
           )}
-          {currentStep === 2 && unitId && projectId && (
-            <SelectionWrapper projectId={Number(projectId)} unitId={Number(unitId)} />
+          {currentStep === 2 && projectId && unitId && (
+            // <SelectionWrapper projectId={Number(projectId)} unitId={Number(unitId)} />
+            <Selection 
+              intJobId={Number(projectId)} 
+              intUnitNo={Number(unitId)} 
+              intProdTypeId={0} 
+            />
           )}
         </Box>
       </Container>
+        )}
       <FooterStepStyle>
         <Grid container>
-          <Grid item xs={8}>
+          <Grid item xs={10}>
             <Stack
               direction="row"
               divider={<Divider orientation="vertical" flexItem />}
@@ -166,7 +195,19 @@ export default function EditUnit() {
               </Item>
             </Stack>
           </Grid>
-          <Grid item xs={4} textAlign="center" alignContent="right">
+          <Grid item xs={1} textAlign="center" alignContent="right">
+          <Button
+              variant="contained"
+              color="primary"
+              onClick={onClickUnitInfo}
+              sx={{display: currentStep === 2 ? 'block' : 'none' }}
+            >              
+            <Iconify icon='akar-icons:arrow-left' />
+              Unit info
+            </Button>
+            </Grid>
+          <Grid item xs={1} textAlign="center" alignContent="right">
+
             <Button
               variant="contained"
               color="primary"

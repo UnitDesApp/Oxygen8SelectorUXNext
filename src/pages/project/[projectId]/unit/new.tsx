@@ -97,7 +97,8 @@ export default function AddNewUnit() {
   };
 
   const onClickNextStep = () => {
-    if (currentStep < 2) setCurrentStep(currentStep + 1);
+    if (currentStep < 2) 
+      setCurrentStep(currentStep + 1);
     else if (currentStep === 2 && projectId)
       push(`/project/${projectId?.toString() || '0'}/unitlist`);
   };
@@ -124,7 +125,7 @@ export default function AddNewUnit() {
       <Head>
         <title> New Unit | Oxygen8 </title>
       </Head>
-      <Container>
+      <Container maxWidth="xl">
         <CustomBreadcrumbs
           heading={`New: ${STEP_PAGE_NAME[currentStep]}`}
           links={[
@@ -171,7 +172,7 @@ export default function AddNewUnit() {
             />
           )}
           {currentStep === 2 && (
-            <Selection unitTypeData={unitTypeData} intUnitNo={Number(intUnitNo)} />
+            <Selection intJobId={Number(projectId)} intUnitNo={Number(intUnitNo)} intProdTypeId={Number(unitTypeData.intProductTypeID)} />
           )}
         </Box>
       </Container>
