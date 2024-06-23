@@ -391,9 +391,10 @@ export default function UnitInfoForm({
       const oUC: any = getUnitInputs();
       const data = await api.project.saveUnit(oUC);
       if (onSuccess) onSuccess(true);
-      if (setCurrentStep) setCurrentStep(2);
       if (setIsSavedUnit) setIsSavedUnit(data?.intUnitNo || 0);
-      push(PATH_APP.editUnit(projectId?.toString() || '0', unitId?.toString() || '0'));
+      if (Number(unitId) > 0) {
+        push(PATH_APP.editUnit(projectId?.toString() || '0', unitId?.toString() || '0'));
+      }
       moveNextStep();
     } catch (e) {
       console.log(e);
