@@ -40,6 +40,9 @@ type UnitInfoProps = {
   txbUnitType?: string;
   unitInfoData?: any;
   setCurrentStep?: Function;
+  submitButtonRef?: any;
+  setIsSaving: Function;
+  moveNextStep: Function;
 };
 
 export default function UnitInfo({
@@ -55,12 +58,15 @@ export default function UnitInfo({
   txbUnitType,
   unitInfoData,
   setCurrentStep,
+  submitButtonRef,
+  setIsSaving,
+  moveNextStep,
 }: UnitInfoProps) {
-  const [baseData, setbaseData] = useState(null)
-  const [unitData, setunitData] = useState(null)
-  const [isLoadingUnitInfo, setisLoadingUnitInfo] = useState(true)
-  const [isLoadingBaseData, setisLoadingBaseData] = useState(true)
-  const [unitInfo, setunitInfo] = useState<TUnitInfoData>({})
+  const [baseData, setbaseData] = useState(null);
+  const [unitData, setunitData] = useState(null);
+  const [isLoadingUnitInfo, setisLoadingUnitInfo] = useState(true);
+  const [isLoadingBaseData, setisLoadingBaseData] = useState(true);
+  const [unitInfo, setunitInfo] = useState<TUnitInfoData>({});
 
   useEffect(() => {
     GetUnitInfo({
@@ -84,7 +90,7 @@ export default function UnitInfo({
     });
     return () => {
       // second
-    }
+    };
   }, [edit, projectId, unitId]);
 
 
@@ -123,6 +129,9 @@ export default function UnitInfo({
               txbProductType={txbProductType}
               txbUnitType={txbUnitType}
               setCurrentStep={setCurrentStep}
+              submitButtonRef={submitButtonRef}
+              setIsSaving={setIsSaving}
+              moveNextStep={moveNextStep}
             />
           )}
         </Box>

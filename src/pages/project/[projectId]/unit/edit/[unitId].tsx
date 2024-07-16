@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useRef, useState } from 'react';
 // import PropTypes from 'prop-types';
 // @mui
 import { styled, useTheme } from '@mui/material/styles';
@@ -20,6 +20,7 @@ import { PATH_APP } from 'src/routes/paths';
 import Iconify from 'src/components/iconify';
 import Head from 'next/head';
 import DashboardLayout from 'src/layouts/dashboard/DashboardLayout';
+import { LoadingButton } from '@mui/lab';
 import UnitInfo from '../components/UnitInfo/UnitInfo';
 import SelectionReportDialog from '../../components/dialog/SelectionReportDialog';
 import SelectionWrapper from '../components/Selection/SelectionWrapper';
@@ -57,7 +58,9 @@ export default function EditUnit() {
   const [currentStep, setCurrentStep] = useState(1);
   const [isSavedUnit, setIsSavedUnit] = useState(false);
   const [openRPDialog, setOpenRPDialog] = useState(false);
-  const [isProcessingData, setIsProcessingData] = useState(false)
+  const [isProcessingData, setIsProcessingData] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
+  const submitButtonRef = useRef<HTMLButtonElement>(null);
 
   const closeDialog = useCallback(() => {
     setOpenRPDialog(false);
@@ -69,15 +72,18 @@ export default function EditUnit() {
 
 
   const onClickUnitInfo = () => {
-      setCurrentStep(1);
-      push(PATH_APP.editUnit(projectId?.toString() || '0', unitId?.toString() || '0'));
+    setCurrentStep(1);
+    push(PATH_APP.editUnit(projectId?.toString() || '0',  unitId?.toString() || '0'));
   };
 
   const onClickNextStep = () => {
     if (currentStep < 2) {
-      setCurrentStep(currentStep + 1);
-    }
-    else if (currentStep === 2 && projectId)
+      if (currentStep === 1 && submitButtonRef?.current) {
+        submitButtonRef?.current.click();
+      } else {
+        setCurrentStep(currentStep + 1);
+      }
+    } else if (currentStep === 2 && projectId)
       push(`/project/${projectId?.toString() || '0'}/unitlist`);
       // push(PATH_APP.editUnit(projectId?.toString() || '0', unitId?.toString() || '0'));
   };
@@ -90,7 +96,7 @@ export default function EditUnit() {
   // };
 
   const validateContinue = () => {
-    if (currentStep === 1 && isSavedUnit) return false;
+    if (currentStep === 1) return false;
     if (currentStep === 2) return false;
 
     return true;
@@ -102,7 +108,7 @@ export default function EditUnit() {
         <title> New Unit | Oxygen8 </title>
       </Head>
       {isProcessingData ? ( 
-      <CircularProgressLoading /> 
+        <CircularProgressLoading /> 
       ) : (
 
       <Container maxWidth="xl">
@@ -136,9 +142,12 @@ export default function EditUnit() {
               unitId={Number(unitId)}
               isSavedUnit={isSavedUnit}
               setIsSavedUnit={(no: number) => {
-              setIsSavedUnit(true);
-            }}
+                setIsSavedUnit(true);
+              }}
               edit
+              submitButtonRef={submitButtonRef}
+              setIsSaving={setIsSaving}
+              moveNextStep={() => setCurrentStep(2)}
             />
           )}
           {currentStep === 2 && projectId && unitId && (
@@ -200,23 +209,24 @@ export default function EditUnit() {
               variant="contained"
               color="primary"
               onClick={onClickUnitInfo}
-              sx={{display: currentStep === 2 ? 'block' : 'none' }}
+              sx={{display: currentStep === 2 ? 'inline-flex' : 'none' }}
+              startIcon={<Iconify icon="akar-icons:arrow-left" />}
             >              
-            <Iconify icon='akar-icons:arrow-left' />
               Unit info
             </Button>
             </Grid>
           <Grid item xs={1} textAlign="center" alignContent="right">
 
-            <Button
+            <LoadingButton
               variant="contained"
               color="primary"
               onClick={onClickNextStep}
               disabled={validateContinue()}
+              loading={isSaving}
             >
               {currentStep !== 2 ? 'Continue' : 'Done'}
               <Iconify icon={currentStep !== 2 ? 'akar-icons:arrow-right' : 'icons8:cancel-2'} />
-            </Button>
+            </LoadingButton>
           </Grid>
         </Grid>
       </FooterStepStyle>

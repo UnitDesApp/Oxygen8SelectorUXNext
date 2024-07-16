@@ -74,6 +74,9 @@ type UnitInfoFormProps = {
   txbProductType?: string;
   txbUnitType?: string;
   setCurrentStep?: Function;
+  submitButtonRef?: any;
+  setIsSaving: Function;
+  moveNextStep: Function;
 };
 
 
@@ -93,6 +96,9 @@ export default function UnitInfoForm({
   txbProductType,
   txbUnitType,
   setCurrentStep,
+  submitButtonRef,
+  setIsSaving,
+  moveNextStep,
 }: UnitInfoFormProps) {
   const api = useApiContext();
   const [isLoading, setIsLoading] = useState(true);
@@ -394,6 +400,7 @@ export default function UnitInfoForm({
 
   // --------------------------- Submit (Save) -----------------------------
   const onSubmit = useCallback(async () => {
+    setIsSaving(true);
     try {
       // const data = await api.project.saveUnitInfo(getAllFormData1());
       // formValues = getValues();
@@ -404,11 +411,12 @@ export default function UnitInfoForm({
       if (setCurrentStep) setCurrentStep(2);
       if (setIsSavedUnit) setIsSavedUnit(data?.intUnitNo || 0);
       push(PATH_APP.editUnit(projectId?.toString() || '0', unitId?.toString() || '0'));
-
+      moveNextStep();
     } catch (e) {
       console.log(e);
       if (onError) onError(true);
     }
+    setIsSaving(false);
   }, [edit, onSuccess, onError, getAllFormData, setIsSavedUnit]);
 
 
@@ -3162,11 +3170,13 @@ useEffect(()=>{
         <Stack direction="row" justifyContent="flex-end">
           <Box sx={{ width: '150px' }}>
             <LoadingButton
+              ref={submitButtonRef}
               type="submit"
               variant="contained"
               onClick={() => console.log(getValues())}
               loading={isSubmitting}
               disabled={isSavedUnit && !edit}
+              sx={{ visibility: 'hidden' }}
             >
               {edit ? 'Update Unit' : 'Add New Unit'}
             </LoadingButton>
