@@ -20,11 +20,11 @@ import { PATH_APP } from 'src/routes/paths';
 import Iconify from 'src/components/iconify';
 import Head from 'next/head';
 import DashboardLayout from 'src/layouts/dashboard/DashboardLayout';
+import { LoadingButton } from '@mui/lab';
 import UnitInfo from '../components/UnitInfo/UnitInfo';
 import SelectionReportDialog from '../../components/dialog/SelectionReportDialog';
 import SelectionWrapper from '../components/Selection/SelectionWrapper';
 import Selection from '../components/Selection/Selection';
-import { LoadingButton } from '@mui/lab';
 
 // ----------------------------------------------------------------------
 
@@ -77,8 +77,8 @@ export default function EditUnit() {
 
   const onClickNextStep = () => {
     if (currentStep < 2) {
-      if (currentStep === 1) {
-        submitButtonRef?.current && submitButtonRef?.current.click();
+      if (currentStep === 1 && submitButtonRef?.current) {
+        submitButtonRef?.current.click();
       } else {
         setCurrentStep(currentStep + 1);
       }

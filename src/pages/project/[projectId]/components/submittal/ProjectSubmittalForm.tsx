@@ -717,7 +717,7 @@ export default function ProjectSubmittalForm({
                   <RHFTextField
                     sx={{ width: '60%' }}
                     size="small"
-                    name="txbNote"
+                    name="txbNotes"
                     label="Enter Notes"
                     // value={noteInfo}
                     // onChange={(e) => setNote(e.target.value)}
