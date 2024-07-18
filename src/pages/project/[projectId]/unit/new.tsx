@@ -177,8 +177,6 @@ export default function AddNewUnit() {
                 setIntUnitNo(no);
                 setIsSavedUnit(true);
               }}
-              setIsSaving={() => false}
-              moveNextStep={() => setCurrentStep(2)}
               txbProductType={unitTypeData.txbProductType}
               txbUnitType={unitTypeData.txbUnitType}
               setIsSaving={setIsSaving}
