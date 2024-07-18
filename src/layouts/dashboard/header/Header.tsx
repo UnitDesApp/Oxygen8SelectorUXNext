@@ -38,7 +38,7 @@ export default function Header({ onOpenNav, navBar }: Props) {
 
   const renderContent = (
     <Stack flexGrow={1} direction="row" alignItems="center" justifyContent="space-between" gap={4}>
-      {isDesktop && isNavHorizontal && <Logo sx={{ mr: 2.5, height: '40px' }} />}
+      {isDesktop && isNavHorizontal && <Logo sx={{ width: '299px', height: '25px' }} />}
 
       {!isDesktop && (
         <IconButton onClick={onOpenNav} sx={{ mr: 1, color: 'text.primary' }}>
@@ -54,6 +54,7 @@ export default function Header({ onOpenNav, navBar }: Props) {
         alignItems="center"
         justifyContent="flex-end"
         spacing={{ xs: 0.5, sm: 1.5 }}
+        sx={{ width: '299px' }}
       >
         <AccountPopover />
       </Stack>
