@@ -82,7 +82,9 @@ export default function Project() {
     onSort,
     onChangePage,
     onChangeRowsPerPage,
-  } = useTable();
+  } = useTable({
+    defaultRowsPerPage: 10,
+  });
 
   const { user } = useAuthContext();
 
@@ -229,7 +231,9 @@ export default function Project() {
                     }
                   />
                   <TableBody>
-                    {dataFiltered?.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)?.map((row: any) => (
+                    {dataFiltered
+                      ?.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                      ?.map((row: any) => (
                         <ProjectTableRow
                           key={row.id}
                           row={row}
