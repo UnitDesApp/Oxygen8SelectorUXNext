@@ -87,10 +87,6 @@ export default function ProjectQuote() {
     // intUnitNo: 1,
   });
 
-  const handleGenerate = () => {
-    setIsGenerate(true);
-  };
-
   // if (isLoadingQuoteInfo) return <LinearProgress color="info" />;
 
   // if (!isGenerate)

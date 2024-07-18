@@ -100,8 +100,8 @@ export default function AddNewUnit() {
 
   const onClickNextStep = () => {
     if (currentStep < 2) {
-      if (currentStep === 1) {
-        submitButtonRef?.current && submitButtonRef?.current.click();
+      if (currentStep === 1 && submitButtonRef?.current) {
+        submitButtonRef?.current.click();
       } else {
         setCurrentStep(currentStep + 1);
       }
