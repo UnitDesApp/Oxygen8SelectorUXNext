@@ -72,21 +72,20 @@ function CustomGroupBox({ title, children, bordersx, titlesx }: CustomGroupBoxPr
 
 export default function ProjectQuote() {
   const { projectId } = useRouter().query;
-  const [isGenerate, setIsGenerate] = useState<boolean>(false);
   const [isNoUnit, setIsNoUnit] = useState<boolean>(false);
 
   const theme = useTheme();
 
-  const { data: quoteInfo, isLoading: isLoadingQuoteInfo, refetch, } = useGetSavedQuote({
+  const {
+    data: quoteInfo,
+    isLoading: isLoadingQuoteInfo,
+    refetch,
+  } = useGetSavedQuote({
     intUserId: typeof window !== 'undefined' && localStorage.getItem('userId'),
     intUAL: typeof window !== 'undefined' && localStorage.getItem('UAL'),
     intJobId: Number(projectId),
     // intUnitNo: 1,
   });
-
-  const handleGenerate = () => {
-    setIsGenerate(true);
-  };
 
   // if (isLoadingQuoteInfo) return <LinearProgress color="info" />;
 
@@ -126,11 +125,11 @@ export default function ProjectQuote() {
   //     </Container>
   //   );
 
-    // if (!quoteInfo)
-    //   return (
-    //     <Stack direction="row" alignItems='center' justifyContent="center" sx={{pt: '30px' }}>
-    //       <Box sx={{fontSize: '30px' }}>Unable to load quote data</Box>{' '}
-    //     </Stack>
-    //   );
-    return <ProjectQuoteForm projectId={Number(projectId)} quoteInfo={quoteInfo} refetch={refetch} />;
+  // if (!quoteInfo)
+  //   return (
+  //     <Stack direction="row" alignItems='center' justifyContent="center" sx={{pt: '30px' }}>
+  //       <Box sx={{fontSize: '30px' }}>Unable to load quote data</Box>{' '}
+  //     </Stack>
+  //   );
+  return <ProjectQuoteForm projectId={Number(projectId)} quoteInfo={quoteInfo} refetch={refetch} />;
 }

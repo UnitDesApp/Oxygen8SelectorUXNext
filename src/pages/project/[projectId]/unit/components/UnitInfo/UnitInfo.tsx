@@ -6,10 +6,9 @@ import { styled } from '@mui/material/styles';
 import { useGetUnitSelTables, useGetSavedUnit } from 'src/hooks/useApi';
 import CircularProgressLoading from 'src/components/loading/CircularProgressLoading';
 import { GetAllBaseData, GetUnitInfo } from 'src/api/website/backend_helper';
-// import { useApiContext } from 'src/contexts/ApiContext'; 
+// import { useApiContext } from 'src/contexts/ApiContext';
 
 import UnitInfoForm from './UnitInfoForm';
-
 
 //------------------------------------------------
 const RootStyle = styled('div')(({ theme }) => ({
@@ -40,6 +39,9 @@ type UnitInfoProps = {
   txbUnitType?: string;
   unitInfoData?: any;
   setCurrentStep?: Function;
+  submitButtonRef?: any;
+  setIsSaving: Function;
+  moveNextStep: Function;
 };
 
 export default function UnitInfo({
@@ -55,12 +57,15 @@ export default function UnitInfo({
   txbUnitType,
   unitInfoData,
   setCurrentStep,
+  submitButtonRef,
+  setIsSaving,
+  moveNextStep,
 }: UnitInfoProps) {
-  const [baseData, setbaseData] = useState(null)
-  const [unitData, setunitData] = useState(null)
-  const [isLoadingUnitInfo, setisLoadingUnitInfo] = useState(true)
-  const [isLoadingBaseData, setisLoadingBaseData] = useState(true)
-  const [unitInfo, setunitInfo] = useState<TUnitInfoData>({})
+  const [baseData, setbaseData] = useState(null);
+  const [unitData, setunitData] = useState(null);
+  const [isLoadingUnitInfo, setisLoadingUnitInfo] = useState(true);
+  const [isLoadingBaseData, setisLoadingBaseData] = useState(true);
+  const [unitInfo, setunitInfo] = useState<TUnitInfoData>({});
 
   useEffect(() => {
     GetUnitInfo({
@@ -70,8 +75,8 @@ export default function UnitInfo({
       intJobId: projectId,
       intUnitNo: edit ? unitId : -1,
     }).then((res: any) => {
- //     setunitData(JSON.parse(res)['unitInfo']);
- //     setunitInfo(JSON.parse(res)['unitInfo']);
+      //     setunitData(JSON.parse(res)['unitInfo']);
+      //     setunitInfo(JSON.parse(res)['unitInfo']);
       setunitData(JSON.parse(res).unitInfo);
       setunitInfo(JSON.parse(res).unitInfo);
 
@@ -84,9 +89,8 @@ export default function UnitInfo({
     });
     return () => {
       // second
-    }
+    };
   }, [edit, projectId, unitId]);
-
 
   // ----------------------- Success State and Handle Close ---------------------------
   const [openSuccess, setOpenSuccess] = useState(false);
@@ -99,12 +103,11 @@ export default function UnitInfo({
   const handleCloseError = () => {
     setOpenError(false);
   };
-  
+
   return (
     <RootStyle>
       <Container maxWidth="xl">
-        {(isLoadingBaseData || isLoadingUnitInfo) &&
-          <CircularProgressLoading />}
+        {(isLoadingBaseData || isLoadingUnitInfo) && <CircularProgressLoading />}
         <Box>
           {unitData && baseData && unitInfo && (
             <UnitInfoForm
@@ -123,6 +126,9 @@ export default function UnitInfo({
               txbProductType={txbProductType}
               txbUnitType={txbUnitType}
               setCurrentStep={setCurrentStep}
+              submitButtonRef={submitButtonRef}
+              setIsSaving={setIsSaving}
+              moveNextStep={moveNextStep}
             />
           )}
         </Box>

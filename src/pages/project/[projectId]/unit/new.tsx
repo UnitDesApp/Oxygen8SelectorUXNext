@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useRef, useState } from 'react';
 // import PropTypes from 'prop-types';
 // @mui
 import { styled, useTheme } from '@mui/material/styles';
@@ -75,6 +75,8 @@ export default function AddNewUnit() {
   }>(DEFAULT_UNIT_DATA);
   const [intUnitNo, setIntUnitNo] = useState(0);
   const [openRPDialog, setOpenRPDialog] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
+  const submitButtonRef = useRef<HTMLButtonElement>(null);
 
   const closeDialog = useCallback(() => {
     setOpenRPDialog(false);
@@ -97,9 +99,13 @@ export default function AddNewUnit() {
   };
 
   const onClickNextStep = () => {
-    if (currentStep < 2) 
-      setCurrentStep(currentStep + 1);
-    else if (currentStep === 2 && projectId)
+    if (currentStep < 2) {
+      if (currentStep === 1 && submitButtonRef?.current) {
+        submitButtonRef?.current.click();
+      } else {
+        setCurrentStep(currentStep + 1);
+      }
+    } else if (currentStep === 2 && projectId)
       push(`/project/${projectId?.toString() || '0'}/unitlist`);
   };
 
@@ -114,10 +120,14 @@ export default function AddNewUnit() {
       return false;
     }
 
-    if (currentStep === 1 && isSavedUnit) return false;
+    if (currentStep === 1) return false;
     if (currentStep === 2 && intUnitNo !== 0) return false;
 
     return true;
+  };
+
+  const moveToNextStep = () => {
+    setCurrentStep(2);
   };
 
   return (
@@ -169,10 +179,17 @@ export default function AddNewUnit() {
               }}
               txbProductType={unitTypeData.txbProductType}
               txbUnitType={unitTypeData.txbUnitType}
+              setIsSaving={setIsSaving}
+              moveNextStep={moveToNextStep}
+              submitButtonRef={submitButtonRef}
             />
           )}
           {currentStep === 2 && (
-            <Selection intJobId={Number(projectId)} intUnitNo={Number(intUnitNo)} intProdTypeId={Number(unitTypeData.intProductTypeID)} />
+            <Selection
+              intJobId={Number(projectId)}
+              intUnitNo={Number(intUnitNo)}
+              intProdTypeId={Number(unitTypeData.intProductTypeID)}
+            />
           )}
         </Box>
       </Container>

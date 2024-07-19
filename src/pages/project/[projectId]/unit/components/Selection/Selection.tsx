@@ -138,7 +138,7 @@ export default function Selection({ intJobId, intUnitNo, intProdTypeId }: Select
     panel20: true,
   });
 
-  const { data: selectionData, isLoading: isLoadingSelectionInfo } = useGetUnitSelection({
+  const { data: selectionData, isLoading: isLoadingSelectionInfo, refetch, isFetching: isFetchingSelectionInfo } = useGetUnitSelection({
     intUserId: typeof window !== 'undefined' && localStorage.getItem('userId'),
     intUAL: typeof window !== 'undefined' && localStorage.getItem('UAL'),
     intJobId: projectId,
@@ -146,6 +146,11 @@ export default function Selection({ intJobId, intUnitNo, intProdTypeId }: Select
     intProdTypeId,
     // intUnitTypeId: unitTypeData?.intUnitTypeID,
   });
+
+  useEffect(() =>  {
+    refetch()
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   // const viewSelectionInfo = useMemo(
   //   () => ({
@@ -978,7 +983,7 @@ export default function Selection({ intJobId, intUnitNo, intProdTypeId }: Select
             Server Error!
           </Box>
         )}
-        {isLoadingSelectionInfo ? (
+        {isLoadingSelectionInfo || isFetchingSelectionInfo ? (
           <LinearProgress color="info" />
         ) : (
           <Stack spacing={5} sx={{ mt: 2 }}>
@@ -2736,7 +2741,6 @@ export default function Selection({ intJobId, intUnitNo, intProdTypeId }: Select
                       direction={item.direction}
                       alignItems="stretch"
                       justifyContent="left"
-                      spacing={3}
                       sx={{ ...item.style }}
                     >
                       {item.subGroups.map((element: any, i: number) =>
