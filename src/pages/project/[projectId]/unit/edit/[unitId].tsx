@@ -70,10 +70,9 @@ export default function EditUnit() {
     setOpenRPDialog(true);
   }, []);
 
-
   const onClickUnitInfo = () => {
     setCurrentStep(1);
-    push(PATH_APP.editUnit(projectId?.toString() || '0',  unitId?.toString() || '0'));
+    push(PATH_APP.editUnit(projectId?.toString() || '0', unitId?.toString() || '0'));
   };
 
   const onClickNextStep = () => {
@@ -85,9 +84,8 @@ export default function EditUnit() {
       }
     } else if (currentStep === 2 && projectId)
       push(`/project/${projectId?.toString() || '0'}/unitlist`);
-      // push(PATH_APP.editUnit(projectId?.toString() || '0', unitId?.toString() || '0'));
+    // push(PATH_APP.editUnit(projectId?.toString() || '0', unitId?.toString() || '0'));
   };
-
 
   // const handleEditRow = (row: any) => {
   //   setIntProductTypeID(Number(row.prod_type_id));
@@ -107,60 +105,59 @@ export default function EditUnit() {
       <Head>
         <title> New Unit | Oxygen8 </title>
       </Head>
-      {isProcessingData ? ( 
-        <CircularProgressLoading /> 
+      {isProcessingData ? (
+        <CircularProgressLoading />
       ) : (
-
-      <Container maxWidth="xl">
-        <CustomBreadcrumbs
-          heading={`Edit: ${STEP_PAGE_NAME[currentStep]}`}
-          links={[
-            { name: 'My projects', href: PATH_APP.project },
-            {
-              name: 'Dashboard',
-              href: PATH_APP.projectDashboard(projectId?.toString() || '', 'unitlist'),
-            },
-            { name: 'Edit Unit' },
-          ]}
-          sx={{ paddingLeft: '24px', paddingTop: '24px' }}
-          action={
-            currentStep === 2 && (
-              <Button
-                variant="text"
-                startIcon={<Iconify icon="bxs:download" />}
-                onClick={openDialog}
-              >
-                Export report
-              </Button>
-            )
-          }
-        />
-        <Box sx={{ my: 3 }}>
-          {currentStep === 1 && projectId && unitId && (
-            <UnitInfo
-              projectId={Number(projectId)}
-              unitId={Number(unitId)}
-              isSavedUnit={isSavedUnit}
-              setIsSavedUnit={(no: number) => {
-                setIsSavedUnit(true);
-              }}
-              edit
-              submitButtonRef={submitButtonRef}
-              setIsSaving={setIsSaving}
-              moveNextStep={() => setCurrentStep(2)}
-            />
-          )}
-          {currentStep === 2 && projectId && unitId && (
-            // <SelectionWrapper projectId={Number(projectId)} unitId={Number(unitId)} />
-            <Selection 
-              intJobId={Number(projectId)} 
-              intUnitNo={Number(unitId)} 
-              intProdTypeId={0} 
-            />
-          )}
-        </Box>
-      </Container>
-        )}
+        <Container maxWidth="xl">
+          <CustomBreadcrumbs
+            heading={`Edit: ${STEP_PAGE_NAME[currentStep]}`}
+            links={[
+              { name: 'My projects', href: PATH_APP.project },
+              {
+                name: 'Dashboard',
+                href: PATH_APP.projectDashboard(projectId?.toString() || '', 'unitlist'),
+              },
+              { name: 'Edit Unit' },
+            ]}
+            sx={{ paddingLeft: '24px', paddingTop: '24px' }}
+            action={
+              currentStep === 2 && (
+                <Button
+                  variant="text"
+                  startIcon={<Iconify icon="bxs:download" />}
+                  onClick={openDialog}
+                >
+                  Export report
+                </Button>
+              )
+            }
+          />
+          <Box sx={{ my: 3 }}>
+            {currentStep === 1 && projectId && unitId && (
+              <UnitInfo
+                projectId={Number(projectId)}
+                unitId={Number(unitId)}
+                isSavedUnit={isSavedUnit}
+                setIsSavedUnit={(no: number) => {
+                  setIsSavedUnit(true);
+                }}
+                edit
+                submitButtonRef={submitButtonRef}
+                setIsSaving={setIsSaving}
+                moveNextStep={() => setCurrentStep(2)}
+              />
+            )}
+            {currentStep === 2 && projectId && unitId && (
+              // <SelectionWrapper projectId={Number(projectId)} unitId={Number(unitId)} />
+              <Selection
+                intJobId={Number(projectId)}
+                intUnitNo={Number(unitId)}
+                intProdTypeId={0}
+              />
+            )}
+          </Box>
+        </Container>
+      )}
       <FooterStepStyle>
         <Grid container>
           <Grid item xs={10}>
@@ -205,18 +202,17 @@ export default function EditUnit() {
             </Stack>
           </Grid>
           <Grid item xs={1} textAlign="center" alignContent="right">
-          <Button
+            <Button
               variant="contained"
               color="primary"
               onClick={onClickUnitInfo}
-              sx={{display: currentStep === 2 ? 'inline-flex' : 'none' }}
+              sx={{ display: currentStep === 2 ? 'inline-flex' : 'none' }}
               startIcon={<Iconify icon="akar-icons:arrow-left" />}
-            >              
+            >
               Unit info
             </Button>
-            </Grid>
+          </Grid>
           <Grid item xs={1} textAlign="center" alignContent="right">
-
             <LoadingButton
               variant="contained"
               color="primary"

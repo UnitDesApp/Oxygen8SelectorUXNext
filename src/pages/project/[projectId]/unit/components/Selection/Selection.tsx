@@ -2741,7 +2741,6 @@ export default function Selection({ intJobId, intUnitNo, intProdTypeId }: Select
                       direction={item.direction}
                       alignItems="stretch"
                       justifyContent="left"
-                      spacing={3}
                       sx={{ ...item.style }}
                     >
                       {item.subGroups.map((element: any, i: number) =>
