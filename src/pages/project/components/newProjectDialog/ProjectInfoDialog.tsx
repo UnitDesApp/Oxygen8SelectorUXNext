@@ -1096,9 +1096,9 @@ export default function ProjectInfoDialog({
   return (
     <Dialog open={open} onClose={handleClose} maxWidth="lg">
       <DialogTitle>
-        {step === 'SHOW_FIRST_DIALOG' || step === ''
-          ? 'PROJECT INFORMATION'
-          : 'PROJECT DESIGN CONDITIONS'}
+        {step === 'SHOW_ALL_DIALOG' && 'PROJECT DETAILS'}
+        {(step === 'SHOW_FIRST_DIALOG' || step === '') && 'PROJECT INFORMATION'}
+        {step === 'SHOW_SECOND_DIALOG' && 'PROJECT DESIGN CONDITIONS'}
       </DialogTitle>
       <FormProvider methods={methods} onSubmit={handleSubmit(onSubmit)}>
         <DialogContent>
@@ -1208,6 +1208,7 @@ export default function ProjectInfoDialog({
                     name="ddlUoM"
                     label="UoM"
                     placeholder=""
+                    disabled
                     // onChange={(e: any) => setValue('ddlUoM', Number(e.target.value))}
                   >
                     {/* <option value="" /> */}
@@ -1236,6 +1237,9 @@ export default function ProjectInfoDialog({
                     columnGap: 2,
                   }}
                 >
+                  <Stack direction="row" spacing={2}>
+                    <Typography variant="subtitle1">LOCATION</Typography>
+                  </Stack>
                   <Stack direction="row" spacing={2}>
                     <RHFSelect
                       native
