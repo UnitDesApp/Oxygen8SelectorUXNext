@@ -1241,6 +1241,9 @@ export default function ProjectInfoDialog({
                   }}
                 >
                   <Stack direction="row" spacing={2}>
+                    <Typography variant="subtitle1">LOCATION</Typography>
+                  </Stack>
+                  <Stack direction="row" spacing={2}>
                     <RHFSelect
                       native
                       size="small"
