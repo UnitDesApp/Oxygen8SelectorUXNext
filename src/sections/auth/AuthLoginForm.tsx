@@ -75,7 +75,7 @@ export default function AuthLoginForm() {
       <Stack spacing={3}>
         {!!errors.afterSubmit && <Alert severity="error">{errors.afterSubmit.message}</Alert>}
 
-        <RHFTextField name="email" label="Email address or username" />
+        <RHFTextField name="email" label="Email Address or Username" />
 
         <RHFTextField
           name="password"
