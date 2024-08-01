@@ -1319,15 +1319,27 @@ export default function ProjectInfoDialog({
                       }}
                     />
                   </Stack>
+                  <Grid container spacing={2}>
+                    <Grid item xs={6}>
+                      <Typography variant="subtitle1" sx={{ textAlign: 'center' }}>
+                        Summer
+                      </Typography>
+                    </Grid>
+                    <Grid item xs={6}>
+                      <Typography variant="subtitle1" sx={{ textAlign: 'center' }}>
+                        Winter
+                      </Typography>
+                    </Grid>
+                  </Grid>
                   <Stack direction="row" spacing={2}>
-                    <Typography variant="subtitle1">OUTDOOR AIR DESIGN CONDITIONS</Typography>
+                    <Typography variant="subtitle2">OUTDOOR AIR DESIGN CONDITIONS</Typography>
                   </Stack>
                   <Stack direction="row" spacing={2}>
                     <RHFTextField
                       type="number"
                       size="small"
                       name="txbSummerOA_DB"
-                      label="Summer Outdoor Air DB (F)"
+                      label="DB (F)"
                       onChange={(e: any) => {
                         setValueWithCheck1(e, 'txbSummerOA_DB');
                       }}
@@ -1337,7 +1349,7 @@ export default function ProjectInfoDialog({
                       type="number"
                       size="small"
                       name="txbWinterOA_DB"
-                      label="Winter Outdoor Air DB (F)"
+                      label="DB (F)"
                       onChange={(e: any) => {
                         setValueWithCheck1(e, 'txbWinterOA_DB');
                       }}
@@ -1349,7 +1361,7 @@ export default function ProjectInfoDialog({
                       type="number"
                       size="small"
                       name="txbSummerOA_WB"
-                      label="Summer Outdoor Air WB (F)"
+                      label="WB (F)"
                       onChange={(e: any) => {
                         setValueWithCheck1(e, 'txbSummerOA_WB');
                       }}
@@ -1359,7 +1371,7 @@ export default function ProjectInfoDialog({
                       type="number"
                       size="small"
                       name="txbWinterOA_WB"
-                      label="Winter Outdoor Air WB (F)"
+                      label="WB (F)"
                       onChange={(e: any) => {
                         setValueWithCheck1(e, 'txbWinterOA_WB');
                       }}
@@ -1371,7 +1383,7 @@ export default function ProjectInfoDialog({
                       type="number"
                       size="small"
                       name="txbSummerOA_RH"
-                      label="Summer Outdoor Air RH (%)"
+                      label="RH (%)"
                       onChange={(e: any) => {
                         setValueWithCheck1(e, 'txbSummerOA_RH');
                       }}
@@ -1381,7 +1393,7 @@ export default function ProjectInfoDialog({
                       type="number"
                       size="small"
                       name="txbWinterOA_RH"
-                      label="Winter Outdoor Air RH (%)"
+                      label="RH (%)"
                       onChange={(e: any) => {
                         setValueWithCheck1(e, 'txbWinterOA_RH');
                       }}
@@ -1389,14 +1401,15 @@ export default function ProjectInfoDialog({
                     />
                   </Stack>
                   <Stack direction="row" spacing={2}>
-                    <Typography variant="subtitle1">RETURN AIR DESIGN CONDITIONS</Typography>
+                    <Typography variant="subtitle2">RETURN AIR DESIGN CONDITIONS</Typography>
                   </Stack>
+
                   <Stack direction="row" spacing={2}>
                     <RHFTextField
                       type="number"
                       size="small"
                       name="txbSummerRA_DB"
-                      label="Summer Return Air DB (F)"
+                      label="DB (F)"
                       onChange={(e: any) => {
                         setValueWithCheck1(e, 'txbSummerRA_DB');
                       }}
@@ -1406,7 +1419,7 @@ export default function ProjectInfoDialog({
                       type="number"
                       size="small"
                       name="txbWinterRA_DB"
-                      label="Winter Return Air DB (F)"
+                      label="DB (F)"
                       onChange={(e: any) => {
                         setValueWithCheck1(e, 'txbWinterRA_DB');
                       }}
@@ -1418,7 +1431,7 @@ export default function ProjectInfoDialog({
                       type="number"
                       size="small"
                       name="txbSummerRA_WB"
-                      label="Summer Return Air WB (F)"
+                      label="WB (F)"
                       onChange={(e: any) => {
                         setValueWithCheck1(e, 'txbSummerRA_WB');
                       }}
@@ -1428,7 +1441,7 @@ export default function ProjectInfoDialog({
                       type="number"
                       size="small"
                       name="txbWinterRA_WB"
-                      label="Winter Return Air WB (F)"
+                      label="WB (F)"
                       onChange={(e: any) => {
                         setValueWithCheck1(e, 'txbWinterRA_WB');
                       }}
@@ -1440,7 +1453,7 @@ export default function ProjectInfoDialog({
                       type="number"
                       size="small"
                       name="txbSummerRA_RH"
-                      label="Summer Return Air RH (%)"
+                      label="RH (%)"
                       onChange={(e: any) => {
                         setValueWithCheck1(e, 'txbSummerRA_RH');
                       }}
@@ -1450,7 +1463,7 @@ export default function ProjectInfoDialog({
                       type="number"
                       size="small"
                       name="txbWinterRA_RH"
-                      label="Winter Return Air RH (%)"
+                      label="RH (%)"
                       onChange={(e: any) => {
                         setValueWithCheck1(e, 'txbWinterRA_RH');
                       }}

@@ -3,7 +3,7 @@ import { intDesignDataCooling_004_Heating_996_ID } from 'src/utils/ids';
 import * as Yup from 'yup';
 
 export const useGetDefaultValue = (edit: boolean, unitInfo: any, data: any) => {
-const {
+  const {
     strTag,
     intQty,
     intProdTypeId,
@@ -26,7 +26,6 @@ const {
     intIsselectionCompleted,
     dblUnitPrice,
   } = unitInfo?.oUnit || {};
-
 
   const {
     intAltitude,
@@ -94,7 +93,6 @@ const {
     dblRefrigSubcoolingTemp,
   } = unitInfo?.oUnitCompOpt || {};
 
-
   const {
     intIsPreheatHWCUseCap,
     dblPreheatHWCCap,
@@ -114,7 +112,6 @@ const {
     dblReheatHWCFlowRate,
   } = unitInfo?.oUnitCompOptCust || {};
 
-
   const {
     intHandingId,
     intPreheatCoilHandingId,
@@ -130,16 +127,14 @@ const {
     strRAOpening,
   } = unitInfo?.oUnitLayout || {};
 
-
-
   const defaultValues = useMemo(
     () => ({
       // Unit
       intProductTypeID: edit ? intProdTypeId : 0,
       intUnitTypeID: edit ? intUnitTypeId : 0,
       ddlUnitTypeId: edit ? intUnitTypeId : 0,
-      txtTag: edit ? strTag: '',
-      txbQty: edit ? intQty: 1,
+      txtTag: edit ? strTag : '',
+      txbQty: edit ? intQty : 1,
       ddlUnitVoltage: edit ? intUnitVoltageId : 1,
       ckbVoltageSPP: edit ? intIsVoltageSPP : 0,
       ddlUnitModel: edit ? intUnitModelId : 1,
@@ -255,6 +250,22 @@ const {
       ddlReturnAirOpening: edit ? intRAOpeningId : 0,
       ddlReturnAirOpeningText: edit ? strRAOpening : '',
       layoutImage: {},
+      txbMixingBoxSummerReturnAir: 0,
+      txbMixingBoxSummerOutdoorAirDB: 0,
+      txbMixingBoxSummerOutdoorAirWB: 0,
+      txbMixingBoxSummerOutdoorAirRH: 0,
+      txbMixingBoxSummerReturnAirDB: 0,
+      txbMixingBoxSummerReturnAirWB: 0,
+      txbMixingBoxSummerReturnAirRH: 0,
+      txbMixingBoxWinterOutdoorAir: 0,
+      txbMixingBoxWinterReturnAir: 0,
+      txbMixingBoxWinterOutdoorAirDB: 0,
+      txbMixingBoxWinterOutdoorAirWB: 0,
+      txbMixingBoxWinterOutdoorAirRH: 0,
+      txbMixingBoxWinterReturnAirDB: 0,
+      txbMixingBoxWinterReturnAirWB: 0,
+      txbMixingBoxWinterReturnAirRH: 0,
+      ckbMixingBox: 0,
     }),
     [
       edit,
@@ -363,7 +374,7 @@ const {
       intOAOpeningId,
       strOAOpening,
       intRAOpeningId,
-      strRAOpening,    
+      strRAOpening,
     ]
   );
 
@@ -444,4 +455,21 @@ export const unitEditFormSchema = Yup.object().shape({
   ddlOutdoorAirOpeningText: Yup.string(),
   ddlReturnAirOpening: Yup.number(),
   ddlReturnAirOpeningText: Yup.string(),
+  txbMixingBoxSummerOutdoorAir: Yup.string(),
+  txbMixingBoxSummerReturnAir: Yup.string(),
+  txbMixingBoxSummerOutdoorAirDB: Yup.string(),
+  txbMixingBoxSummerOutdoorAirWB: Yup.string(),
+  txbMixingBoxSummerOutdoorAirRH: Yup.string(),
+  txbMixingBoxSummerReturnAirDB: Yup.string(),
+  txbMixingBoxSummerReturnAirWB: Yup.string(),
+  txbMixingBoxSummerReturnAirRH: Yup.string(),
+  txbMixingBoxWinterOutdoorAir: Yup.string(),
+  txbMixingBoxWinterReturnAir: Yup.string(),
+  txbMixingBoxWinterOutdoorAirDB: Yup.string(),
+  txbMixingBoxWinterOutdoorAirWB: Yup.string(),
+  txbMixingBoxWinterOutdoorAirRH: Yup.string(),
+  txbMixingBoxWinterReturnAirDB: Yup.string(),
+  txbMixingBoxWinterReturnAirWB: Yup.string(),
+  txbMixingBoxWinterReturnAirRH: Yup.string(),
+  ckbMixingBox: Yup.number(),
 });

@@ -158,8 +158,6 @@ export default function UnitInfoForm({
     formState: { isSubmitting, errors },
   } = methods;
 
-  console.log(errors);
-
   useEffect(() => {
     if (!isLoading && !isResetCalled.current) {
       reset(defaultValues);
@@ -3029,11 +3027,207 @@ export default function UnitInfoForm({
                       </option>
                     ))}
                   </RHFSelect>
+                  <RHFCheckbox
+                    label="Mixing Box CheckBox"
+                    name="ckbMixingBox"
+                    checked={!!formValues.ckbMixingBox}
+                    onChange={(e: any) => setValue('ckbMixingBox', Number(e.target.checked))}
+                  />
                 </Box>
               </Grid>
             </Grid>
           </AccordionDetails>
         </Accordion>
+        {!!formValues.ckbMixingBox && (
+          <Accordion
+            expanded={expanded.panel2}
+            sx={getDisplay(intProductTypeID !== IDs.intProdTypeVentumLiteID)}
+            onChange={() => setExpanded({ ...expanded, panel2: !expanded.panel2 })}
+          >
+            <AccordionSummary
+              expandIcon={<Iconify icon="il:arrow-down" />}
+              aria-controls="panel1a-content"
+              id="panel1a-header"
+            >
+              <Typography color="primary.main" variant="h6">
+                Mixing Box Section
+              </Typography>
+            </AccordionSummary>
+            <AccordionDetails>
+              <Box
+                sx={{
+                  display: 'grid',
+                  rowGap: 3,
+                  columnGap: 3,
+                  gridTemplateColumns: { xs: 'repeat(3, 1fr)' },
+                }}
+              >
+                <Stack spacing={1}>
+                  <Typography variant="subtitle1" sx={{ textAlign: 'center' }}>
+                    Summer
+                  </Typography>
+                  <RHFTextField
+                    size="small"
+                    name="txbMixingBoxSummerOutdoorAir"
+                    label="Outdoor Air (%) - 300 CFM"
+                    autoComplete="off"
+                    onChange={(e: any) => {
+                      setValueWithCheck1(e, 'txbMixingBoxSummerOutdoorAir');
+                    }}
+                  />
+                  <RHFTextField
+                    size="small"
+                    name="txbMixingBoxSummerReturnAir"
+                    label="Return Air (%) - 700 CFM"
+                    autoComplete="off"
+                    onChange={(e: any) => {
+                      setValueWithCheck1(e, 'txbMixingBoxSummerReturnAir');
+                    }}
+                  />
+                  <RHFCheckbox label={'Use Project Default'} name={'ckbUseProjectDefault'} />
+                  <Typography variant="subtitle2">Outdoor Air Properties:</Typography>
+                  <RHFTextField
+                    size="small"
+                    name="txbMixingBoxSummerOutdoorAirDB"
+                    label="DB (F):"
+                    autoComplete="off"
+                    onChange={(e: any) => {
+                      setValueWithCheck1(e, 'txbMixingBoxSummerOutdoorAirDB');
+                    }}
+                  />
+                  <RHFTextField
+                    size="small"
+                    name="txbMixingBoxSummerOutdoorAirWB"
+                    label="WB (F):"
+                    autoComplete="off"
+                    onChange={(e: any) => {
+                      setValueWithCheck1(e, 'txbMixingBoxSummerOutdoorAirWB');
+                    }}
+                  />
+                  <RHFTextField
+                    size="small"
+                    name="txbMixingBoxSummerOutdoorAirRH"
+                    label="RH (F):"
+                    autoComplete="off"
+                    onChange={(e: any) => {
+                      setValueWithCheck1(e, 'txbMixingBoxSummerOutdoorAirRH');
+                    }}
+                  />
+                  <Typography variant="subtitle2">Return Air Properties:</Typography>
+                  <RHFTextField
+                    size="small"
+                    name="txbMixingBoxSummerReturnAirDB"
+                    label="DB (F):"
+                    autoComplete="off"
+                    onChange={(e: any) => {
+                      setValueWithCheck1(e, 'txbMixingBoxSummerReturnAirDB');
+                    }}
+                  />
+                  <RHFTextField
+                    size="small"
+                    name="txbMixingBoxSummerReturnAirWB"
+                    label="WB (F):"
+                    autoComplete="off"
+                    onChange={(e: any) => {
+                      setValueWithCheck1(e, 'txbMixingBoxSummerReturnAirWB');
+                    }}
+                  />
+                  <RHFTextField
+                    size="small"
+                    name="txbMixingBoxSummerReturnAirRH"
+                    label="RH (F):"
+                    autoComplete="off"
+                    onChange={(e: any) => {
+                      setValueWithCheck1(e, 'txbMixingBoxSummerReturnAirRH');
+                    }}
+                  />
+                </Stack>
+                <Stack spacing={1}>
+                  <Typography variant="subtitle1" sx={{ textAlign: 'center' }}>
+                    Winter
+                  </Typography>
+                  <RHFTextField
+                    size="small"
+                    name="txbMixingBoxWinterOutdoorAir"
+                    label="Outdoor Air (%) - 300 CFM"
+                    autoComplete="off"
+                    onChange={(e: any) => {
+                      setValueWithCheck1(e, 'txbMixingBoxWinterOutdoorAir');
+                    }}
+                  />
+                  <RHFTextField
+                    size="small"
+                    name="txbMixingBoxWinterReturnAir"
+                    label="Return Air (%) - 700 CFM"
+                    autoComplete="off"
+                    onChange={(e: any) => {
+                      setValueWithCheck1(e, 'txbMixingBoxWinterReturnAir');
+                    }}
+                  />
+                  <Box height={40} />
+                  <Box height={22} />
+
+                  <RHFTextField
+                    size="small"
+                    name="txbMixingBoxWinterOutdoorAirDB"
+                    label="DB (F):"
+                    autoComplete="off"
+                    onChange={(e: any) => {
+                      setValueWithCheck1(e, 'txbMixingBoxWinterOutdoorAirDB');
+                    }}
+                  />
+                  <RHFTextField
+                    size="small"
+                    name="txbMixingBoxWinterOutdoorAirWB"
+                    label="WB (F):"
+                    autoComplete="off"
+                    onChange={(e: any) => {
+                      setValueWithCheck1(e, 'txbMixingBoxWinterOutdoorAirWB');
+                    }}
+                  />
+                  <RHFTextField
+                    size="small"
+                    name="txbMixingBoxWinterOutdoorAirRH"
+                    label="RH (F):"
+                    autoComplete="off"
+                    onChange={(e: any) => {
+                      setValueWithCheck1(e, 'txbMixingBoxWinterOutdoorAirRH');
+                    }}
+                  />
+                  <Box height={22} />
+
+                  <RHFTextField
+                    size="small"
+                    name="txbMixingBoxWinterReturnAirDB"
+                    label="DB (F):"
+                    autoComplete="off"
+                    onChange={(e: any) => {
+                      setValueWithCheck1(e, 'txbMixingBoxWinterReturnAirDB');
+                    }}
+                  />
+                  <RHFTextField
+                    size="small"
+                    name="txbMixingBoxWinterReturnAirWB"
+                    label="WB (F):"
+                    autoComplete="off"
+                    onChange={(e: any) => {
+                      setValueWithCheck1(e, 'txbMixingBoxWinterReturnAirWB');
+                    }}
+                  />
+                  <RHFTextField
+                    size="small"
+                    name="txbMixingBoxWinterReturnAirRH"
+                    label="RH (F):"
+                    autoComplete="off"
+                    onChange={(e: any) => {
+                      setValueWithCheck1(e, 'txbMixingBoxWinterReturnAirRH');
+                    }}
+                  />
+                </Stack>
+              </Box>
+            </AccordionDetails>
+          </Accordion>
+        )}
         <Accordion
           expanded={expanded.panel2}
           sx={getDisplay(intProductTypeID !== IDs.intProdTypeVentumLiteID)}

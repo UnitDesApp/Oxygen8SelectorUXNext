@@ -86,7 +86,7 @@ export default function ResetPasswordForm() {
       <Stack spacing={3}>
         {!!errors.afterSubmit && <Alert severity="error">{errors.afterSubmit.message}</Alert>}
 
-        <RHFTextField name="email" label="Email address" />
+        <RHFTextField name="email" label="Email Address" />
       </Stack>
 
       <LoadingButton
