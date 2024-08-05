@@ -1221,6 +1221,80 @@ export default function Selection({ intJobId, intUnitNo, intProdTypeId }: Select
             </Grid>
 
 
+            <Grid item xs={12} sx={{display: selectionData?.dtMixingSection?.length > 0 ? 'block' : 'none' }}>
+            <AccordionSummary
+                      // expandIcon={<Iconify icon="il:arrow-down" />}
+                      // aria-controls="panel1a-content"
+                      // id="panel1a-header"
+                >
+                  <Typography color="primary.main" variant="h6">
+                  Mixing Section
+                  </Typography>
+                </AccordionSummary>
+              <Grid container spacing={2}>
+                <Grid item xs={10}>
+                  <CustomGroupBox title="Design Conditions" bordersx={{ width: '100%', m: '15px 0px !important', padding: '0px',}}>
+                    <TableContainer component={Paper}>
+                      <Table size="small">
+                      <TableBody>
+                        {selectionData?.dtMixingSection?.map((item: any, i: number) => (
+                          <TableRow key={i} sx={{'&:last-child td, &:last-child th': {border: 0,}, }}>
+                            <TableCell component="th" scope="row" align="left" sx={{ width: '40%', fontWeight: 300}}>
+                              {item.cLabel}
+                            </TableCell>
+                            <TableCell component="th" scope="row" align="left" sx={{ width: '30%', fontWeight: 300}}>
+                              {item.cValue_1}
+                            </TableCell>
+                            <TableCell component="th" scope="row" align="left" sx={{ width: '30%', fontWeight: 300}}>
+                              {item.cValue_2}
+                            </TableCell>
+                          </TableRow>
+                        ))}
+                      </TableBody>
+                      </Table>
+                    </TableContainer>
+                  </CustomGroupBox>
+                </Grid>  
+              </Grid>
+              <Grid container spacing={2} sx={{display: selectionData?.dtHX_FP_CORE_AHRIWarning?.length > 0 ? 'block' : 'none' }}> 
+                <Grid item xs={2}/>
+                <Grid item xs={10}>
+                    <TableContainer component={Paper}>
+                      <Table size="small">
+                        <TableBody>
+                            {selectionData?.dtHX_FP_CORE_AHRIWarning?.map((item: any, i: number) => (
+                              <TableRow key={i} sx={{'&:last-child td, &:last-child th': {border: 0,}, }}>
+                                <TableCell component="th" scope="row" align="left" sx={{ width: '100%', fontWeight: 300}}>
+                                  {item.cValue}
+                                </TableCell>
+                              </TableRow>
+                            ))}
+                          </TableBody>
+                          </Table>
+                    </TableContainer>
+                </Grid>
+              </Grid>
+              <Grid container spacing={2} sx={{display: selectionData?.dtHX_FP_CORE_CondWarning?.length > 0 ? 'block' : 'none' }}>                
+                <Grid item xs={12}>
+                <TableContainer component={Paper}>
+                      <Table size="small">
+                      <TableBody>
+                        {selectionData?.dtHX_FP_CORE_CondWarning?.map((item: any, i: number) => (
+                          <TableRow key={i} sx={{'&:last-child td, &:last-child th': {border: 0,}, }}>
+                            <TableCell component="th" scope="row" align="left" sx={{ width: '100%', fontWeight: 300}}>
+                              {item.cValue}
+                            </TableCell>
+                          </TableRow>
+                        ))}
+                      </TableBody>
+                      </Table>
+                    </TableContainer>
+                </Grid>
+              </Grid>
+            </Grid>
+
+
+
             <Grid item xs={4} sx={{display: selectionData?.dtPreheatElecHeaterData?.length > 0 ? 'block' : 'none' }}>
               <AccordionSummary
                         // expandIcon={<Iconify icon="il:arrow-down" />}

@@ -170,6 +170,7 @@ export default function UnitInfoForm({
   // ------------------------- Form State Values --------------------------
   // const values = watch();
   const formValues = watch(); // watch()
+  let formCurrValues = getValues();
 
   /*
    * Style functions that check if the compoment should be displayed or not
@@ -203,7 +204,7 @@ export default function UnitInfoForm({
   const getUnitInputs = () => {
     // const jsonData = '{"name":"John", "age":30, "city":"London"}';
     // let oUnitInputs;
-    const formCurrValues = getValues();
+    formCurrValues = getValues();
 
     let heatingFluidTypeId;
     let heatingFluidConcenId;
@@ -240,6 +241,7 @@ export default function UnitInfoForm({
         strTag: formCurrValues.txtTag,
         intQty: formCurrValues.txbQty,
         intUnitVoltageId: formCurrValues.ddlUnitVoltage,
+        intIsVoltageSPP: 0,
         intIsPHI: 0,
         intIsBypass: 0,
         intUnitModelId: formCurrValues.ddlUnitModel,
@@ -255,7 +257,7 @@ export default function UnitInfoForm({
         intUnitNo: edit ? unitId : 0,
         intProdTypeId: intProductTypeID,
         intUnitTypeId: intUnitTypeID,
-        intAltitude: formCurrValues.ddlUnitVoltage,
+        intAltitude: formCurrValues.txbAltitude,
         intSummerSupplyAirCFM: formCurrValues.txbSummerSupplyAirCFM,
         intSummerReturnAirCFM: formCurrValues.txbSummerReturnAirCFM,
         intWinterSupplyAirCFM: formCurrValues.txbSummerSupplyAirCFM,
@@ -272,6 +274,21 @@ export default function UnitInfoForm({
         dblWinterReturnAirDB: formCurrValues.txbWinterReturnAirDB,
         dblWinterReturnAirWB: formCurrValues.txbWinterReturnAirWB,
         dblWinterReturnAirRH: formCurrValues.txbWinterReturnAirRH,
+        dblMixSummerOA_CFMPct: Number(formCurrValues.txbMixSummerOA_CFMPct),
+        dblMixWinterOA_CFMPct: Number(formCurrValues.txbMixWinterOA_CFMPct),
+        intIsMixUseProjectDefault: Number(formCurrValues.ckbMixUseProjectDefault) === 1 ? 1 : 0,
+        dblMixSummerOutdoorAirDB: formCurrValues.txbMixSummerOA_DB,
+        dblMixSummerOutdoorAirWB: formCurrValues.txbMixSummerOA_WB,
+        dblMixSummerOutdoorAirRH: formCurrValues.txbMixSummerOA_RH,
+        dblMixWinterOutdoorAirDB: formCurrValues.txbMixWinterOA_DB,
+        dblMixWinterOutdoorAirWB: formCurrValues.txbMixWinterOA_WB,
+        dblMixWinterOutdoorAirRH: formCurrValues.txbMixWinterOA_RH,
+        dblMixSummerReturnAirDB: formCurrValues.txbMixSummerRA_DB,
+        dblMixSummerReturnAirWB: formCurrValues.txbMixSummerRA_WB,
+        dblMixSummerReturnAirRH: formCurrValues.txbMixSummerRA_RH,
+        dblMixWinterReturnAirDB: formCurrValues.txbMixWinterRA_DB,
+        dblMixWinterReturnAirWB: formCurrValues.txbMixWinterRA_WB,
+        dblMixWinterReturnAirRH: formCurrValues.txbMixWinterRA_RH,
         dblSupplyAirESP: formCurrValues.txbSupplyAirESP,
         dblExhaustAirESP: formCurrValues.txbExhaustAirESP,
       },
@@ -283,9 +300,10 @@ export default function UnitInfoForm({
         intOAFilterModelId: formCurrValues.ddlOA_FilterModel,
         intSAFinalFilterModelId: 0,
         intRAFilterModelId: formCurrValues.ddlRA_FilterModel,
-        intHeatExchCompId: formCurrValues.ddlHeatExchComp,
+        intIsMixingBox: Number(formCurrValues.ckbMixingBox) === 1 ? 1 : 0,
         intPreheatCompId: formCurrValues.ddlPreheatComp,
-        intIsBackupHeating: 0,
+        intIsBackupHeating: formCurrValues.txbWinterReturnAirRH,
+        intHeatExchCompId: formCurrValues.ddlHeatExchComp,
         intCoolingCompId: formCurrValues.ddlCoolingComp,
         intHeatingCompId: formCurrValues.ddlHeatingComp,
         intReheatCompId: formCurrValues.ddlReheatComp,
@@ -335,6 +353,7 @@ export default function UnitInfoForm({
         dblRefrigVaporTemp: formCurrValues.txbRefrigVaporTemp,
         dblRefrigSubcoolingTemp: formCurrValues.txbRefrigSubcoolingTemp,
         intIsHeatExchEA_Warning: 0,
+        intElecHeaterQty:0,
       },
       oUnitCompOptCust: {
         intJobId: projectId,
@@ -375,11 +394,14 @@ export default function UnitInfoForm({
         strOAOpening: formCurrValues.ddlOutdoorAirOpeningText,
         intRAOpeningId: formCurrValues.ddlReturnAirOpening,
         strRAOpening: formCurrValues.ddlReturnAirOpeningText,
+        intMixOADamperPosId: formCurrValues.ddlMixOADamperPos,
+        intMixRADamperPosId: formCurrValues.ddlMixRADamperPos,
       },
     };
 
     return oUnitInputs;
   };
+
 
   // --------------------------- Submit (Save) -----------------------------
   const onSubmit = useCallback(async () => {
@@ -400,6 +422,7 @@ export default function UnitInfoForm({
     }
     setIsSaving(false);
   }, [edit, onSuccess, onError, getAllFormData, setIsSavedUnit]);
+
 
   // -------------------- Get String Unit Model Codes ----------------------
   const { strUnitModelValue } = useMemo(() => {
@@ -450,6 +473,7 @@ export default function UnitInfoForm({
     formValues.ddlUnitModel,
   ]);
 
+
   const [controlsPrefInfo, setControlsPrefInfo] = useState<any>([]);
   useMemo(() => {
     const info: { fdtControlsPref: any; isVisible: boolean; defaultId: number } = {
@@ -474,6 +498,7 @@ export default function UnitInfoForm({
     info.defaultId = info.fdtControlsPref?.[0]?.id;
     setValue('ddlControlsPref', info.fdtControlsPref?.[0]?.id);
   }, [db, intProductTypeID]);
+
 
   const [controlViaInfo, setControlViaInfo] = useState<any>([]);
   useMemo(() => {
@@ -516,6 +541,7 @@ export default function UnitInfoForm({
     setValue('ddlControlVia', info.fdtControlVia?.[0]?.id);
   }, [db, intProductTypeID, getValues('ddlControlsPref')]);
 
+
   const [outdoorAirFilterInfo, setOutdoorAirFilterInfo] = useState<any>([]);
   useMemo(() => {
     const info: { fdtOutdoorAirFilter: any; isVisible: boolean; defaultId: number } = {
@@ -556,6 +582,7 @@ export default function UnitInfoForm({
     setValue('ddlOA_FilterModel', info.defaultId);
   }, [db, intProductTypeID]);
 
+
   const [returnAirFilterInfo, setReturnAirFilterInfo] = useState<any>([]);
   useMemo(() => {
     const info: { fdtReturnAirFilter: any; isVisible: boolean; defaultId: number } = {
@@ -592,6 +619,428 @@ export default function UnitInfoForm({
 
     setValue('ddlRA_FilterModel', info.fdtReturnAirFilter?.[0]?.id);
   }, [db, intProductTypeID]);
+
+
+
+  useMemo(() => {
+    const info: { ftdMixOADamper: any;  ftdMixRADamper: any; isVisible: boolean; defaultId: number } = {
+
+      ftdMixOADamper: [],
+      ftdMixRADamper: [],
+      isVisible: false,
+      defaultId: 0,
+    };
+
+    info.ftdMixOADamper = db?.dbtMixOADamper;
+    info.ftdMixRADamper = db?.dbtMixRADamper;
+
+    if (getValues("ckbMixUseProjectDefault") === 1){
+      // setValue('txbMixSummerOA_DB', db?.oUnitAirflow?.dblSummerOutdoorAirDB);
+      // setValue('txbMixSummerOA_WB', db?.oUnitAirflow?.dblSummerOutdoorAirWB);
+      // setValue('txbMixSummerOA_RH', db?.oUnitAirflow?.dblSummerOutdoorAirWB);
+      // setValue('txbMixWinterOA_DB', db?.oUnitAirflow?.dblWinterOutdoorAirDB);
+      // setValue('txbMixWinterOA_WB', db?.oUnitAirflow?.dblWinterOutdoorAirWB);
+      // setValue('txbMixWinterOA_RH', db?.oUnitAirflow?.dblWinterOutdoorAirRH);
+      // setValue('txbMixSummerRA_DB', db?.oUnitAirflow?.dblSummerReturnAirDB);
+      // setValue('txbMixSummerRA_WB', db?.oUnitAirflow?.dblSummerReturnAirWB);
+      // setValue('txbMixSummerRA_RH', db?.oUnitAirflow?.dblSummerReturnAirRH);
+      // setValue('txbMixWinterRA_DB', db?.oUnitAirflow?.dblWinterReturnAirDB);
+      // setValue('txbMixWinterRA_WB', db?.oUnitAirflow?.dblWinterReturnAirWB);
+      // setValue('txbMixWinterRA_RH', db?.oUnitAirflow?.dblWinterReturnAirRH);
+    }
+
+    // if (Number(getValues('ddlReheatComp')) === IDs.intCompHWC_ID) {
+    //   info.ftdMixOADamper = info.ftdMixOADamper?.filter(
+    //     (item: { id: number }) => item.id !== IDs.intFluidTypeIdNA
+    //   );
+    // } else {
+    //   info.ftdMixRADamper = info.ftdMixRADamper?.filter(
+    //     (item: { id: number }) => item.id === IDs.intFluidTypeIdNA
+    //   );
+    // }
+
+
+    // if (
+    //   Number(getValues('ddlReheatComp')) === IDs.intCompHWC_ID &&
+    //   Number(getValues('ddlPreheatComp')) === IDs.intCompHWC_ID
+    // ) {
+    //   setValue('ddlReheatFluidType', getValues('ddlPreheatFluidType'));
+    //   setValue('ddlReheatFluidConcentration', getValues('ddlPreheatFluidConcentration'));
+    // } else if (
+    //   Number(getValues('ddlReheatComp')) === IDs.intCompHWC_ID &&
+    //   Number(getValues('ddlHeatingComp')) === IDs.intCompHWC_ID
+    // ) {
+    //   setValue('ddlReheatFluidType', getValues('ddlHeatingFluidType'));
+    //   setValue('ddlReheatFluidConcentration', getValues('ddlHeatingFluidConcentration'));
+    //   setValue('txbReheatFluidEntTemp', getValues('txbHeatingFluidEntTemp'));
+    //   setValue('txbReheatFluidLvgTemp', getValues('txbHeatingFluidLvgTemp'));
+    // } else {
+    //   info.defaultId = info.fdtFluidType?.[0]?.id;
+    //   setValue('ddlReheatFluidType', info.fdtFluidType?.[0]?.id);
+    // }
+  }, [db]);
+
+
+  useEffect(() => {
+    if (Number(getValues('ckbMixingBox')) === 1) {
+      setValue('txbMixSummerOA_CFM', (Number(getValues('txbSummerSupplyAirCFM')) * Number(getValues('txbMixSummerOA_CFMPct'))) / 100);
+      setValue('txbMixWinterOA_CFM', (Number(getValues('txbSummerSupplyAirCFM')) * Number(getValues('txbMixWinterOA_CFMPct'))) / 100);
+      setValue('txbMixSummerRA_CFMPct', (100 - Number(getValues('txbMixSummerOA_CFMPct'))));
+      setValue('txbMixWinterRA_CFMPct', (100 - Number(getValues('txbMixWinterOA_CFMPct'))));
+      setValue('txbMixSummerRA_CFM', (Number(getValues('txbSummerSupplyAirCFM')) * Number(getValues('txbMixSummerRA_CFMPct'))) / 100);
+      setValue('txbMixWinterRA_CFM', (Number(getValues('txbSummerSupplyAirCFM')) * Number(getValues('txbMixWinterRA_CFMPct'))) / 100);
+      setValue('ckbMixUseProjectDefault', true);
+    }
+  }, [getValues('ckbMixingBox')]);
+
+
+  useEffect(() => {
+      setValue('txbMixSummerOA_CFM', (Number(getValues('txbSummerSupplyAirCFM')) * Number(getValues('txbMixSummerOA_CFMPct'))) / 100);
+      setValue('txbMixSummerRA_CFMPct', (100 - Number(getValues('txbMixSummerOA_CFMPct'))));
+      setValue('txbMixSummerRA_CFM', (Number(getValues('txbSummerSupplyAirCFM')) * Number(getValues('txbMixSummerRA_CFMPct'))) / 100);
+  }, [getValues('txbMixSummerOA_CFMPct')]);
+
+
+  useEffect(() => {
+      setValue('txbMixWinterOA_CFM', (Number(getValues('txbSummerSupplyAirCFM')) * Number(getValues('txbMixWinterOA_CFMPct'))) / 100);
+      setValue('txbMixWinterRA_CFMPct', (100 - Number(getValues('txbMixWinterOA_CFMPct'))));
+      setValue('txbMixWinterRA_CFM', (Number(getValues('txbSummerSupplyAirCFM')) * Number(getValues('txbMixWinterRA_CFMPct'))) / 100);
+  }, [getValues('txbMixWinterOA_CFMPct')]);
+
+
+  useEffect(() => {
+    if (Number(getValues('ckbMixUseProjectDefault')) === 1) {
+        setValue('txbMixSummerOA_DB', unitInfo?.oJob?.dblSummerOA_DB);
+        setValue('txbMixSummerOA_WB', unitInfo?.oJob?.dblSummerOA_WB);
+        setValue('txbMixSummerOA_RH', unitInfo?.oJob?.dblSummerOA_RH);
+        setValue('txbMixWinterOA_DB', unitInfo?.oJob?.dblWinterOA_DB);
+        setValue('txbMixWinterOA_WB', unitInfo?.oJob?.dblWinterOA_WB);
+        setValue('txbMixWinterOA_RH', unitInfo?.oJob?.dblWinterOA_RH);
+        setValue('txbMixSummerRA_DB', unitInfo?.oJob?.dblSummerRA_DB);
+        setValue('txbMixSummerRA_WB', unitInfo?.oJob?.dblSummerRA_WB);
+        setValue('txbMixSummerRA_RH', unitInfo?.oJob?.dblSummerRA_RH);
+        setValue('txbMixWinterRA_DB', unitInfo?.oJob?.dblWinterRA_DB);
+        setValue('txbMixWinterRA_WB', unitInfo?.oJob?.dblWinterRA_WB);
+        setValue('txbMixWinterRA_RH', unitInfo?.oJob?.dblWinterRA_RH);
+    }
+  }, [getValues('ckbMixUseProjectDefault')]);
+
+
+  // Use this method since getValues('') for dependencies don't work. Extract all fieled from getValues into a constant first.
+  const oMixSummerOA_RH = useMemo(() => {
+    const inputs: any = {
+      dblAlt: formCurrValues.txbAltitude || any,
+      dblDB: formCurrValues.txbMixSummerOA_DB || any,
+      dblWB: formCurrValues.txbMixSummerOA_WB || any,
+    };
+    return inputs;
+  }, [formCurrValues.txbAltitude, formCurrValues.txbMixSummerOA_DB, formCurrValues.txbMixSummerOA_WB]);
+
+  const oMixSummerOA_WB = useMemo(() => {
+    const inputs: any = {
+      dblAlt: formCurrValues.txbAltitude || any,
+      dblDB: formCurrValues.txbMixSummerOA_DB || any,
+      dblRH: formCurrValues.txbMixSummerOA_RH || any,
+    };
+    return inputs;
+  }, [formCurrValues.txbAltitude, formCurrValues.txbMixSummerOA_DB, formCurrValues.txbMixSummerOA_RH]);
+
+  const oMixWinterOA_RH = useMemo(() => {
+    const inputs: any = {
+      dblAlt: formCurrValues.txbAltitude || any,
+      dblDB: formCurrValues.txbMixWinterOA_DB || any,
+      dblWB: formCurrValues.txbMixWinterOA_WB || any,
+    };
+    return inputs;
+  }, [formCurrValues.txbAltitude, formCurrValues.txbMixWinterOA_DB, formCurrValues.txbMixWinterOA_WB]);
+
+  const oMixWinterOA_WB = useMemo(() => {
+    const inputs: any = {
+      dblAlt: formCurrValues.txbAltitude || any,
+      dblDB: formCurrValues.txbMixWinterOA_DB || any,
+      dblRH: formCurrValues.txbMixWinterOA_RH || any,
+    };
+    return inputs;
+  }, [formCurrValues.txbAltitude, formCurrValues.txbMixWinterOA_DB, formCurrValues.txbMixWinterOA_RH]);
+
+  const oMixSummerRA_RH = useMemo(() => {
+    const inputs: any = {
+      dblAlt: formCurrValues.txbAltitude || any,
+      dblDB: formCurrValues.txbMixSummerRA_DB || any,
+      dblWB: formCurrValues.txbMixSummerRA_WB || any,
+    };
+    return inputs;
+  }, [formCurrValues.txbAltitude, formCurrValues.txbMixSummerRA_DB, formCurrValues.txbMixSummerRA_WB]);
+
+  const oMixSummerRA_WB = useMemo(() => {
+    const inputs: any = {
+      dblAlt: formCurrValues.txbAltitude || any,
+      dblDB: formCurrValues.txbMixSummerRA_DB || any,
+      dblRH: formCurrValues.txbMixSummerRA_RH || any,
+    };
+    return inputs;
+  }, [formCurrValues.txbAltitude, formCurrValues.txbMixSummerRA_DB, formCurrValues.txbMixSummerRA_RH]);
+
+  const oMixWinterRA_RH = useMemo(() => {
+    const inputs: any = {
+      dblAlt: formCurrValues.txbAltitude || any,
+      dblDB: formCurrValues.txbMixWinterRA_DB || any,
+      dblWB: formCurrValues.txbMixWinterRA_WB || any,
+    };
+    return inputs;
+  }, [formCurrValues.txbAltitude, formCurrValues.txbMixWinterRA_DB, formCurrValues.txbMixWinterRA_WB]);
+
+  const oMixWinterRA_WB = useMemo(() => {
+    const inputs: any = {
+      dblAlt: formCurrValues.txbAltitude || any,
+      dblDB: formCurrValues.txbMixWinterRA_DB || any,
+      dblRH: formCurrValues.txbMixWinterRA_RH || any,
+    };
+
+    return inputs;
+  }, [formCurrValues.txbAltitude, formCurrValues.txbMixWinterRA_DB, formCurrValues.txbMixWinterRA_RH]);
+
+
+
+
+  const handleMixSummerOA_DBChanged = useCallback(
+    (e: any) => {
+      setValue('txbMixSummerOA_DB', parseFloat(e.target.value).toFixed(1));
+      api.project.getRH_By_DB_WB(oMixSummerOA_RH).then((data: any) => {
+        setValue('txbMixSummerOA_RH', data.toFixed(1));
+      });
+    },
+    [formCurrValues.txbMixSummerOA_DB]
+  );
+
+  // Summer Outdoor Air WB
+  const handleMixSummerOA_WBChanged = useCallback(
+    (e: any) => {
+      setValue('txbMixSummerOA_WB', parseFloat(e.target.value).toFixed(1));
+      api.project.getRH_By_DB_WB(oMixSummerOA_RH).then((data: any) => {
+        setValue('txbMixSummerOA_RH', data.toFixed(1));
+      });
+    },
+    [formCurrValues.txbMixSummerOA_WB]
+  );
+
+  // Summer Outdoor Air RH
+  const handleMixSummerOA_RHChanged = useCallback(
+    (e: any) => {
+      setValue('txbMixSummerOA_RH', parseFloat(e.target.value).toFixed(1));
+      api.project.getWB_By_DB_RH(oMixSummerOA_WB).then((data: any) => {
+        setValue('txbMixSummerOA_WB', data.toFixed(1));
+      });
+    },
+    [formCurrValues.txbMixSummerOA_RH]
+  );
+
+  // Winter Outdoor Air DB
+  const handleMixWinterOA_DBChanged = useCallback(
+    (e: any) => {
+      setValue('txbMixWinterOA_DB', parseFloat(e.target.value).toFixed(1));
+      api.project.getRH_By_DB_WB(oMixWinterOA_RH).then((data: any) => {
+        setValue('txbMixWinterOA_RH', data.toFixed(1));
+      });
+    },
+    [formCurrValues.txbMixWinterOA_DB]
+  );
+
+  // Winter Outdoor Air WB
+  const handleMixWinterOA_WBChanged = useCallback(
+    (e: any) => {
+      setValue('txbMixWinterOA_WB', parseFloat(e.target.value).toFixed(1));
+      api.project.getRH_By_DB_WB(oMixWinterOA_RH).then((data: any) => {
+        setValue('txbMixWinterOA_RH', data.toFixed(1));
+      });
+    },
+    [formCurrValues.txbMixWinterOA_WB]
+  );
+
+  // Winter Outdoor Air RH
+  const handleMixWinterOA_RHChanged = useCallback(
+    (e: any) => {
+      setValue('txbMixWinterOA_RH', parseFloat(e.target.value).toFixed(1));
+      api.project.getWB_By_DB_RH(oMixWinterOA_WB).then((data: any) => {
+        setValue('txbMixWinterOA_WB', data.toFixed(1));
+      });
+    },
+    [formCurrValues.txbMixWinterOA_RH]
+  );
+
+  // Summer Return Air DB
+  const handleMixSummerRA_DBChanged = useCallback(
+    (e: any) => {
+      setValue('txbMixSummerRA_DB', parseFloat(e.target.value).toFixed(1));
+      api.project.getRH_By_DB_WB(oMixSummerRA_RH).then((data: any) => {
+        setValue('txbMixSummerRA_RH', data.toFixed(1));
+      });
+    },
+    [formCurrValues.txbMixSummerRA_DB]
+  );
+
+  // Summer Return Air WB
+  const handleMixSummerRA_WBChanged = useCallback(
+    (e: any) => {
+      setValue('txbMixSummerRA_WB', parseFloat(e.target.value).toFixed(1));
+      api.project.getRH_By_DB_WB(oMixSummerRA_RH).then((data: any) => {
+        setValue('txbMixSummerRA_RH', data.toFixed(1));
+      });
+    },
+    [formCurrValues.txbMixSummerOA_WB]
+  );
+
+  // Summer Return Air RH
+  const handleMixSummerRA_RHChanged = useCallback(
+    (e: any) => {
+      setValue('txbMixSummerRA_RH', parseFloat(e.target.value).toFixed(1));
+      api.project.getWB_By_DB_RH(oMixSummerRA_WB).then((data: any) => {
+        setValue('txbMixSummerRA_WB', data.toFixed(1));
+      });
+    },
+    [formCurrValues.txbMixSummerOA_RH]
+  );
+
+  // Winter Return Air DB
+  const handleMixWinterRA_DBChanged = useCallback(
+    (e: any) => {
+      setValue('txbMixWinterRA_DB', parseFloat(e.target.value).toFixed(1));
+      api.project.getRH_By_DB_WB(oMixWinterRA_RH).then((data: any) => {
+        setValue('txbMixWinterRA_RH', data.toFixed(1));
+      });
+    },
+    [formCurrValues.txbMixWinterRA_DB]
+  );
+
+  // Winter Return Air WB
+  const handleMixWinterRA_WBChanged = useCallback(
+    (e: any) => {
+      setValue('txbMixWinterRA_WB', parseFloat(e.target.value).toFixed(1));
+      api.project.getRH_By_DB_WB(oMixWinterRA_RH).then((data: any) => {
+        setValue('txbMixWinterRA_RH', data.toFixed(1));
+      });
+    },
+    [formCurrValues.txbMixWinterRA_WB]
+  );
+
+  // Winter Return Air RH
+  const handleMixWinterRA_RHChanged = useCallback(
+    (e: any) => {
+      setValue('txbMixWinterRA_RH', parseFloat(e.target.value).toFixed(1));
+      api.project.getWB_By_DB_RH(oMixWinterRA_WB).then((data: any) => {
+        setValue('txbMixWinterRA_WB', data.toFixed(1));
+      });
+    },
+    [formCurrValues.txbMixWinterRA_RH]
+  );
+
+
+  // useEffect(() => {
+  //   // const inputs: any = {
+  //   //   dblAlt: getValues('txbAltitude') || any,
+  //   //   dblDB: getValues('txbMixSummerOA_DB') || any,
+  //   //   dblWB: getValues('txbMixSummerOA_WB') || any,
+  //   // };
+
+  //   api.project.getRH_By_DB_WB(oMixSummerOA_RH).then((data: any) => {
+  //     setValue('txbMixSummerOA_RH', data.toFixed(1));
+  //   });
+  // }, [getValues('txbMixSummerOA_DB'), getValues('txbMixSummerOA_WB')]);
+
+
+  // useEffect(() => {
+  //   // const inputs: any = {
+  //   //   dblAlt: getValues('txbAltitude') || any,
+  //   //   dblDB: getValues('txbMixSummerOA_DB') || any,
+  //   //   dblRH: getValues('txbMixSummerOA_RH') || any,
+  //   // };
+
+  //   api.project.getWB_By_DB_RH(oMixSummerOA_WB).then((data: any) => {
+  //     setValue('txbMixSummerOA_WB', data.toFixed(1));
+  //   });
+  // }, [getValues('txbMixSummerOA_RH')]);
+
+
+  // useCallback(() => {
+  //   // const inputs: any = {
+  //   //   dblAlt: getValues('txbAltitude') || any,
+  //   //   dblDB: getValues('txbMixSummerRA_DB') || any,
+  //   //   dblWB: getValues('txbMixSummerRA_WB') || any,
+  //   // };
+
+  //   api.project.getRH_By_DB_WB(oMixSummerRA_RH).then((data: any) => {
+  //     setValue('txbMixSummerRA_RH', data.toFixed(1));
+  //   });
+  // }, [getValues('txbMixSummerRA_DB'), getValues('txbMixSummerRA_WB')]);
+
+
+  // useEffect(() => {
+  //   // const inputs: any = {
+  //   //   dblAlt: getValues('txbAltitude') || any,
+  //   //   dblDB: getValues('txbMixSummerRA_DB') || any,
+  //   //   dblRH: getValues('txbMixSummerRA_RH') || any,
+  //   // };
+
+  //   api.project.getWB_By_DB_RH(oMixSummerRA_WB).then((data: any) => {
+  //     setValue('txbMixSummerRA_WB', data.toFixed(1));
+  //   });
+  // }, [getValues('txbMixSummerRA_RH')]);
+
+
+  // useEffect(() => {
+  //   // const inputs: any = {
+  //   //   dblAlt: getValues('txbAltitude') || any,
+  //   //   dblDB: getValues('txbMixWinterOA_DB') || any,
+  //   //   dblWB: getValues('txbMixWinterOA_WB') || any,
+  //   // };
+
+  //   api.project.getRH_By_DB_WB(oMixWinterOA_RH).then((data: any) => {
+  //     setValue('txbMixWinterOA_RH', data.toFixed(1));
+  //   });
+  //   }, [getValues('txbMixWinterOA_DB'), getValues('txbMixWinterOA_WB')]);
+
+
+  // useEffect(() => {
+  //   // const inputs: any = {
+  //   //   dblAlt: getValues('txbAltitude') || any,
+  //   //   dblDB: getValues('txbMixWinterOA_DB') || any,
+  //   //   dblRH: getValues('txbMixWinterOA_RH') || any,
+  //   // };
+
+  //   api.project.getWB_By_DB_RH(oMixWinterOA_WB).then((data: any) => {
+  //     setValue('txbMixWinterOA_WB', data.toFixed(1));
+  //   });
+  // }, [getValues('txbMixWinterOA_RH')]);
+
+
+  // useEffect(() => {
+  //   // const inputs: any = {
+  //   //   dblAlt: getValues('txbAltitude') || any,
+  //   //   dblDB: getValues('txbMixWinterRA_DB') || any,
+  //   //   dblWB: getValues('txbMixWinterRA_WB') || any,
+  //   // };
+
+  //   api.project.getRH_By_DB_WB(oMixWinterRA_RH).then((data: any) => {
+  //     setValue('txbMixWinterRA_RH', data.toFixed(1));
+  //   });
+  //   }, [getValues('txbMixWinterRA_DB'), getValues('txbMixWinterRA_WB')]);
+
+
+  // useEffect(() => {
+  //   // const inputs: any = {
+  //   //   dblAlt: getValues('txbAltitude') || any,
+  //   //   dblDB: getValues('txbMixWinterRA_DB') || any,
+  //   //   dblRH: getValues('txbMixWinterRA_RH') || any,
+  //   // };
+
+  //   api.project.getWB_By_DB_RH(oMixWinterRA_WB).then((data: any) => {
+  //     setValue('txbMixWinterRA_WB', data.toFixed(1));
+  //   });
+  // }, [getValues('txbMixWinterRA_RH')]);
+
+
+
+
 
   // Keep preheat elec heater separate even if the logic is same as heating/reheat logic.
   const [preheatElecHeaterInfo, setPreheatElecHeaterInfo] = useState<any>([]);
@@ -683,6 +1132,7 @@ export default function UnitInfoForm({
     setValue('ddlPreheatElecHeaterInstall', info.defaultId);
   }, [getValues('ddlLocation'), getValues('ddlPreheatComp')]);
 
+
   // Same logic applies for Heating and Reheat since it's the same component
   const [heatingElecHeaterInfo, setHeatingElecHeaterInfo] = useState<any>([]);
   const HeatingElecHeaterInfo = useMemo(() => {
@@ -773,6 +1223,7 @@ export default function UnitInfoForm({
     return info;
   }, [getValues('ddlLocation'), getValues('ddlHeatingComp'), getValues('ddlReheatComp')]);
 
+
   // const [heatingElecHeaterInfo, setHeatingElecHeaterInfo] = useState<any>([])
   // setHeatingElecHeaterInfo is executed
   useMemo(() => {
@@ -783,6 +1234,7 @@ export default function UnitInfoForm({
     }
   }, [getValues('ddlHeatingComp')]);
 
+
   useMemo(() => {
     if (Number(getValues('ddlHeatingComp')) === IDs.intCompElecHeaterID) {
       setValue('ddlReheatElecHeaterInstall', getValues('ddlHeatingElecHeaterInstall'));
@@ -790,6 +1242,7 @@ export default function UnitInfoForm({
       setValue('ddlReheatElecHeaterInstall', HeatingElecHeaterInfo?.defaultId);
     }
   }, [getValues('ddlReheatComp')]);
+
 
   useEffect(() => {
     if (Number(getValues('ddlHeatingComp')) === IDs.intCompElecHeaterID) {
@@ -799,6 +1252,7 @@ export default function UnitInfoForm({
     }
   }, [getValues('ddlHeatingElecHeaterInstall')]);
 
+
   useEffect(() => {
     if (Number(getValues('ddlReheatComp')) === IDs.intCompElecHeaterID) {
       if (Number(getValues('ddlHeatingComp')) === IDs.intCompElecHeaterID) {
@@ -806,6 +1260,7 @@ export default function UnitInfoForm({
       }
     }
   }, [getValues('ddlReheatElecHeaterInstall')]);
+
 
   const [preheatFluidTypeInfo, setPreheatFluidTypeInfo] = useState<any>([]);
   useMemo(() => {
@@ -849,6 +1304,7 @@ export default function UnitInfoForm({
       setValue('ddlPreheatFluidType', info.fdtFluidType?.[0]?.id);
     }
   }, [db, getValues('ddlPreheatComp')]);
+
 
   const [preheatFluidConcenInfo, setPreheatFluidConcenInfo] = useState<any>([]);
   useMemo(() => {
@@ -896,6 +1352,7 @@ export default function UnitInfoForm({
     }
   }, [db, getValues('ddlPreheatComp'), getValues('ddlPreheatFluidType')]);
 
+
   useEffect(() => {
     if (
       Number(getValues('ddlPreheatComp')) === IDs.intCompHWC_ID &&
@@ -923,6 +1380,7 @@ export default function UnitInfoForm({
     getValues('txbPreheatFluidLvgTemp'),
   ]);
 
+
   const [coolingFluidTypeInfo, setCoolingFluidTypeInfo] = useState<any>([]);
   useMemo(() => {
     const info: { fdtFluidType: any; isVisible: boolean; defaultId: number } = {
@@ -947,6 +1405,7 @@ export default function UnitInfoForm({
     info.defaultId = info.fdtFluidType?.[0]?.id;
     setValue('ddlCoolingFluidType', info.fdtFluidType?.[0]?.id);
   }, [db, getValues('ddlCoolingComp')]);
+
 
   const [coolingFluidConcenInfo, setCoolingFluidConcenInfo] = useState<any>([]);
   useMemo(() => {
@@ -981,6 +1440,7 @@ export default function UnitInfoForm({
     info.defaultId = info.fdtFluidConcen?.[0]?.id;
     setValue('ddlCoolingFluidConcentration', info.fdtFluidConcen?.[0]?.id);
   }, [db, getValues('ddlCoolingComp'), getValues('ddlCoolingFluidType')]);
+
 
   const [heatingFluidTypeInfo, setHeatingFluidTypeInfo] = useState<any>([]);
   useMemo(() => {
@@ -1026,6 +1486,7 @@ export default function UnitInfoForm({
       setValue('ddlHeatingFluidType', info.fdtFluidType?.[0]?.id);
     }
   }, [db, getValues('ddlHeatingComp')]);
+
 
   const [heatingFluidConcenInfo, setHeatingFluidConcenInfo] = useState<any>([]);
   useMemo(() => {
@@ -1073,6 +1534,7 @@ export default function UnitInfoForm({
     }
   }, [db, getValues('ddlHeatingComp'), getValues('ddlHeatingFluidType')]);
 
+
   useEffect(() => {
     if (
       Number(getValues('ddlHeatingComp')) === IDs.intCompHWC_ID &&
@@ -1099,6 +1561,7 @@ export default function UnitInfoForm({
     getValues('txbHeatingFluidEntTemp'),
     getValues('txbHeatingFluidLvgTemp'),
   ]);
+
 
   const [reheatFluidTypeInfo, setReheatFluidTypeInfo] = useState<any>([]);
   useMemo(() => {
@@ -1142,6 +1605,7 @@ export default function UnitInfoForm({
       setValue('ddlReheatFluidType', info.fdtFluidType?.[0]?.id);
     }
   }, [db, getValues('ddlReheatComp')]);
+
 
   const [reheatFluidConcenInfo, setReheatFluidConcenInfo] = useState<any>([]);
   useMemo(() => {
@@ -1189,6 +1653,7 @@ export default function UnitInfoForm({
     }
   }, [db, getValues('ddlReheatComp'), getValues('ddlReheatFluidType')]);
 
+
   // useCallback(
   //   (e: any) => {
   useEffect(() => {
@@ -1218,6 +1683,7 @@ export default function UnitInfoForm({
     getValues('txbReheatFluidLvgTemp'),
   ]);
 
+
   const [heatPumpInfo, setHeatPumpInfo] = useState<any>([]);
   useMemo(() => {
     const info: { isChecked: boolean; isVisible: boolean; defaultId: number } = {
@@ -1238,6 +1704,7 @@ export default function UnitInfoForm({
 
     setValue('ckbHeatPump', info.isChecked);
   }, [db, getValues('ddlCoolingComp')]);
+
 
   const [damperActuatorInfo, setDamperActuatorInfo] = useState<any>([]);
   useMemo(() => {
@@ -1293,6 +1760,7 @@ export default function UnitInfoForm({
     setValue('ddlDamperAndActuator', info.fdtDamperActuator?.[0]?.id); //
   }, [db, intProductTypeID, getValues('ddlLocation')]);
 
+
   const [valveTypeInfo, setValveTypeInfo] = useState<any>([]);
   useMemo(() => {
     const info: { fdtValveType: any; isVisible: boolean } = { fdtValveType: [], isVisible: false };
@@ -1318,51 +1786,61 @@ export default function UnitInfoForm({
     setValue('ddlValveType', info.fdtValveType?.[0]?.id); //
   }, [db, intProductTypeID]);
 
+
   /* ---------------------------- Start OnChange functions ---------------------------- */
   const ddlLocationChanged = useCallback(
     (e: any) => setValue('ddlLocation', Number(e.target.value)),
     [setValue]
   );
 
+
   const ddlOrientationChanged = useCallback(
     (e: any) => setValue('ddlOrientation', Number(e.target.value)),
     [setValue]
   );
+
 
   const ddlUnitModelChanged = useCallback(
     (e: any) => setValue('ddlUnitModel', Number(e.target.value)),
     [setValue]
   );
 
+
   const ddlUnitVoltageChanged = useCallback(
     (e: any) => setValue('ddlUnitVoltage', Number(e.target.value)),
     [setValue]
   );
+
 
   const ddlPreheatCompChanged = useCallback(
     (e: any) => setValue('ddlPreheatComp', Number(e.target.value)),
     [setValue]
   );
 
+
   const ddlCoolingCompChanged = useCallback(
     (e: any) => setValue('ddlCoolingComp', Number(e.target.value)),
     [setValue]
   );
+
 
   const ddlElecHeaterVoltageChanged = useCallback(
     (e: any) => setValue('ddlElecHeaterVoltage', Number(e.target.value)),
     [setValue]
   );
 
+
   const ddlDamperAndActuatorChanged = useCallback(
     (e: any) => setValue('ddlDamperAndActuator', Number(e.target.value)),
     [setValue]
   );
 
+
   const ddlValveTypeChanged = useCallback(
     (e: any) => setValue('ddlValveType', Number(e.target.value)),
     [setValue]
   );
+
 
   const ddlHandingChanged = useCallback(
     (e: any) => {
@@ -1373,6 +1851,7 @@ export default function UnitInfoForm({
     },
     [setValue]
   );
+
 
   const ddlHeatingCoilHandingChanged = useCallback(
     (e: any) => {
@@ -1385,6 +1864,7 @@ export default function UnitInfoForm({
     [setValue]
   );
 
+
   const ddlReheatCoilHandingChanged = useCallback(
     (e: any) => {
       setValue('ddlReheatCoilHanding', Number(e.target.value));
@@ -1396,6 +1876,7 @@ export default function UnitInfoForm({
     [setValue]
   );
 
+
   const ddlSupplyAirOpeningChanged = useCallback(
     (e: any) => {
       setValue('ddlSupplyAirOpening', Number(e.target.value));
@@ -1403,6 +1884,7 @@ export default function UnitInfoForm({
     },
     [setValue]
   );
+
 
   const ddlExhaustAirOpeningChanged = useCallback(
     (e: any) => {
@@ -1412,6 +1894,7 @@ export default function UnitInfoForm({
     [setValue]
   );
 
+
   const ddlOutdoorAirOpeningChanged = useCallback(
     (e: any) => {
       setValue('ddlOutdoorAirOpening', Number(e.target.value));
@@ -1420,6 +1903,7 @@ export default function UnitInfoForm({
     [setValue]
   );
 
+
   const ddlReturnAirOpeningChanged = useCallback(
     (e: any) => {
       setValue('ddlReturnAirOpening', Number(e.target.value));
@@ -1427,6 +1911,7 @@ export default function UnitInfoForm({
     },
     [setValue]
   );
+
 
   const setValueWithCheck = useCallback(
     (e: any, key: any) => {
@@ -1440,6 +1925,7 @@ export default function UnitInfoForm({
     },
     [setValue]
   );
+
 
   const setValueWithCheck1 = useCallback(
     (e: any, key: any) => {
@@ -1514,6 +2000,7 @@ export default function UnitInfoForm({
     setValue,
   ]);
 
+
   // ------------------------------ Get Bypass State -------------------------------
   const ckbBypassInfo = useMemo(() => {
     const result = getBypass(
@@ -1527,6 +2014,7 @@ export default function UnitInfoForm({
     return result;
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [db, intProductTypeID, formValues.ddlOrientation, formValues.ddlUnitModel]);
+
 
   // ---------------------------- Get Orientation Info -----------------------------
   const orientationInfo = useMemo(() => {
@@ -1556,6 +2044,7 @@ export default function UnitInfoForm({
     formValues.txbSummerSupplyAirCFM,
   ]);
 
+
   // ---------------------------- Get Orientation Info -----------------------------
   const locationInfo = useMemo(() => {
     const locations = getLocation(db, intProductTypeID, intUnitTypeID);
@@ -1566,6 +2055,7 @@ export default function UnitInfoForm({
 
     return locations;
   }, [db, intProductTypeID, intUnitTypeID, setValue, formValues.ddlLocation]);
+
 
   // ---------------------------- Get Unit Voltage Info -----------------------------
   const unitVoltage = useMemo(() => {
@@ -1582,6 +2072,7 @@ export default function UnitInfoForm({
     return unitVoltageList;
   }, [db, intProductTypeID, strUnitModelValue, formValues.ddlUnitVoltage, setValue]);
 
+
   // ---------------------------- Get QAFilter Model DDL -----------------------------
   // const OAFilterModel = useMemo(
   //   () => db?.dbtSelFilterModel?.filter((item: any) => item.outdoor_air === 1),
@@ -1596,6 +2087,7 @@ export default function UnitInfoForm({
     return info;
   }, [db]);
 
+
   // ---------------------------- Initialize QAFilter Model --------------------------
   // useEffect(() => {
   //   if ( OAFilterModel?.filter((item: any) => item?.id === formValues.ddlOA_FilterModel).length === 0) {
@@ -1603,6 +2095,7 @@ export default function UnitInfoForm({
   //   }
 
   // }, [setValue, OAFilterModel, formValues.ddlOA_FilterModel]);
+
 
   // ---------------------------- Initialize RAFilter Model --------------------------
   useEffect(() => {
@@ -1618,11 +2111,13 @@ export default function UnitInfoForm({
     }
   }, [setValue, RAFilterModel, formValues.ddlRA_FilterModel]);
 
+
   // ------------------------- Get each complete informaiton --------------------------
   const { dtPreheatComp, dtCoolingComp, dtHeatingComp } = useMemo(
     () => getComponentInfo(db, Number(intProductTypeID), Number(intUnitTypeID)),
     [db, intProductTypeID, intUnitTypeID]
   );
+
 
   const { dtReheatComp } = useMemo(
     () =>
@@ -1646,6 +2141,7 @@ export default function UnitInfoForm({
     ]
   );
 
+
   // ---------------- Get Preheat Elec Heater Installation Info --------------------
   const preheatElecHeaterInstallationInfo = useMemo(() => {
     const result = getPreheatElecHeaterInstallationInfo(
@@ -1661,6 +2157,7 @@ export default function UnitInfoForm({
 
     return result.ddlPreheatElecHeaterInstallationDataTbl;
   }, [edit, db, setValue, intProductTypeID, formValues.ddlLocation, formValues.ddlPreheatComp]);
+
 
   const preheatHWCCapInfo = useMemo(() => {
     const info: { resetCapacity: number; isDisabled: boolean } = {
@@ -1678,6 +2175,7 @@ export default function UnitInfoForm({
     return info;
   }, [formValues.ckbPreheatHWCUseCap]);
 
+
   const preheatHWCFlowRateInfo = useMemo(() => {
     const info: { resetCapacity: number; isDisabled: boolean } = {
       resetCapacity: 0,
@@ -1693,6 +2191,7 @@ export default function UnitInfoForm({
 
     return info;
   }, [formValues.ckbPreheatHWCUseFlowRate]);
+
 
   const coolingCWCCapInfo = useMemo(() => {
     const info: { resetCapacity: number; isDisabled: boolean } = {
@@ -1710,6 +2209,7 @@ export default function UnitInfoForm({
     return info;
   }, [formValues.ckbCoolingCWCUseCap]);
 
+
   const coolingCWCFlowRateInfo = useMemo(() => {
     const info: { resetCapacity: number; isDisabled: boolean } = {
       resetCapacity: 0,
@@ -1725,6 +2225,7 @@ export default function UnitInfoForm({
 
     return info;
   }, [formValues.ckbCoolingCWCUseFlowRate]);
+
 
   const heatingHWCCapInfo = useMemo(() => {
     const info: { resetCapacity: number; isDisabled: boolean } = {
@@ -1742,6 +2243,7 @@ export default function UnitInfoForm({
     return info;
   }, [formValues.ckbHeatingHWCUseCap]);
 
+
   const heatingHWCFlowRateInfo = useMemo(() => {
     const info: { resetCapacity: number; isDisabled: boolean } = {
       resetCapacity: 0,
@@ -1757,6 +2259,7 @@ export default function UnitInfoForm({
 
     return info;
   }, [formValues.ckbHeatingHWCUseFlowRate]);
+
 
   const reheatHWCCapInfo = useMemo(() => {
     const info: { resetCapacity: number; isDisabled: boolean } = {
@@ -1774,6 +2277,7 @@ export default function UnitInfoForm({
     return info;
   }, [formValues.ckbReheatHWCUseCap]);
 
+
   const reheatHWCFlowRateInfo = useMemo(() => {
     const info: { resetCapacity: number; isDisabled: boolean } = {
       resetCapacity: 0,
@@ -1790,11 +2294,13 @@ export default function UnitInfoForm({
     return info;
   }, [formValues.ckbReheatHWCUseFlowRate]);
 
+
   // -------------- Get User Authentication Level from LocalStorage ----------------
   const ualInfo = useMemo(
     () => getUALInfo(Number(typeof window !== 'undefined' && localStorage.getItem('UAL'))),
     []
   );
+
 
   // -------------- Get Heating Pump Information ----------------
   // const heatPumpInfo = useMemo(() => {
@@ -1825,6 +2331,7 @@ export default function UnitInfoForm({
   //       Number(formValues.ddlReheatComp)
   //     ),
   //   [db, intProductTypeID, formValues.ddlHeatingComp, formValues.ddlReheatComp]);
+
 
   const [reheatHandingInfo, setReheattHandingInfo] = useState<any>([]);
   useMemo(() => {
@@ -1885,6 +2392,7 @@ export default function UnitInfoForm({
   //   return result;
   // }, [edit, db, setValue, intProductTypeID, formValues.ddlLocation]);
 
+
   const elecHeaterVoltageInfo = useMemo(() => {
     const result = getElecHeaterVoltageInfo(
       db,
@@ -1925,6 +2433,7 @@ export default function UnitInfoForm({
     strUnitModelValue,
   ]);
 
+
   const valveAndActuatorInfo = useMemo(
     () =>
       getValveAndActuatorInfo(
@@ -1941,6 +2450,7 @@ export default function UnitInfoForm({
     ]
   );
 
+
   const drainPanInfo = useMemo(
     () => getDrainPanInfo(Number(intProductTypeID), Number(intUnitTypeID)),
     [intProductTypeID, intUnitTypeID]
@@ -1951,6 +2461,7 @@ export default function UnitInfoForm({
   //   if (!edit) setValue('ddlHandingId', result.ddlHandingId);
   //   return result;
   // }, [edit, db, setValue]);
+
 
   const handingInfo = useMemo(() => {
     const result = db?.dbtSelHanding;
@@ -1971,6 +2482,7 @@ export default function UnitInfoForm({
     return result;
   }, [edit, db, setValue]);
 
+
   const supplyAirOpeningInfo = useMemo(() => {
     const result = getSupplyAirOpeningInfo(
       db,
@@ -1985,11 +2497,9 @@ export default function UnitInfoForm({
       Number(formValues.ddlReheatComp)
     );
 
-    setValue(
-      'ddlSupplyAirOpening',
-      !edit ? result?.ddlSupplyAirOpeningId : defaultValues.ddlSupplyAirOpening
-    );
+    setValue('ddlSupplyAirOpening', !edit ? result?.ddlSupplyAirOpeningId : defaultValues.ddlSupplyAirOpening);
     setValue('ddlSupplyAirOpeningText', result?.ddlSupplyAirOpeningText);
+
     return result;
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
@@ -2004,6 +2514,7 @@ export default function UnitInfoForm({
     formValues.ddlOrientation,
     formValues.ddlReheatComp,
   ]);
+
 
   useEffect(() => {
     if (!formValues.ddlOrientation || !formValues.ddlSupplyAirOpeningText || !intProductTypeID)
@@ -2051,6 +2562,7 @@ export default function UnitInfoForm({
     formValues.ddlSupplyAirOpeningText,
   ]);
 
+
   // onChange functions
   const handleBlurSummerSupplyAirCFM = useCallback(
     (e: any) => {
@@ -2068,6 +2580,7 @@ export default function UnitInfoForm({
     [formValues.ckbBypass, getAllFormData, setValue, user?.UAL || 0]
   );
 
+
   const handleBlurSummerReturnAirCFM = useCallback(
     (e: any) => {
       const value = getSummerReturnAirCFM(
@@ -2082,6 +2595,7 @@ export default function UnitInfoForm({
     [db, getAllFormData, setValue, user?.UAL || 0]
   );
 
+
   const handleBlurSupplyAirESP = useCallback(
     (e: any) => {
       const value = getSupplyAirESPInfo(e.target.value, intProductTypeID, formValues.ddlUnitModel);
@@ -2089,6 +2603,7 @@ export default function UnitInfoForm({
     },
     [setValue, intProductTypeID, formValues.ddlUnitModel]
   );
+
 
   const handleBlurExhaustAirESP = useCallback(
     (e: any) => {
@@ -2102,6 +2617,7 @@ export default function UnitInfoForm({
     },
     [setValue, intProductTypeID, intUnitTypeID, formValues.ddlUnitModel]
   );
+
 
   const isAvailable = useCallback((value: any[]) => !!value && value.length > 0, []);
   if (edit && setFunction) setFunction(handleSubmit(onSubmit));
@@ -2744,6 +3260,7 @@ export default function UnitInfoForm({
     }
   }, []); // <-- empty dependency array - This will only trigger when the component mounts and no-render
 
+
   return (
     <FormProvider methods={methods} onSubmit={handleSubmit(onSubmit)}>
       <Stack spacing={2} sx={{ marginBottom: '150px' }}>
@@ -2847,6 +3364,7 @@ export default function UnitInfoForm({
                       ))}
                     </RHFSelect>
                   )}
+                  
                   <RHFSelect
                     native
                     size="small"
@@ -3029,11 +3547,327 @@ export default function UnitInfoForm({
                       </option>
                     ))}
                   </RHFSelect>
+                  <RHFCheckbox
+                    label="Mixing Section"
+                    name="ckbMixingBox"
+                    checked={formValues.ckbVoltageSPP}
+                    onChange={(e: any) => setValue('ckbMixingBox', Number(e.target.checked))}
+                    sx={getDisplay(intProductTypeID === IDs.intProdTypeTerraID)}
+                  />                
                 </Box>
               </Grid>
             </Grid>
           </AccordionDetails>
         </Accordion>
+        <Accordion
+          expanded={expanded.panel2}
+          sx={getDisplay(getValues('ckbMixingBox'))}
+          onChange={() => setExpanded({ ...expanded, panel2: !expanded.panel2 })}
+        >
+          <AccordionSummary
+            expandIcon={<Iconify icon="il:arrow-down" />}
+            aria-controls="panel1a-content"
+            id="panel1a-header"
+          >
+            <Typography color="primary.main" variant="h6">
+              MIXING SECTION
+            </Typography>
+          </AccordionSummary>
+          <AccordionDetails>
+            <Box
+              sx={{
+                display: 'grid',
+                rowGap: 1,
+                columnGap: 1,
+                gridTemplateColumns: { xs: 'repeat(6, 1fr)' },
+              }}
+            >
+          <Stack spacing={1}><Typography color="primary.main" variant="subtitle2"/></Stack>
+          <Stack spacing={1}><Typography color="primary.main" variant="subtitle2">SUMMER</Typography></Stack>
+          <Stack spacing={1}><Typography color="primary.main" variant="subtitle2"/></Stack>
+          <Stack spacing={1}><Typography color="primary.main" variant="subtitle2">WINTER</Typography></Stack>
+          <Stack spacing={1}><Typography color="primary.main" variant="subtitle2"/></Stack>
+          <Stack spacing={1}><Typography color="primary.main" variant="subtitle2"/></Stack>
+          
+          <Stack spacing={1}><Typography color="primary.main" variant="subtitle2">Outdoor Air (% / CFM)</Typography></Stack>
+          <Stack spacing={1}>
+            <RHFTextField
+              size="small"
+                name="txbMixSummerOA_CFMPct"
+                label="%"
+                autoComplete="off"
+                onChange={(e: any) => {
+                  setValueWithCheck1(e, 'txbMixSummerOA_CFMPct');
+                }}
+                />
+          </Stack> 
+          <Stack spacing={1}>
+            <RHFTextField
+              size="small"
+              name="txbMixSummerOA_CFM"
+              label="CFM"
+              disabled
+            />
+          </Stack>  
+          {/* <TextField
+            name="txbMixSummerOA_CFM"
+
+      /> */}
+          <Stack spacing={1}>
+              <RHFTextField
+                  size="small"
+                  name="txbMixWinterOA_CFMPct"
+                  label="%"
+                  autoComplete="off"
+                  onChange={(e: any) => {
+                    setValueWithCheck1(e, 'txbMixWinterOA_CFMPct');
+                  }}
+                />
+          </Stack> 
+          <Stack spacing={1}>
+            <RHFTextField
+              size="small"
+              name="txbMixWinterOA_CFM"
+              label="CFM"
+              disabled
+            />
+          </Stack> 
+          <Stack spacing={1}><Typography color="primary.main" variant="subtitle2"/></Stack>
+
+          <Stack spacing={1}><Typography color="primary.main" variant="subtitle2">Return Air (% / CFM)</Typography></Stack>
+          <Stack spacing={1}>
+            <RHFTextField
+              size="small"
+              name="txbMixSummerRA_CFMPct"
+              label="%"
+              autoComplete="off"
+              disabled
+              onChange={(e: any) => {setValueWithCheck1(e, 'txbMixSummerRA_CFMPct');}}
+            />
+          </Stack>  
+          <Stack spacing={1}>
+            <RHFTextField
+              size="small"
+              name="txbMixSummerRA_CFM"
+              label="CFM"
+              disabled
+            />
+          </Stack> 
+                <Stack spacing={1}>
+                <RHFTextField
+                  size="small"
+                  name="txbMixWinterRA_CFMPct"
+                  label="%"
+                  autoComplete="off"
+                  disabled
+                  onChange={(e: any) => {
+                    setValueWithCheck1(e, 'txbMixWinterRA_CFMPct');
+                  }}
+                />
+                </Stack>
+                <Stack spacing={1}>
+            <RHFTextField
+              size="small"
+              name="txbMixWinterRA_CFM"
+              label="CFM"
+              disabled
+            />
+          </Stack>           
+          <Stack spacing={1}><Typography color="primary.main" variant="subtitle2"/></Stack>
+
+          <Stack spacing={1}> 
+              <RHFCheckbox
+                  label="Use Project Default"
+                  name="ckbMixUseProjectDefault"
+                  onChange={(e: any) => setValue('ckbMixUseProjectDefault', Number(e.target.checked))}
+                /> 
+          </Stack>
+          <Stack spacing={1}><Typography color="primary.main" variant="subtitle2"/></Stack>
+          <Stack spacing={1}><Typography color="primary.main" variant="subtitle2"/></Stack>
+          <Stack spacing={1}><Typography color="primary.main" variant="subtitle2"/></Stack>
+          <Stack spacing={1}><Typography color="primary.main" variant="subtitle2"/></Stack>
+          <Stack spacing={1}><Typography color="primary.main" variant="subtitle2"/></Stack>
+
+          <Stack spacing={1}><Typography color="primary.main" variant="subtitle2">OUTDOOR AIR</Typography></Stack>
+          <Stack spacing={1}><Typography color="primary.main" variant="subtitle2"/></Stack>
+          <Stack spacing={1}><Typography color="primary.main" variant="subtitle2"/></Stack>
+          <Stack spacing={1}><Typography color="primary.main" variant="subtitle2"/></Stack>
+          <Stack spacing={1}><Typography color="primary.main" variant="subtitle2"/></Stack>
+          <Stack spacing={1}><Typography color="primary.main" variant="subtitle2"/></Stack>
+
+          <Typography color="primary.main" variant="subtitle2">Dry Bulb Temperature (F)</Typography>
+          <Stack spacing={1}>
+                <RHFTextField
+                  size="small"
+                  name="txbMixSummerOA_DB"
+                  label=""
+                  disabled= {getValues('ckbMixUseProjectDefault')}
+                  onChange={(e: any) => { setValueWithCheck1(e, 'txbMixSummerOA_DB'); }}
+                  onBlur={handleMixSummerOA_DBChanged}
+                />
+          </Stack>
+          <Stack spacing={1}><Typography color="primary.main" variant="subtitle2"/></Stack>
+          <Stack spacing={1}>
+                <RHFTextField
+                  disabled= {getValues('ckbMixUseProjectDefault')}
+                  size="small"
+                  name="txbMixWinterOA_DB"
+                  label=""
+                  onChange={(e: any) => { setValueWithCheck1(e, 'txbMixWinterOA_DB');}}
+                  onBlur={handleMixWinterOA_DBChanged}
+                />
+          </Stack>
+          <Stack spacing={1}><Typography color="primary.main" variant="subtitle2"/></Stack>
+          <Stack spacing={1}><Typography color="primary.main" variant="subtitle2"/></Stack>
+
+          <Typography color="primary.main" variant="subtitle2">Wet Bulb Temperature (F)</Typography>
+          <Stack spacing={1}>
+              <RHFTextField
+                  disabled= {getValues('ckbMixUseProjectDefault')}
+                  size="small"
+                  name="txbMixSummerOA_WB"
+                  label=""
+                  onChange={(e: any) => { setValueWithCheck1(e, 'txbMixSummerOA_WB'); }}
+                  onBlur={handleMixSummerOA_WBChanged}
+                />
+          </Stack>
+          <Stack spacing={1}><Typography color="primary.main" variant="subtitle2"/></Stack>
+          <Stack spacing={1}>
+                <RHFTextField
+                  disabled= {getValues('ckbMixUseProjectDefault')}
+                  size="small"
+                  name="txbMixWinterOA_WB"
+                  label=""
+                  onChange={(e: any) => { setValueWithCheck1(e, 'txbMixWinterOA_WB'); }}
+                  onBlur={handleMixWinterOA_WBChanged}
+                />  
+          </Stack>
+          <Stack spacing={1}><Typography color="primary.main" variant="subtitle2"/></Stack>
+          <Stack spacing={1}><Typography color="primary.main" variant="subtitle2"/></Stack>
+
+          <Typography color="primary.main" variant="subtitle2">Relative Humidity (%)</Typography>
+          <Stack spacing={1}>
+              <RHFTextField
+                  disabled= {getValues('ckbMixUseProjectDefault')}
+                  size="small"
+                  name="txbMixSummerOA_RH"
+                  label=""
+                  onChange={(e: any) => {
+                    setValueWithCheck1(e, 'txbMixSummerOA_RH');
+                  }}
+                  onBlur={handleMixSummerOA_RHChanged}
+                />
+          </Stack> 
+          <Stack spacing={1}><Typography color="primary.main" variant="subtitle2"/></Stack>
+          <Stack spacing={1}>
+                <RHFTextField
+                  disabled= {getValues('ckbMixUseProjectDefault')}
+                  size="small"
+                  name="txbMixWinterOA_RH"
+                  label=""
+                  onChange={(e: any) => {
+                    setValueWithCheck1(e, 'txbMixWinterOA_RH');
+                  }}
+                  onBlur={handleMixWinterOA_RHChanged}
+                />  
+          </Stack>    
+          <Stack spacing={1}><Typography color="primary.main" variant="subtitle2"/></Stack>
+          <Stack spacing={1}><Typography color="primary.main" variant="subtitle2"/></Stack>
+
+          <Stack spacing={1}><Typography color="primary.main" variant="subtitle2">RETURN AIR</Typography></Stack>
+          <Stack spacing={1}><Typography color="primary.main" variant="subtitle2"/></Stack>
+          <Stack spacing={1}><Typography color="primary.main" variant="subtitle2"/></Stack>
+          <Stack spacing={1}><Typography color="primary.main" variant="subtitle2"/></Stack>
+          <Stack spacing={1}><Typography color="primary.main" variant="subtitle2"/></Stack>
+          <Stack spacing={1}><Typography color="primary.main" variant="subtitle2"/></Stack>
+
+          <Typography color="primary.main" variant="subtitle2">Dry Bulb Temperature (F)</Typography>
+          <Stack spacing={1}>
+                <RHFTextField
+                  disabled= {getValues('ckbMixUseProjectDefault')}
+                  size="small"
+                  name="txbMixSummerRA_DB"
+                  label=""
+                  onChange={(e: any) => {
+                    setValueWithCheck1(e, 'txbMixSummerRA_DB');
+                  }}
+                  onBlur={handleMixSummerRA_DBChanged}
+                />
+          </Stack>  
+          <Stack spacing={1}><Typography color="primary.main" variant="subtitle2"/></Stack>
+          <Stack spacing={1}>
+                  <RHFTextField
+                  disabled= {getValues('ckbMixUseProjectDefault')}
+                  size="small"
+                  name="txbMixWinterRA_DB"
+                  label=""
+                  onChange={(e: any) => {
+                    setValueWithCheck1(e, 'txbMixWinterRA_DB');
+                  }}
+                  onBlur={handleMixWinterRA_DBChanged}
+                />
+          </Stack>
+          <Stack spacing={1}><Typography color="primary.main" variant="subtitle2"/></Stack>
+          <Stack spacing={1}><Typography color="primary.main" variant="subtitle2"/></Stack>
+
+          <Typography color="primary.main" variant="subtitle2">Wet Bulb Temperature (F)</Typography>
+          <Stack spacing={1}>
+              <RHFTextField
+                  disabled= {getValues('ckbMixUseProjectDefault')}
+                  size="small"
+                  name="txbMixSummerRA_WB"
+                  label=""
+                  onChange={(e: any) => {
+                    setValueWithCheck1(e, 'txbMixSummerRA_WB');
+                  }}
+                  onBlur={handleMixSummerRA_WBChanged}
+                />
+          </Stack>  
+          <Stack spacing={1}><Typography color="primary.main" variant="subtitle2"/></Stack>
+          <Stack spacing={1}>
+                <RHFTextField
+                  disabled= {getValues('ckbMixUseProjectDefault')}
+                  size="small"
+                  name="txbMixWinterRA_WB"
+                  label=""
+                  onChange={(e: any) => {
+                    setValueWithCheck1(e, 'txbMixWinterRA_WB');
+                  }}
+                  onBlur={handleMixWinterRA_WBChanged}
+                />  
+          </Stack>
+          <Stack spacing={1}><Typography color="primary.main" variant="subtitle2"/></Stack>
+          <Stack spacing={1}><Typography color="primary.main" variant="subtitle2"/></Stack>
+
+          <Typography color="primary.main" variant="subtitle2">Relative Humidity (%)</Typography>
+          <Stack spacing={1}>
+              <RHFTextField
+                  disabled= {getValues('ckbMixUseProjectDefault')}
+                  size="small"
+                  name="txbMixSummerRA_RH"
+                  label=""
+                  onChange={(e: any) => {
+                    setValueWithCheck1(e, 'txbMixSummerRA_RH');
+                  }}
+                  onBlur={handleMixSummerRA_RHChanged}
+                />
+          </Stack>  
+          <Stack spacing={1}><Typography color="primary.main" variant="subtitle2"/></Stack>
+          <Stack spacing={1}>
+            <RHFTextField
+              disabled= {getValues('ckbMixUseProjectDefault')}
+              size="small"
+              name="txbMixWinterRA_RH"
+              label=""
+              onChange={(e: any) => { setValueWithCheck1(e, 'txbMixWinterRA_RH'); }}
+              onBlur={handleMixWinterRA_RHChanged}
+            />  
+              </Stack>  
+          <Stack spacing={1}><Typography color="primary.main" variant="subtitle2"/></Stack>
+          <Stack spacing={1}><Typography color="primary.main" variant="subtitle2"/></Stack>
+            </Box>
+          </AccordionDetails>
+        </Accordion>        
         <Accordion
           expanded={expanded.panel2}
           sx={getDisplay(intProductTypeID !== IDs.intProdTypeVentumLiteID)}
@@ -4171,6 +5005,44 @@ export default function UnitInfoForm({
                       name="ddlReturnAirOpening"
                       label="Return Air Opening"
                       sx={getDisplay(remainingOpeningsInfo.ddlReturnAirOpeningVisible)}
+                      placeholder=""
+                      onChange={ddlReturnAirOpeningChanged}
+                    >
+                      {remainingOpeningsInfo.ddlReturnAirOpeningDataTbl.map(
+                        (item: any, index: number) => (
+                          <option key={index} value={item.id}>
+                            {item.items}
+                          </option>
+                        )
+                      )}
+                    </RHFSelect>
+                  )}
+                  {isAvailable(remainingOpeningsInfo.ddlReturnAirOpeningDataTbl) && (
+                    <RHFSelect
+                      native
+                      size="small"
+                      name="ddlMixOADamperPos"
+                      label="Return Air Opening"
+                      // sx={getDisplay(remainingOpeningsInfo.ddlReturnAirOpeningVisible)}
+                      placeholder=""
+                      onChange={ddlReturnAirOpeningChanged}
+                    >
+                      {remainingOpeningsInfo.ddlReturnAirOpeningDataTbl.map(
+                        (item: any, index: number) => (
+                          <option key={index} value={item.id}>
+                            {item.items}
+                          </option>
+                        )
+                      )}
+                    </RHFSelect>
+                  )}
+                  {isAvailable(remainingOpeningsInfo.ddlReturnAirOpeningDataTbl) && (
+                    <RHFSelect
+                      native
+                      size="small"
+                      name="ddlMixRADamperPos"
+                      label="Return Air Opening"
+                      // sx={getDisplay(remainingOpeningsInfo.ddlReturnAirOpeningVisible)}
                       placeholder=""
                       onChange={ddlReturnAirOpeningChanged}
                     >
