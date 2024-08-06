@@ -17,6 +17,9 @@ const intVEN_INT_USERS_MAX_CFM_NO_BYPASS = 3048;
 const intVEN_INT_USERS_MIN_CFM_WITH_BYPASS = 300;
 const intVEN_INT_USERS_MAX_CFM_WITH_BYPASS = 3048;
 
+const intVEN_MIN_CFM_PHI = 185;
+const intVEN_MAX_CFM_PHI = 1480;
+
 const intVENLITE_MIN_CFM_NO_BYPASS = 200;
 const intVENLITE_MAX_CFM_NO_BYPASS = 500;
 const intVENLITE_MIN_CFM_WITH_BYPASS = 200;
@@ -33,19 +36,22 @@ const intVENPLUS_MIN_CFM_WITH_BYPASS = 1200;
 const intVENPLUS_MAX_CFM_WITH_BYPASS = 10000;
 
 const intVENPLUS_INT_USERS_MIN_CFM_NO_BYPASS = 1080;
-const intVENPLUS_INT_USERS_MAX_CFM_NO_BYPASS = 10000;
+const intVENPLUS_INT_USERS_MAX_CFM_NO_BYPASS = 10500;
 const intVENPLUS_INT_USERS_MIN_CFM_WITH_BYPASS = 1080;
-const intVENPLUS_INT_USERS_MAX_CFM_WITH_BYPASS = 10000;
+const intVENPLUS_INT_USERS_MAX_CFM_WITH_BYPASS = 10500;
+
+const intVENPLUS_MIN_CFM_PHI = 495;
+const intVENPLUS_MAX_CFM_PHI = 7150;
 
 const intTERA_MIN_CFM_NO_BYPASS = 450;
-const intTERA_MAX_CFM_NO_BYPASS = 2400;
+const intTERA_MAX_CFM_NO_BYPASS = 4800;
 const intTERA_MIN_CFM_WITH_BYPASS = 450;
-const intTERA_MAX_CFM_WITH_BYPASS = 500;
+const intTERA_MAX_CFM_WITH_BYPASS = 4800;
 
-const intTERA_INT_USERS_MIN_CFM_NO_BYPASS = 400;
-const intTERA_INT_USERS_MAX_CFM_NO_BYPASS = 2500;
-const intTERA_INT_USERS_MIN_CFM_WITH_BYPASS = 400;
-const intTERA_INT_USERS_MAX_CFM_WITH_BYPASS = 2500;
+const intTERA_INT_USERS_MIN_CFM_NO_BYPASS = 450;
+const intTERA_INT_USERS_MAX_CFM_NO_BYPASS = 4800;
+const intTERA_INT_USERS_MIN_CFM_WITH_BYPASS = 450;
+const intTERA_INT_USERS_MAX_CFM_WITH_BYPASS = 4800;
 
 // const getFromLink = (dt: any, linkColumn: any, dtLink: any, sortColumn: string) => {
 //   if (!dt || !dtLink) return [];
@@ -418,7 +424,8 @@ export const getSummerSupplyAirCFM = (
   summerSupplyAirCFM: any,
   intProductTypeID: any,
   intUAL: any,
-  ckbBypassVal: number
+  ckbBypassVal: number,
+  ckbPHI: number
 ) => {
   let intSummerSupplyAirCFM = Number(summerSupplyAirCFM);
   switch (intProductTypeID) {
@@ -447,7 +454,13 @@ export const getSummerSupplyAirCFM = (
         intUAL === ClsID.intUAL_IntLvl_2 ||
         intUAL === ClsID.intUAL_IntLvl_1
       ) {
-        if (ckbBypassVal === 1) {
+        if (ckbPHI === 1) {
+          if (intSummerSupplyAirCFM < intVEN_MIN_CFM_PHI) {
+            intSummerSupplyAirCFM = intVEN_MIN_CFM_PHI;
+          } else if (intSummerSupplyAirCFM > intVEN_MAX_CFM_PHI) {
+            intSummerSupplyAirCFM = intVEN_MAX_CFM_PHI;
+          }
+        } else if (ckbBypassVal === 1) {
           if (intSummerSupplyAirCFM < intVEN_INT_USERS_MIN_CFM_WITH_BYPASS) {
             intSummerSupplyAirCFM = intVEN_INT_USERS_MIN_CFM_WITH_BYPASS;
           } else if (intSummerSupplyAirCFM > intVEN_INT_USERS_MAX_CFM_WITH_BYPASS) {
@@ -507,7 +520,13 @@ export const getSummerSupplyAirCFM = (
         intUAL === ClsID.intUAL_IntLvl_2 ||
         intUAL === ClsID.intUAL_IntLvl_1
       ) {
-        if (ckbBypassVal === 1) {
+        if (ckbPHI === 1) {
+          if (intSummerSupplyAirCFM < intVENPLUS_MIN_CFM_PHI) {
+            intSummerSupplyAirCFM = intVENPLUS_MIN_CFM_PHI;
+          } else if (intSummerSupplyAirCFM > intVENPLUS_MAX_CFM_PHI) {
+            intSummerSupplyAirCFM = intVENPLUS_MAX_CFM_PHI;
+          }
+        } else if (ckbBypassVal === 1) {
           if (intSummerSupplyAirCFM < intVENPLUS_INT_USERS_MIN_CFM_WITH_BYPASS) {
             intSummerSupplyAirCFM = intVENPLUS_INT_USERS_MIN_CFM_WITH_BYPASS;
           } else if (intSummerSupplyAirCFM > intVENPLUS_INT_USERS_MAX_CFM_WITH_BYPASS) {
@@ -575,6 +594,7 @@ export const getSummerReturnAirCFM = (
     ddlUnitModel: any;
     intProductTypeID: any;
     ckbBypass: any;
+    ckbPHI: any;
     intUnitTypeID: any;
   },
   intUAL: any,
@@ -588,6 +608,7 @@ export const getSummerReturnAirCFM = (
   let intSummerReturnAirCFM = Number(summerReturnAirCFM);
   const intUnitTypeID = Number(values.intUnitTypeID);
   const ckbBypass = Number(values.ckbBypass);
+  const ckbPHI = Number(values.ckbPHI);
 
   if (
     intOrientationID === ClsID.intOrientationHorizontalID &&
@@ -616,36 +637,22 @@ export const getSummerReturnAirCFM = (
         intUAL === ClsID.intUAL_IntLvl_2 ||
         intUAL === ClsID.intUAL_IntLvl_1
       ) {
-        if (ckbBypassVal === 1) {
-          if (
-            intSummerReturnAirCFM <
-            Math.max(intSummerSupplyAirCFM * 0.5, intVEN_INT_USERS_MIN_CFM_WITH_BYPASS)
-          ) {
-            intSummerReturnAirCFM = Number(
-              Math.max(intSummerSupplyAirCFM * 0.5, intVEN_INT_USERS_MIN_CFM_WITH_BYPASS)
-            );
-          } else if (
-            intSummerReturnAirCFM >
-            Math.min(Number(intSummerSupplyAirCFM) * 2, intVEN_INT_USERS_MAX_CFM_WITH_BYPASS)
-          ) {
-            intSummerReturnAirCFM = Number(
-              Math.min(intSummerSupplyAirCFM * 2, intVEN_INT_USERS_MAX_CFM_WITH_BYPASS)
-            );
+        if (ckbPHI === 1) {
+          if (intSummerReturnAirCFM < Math.max(intSummerSupplyAirCFM * 0.5, intVEN_MIN_CFM_PHI)) {
+            intSummerReturnAirCFM = Number(Math.max(intSummerSupplyAirCFM * 0.5, intVEN_MIN_CFM_PHI));
+          } else if (intSummerReturnAirCFM > Math.min(Number(intSummerSupplyAirCFM) * 2, intVEN_MAX_CFM_PHI)) {
+            intSummerReturnAirCFM = Number(Math.min(intSummerSupplyAirCFM * 2, intVEN_MAX_CFM_PHI));
           }
-        } else if (
-          intSummerReturnAirCFM <
-          Math.max(Number(intSummerSupplyAirCFM) * 0.5, intVEN_INT_USERS_MIN_CFM_NO_BYPASS)
-        ) {
-          intSummerReturnAirCFM = Number(
-            Math.max(intSummerSupplyAirCFM * 0.5, intVEN_INT_USERS_MIN_CFM_NO_BYPASS)
-          );
-        } else if (
-          intSummerReturnAirCFM >
-          Math.min(intSummerSupplyAirCFM * 2, intVEN_INT_USERS_MAX_CFM_NO_BYPASS)
-        ) {
-          intSummerReturnAirCFM = Number(
-            Math.min(intSummerSupplyAirCFM * 2, intVEN_INT_USERS_MAX_CFM_NO_BYPASS)
-          );
+        } else if (ckbBypassVal === 1) {
+          if (intSummerReturnAirCFM < Math.max(intSummerSupplyAirCFM * 0.5, intVEN_INT_USERS_MIN_CFM_WITH_BYPASS)) {
+            intSummerReturnAirCFM = Number(Math.max(intSummerSupplyAirCFM * 0.5, intVEN_INT_USERS_MIN_CFM_WITH_BYPASS));
+          } else if (intSummerReturnAirCFM > Math.min(Number(intSummerSupplyAirCFM) * 2, intVEN_INT_USERS_MAX_CFM_WITH_BYPASS)) {
+            intSummerReturnAirCFM = Number(Math.min(intSummerSupplyAirCFM * 2, intVEN_INT_USERS_MAX_CFM_WITH_BYPASS));
+          }
+        } else if (intSummerReturnAirCFM < Math.max(Number(intSummerSupplyAirCFM) * 0.5, intVEN_INT_USERS_MIN_CFM_NO_BYPASS)) {
+          intSummerReturnAirCFM = Number(Math.max(intSummerSupplyAirCFM * 0.5, intVEN_INT_USERS_MIN_CFM_NO_BYPASS));
+        } else if (intSummerReturnAirCFM > Math.min(intSummerSupplyAirCFM * 2, intVEN_INT_USERS_MAX_CFM_NO_BYPASS) ) {
+          intSummerReturnAirCFM = Number(Math.min(intSummerSupplyAirCFM * 2, intVEN_INT_USERS_MAX_CFM_NO_BYPASS));
         }
       } else if (ckbBypassVal === 1) {
         if (intSummerReturnAirCFM < Number(dtModel.Rows?.[0]?.erv_cfm_min_ext_users)) {
@@ -670,36 +677,16 @@ export const getSummerReturnAirCFM = (
         intUAL === ClsID.intUAL_IntLvl_2 ||
         intUAL === ClsID.intUAL_IntLvl_1
       ) {
-        if (ckbBypassVal === 1) {
-          if (
-            intSummerReturnAirCFM <
-            Math.max(intSummerSupplyAirCFM * 0.5, intVENLITE_INT_USERS_MIN_CFM_WITH_BYPASS)
-          ) {
-            intSummerReturnAirCFM = Number(
-              Math.max(intSummerSupplyAirCFM * 0.5, intVENLITE_INT_USERS_MIN_CFM_WITH_BYPASS)
-            );
-          } else if (
-            intSummerReturnAirCFM >
-            Math.min(intSummerSupplyAirCFM * 2, intVENLITE_INT_USERS_MAX_CFM_WITH_BYPASS)
-          ) {
-            intSummerReturnAirCFM = Number(
-              Math.min(intSummerSupplyAirCFM * 2, intVENLITE_INT_USERS_MAX_CFM_WITH_BYPASS)
-            );
+        if (ckbPHI === 1) {
+          if (intSummerReturnAirCFM < Math.max(intSummerSupplyAirCFM * 0.5, intVENLITE_INT_USERS_MIN_CFM_WITH_BYPASS)) {
+            intSummerReturnAirCFM = Number(Math.max(intSummerSupplyAirCFM * 0.5, intVENLITE_INT_USERS_MIN_CFM_WITH_BYPASS));
+          } else if (intSummerReturnAirCFM >Math.min(intSummerSupplyAirCFM * 2, intVENLITE_INT_USERS_MAX_CFM_WITH_BYPASS)) {
+            intSummerReturnAirCFM = Number( Math.min(intSummerSupplyAirCFM * 2, intVENLITE_INT_USERS_MAX_CFM_WITH_BYPASS));
           }
-        } else if (
-          intSummerReturnAirCFM <
-          Math.max(intSummerSupplyAirCFM * 0.5, intVENLITE_INT_USERS_MIN_CFM_NO_BYPASS)
-        ) {
-          intSummerReturnAirCFM = Number(
-            Math.max(intSummerSupplyAirCFM * 0.5, intVENLITE_INT_USERS_MIN_CFM_NO_BYPASS)
-          );
-        } else if (
-          intSummerReturnAirCFM >
-          Math.min(intSummerSupplyAirCFM * 2, intVENLITE_INT_USERS_MAX_CFM_NO_BYPASS)
-        ) {
-          intSummerReturnAirCFM = Number(
-            Math.min(intSummerSupplyAirCFM * 2, intVENLITE_INT_USERS_MAX_CFM_NO_BYPASS)
-          );
+        } else if (intSummerReturnAirCFM < Math.max(intSummerSupplyAirCFM * 0.5, intVENLITE_INT_USERS_MIN_CFM_NO_BYPASS)) {
+          intSummerReturnAirCFM = Number(Math.max(intSummerSupplyAirCFM * 0.5, intVENLITE_INT_USERS_MIN_CFM_NO_BYPASS));
+        } else if (intSummerReturnAirCFM > Math.min(intSummerSupplyAirCFM * 2, intVENLITE_INT_USERS_MAX_CFM_NO_BYPASS)) {
+          intSummerReturnAirCFM = Number(Math.min(intSummerSupplyAirCFM * 2, intVENLITE_INT_USERS_MAX_CFM_NO_BYPASS));
         }
       } else if (ckbBypassVal === 1) {
         if (intSummerReturnAirCFM < Number(dtModel.Rows?.[0]?.erv_cfm_min_ext_users)) {
@@ -724,36 +711,22 @@ export const getSummerReturnAirCFM = (
         intUAL === ClsID.intUAL_IntLvl_2 ||
         intUAL === ClsID.intUAL_IntLvl_1
       ) {
-        if (ckbBypassVal === 1) {
-          if (
-            intSummerReturnAirCFM <
-            Math.max(intSummerSupplyAirCFM * 0.5, intVENPLUS_INT_USERS_MIN_CFM_WITH_BYPASS)
-          ) {
-            intSummerReturnAirCFM = Number(
-              Math.max(intSummerSupplyAirCFM * 0.5, intVENPLUS_INT_USERS_MIN_CFM_WITH_BYPASS)
-            );
-          } else if (
-            intSummerReturnAirCFM >
-            Math.min(intSummerSupplyAirCFM * 2, intVENPLUS_INT_USERS_MAX_CFM_WITH_BYPASS)
-          ) {
-            intSummerReturnAirCFM = Number(
-              Math.min(intSummerSupplyAirCFM * 2, intVENPLUS_INT_USERS_MAX_CFM_WITH_BYPASS)
-            );
+        if (ckbPHI === 1) {
+          if (intSummerReturnAirCFM < Math.max(intSummerSupplyAirCFM * 0.5, intVENPLUS_MIN_CFM_PHI)) {
+            intSummerReturnAirCFM = Number(Math.max(intSummerSupplyAirCFM * 0.5, intVENPLUS_MIN_CFM_PHI));
+          } else if (intSummerReturnAirCFM > Math.min(intSummerSupplyAirCFM * 2, intVENPLUS_MAX_CFM_PHI)) {
+            intSummerReturnAirCFM = Number(Math.min(intSummerSupplyAirCFM * 2, intVENPLUS_MAX_CFM_PHI));
           }
-        } else if (
-          intSummerReturnAirCFM <
-          Math.max(intSummerSupplyAirCFM * 0.5, intVENPLUS_INT_USERS_MIN_CFM_NO_BYPASS)
-        ) {
-          intSummerReturnAirCFM = Number(
-            Math.max(intSummerSupplyAirCFM * 0.5, intVENPLUS_INT_USERS_MIN_CFM_NO_BYPASS)
-          );
-        } else if (
-          intSummerReturnAirCFM >
-          Math.min(intSummerSupplyAirCFM * 2, intVENPLUS_INT_USERS_MAX_CFM_NO_BYPASS)
-        ) {
-          intSummerReturnAirCFM = Number(
-            Math.min(intSummerSupplyAirCFM * 2, intVENPLUS_INT_USERS_MAX_CFM_NO_BYPASS)
-          );
+        } else if (ckbBypassVal === 1) {
+          if (intSummerReturnAirCFM < Math.max(intSummerSupplyAirCFM * 0.5, intVENPLUS_INT_USERS_MIN_CFM_WITH_BYPASS)) {
+            intSummerReturnAirCFM = Number(Math.max(intSummerSupplyAirCFM * 0.5, intVENPLUS_INT_USERS_MIN_CFM_WITH_BYPASS));
+          } else if (intSummerReturnAirCFM > Math.min(intSummerSupplyAirCFM * 2, intVENPLUS_INT_USERS_MAX_CFM_WITH_BYPASS)) {
+            intSummerReturnAirCFM = Number(Math.min(intSummerSupplyAirCFM * 2, intVENPLUS_INT_USERS_MAX_CFM_WITH_BYPASS));
+          }
+        } else if (intSummerReturnAirCFM < Math.max(intSummerSupplyAirCFM * 0.5, intVENPLUS_INT_USERS_MIN_CFM_NO_BYPASS)) {
+          intSummerReturnAirCFM = Number(Math.max(intSummerSupplyAirCFM * 0.5, intVENPLUS_INT_USERS_MIN_CFM_NO_BYPASS));
+        } else if (intSummerReturnAirCFM > Math.min(intSummerSupplyAirCFM * 2, intVENPLUS_INT_USERS_MAX_CFM_NO_BYPASS)) {
+          intSummerReturnAirCFM = Number(Math.min(intSummerSupplyAirCFM * 2, intVENPLUS_INT_USERS_MAX_CFM_NO_BYPASS));
         }
       } else if (ckbBypassVal === 1) {
         if (intSummerReturnAirCFM < Number(dtModel.Rows?.[0]?.erv_cfm_min_ext_users)) {

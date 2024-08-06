@@ -691,7 +691,7 @@ export default function UnitInfoForm({
       setValue('txbMixWinterRA_CFM', (Number(getValues('txbSummerSupplyAirCFM')) * Number(getValues('txbMixWinterRA_CFMPct'))) / 100);
       setValue('ckbMixUseProjectDefault', true);
     }
-  }, [getValues('ckbMixingBox')]);
+  }, [getValues('ckbMixingBox'), getValues('txbSummerSupplyAirCFM')]);
 
 
   useEffect(() => {
@@ -802,7 +802,7 @@ export default function UnitInfoForm({
 
 
 
-
+  // Summer Mix Outdoor Air DB
   const handleMixSummerOA_DBChanged = useCallback(
     (e: any) => {
       setValue('txbMixSummerOA_DB', parseFloat(e.target.value).toFixed(1));
@@ -813,7 +813,7 @@ export default function UnitInfoForm({
     [formCurrValues.txbMixSummerOA_DB]
   );
 
-  // Summer Outdoor Air WB
+  // Summer Mix Outdoor Air WB
   const handleMixSummerOA_WBChanged = useCallback(
     (e: any) => {
       setValue('txbMixSummerOA_WB', parseFloat(e.target.value).toFixed(1));
@@ -824,7 +824,7 @@ export default function UnitInfoForm({
     [formCurrValues.txbMixSummerOA_WB]
   );
 
-  // Summer Outdoor Air RH
+  // Summer Mix Outdoor Air RH
   const handleMixSummerOA_RHChanged = useCallback(
     (e: any) => {
       setValue('txbMixSummerOA_RH', parseFloat(e.target.value).toFixed(1));
@@ -835,7 +835,7 @@ export default function UnitInfoForm({
     [formCurrValues.txbMixSummerOA_RH]
   );
 
-  // Winter Outdoor Air DB
+  // Winter Mix Outdoor Air DB
   const handleMixWinterOA_DBChanged = useCallback(
     (e: any) => {
       setValue('txbMixWinterOA_DB', parseFloat(e.target.value).toFixed(1));
@@ -846,7 +846,7 @@ export default function UnitInfoForm({
     [formCurrValues.txbMixWinterOA_DB]
   );
 
-  // Winter Outdoor Air WB
+  // Winter Mix Outdoor Air WB
   const handleMixWinterOA_WBChanged = useCallback(
     (e: any) => {
       setValue('txbMixWinterOA_WB', parseFloat(e.target.value).toFixed(1));
@@ -857,7 +857,7 @@ export default function UnitInfoForm({
     [formCurrValues.txbMixWinterOA_WB]
   );
 
-  // Winter Outdoor Air RH
+  // Winter Mix Outdoor Air RH
   const handleMixWinterOA_RHChanged = useCallback(
     (e: any) => {
       setValue('txbMixWinterOA_RH', parseFloat(e.target.value).toFixed(1));
@@ -868,7 +868,7 @@ export default function UnitInfoForm({
     [formCurrValues.txbMixWinterOA_RH]
   );
 
-  // Summer Return Air DB
+  // Summer Mix Return Air DB
   const handleMixSummerRA_DBChanged = useCallback(
     (e: any) => {
       setValue('txbMixSummerRA_DB', parseFloat(e.target.value).toFixed(1));
@@ -879,7 +879,7 @@ export default function UnitInfoForm({
     [formCurrValues.txbMixSummerRA_DB]
   );
 
-  // Summer Return Air WB
+  // Summer Mix Return Air WB
   const handleMixSummerRA_WBChanged = useCallback(
     (e: any) => {
       setValue('txbMixSummerRA_WB', parseFloat(e.target.value).toFixed(1));
@@ -890,7 +890,7 @@ export default function UnitInfoForm({
     [formCurrValues.txbMixSummerOA_WB]
   );
 
-  // Summer Return Air RH
+  // Summer Mix Return Air RH
   const handleMixSummerRA_RHChanged = useCallback(
     (e: any) => {
       setValue('txbMixSummerRA_RH', parseFloat(e.target.value).toFixed(1));
@@ -901,7 +901,7 @@ export default function UnitInfoForm({
     [formCurrValues.txbMixSummerOA_RH]
   );
 
-  // Winter Return Air DB
+  // Winter Mix Return Air DB
   const handleMixWinterRA_DBChanged = useCallback(
     (e: any) => {
       setValue('txbMixWinterRA_DB', parseFloat(e.target.value).toFixed(1));
@@ -912,7 +912,7 @@ export default function UnitInfoForm({
     [formCurrValues.txbMixWinterRA_DB]
   );
 
-  // Winter Return Air WB
+  // Winter Mix Return Air WB
   const handleMixWinterRA_WBChanged = useCallback(
     (e: any) => {
       setValue('txbMixWinterRA_WB', parseFloat(e.target.value).toFixed(1));
@@ -923,7 +923,7 @@ export default function UnitInfoForm({
     [formCurrValues.txbMixWinterRA_WB]
   );
 
-  // Winter Return Air RH
+  // Winter Mix Return Air RH
   const handleMixWinterRA_RHChanged = useCallback(
     (e: any) => {
       setValue('txbMixWinterRA_RH', parseFloat(e.target.value).toFixed(1));
@@ -2570,7 +2570,8 @@ export default function UnitInfoForm({
         e.target.value,
         intProductTypeID,
         Number(user?.UAL || 0),
-        Number(formValues.ckbBypass)
+        Number(formValues.ckbBypass),
+        Number(formValues.ckbPHI)
       );
 
       setValue('txbSummerSupplyAirCFM', value);
