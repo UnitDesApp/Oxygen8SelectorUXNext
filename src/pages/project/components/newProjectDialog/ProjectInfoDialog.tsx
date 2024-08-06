@@ -1190,6 +1190,13 @@ export default function ProjectInfoDialog({
                       <option value={0}>No contact available</option>
                     )}
                   </RHFSelect>
+                  <RHFTextField
+                      // type="number"
+                      size="small"
+                      name="txbSpecifyingFirm"
+                      label="Specifying Firm"
+                      // value={stationInfo?.altitude}
+                    />
                   <RHFSelect
                     native
                     size="small"
