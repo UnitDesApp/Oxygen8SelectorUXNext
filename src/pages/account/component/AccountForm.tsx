@@ -103,7 +103,7 @@ export default function AccountForm({ accountInfo }: AccountFormProps) {
               </Stack>
               <RHFTextField size="small" name="email" label="Email" />
               <RHFTextField size="small" name="company_name" label="Company Name" />
-              <RHFTextField size="small" name="job_name" label="Job Name" />
+              <RHFTextField size="small" name="job_name" label="Job Title" />
               <RHFTextField size="small" name="phone_number" label="Phone Number" />
               <Stack direction="row" justifyContent="space_around" spacing={1}>
                 <RHFTextField size="small" name="address1" label="Address1" />
@@ -111,7 +111,7 @@ export default function AccountForm({ accountInfo }: AccountFormProps) {
               </Stack>
               <Stack direction="row" justifyContent="space_around" spacing={1}>
                 <RHFTextField size="small" name="city" label="City" />
-                <RHFTextField size="small" name="status" label="Status" />
+                <RHFTextField size="small" name="state/Province" label="Status" />
                 <RHFTextField size="small" name="country" label="Country" />
               </Stack>
               <Stack spacing={3} alignItems="flex-end" sx={{ mt: 3 }}>

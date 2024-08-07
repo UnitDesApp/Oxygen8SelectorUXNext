@@ -26,7 +26,7 @@ import {
 import { ROLE_OPTIONS } from 'src/utils/constants';
 import { useAuthContext } from 'src/auth/useAuthContext';
 import CircularProgressLoading from 'src/components/loading/CircularProgressLoading';
-import { useGetSavedJobs, useGetJobSelTables } from 'src/hooks/useApi';
+import { useGetSavedJobs, useGetJobSelTables, useGetSavedJobsByUserAndCustomer } from 'src/hooks/useApi';
 import { PATH_APP } from 'src/routes/paths';
 import Scrollbar from 'src/components/scrollbar/Scrollbar';
 import ConfirmDialog from 'src/components/dialog/ConfirmDialog';
@@ -66,7 +66,20 @@ export default function Project() {
   const [openFail, setOpenFail] = useState<boolean>(false);
 
   // const { data: projects, isLoading: isLoadingProjects, refetch } = useGetAllProjects();
-  const { data: projects, isLoading: isLoadingProjects, refetch } = useGetSavedJobs();
+  // const { data: projects, isLoading: isLoadingProjects, refetch } = useGetSavedJobs();
+  const { data: projects, isLoading: isLoadingProjects, refetch } = useGetSavedJobsByUserAndCustomer(
+    {    
+      // oJobs: {
+      intUserId: typeof window !== 'undefined' && localStorage.getItem('userId'),
+      intUAL: typeof window !== 'undefined' && localStorage.getItem('UAL'),
+      // }
+      // intProjectID: projectId,
+    },
+    {
+      enabled: typeof window !== 'undefined',
+    }  
+  );
+
   const { data: jobSelTables } = useGetJobSelTables();
 
   const {
