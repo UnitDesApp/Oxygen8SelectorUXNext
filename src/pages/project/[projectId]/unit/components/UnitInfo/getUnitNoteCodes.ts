@@ -75,7 +75,7 @@ export const getUnitModelCodes = (
   let strUnitModelValueNovaBypassAccDecoupled = '';
 
   switch (_intUnitTypeId) {
-    case ClsID.intUnitTypeERV_ID:
+    case ClsID.intUnitTypeIdERV:
       strUnitModelUnitTypeValue = strUnitModelUnitTypeValue?.replace('_HRV', '');
       strUnitModelLocUnitTypeBypassValue = strUnitModelLocUnitTypeBypassValue?.replace('_HRV', '');
       strUnitModelOriLocUnitTypeBypassValue = strUnitModelOriLocUnitTypeBypassValue?.replace(
@@ -83,7 +83,7 @@ export const getUnitModelCodes = (
         ''
       );
       break;
-    case ClsID.intUnitTypeHRV_ID:
+    case ClsID.intUnitTypeIdHRV:
       strUnitModelUnitTypeValue = strUnitModelUnitTypeValue?.replace('_ERV', '');
       strUnitModelLocUnitTypeBypassValue = strUnitModelLocUnitTypeBypassValue?.replace('_ERV', '');
       strUnitModelOriLocUnitTypeBypassValue = strUnitModelOriLocUnitTypeBypassValue?.replace(
@@ -96,7 +96,7 @@ export const getUnitModelCodes = (
   }
 
   switch (_intLocId) {
-    case ClsID.intLocationIndoorID:
+    case ClsID.intLocationIdIndoor:
       strUnitModelLocValue = strUnitModelLocValue?.replace('_OU', '');
       strUnitModelOriLocValue = strUnitModelOriLocValue?.replace('_OU', '');
       strUnitModelLocBypassValue = strUnitModelLocBypassValue?.replace('_OU', '');
@@ -106,7 +106,7 @@ export const getUnitModelCodes = (
         ''
       );
       break;
-    case ClsID.intLocationOutdoorID:
+    case ClsID.intLocationIdOutdoor:
       strUnitModelLocValue = strUnitModelLocValue?.replace('_IN', '');
       strUnitModelOriLocValue = strUnitModelOriLocValue?.replace('_IN', '');
       strUnitModelLocBypassValue = strUnitModelLocBypassValue?.replace('_IN', '');
@@ -121,7 +121,7 @@ export const getUnitModelCodes = (
   }
 
   switch (_intOriId) {
-    case ClsID.intOrientationHorizontalID:
+    case ClsID.intOrientationIdHorizontal:
       strUnitModelOriValue = strUnitModelOriValue?.replace('_VER', '');
       strUnitModelOriBypassValue = strUnitModelOriBypassValue?.replace('_VER', '');
       strUnitModelOriLocValue = strUnitModelOriLocValue?.replace('_VER', '');
@@ -130,7 +130,7 @@ export const getUnitModelCodes = (
         ''
       );
       break;
-    case ClsID.intOrientationVerticalID:
+    case ClsID.intOrientationIdVertical:
       strUnitModelOriValue = strUnitModelOriValue?.replace('_HOR', '');
       strUnitModelOriBypassValue = strUnitModelOriBypassValue?.replace('_VER', '');
       strUnitModelOriLocValue = strUnitModelOriLocValue?.replace('_HOR', '');
@@ -153,7 +153,7 @@ export const getUnitModelCodes = (
     );
   }
 
-  if (_intUnitProdId === ClsID.intProdTypeNovaID && _intIsBypass === 1) {
+  if (_intUnitProdId === ClsID.intProdTypeIdNova && _intIsBypass === 1) {
     const dtModelBypassAccs = data.novaUnitModelBypass.filter(
       (item: any) => item.unit_model_value === strUnitModelLocValue
     );
