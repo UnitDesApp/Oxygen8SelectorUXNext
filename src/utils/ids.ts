@@ -94,10 +94,10 @@ export const intElecHeaterInstallIdInCasing = 5;
 
 export const intFluidTypeIdNA= 1;
 
-export const intNovaUnitModelID_A16IN = 1;
-export const intNovaUnitModelID_B20IN = 2;
-export const intNovaUnitModelID_A18OU = 6;
-export const intNovaUnitModelID_B22OU = 7;
+export const intNovaUnitModelIdA16IN = 1;
+export const intNovaUnitModelIdB20IN = 2;
+export const intNovaUnitModelIdA18OU = 6;
+export const intNovaUnitModelIdB22OU = 7;
 export const  intNovaUnitModelIdC70IN = 14;
 export const  intNovaUnitModelIdC70OU = 18;
 
@@ -131,7 +131,7 @@ export const  intEKEXVKitInstallIdCustomer = 3;
 export const intFanPlacementIdLeftID = 1;
 export const intFanPlacementIdRightID = 2;
 
-export const intSA_Open_2_ID = 3;
+export const intSA_OpenId2 = 3;
 
 export const  intDamperPosIdNA = 1;
 export const  intDamperPosIdSide = 2;
