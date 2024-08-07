@@ -23,6 +23,9 @@ export default class ProjectApi extends AbstractApi {
   duplicateJob = async (data: any) => 
     this.client.post(`/api/Job/DuplicateJob`, data);
 
+  getSavedJobsByUserAndCustomer = async (params: JSON): Promise<any> =>
+    this.client.post(`/api/Job/GetSavedJobsByUserAndCustomer`, params).then((res: any) => JSON.parse(res.data));
+
   getSavedJobs = async (): Promise<any> =>
     this.client.post(`/api/Job/GetSavedJobs`).then((res: any) => JSON.parse(res.data));
 

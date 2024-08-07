@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import { intDesignDataCooling_004_Heating_996_ID } from 'src/utils/ids';
+import { intDesignDataIdCooling_004_Heating_996 } from 'src/utils/ids';
 import * as Yup from 'yup';
 
 export const useGetDefaultValue = (edit: boolean, unitInfo: any, data: any) => {

@@ -408,9 +408,9 @@ export default function ProjectQuoteForm({ projectId, quoteInfo, refetch }: Proj
     info.fdtFOBPoint = db?.dbtSelFOBPoint;
 
     setFOBPointInfo(info);
-    info.defaultId = Ids.intFOB_PointVancouverID;
+    info.defaultId = Ids.intFOB_PointIdVancouver;
     // setValue('ddlFOBPoint', info.fdtFOBPoint?.[0]?.id);
-    setValue('ddlFOBPoint', Ids.intFOB_PointVancouverID);
+    setValue('ddlFOBPoint', Ids.intFOB_PointIdVancouver);
   }, [db, setValue]);
 
   const [countryInfo, setCountryInfo] = useState<any>([]);
@@ -424,9 +424,9 @@ export default function ProjectQuoteForm({ projectId, quoteInfo, refetch }: Proj
     info.fdtCountry = db?.dbtSelCountry;
 
     setCountryInfo(info);
-    info.defaultId = Ids.intCountryUSA_ID;
+    info.defaultId = Ids.intCountryIdUSA;
     // setValue('ddlCountry', info.fdtCountry?.[0]?.id);
-    setValue('ddlCountry', Ids.intCountryUSA_ID);
+    setValue('ddlCountry', Ids.intCountryIdUSA);
   }, [db, setValue]);
 
   // // Event handler for addding misc

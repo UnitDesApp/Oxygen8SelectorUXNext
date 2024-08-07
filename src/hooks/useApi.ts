@@ -28,6 +28,12 @@ export const useGetSavedJobs = (config?: UseQueryOptions<any, any, any, any>) =>
   return useQuery<any>(`get-saved-jobs`, () => api.project.getSavedJobs(), config);
 };
 
+
+export const useGetSavedJobsByUserAndCustomer = (params: any, config?: UseQueryOptions<any, any, any, any>) => {
+  const api = useApiContext();
+  return useQuery<any>([`get-saved-jobs-by-user-and-customer`, params], () => api.project.getSavedJobsByUserAndCustomer(params), config);
+};
+
 // export const useGetProjectInitInfo = (config?: UseQueryOptions<any, any, any, any>) => {
 //   const api = useApiContext();
 //   return useQuery<any>(`get-job-init-info`, () => api.project.getJobInitInfo(), config);
