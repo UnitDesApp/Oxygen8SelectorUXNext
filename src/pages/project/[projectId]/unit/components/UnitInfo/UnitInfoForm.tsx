@@ -693,7 +693,7 @@ export default function UnitInfoForm({
         // setValue('ddlMixRADamperPos', SelId);
       }
       
-      setValue('ddlMixOADamperPos', SelId);
+      setValue('ddlMixRADamperPos', SelId);
     }
   }, [db,formCurrValues.ckbMixingBox,formCurrValues.ddlMixOADamperPos]);
 
