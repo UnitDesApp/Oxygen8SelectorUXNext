@@ -72,8 +72,7 @@ export default function Project() {
       // oJobs: {
       intUserId: typeof window !== 'undefined' && localStorage.getItem('userId'),
       intUAL: typeof window !== 'undefined' && localStorage.getItem('UAL'),
-      // }
-      // intProjectID: projectId,
+      // strSearchBy: filterName,
     },
     {
       enabled: typeof window !== 'undefined',

@@ -155,9 +155,9 @@ export default function UnitInfoForm({
 //   return 0;                           
 // });
 
-  useEffect(() => {
-    refetch();
-  }, []);
+  // useEffect(() => {
+  //   refetch();
+  // }, []);
 
 
   // ---------------------- Initalize Default Values ---------------------
