@@ -74,7 +74,6 @@ export default function Project() {
       } else {
         setProjectName(null);
       }
-      // console.log(filteredProject, 'jjab');
     }
   }, [projects, projectId, projectIdNumber]);
 

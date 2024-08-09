@@ -58,23 +58,28 @@ const STEP_PAGE_NAME = ['Select product type', 'Info', 'Selection'];
 
 AddNewUnit.getLayout = (page: React.ReactElement) => <DashboardLayout>{page}</DashboardLayout>;
 
+type UnitTypeData = {
+  intProductTypeID: number;
+  txbProductType: string;
+  intApplicationTypeID: number;
+  txbApplicationType: string;
+  intUnitTypeID: number;
+  txbUnitType: string;
+};
+
+type UnitTypeProps = {
+  unitTypeData: UnitTypeData;
+  setUnitTypeData: React.Dispatch<React.SetStateAction<UnitTypeData>>;
+};
 
 
-export default function AddNewUnit() {
+export default function AddNewUnit({unitTypeData,setUnitTypeData}:UnitTypeProps) {
   // eslint-disable-next-line no-unused-vars
   const theme = useTheme();
   const { push, query } = useRouter();
   const { projectId } = query;
   const [currentStep, setCurrentStep] = useState(0);
   const [isSavedUnit, setIsSavedUnit] = useState(false);
-  const [unitTypeData, setUnitTypeData] = useState<{
-    intProductTypeID: number;
-    txbProductType: string;
-    intApplicationTypeID: number;
-    txbApplicationType: string;
-    intUnitTypeID: number;
-    txbUnitType: string;
-  }>(DEFAULT_UNIT_DATA);
   const [intUnitNo, setIntUnitNo] = useState(0);
   const [openRPDialog, setOpenRPDialog] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
@@ -175,6 +180,7 @@ export default function AddNewUnit() {
           )}
           {currentStep === 1 && (
             <UnitInfo
+            unitTypeData={unitTypeData} setUnitTypeData={setUnitTypeData}
               projectId={Number(projectId)}
               isSavedUnit={isSavedUnit}
               intProductTypeID={unitTypeData.intProductTypeID}
