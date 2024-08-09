@@ -59,6 +59,15 @@ import {
 import { getUnitModelCodes } from './getUnitNoteCodes';
 
 //------------------------------------------------
+type UnitTypeData = {
+  intProductTypeID: number;
+  txbProductType: string;
+  intApplicationTypeID: number;
+  txbApplicationType: string;
+  intUnitTypeID: number;
+  txbUnitType: string;
+};
+
 type UnitInfoFormProps = {
   projectId: number;
   unitId?: number;
@@ -78,9 +87,13 @@ type UnitInfoFormProps = {
   submitButtonRef?: any;
   setIsSaving: Function;
   moveNextStep: Function;
+  unitTypeData?: UnitTypeData;
+  setUnitTypeData?: React.Dispatch<React.SetStateAction<UnitTypeData>>;
 };
 
 export default function UnitInfoForm({
+  unitTypeData,
+  setUnitTypeData,
   projectId,
   unitId,
   setIsSavedUnit,
