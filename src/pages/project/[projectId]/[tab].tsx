@@ -126,7 +126,10 @@ export default function Project() {
               <Button
                 variant="contained"
                 startIcon={<Iconify icon="eva:plus-fill" />}
-                onClick={() => projectId && push(PATH_APP.newUnit(projectId?.toString()))}
+                // onClick={() => projectId && push(PATH_APP.newUnit(projectId?.toString()))}
+                onClick={() => 
+                  
+                  projectId && push(PATH_APP.editUnit(projectId?.toString(), '0'))}
               >
                 Add new unit
               </Button>

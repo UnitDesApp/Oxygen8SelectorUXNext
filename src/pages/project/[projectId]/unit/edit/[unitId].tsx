@@ -25,6 +25,7 @@ import UnitInfo from '../components/UnitInfo/UnitInfo';
 import SelectionReportDialog from '../../components/dialog/SelectionReportDialog';
 import SelectionWrapper from '../components/Selection/SelectionWrapper';
 import Selection from '../components/Selection/Selection';
+import NewUnit from '../new';
 
 // ----------------------------------------------------------------------
 
@@ -61,6 +62,8 @@ export default function EditUnit() {
   const [isProcessingData, setIsProcessingData] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const submitButtonRef = useRef<HTMLButtonElement>(null);
+  const isNewUnitSelected = localStorage.getItem('isNewUnitSelected');
+  
 
   const closeDialog = useCallback(() => {
     setOpenRPDialog(false);
@@ -105,62 +108,68 @@ export default function EditUnit() {
       <Head>
         <title> New Unit | Oxygen8 </title>
       </Head>
-      {isProcessingData ? (
-        <CircularProgressLoading />
+      {Number(isNewUnitSelected) === 0  && Number(unitId) === 0? (
+        <NewUnit /> 
       ) : (
-        <Container maxWidth="xl">
-          <CustomBreadcrumbs
-            heading={`Edit: ${STEP_PAGE_NAME[currentStep]}`}
-            links={[
-              { name: 'My projects', href: PATH_APP.project },
-              {
-                name: 'Dashboard',
-                href: PATH_APP.projectDashboard(projectId?.toString() || '', 'unitlist'),
-              },
-              { name: 'Edit Unit' },
-            ]}
-            sx={{ paddingLeft: '24px', paddingTop: '24px' }}
-            action={
-              currentStep === 2 && (
-                <Button
-                  variant="text"
-                  startIcon={<Iconify icon="bxs:download" />}
-                  onClick={openDialog}
-                >
-                  Export report
-                </Button>
-              )
-            }
-          />
-          <Box sx={{ my: 3 }}>
-            {currentStep === 1 && projectId && unitId && (
-              <UnitInfo
-                projectId={Number(projectId)}
-                unitId={Number(unitId)}
-                isSavedUnit={isSavedUnit}
-                setIsSavedUnit={(no: number) => {
-                  setIsSavedUnit(true);
-                }}
-                edit
-                submitButtonRef={submitButtonRef}
-                setIsSaving={setIsSaving}
-                moveNextStep={() => setCurrentStep(2)}
+          <>
+          {isProcessingData ? (
+            <CircularProgressLoading />
+          ) : (
+            <Container maxWidth="xl">
+              <CustomBreadcrumbs
+                heading={`Edit: ${STEP_PAGE_NAME[currentStep]}`}
+                links={[
+                  { name: 'My projects', href: PATH_APP.project },
+                  {
+                    name: 'Dashboard',
+                    href: PATH_APP.projectDashboard(projectId?.toString() || '', 'unitlist'),
+                  },
+                  { name: 'Edit Unit' },
+                ]}
+                sx={{ paddingLeft: '24px', paddingTop: '24px' }}
+                action={
+                  currentStep === 2 && (
+                    <Button
+                      variant="text"
+                      startIcon={<Iconify icon="bxs:download" />}
+                      onClick={openDialog}
+                    >
+                      Export report
+                    </Button>
+                  )
+                }
               />
-            )}
-            {currentStep === 2 && projectId && unitId && (
-              // <SelectionWrapper projectId={Number(projectId)} unitId={Number(unitId)} />
-              <Selection
-                intJobId={Number(projectId)}
-                intUnitNo={Number(unitId)}
-                intProdTypeId={0}
-              />
-            )}
-          </Box>
-        </Container>
+              <Box sx={{ my: 3 }}>
+                {currentStep === 1 && projectId && unitId && (
+                  <UnitInfo
+                    projectId={Number(projectId)}
+                    unitId={Number(unitId)}
+                    isSavedUnit={isSavedUnit}
+                    setIsSavedUnit={(no: number) => {
+                      setIsSavedUnit(true);
+                    }}
+                    edit
+                    submitButtonRef={submitButtonRef}
+                    setIsSaving={setIsSaving}
+                    moveNextStep={() => setCurrentStep(2)}
+                  />
+                )}
+                {currentStep === 2 && projectId && unitId && (
+                  // <SelectionWrapper projectId={Number(projectId)} unitId={Number(unitId)} />
+                  <Selection
+                    intJobId={Number(projectId)}
+                    intUnitNo={Number(unitId)}
+                    intProdTypeId={0}
+                  />
+                )}
+              </Box>
+            </Container>
+          )}            
+        </>
       )}
       <FooterStepStyle>
         <Grid container>
-          <Grid item xs={10}>
+          <Grid item xs={9}>
             <Stack
               direction="row"
               divider={<Divider orientation="vertical" flexItem />}
@@ -212,7 +221,7 @@ export default function EditUnit() {
               Unit info
             </Button>
           </Grid>
-          <Grid item xs={1} textAlign="center" alignContent="right">
+          <Grid item xs={2} textAlign="center" alignContent="right">
             <LoadingButton
               variant="contained"
               color="primary"
@@ -220,8 +229,16 @@ export default function EditUnit() {
               disabled={validateContinue()}
               loading={isSaving}
             >
-              {currentStep !== 2 ? 'Continue' : 'Done'}
-              <Iconify icon={currentStep !== 2 ? 'akar-icons:arrow-right' : 'icons8:cancel-2'} />
+              {/* {currentStep !== 2 ? 'Continue' : 'Done'} */}
+              {/* <Iconify icon={currentStep !== 2 ? 'akar-icons:arrow-right' : 'icons8:cancel-2'} /> */}
+
+              {(Number(isNewUnitSelected) === 1 && Number(unitId) === 0) ? (
+                'Add Unit' ) : (
+                <>
+                  {Number(unitId) > 0 && currentStep !== 2 ? 'Update Unit' : 'Done'}
+                  <Iconify icon={currentStep !== 2 ? '' : 'icons8:cancel-2'} />
+                </>
+              )}
             </LoadingButton>
           </Grid>
         </Grid>

@@ -58,6 +58,8 @@ const STEP_PAGE_NAME = ['Select product type', 'Info', 'Selection'];
 
 AddNewUnit.getLayout = (page: React.ReactElement) => <DashboardLayout>{page}</DashboardLayout>;
 
+
+
 export default function AddNewUnit() {
   // eslint-disable-next-line no-unused-vars
   const theme = useTheme();
@@ -78,6 +80,8 @@ export default function AddNewUnit() {
   const [isSaving, setIsSaving] = useState(false);
   const submitButtonRef = useRef<HTMLButtonElement>(null);
 
+
+
   const closeDialog = useCallback(() => {
     setOpenRPDialog(false);
   }, []);
@@ -96,10 +100,12 @@ export default function AddNewUnit() {
 
   const onSelectUnitTypeItem = (value: number, txb: string) => {
     setUnitTypeData({ ...unitTypeData, intUnitTypeID: value, txbUnitType: txb });
+    localStorage.setItem('isNewUnitSelected', '1');
+    push(PATH_APP.editUnit(projectId?.toString() || '0', '0'));
+
   };
 
-  const onClickNextStep = () => {
-    if (currentStep < 2) {
+  const onClickNextStep = () => {    if (currentStep < 2) {
       if (currentStep === 1 && submitButtonRef?.current) {
         submitButtonRef?.current.click();
       } else {
@@ -195,7 +201,7 @@ export default function AddNewUnit() {
       </Container>
       <FooterStepStyle>
         <Grid container>
-          <Grid item xs={8}>
+          <Grid item xs={10}>
             <Stack
               direction="row"
               divider={<Divider orientation="vertical" flexItem />}
@@ -236,15 +242,17 @@ export default function AddNewUnit() {
               </Item>
             </Stack>
           </Grid>
-          <Grid item xs={4} textAlign="center" alignContent="right">
+          <Grid item xs={2} textAlign="center" alignContent="right">
             <Button
               variant="contained"
               color="primary"
               onClick={onClickNextStep}
               disabled={validateContinue()}
             >
-              {currentStep !== 2 ? 'Continue' : 'Done'}
-              <Iconify icon={currentStep !== 2 ? 'akar-icons:arrow-right' : 'icons8:cancel-2'} />
+              {/* {currentStep !== 2 ? 'Continue' : 'Done'} */}
+              {/* <Iconify icon={currentStep !== 2 ? 'akar-icons:arrow-right' : 'icons8:cancel-2'} /> */}
+              {currentStep !== 2 ? 'Add Unit' : 'Done'}
+              <Iconify icon={currentStep !== 2 ? '' : 'icons8:cancel-2'} />
             </Button>
           </Grid>
         </Grid>
