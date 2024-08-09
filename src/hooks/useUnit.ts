@@ -155,7 +155,7 @@ const {
       // Unit
       intProductTypeID: edit ? intProdTypeId : 0,
       intUnitTypeID: edit ? intUnitTypeId : 0,
-      ddlUnitTypeId: edit ? intUnitTypeId : 0,
+      ddlUnitType: edit ? intUnitTypeId : 0,
       txtTag: edit ? strTag: '',
       txbQty: edit ? intQty: 1,
       ddlUnitVoltage: edit ? intUnitVoltageId : 1,

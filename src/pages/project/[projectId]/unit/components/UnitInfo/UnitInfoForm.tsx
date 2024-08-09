@@ -31,6 +31,7 @@ import { RHFCheckbox, RHFSelect, RHFTextField } from 'src/components/hook-form';
 import { useApiContext } from 'src/contexts/ApiContext';
 import { any, number } from 'prop-types';
 import { indexOf } from 'lodash';
+// import { useGetAllUnits } from 'src/hooks/useApi';
 import {
   getBypass,
   getComponentInfo,
@@ -56,7 +57,6 @@ import {
   getValveAndActuatorInfo,
 } from './handleUnitModel';
 import { getUnitModelCodes } from './getUnitNoteCodes';
-import { useGetAllUnits } from 'src/hooks/useApi';
 
 //------------------------------------------------
 type UnitInfoFormProps = {
@@ -141,19 +141,19 @@ export default function UnitInfoForm({
 
   const { push } = useRouter();
 
-  // fetch data
-  const {
-    data: units,
-    refetch,
-  } = useGetAllUnits({
-    jobId: Number(projectId),
-  });
+//   // fetch data
+//   const {
+//     data: units,
+//     refetch,
+//   } = useGetAllUnits({
+//     jobId: Number(projectId),
+//   });
 
-const sortedUnits = units?.unitList.sort((a: any, b: any) => {
-  if ((a.unit_no) === String(unitId)) return -1;
-  if ((b.unit_no) === String(unitId)) return 1;  
-  return 0;                           
-});
+// const sortedUnits = units?.unitList.sort((a: any, b: any) => {
+//   if ((a.unit_no) === String(unitId)) return -1;
+//   if ((b.unit_no) === String(unitId)) return 1;  
+//   return 0;                           
+// });
 
   useEffect(() => {
     refetch();
@@ -493,6 +493,23 @@ const sortedUnits = units?.unitList.sort((a: any, b: any) => {
     formValues.ddlOrientation,
     formValues.ddlUnitModel,
   ]);
+
+
+  const [unitTypeInfo, setUnitTypeInfo] = useState<any>([]);
+  useMemo(() => {
+    const info: { fdtUnitType: any; isVisible: boolean; defaultId: number } = {
+      fdtUnitType: [],
+      isVisible: false,
+      defaultId: 0,
+    };
+
+    info.fdtUnitType = db?.dbtSelUnitType;
+
+    setUnitTypeInfo(info);
+    setValue('ddlUnitType', intUnitTypeID);
+
+  }, [db, intUnitTypeID]);
+
 
 
   const [controlsPrefInfo, setControlsPrefInfo] = useState<any>([]);
@@ -3349,9 +3366,14 @@ const sortedUnits = units?.unitList.sort((a: any, b: any) => {
                       placeholder=""
                       disabled
                     >
-                      {sortedUnits?.map((item: any, index: number) => (
+                      {/* {sortedUnits?.map((item: any, index: number) => (
                         <option key={index} value={item.id}>
                           {item.unit_type}
+                        </option>
+                      ))} */}
+                      {unitTypeInfo?.fdtUnitType?.map((item: any, index: number) => (
+                        <option key={index} value={item.id}>
+                          {item.items}
                         </option>
                       ))}
                     </RHFSelect>

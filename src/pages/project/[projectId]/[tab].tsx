@@ -12,6 +12,7 @@ import useTabs from 'src/hooks/useTabs';
 import { capitalCase } from 'change-case';
 import CustomBreadcrumbs from 'src/components/custom-breadcrumbs';
 import Iconify from 'src/components/iconify';
+import { useGetSavedJobsByUserAndCustomer } from 'src/hooks/useApi';
 import { useSettingsContext } from '../../../components/settings';
 import DashboardLayout from '../../../layouts/dashboard';
 // import sub components
@@ -23,7 +24,7 @@ import ProjectStatus from './components/status/ProjectStatus';
 import ProjectNote from './components/note/ProjectNote';
 import ReportDialog from './components/dialog/ReportDialog';
 import ProjectDetail from '../components/newProjectDialog/ProjectInfo';
-import { useGetSavedJobsByUserAndCustomer } from 'src/hooks/useApi';
+
 
 // ----------------------------------------------------------------------
 
@@ -73,9 +74,9 @@ export default function Project() {
       } else {
         setProjectName(null);
       }
-      console.log(filteredProject, 'jjab');
+      // console.log(filteredProject, 'jjab');
     }
-  }, [projects, projectId]);
+  }, [projects, projectId, projectIdNumber]);
 
   // useTab
   const { currentTab, onChangeTab, setCurrentTab } = useTabs(tab?.toString());
@@ -172,7 +173,7 @@ export default function Project() {
                 startIcon={<Iconify icon="eva:plus-fill" />}
                 // onClick={() => projectId && push(PATH_APP.newUnit(projectId?.toString()))}
                 onClick={() => 
-                  
+
                   projectId && push(PATH_APP.editUnit(projectId?.toString(), '0'))}
               >
                 Add new unit
