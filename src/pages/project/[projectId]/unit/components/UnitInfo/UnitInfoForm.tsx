@@ -56,6 +56,7 @@ import {
   getValveAndActuatorInfo,
 } from './handleUnitModel';
 import { getUnitModelCodes } from './getUnitNoteCodes';
+import { useGetAllUnits } from 'src/hooks/useApi';
 
 //------------------------------------------------
 type UnitInfoFormProps = {
@@ -138,7 +139,26 @@ export default function UnitInfoForm({
     panel8: true,
   });
 
-  const { push, query } = useRouter();
+  const { push } = useRouter();
+
+  // fetch data
+  const {
+    data: units,
+    refetch,
+  } = useGetAllUnits({
+    jobId: Number(projectId),
+  });
+
+const sortedUnits = units?.unitList.sort((a: any, b: any) => {
+  if ((a.unit_no) === String(unitId)) return -1;
+  if ((b.unit_no) === String(unitId)) return 1;  
+  return 0;                           
+});
+
+  useEffect(() => {
+    refetch();
+  }, []);
+
 
   // ---------------------- Initalize Default Values ---------------------
   const defaultValues = useGetDefaultValue(edit, unitInfo, db);
@@ -3329,9 +3349,9 @@ export default function UnitInfoForm({
                       placeholder=""
                       disabled
                     >
-                      {db?.dbtSelUnitType.map((item: any, index: number) => (
+                      {sortedUnits?.map((item: any, index: number) => (
                         <option key={index} value={item.id}>
-                          {item.items}
+                          {item.unit_type}
                         </option>
                       ))}
                     </RHFSelect>
