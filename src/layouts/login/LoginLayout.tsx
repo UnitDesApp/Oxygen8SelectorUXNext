@@ -21,7 +21,7 @@ export default function LoginLayout({ children, illustration, title }: Props) {
         <Stack sx={{ width: 1 }}> {children} </Stack>
       </StyledContent>
       <img
-        src="/assets/illustrations/illustration_login.png"
+        src="/assets/illustrations/mountain_login.png"
         alt="auth background"
         style={{
           width: '100vw',

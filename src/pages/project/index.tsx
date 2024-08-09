@@ -203,16 +203,16 @@ export default function Project() {
         <title> Project | Oxygen8 </title>
       </Head>
       <Container maxWidth={themeStretch ? false : 'xl'}>
+      <Alert sx={{ width: '100%', mt: 3, mb: 3 }} severity="info">
+          <b>Pricing module is now availble</b> - select Quote after making a selection to review
+          and generate a PDF. All values shown are Net prices.
+        </Alert>
         <Stack direction="row" alignItems="center" justifyContent="space-between">
           <Typography variant="h3" component="h1" paragraph>
             Projects
           </Typography>
         </Stack>
 
-        <Alert sx={{ width: '100%', mt: 3, mb: 3 }} severity="info">
-          <b>Pricing module is now availble</b> - select Quote after making a selection to review
-          and generate a PDF. All values shown are Net prices.
-        </Alert>
 
         {!dataFiltered && isLoadingProjects ? (
           <Box>
