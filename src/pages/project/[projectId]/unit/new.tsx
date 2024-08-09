@@ -179,22 +179,29 @@ export default function AddNewUnit({unitTypeData,setUnitTypeData}:UnitTypeProps)
             />
           )}
           {currentStep === 1 && (
-            <UnitInfo
-            unitTypeData={unitTypeData} setUnitTypeData={setUnitTypeData}
-              projectId={Number(projectId)}
-              isSavedUnit={isSavedUnit}
-              intProductTypeID={unitTypeData.intProductTypeID}
-              intUnitTypeID={unitTypeData.intUnitTypeID}
-              setIsSavedUnit={(no: number) => {
-                setIntUnitNo(no);
-                setIsSavedUnit(true);
-              }}
-              txbProductType={unitTypeData.txbProductType}
-              txbUnitType={unitTypeData.txbUnitType}
-              setIsSaving={setIsSaving}
-              moveNextStep={moveToNextStep}
-              submitButtonRef={submitButtonRef}
-            />
+            <>
+              <UnitInfo
+                unitTypeData={unitTypeData} setUnitTypeData={setUnitTypeData}
+                projectId={Number(projectId)}
+                isSavedUnit={isSavedUnit}
+                intProductTypeID={unitTypeData.intProductTypeID}
+                intUnitTypeID={unitTypeData.intUnitTypeID}
+                setIsSavedUnit={(no: number) => {
+                  setIntUnitNo(no);
+                  setIsSavedUnit(true);
+                }}
+                txbProductType={unitTypeData.txbProductType}
+                txbUnitType={unitTypeData.txbUnitType}
+                setIsSaving={setIsSaving}
+                moveNextStep={moveToNextStep}
+                submitButtonRef={submitButtonRef}
+              />
+              <Selection
+                intJobId={Number(projectId)}
+                intUnitNo={Number(intUnitNo)}
+                intProdTypeId={Number(unitTypeData.intProductTypeID)}
+              />
+            </>
           )}
           {currentStep === 2 && (
             <Selection
@@ -249,17 +256,15 @@ export default function AddNewUnit({unitTypeData,setUnitTypeData}:UnitTypeProps)
             </Stack>
           </Grid>
           <Grid item xs={2} textAlign="center" alignContent="right">
-            <Button
+             {/* <Button
               variant="contained"
               color="primary"
               onClick={onClickNextStep}
               disabled={validateContinue()}
             >
-              {/* {currentStep !== 2 ? 'Continue' : 'Done'} */}
-              {/* <Iconify icon={currentStep !== 2 ? 'akar-icons:arrow-right' : 'icons8:cancel-2'} /> */}
               {currentStep !== 2 ? 'Add Unit' : 'Done'}
               <Iconify icon={currentStep !== 2 ? '' : 'icons8:cancel-2'} />
-            </Button>
+            </Button> */}
           </Grid>
         </Grid>
       </FooterStepStyle>

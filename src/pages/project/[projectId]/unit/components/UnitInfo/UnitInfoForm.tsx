@@ -15,6 +15,7 @@ import {
   Typography,
   // colors,
   // Collapse,
+  Button
 } from '@mui/material';
 // hooks
 import { yupResolver } from '@hookform/resolvers/yup';
@@ -32,6 +33,8 @@ import { useApiContext } from 'src/contexts/ApiContext';
 import { any, number } from 'prop-types';
 import { indexOf } from 'lodash';
 // import { useGetAllUnits } from 'src/hooks/useApi';
+import Selection from '../Selection/Selection';
+
 import {
   getBypass,
   getComponentInfo,
@@ -118,6 +121,7 @@ export default function UnitInfoForm({
   const [remainingOpeningsInfo, setRemainingOpeningsInfo] = useState<any>({});
   const isResetCalled = useRef(false);
   const user = useAuthContext();
+  const isNewUnitSelected = localStorage.getItem('isNewUnitSelected');
 
   // ------------------------------- Checkbox State -----------------------------------
   const [ckbBypass, setCkbBypassVal] = useState(false);
@@ -205,6 +209,13 @@ export default function UnitInfoForm({
   // const values = watch();
   const formValues = watch(); // watch()
   let formCurrValues = getValues();
+
+  if (Number(unitTypeData?.intUnitTypeID) > 0)
+  {
+    intProductTypeID = unitTypeData?.intProductTypeID || 0;
+    intUnitTypeID = unitTypeData?.intUnitTypeID || 0;
+  }
+
 
   /*
    * Style functions that check if the compoment should be displayed or not
@@ -336,7 +347,8 @@ export default function UnitInfoForm({
         intRAFilterModelId: formCurrValues.ddlRA_FilterModel,
         intIsMixingBox: Number(formCurrValues.ckbMixingBox) === 1 ? 1 : 0,
         intPreheatCompId: formCurrValues.ddlPreheatComp,
-        intIsBackupHeating: formCurrValues.txbWinterReturnAirRH,
+        intIsPreheatElecHeatBackupOnly: 0,
+        intIsBackupHeating: Number(formCurrValues.ckbBackupHeating) === 1 ? 1 : 0,
         intHeatExchCompId: formCurrValues.ddlHeatExchComp,
         intCoolingCompId: formCurrValues.ddlCoolingComp,
         intHeatingCompId: formCurrValues.ddlHeatingComp,
@@ -362,8 +374,9 @@ export default function UnitInfoForm({
         intCoolingCWCValveAndActuatorId: 0,
         intHeatingHWCValveAndActuatorId: 0,
         intReheatHWCValveAndActuatorId: 0,
-        intValveTypeId: Number(formCurrValues.ddlValveType),
         intIsDrainPan: Number(formCurrValues.ckbDrainPan) === 1 ? 1 : 0,
+        intValveTypeId: Number(formCurrValues.ddlValveType),
+        intEKEXVKitInstallId: 0,
         dblOAFilterPD: formCurrValues.txbOA_FilterPD,
         dblRAFilterPD: formCurrValues.txbRA_FilterPD,
         dblPreheatSetpointDB: formCurrValues.txbWinterPreheatSetpointDB,
@@ -371,7 +384,7 @@ export default function UnitInfoForm({
         dblCoolingSetpointWB: formCurrValues.txbSummerCoolingSetpointWB,
         dblHeatingSetpointDB: formCurrValues.txbWinterHeatingSetpointDB,
         dblReheatSetpointDB: formCurrValues.txbSummerReheatSetpointDB,
-        dblBackupHeatingSetpontDB: 0,
+        dblBackupHeatingSetpontDB:  formCurrValues.txbBackupHeatingSetpointDB,
         intCoolingFluidTypeId: formCurrValues.ddlCoolingFluidType,
         intCoolingFluidConcentId: formCurrValues.ddlCoolingFluidConcentration,
         dblCoolingFluidEntTemp: formCurrValues.txbCoolingFluidEntTemp,
@@ -446,8 +459,17 @@ export default function UnitInfoForm({
       // const oUC = getAllFormData1(formValues);
       const oUC: any = getUnitInputs();
       const data = await api.project.saveUnit(oUC);
-      if (onSuccess) onSuccess(true);
+      if (onSuccess) {
+        onSuccess(true);
+        unitId = data?.intUnitNo;
+        <Selection
+        intJobId={Number(projectId)}
+        intUnitNo={Number(unitId)}
+        intProdTypeId={0}
+        />
+      }
       if (setIsSavedUnit) setIsSavedUnit(data?.intUnitNo || 0);
+
       push(PATH_APP.editUnit(projectId?.toString() || '0', unitId?.toString() || '0'));
       moveNextStep();
     } catch (e) {
@@ -3327,6 +3349,11 @@ export default function UnitInfoForm({
     }
   }, []); // <-- empty dependency array - This will only trigger when the component mounts and no-render
 
+  const onClickUnitInfo = () => {
+    // setCurrentStep(1);
+    push(PATH_APP.editUnit(projectId?.toString() || '0', unitId?.toString() || '0'));
+  };
+
 
   return (
     <FormProvider methods={methods} onSubmit={handleSubmit(onSubmit)}>
@@ -4672,6 +4699,20 @@ export default function UnitInfoForm({
                     setValueWithCheck1(e, 'txbSummerReheatSetpointDB');
                   }}
                 />
+                                <RHFTextField
+                  size="small"
+                  name="txbBackupHeatingSetpointDB"
+                  label="Backup Heating Setpoint DB (F):"
+                  autoComplete="off"
+                  // sx={getDisplay(
+                  //   Number(formValues.ddlReheatComp) === IDs.intCompIdElecHeater ||
+                  //     Number(formValues.ddlReheatComp) === IDs.intCompIdHWC ||
+                  //     Number(formValues.ddlReheatComp) === IDs.intCompIdHGRH
+                  // )}
+                  onChange={(e: any) => {
+                    setValueWithCheck1(e, 'txbBackupHeatingSetpointDB');
+                  }}
+                />
                 {isAvailable(db?.dbtSelHanding) && (
                   <RHFSelect
                     native
@@ -5157,7 +5198,7 @@ export default function UnitInfoForm({
         </Accordion>
         <Stack direction="row" justifyContent="flex-end">
           <Box sx={{ width: '150px' }}>
-            <LoadingButton
+            {/* <LoadingButton
               ref={submitButtonRef}
               type="submit"
               variant="contained"
@@ -5167,7 +5208,52 @@ export default function UnitInfoForm({
               sx={{ visibility: 'hidden' }}
             >
               {edit ? 'Update Unit' : 'Add New Unit'}
-            </LoadingButton>
+            </LoadingButton> */}
+
+
+
+
+                {(Number(isNewUnitSelected) === 1 && Number(unitId) === 0) ? (
+                <LoadingButton
+                  variant="contained"
+                  color="primary"
+                  onClick={onSubmit}
+                  // disabled={validateContinue()}
+                  // loading={isSaving}
+                >
+                  Add Unit
+                </LoadingButton>
+              ) : (
+                <>
+                {(Number(unitId) > 0) ? (
+                  <LoadingButton
+                    variant="contained"
+                    color="primary"
+                    onClick={onSubmit}
+                    // disabled={validateContinue()}
+                    // loading={isSaving}
+                  >
+                    Update Unit
+                  </LoadingButton>
+                ) : (
+                  <>
+                  {(Number(unitId) > 0 && !isLoading) ? (
+                    <Button
+                    variant="contained"
+                    color="primary"
+                    onClick={onClickUnitInfo}
+                    // sx={{ display: currentStep === 2 && !isProcessingData ? 'inline-flex' : 'none' }}
+                    startIcon={<Iconify icon="akar-icons:arrow-left" />}
+                  >
+                    Unit info
+                  </Button>
+                  ) : (
+                    null
+                  )}
+                  </>
+                )}
+                </>
+              )}
           </Box>
         </Stack>
       </Stack>
