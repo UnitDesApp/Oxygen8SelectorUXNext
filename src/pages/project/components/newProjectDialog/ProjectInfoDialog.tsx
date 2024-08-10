@@ -479,11 +479,13 @@ export default function ProjectInfoDialog({
     setBasisOfDesignInfo(dtSelBasisOfDesign);
 
     if (dtSelBasisOfDesign?.length > 0) {
-      setValue('ddlBasisOfDesign', dtSelBasisOfDesign?.[0]?.id);
+      // setValue('ddlBasisOfDesign', dtSelBasisOfDesign?.[0]?.id);
+      setValue('ddlBasisOfDesign', Ids.intBasisOfDesignIdYes);
     } else {
       setValue('ddlBasisOfDesign', 0);
     }
   }, [dbtBasisOfDesign, setValue]);
+
 
   const [applicationInfo, setApplicationInfo] = useState([]);
   useMemo(() => {

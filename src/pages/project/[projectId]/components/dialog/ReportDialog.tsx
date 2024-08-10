@@ -21,10 +21,11 @@ import { LoadingButton } from '@mui/lab';
 import { useExport } from 'src/hooks/useExport';
 
 const EXPORT_METHODS = [
-  { label: 'Submittal', id: 'submittal' },
-  { label: 'Selection', id: 'selection' },
-  { label: 'Revit files', id: 'revit_files' },
   { label: 'Quote', id: 'quote' },
+  { label: 'Selection', id: 'selection' },
+  { label: 'Mechanical Schedule', id: 'mech_schedule' },
+  { label: 'Revit files', id: 'revit_files' },
+  { label: 'Submittal', id: 'submittal' },
 ];
 
 interface ReportDialogProps {

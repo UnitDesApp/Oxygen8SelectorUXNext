@@ -26,6 +26,15 @@ interface TUnitInfoData {
 }
 
 //------------------------------------------------
+type UnitTypeData = {
+  intProductTypeID: number;
+  txbProductType: string;
+  intApplicationTypeID: number;
+  txbApplicationType: string;
+  intUnitTypeID: number;
+  txbUnitType: string;
+};
+
 type UnitInfoProps = {
   projectId: number;
   unitId?: number;
@@ -42,9 +51,13 @@ type UnitInfoProps = {
   submitButtonRef?: any;
   setIsSaving: Function;
   moveNextStep: Function;
+  unitTypeData: UnitTypeData;
+  setUnitTypeData: React.Dispatch<React.SetStateAction<UnitTypeData>>;
 };
 
 export default function UnitInfo({
+  unitTypeData,
+  setUnitTypeData,
   projectId,
   unitId,
   setIsSavedUnit,
@@ -111,6 +124,8 @@ export default function UnitInfo({
         <Box>
           {unitData && baseData && unitInfo && (
             <UnitInfoForm
+            unitTypeData={unitTypeData} 
+            setUnitTypeData={setUnitTypeData}
               projectId={projectId}
               unitId={edit ? unitId : -1}
               db={baseData}
