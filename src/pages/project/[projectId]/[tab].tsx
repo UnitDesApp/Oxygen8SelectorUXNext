@@ -2,7 +2,7 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 // next
 import Head from 'next/head';
-import { Box, Container, Stack, Tab, Button, Tabs } from '@mui/material';
+import { Box, Container, Stack, Tab, Button, Tabs, Typography } from '@mui/material';
 // layouts
 // components
 import { PROJECT_DASHBOARD_TABS } from 'src/utils/constants';
@@ -12,16 +12,19 @@ import useTabs from 'src/hooks/useTabs';
 import { capitalCase } from 'change-case';
 import CustomBreadcrumbs from 'src/components/custom-breadcrumbs';
 import Iconify from 'src/components/iconify';
+import { useGetSavedJobsByUserAndCustomer } from 'src/hooks/useApi';
 import { useSettingsContext } from '../../../components/settings';
 import DashboardLayout from '../../../layouts/dashboard';
 // import sub components
 import UnitList from './components/unitlist/UnitList';
-import ProjectDetail from './components/detail/ProjectDetail';
+// import ProjectDetail from './components/detail/ProjectDetail';
 import ProjectQuote from './components/quote/ProjectQuote';
 import ProjectSubmittal from './components/submittal/ProjectSubmittal';
 import ProjectStatus from './components/status/ProjectStatus';
 import ProjectNote from './components/note/ProjectNote';
 import ReportDialog from './components/dialog/ReportDialog';
+import ProjectDetail from '../components/newProjectDialog/ProjectInfo';
+
 
 // ----------------------------------------------------------------------
 
@@ -29,11 +32,50 @@ Project.getLayout = (page: React.ReactElement) => <DashboardLayout>{page}</Dashb
 
 // ----------------------------------------------------------------------
 
+// define Types
+type ProjectItem = {
+  Created_User_Full_Name: string;
+  Customer_Name: string;
+  Revised_User_Full_Name: string;
+  company_contact_name: string;
+  company_name: string;
+  created_date: string;
+  id: number;
+  job_name: string;
+  reference_no: string;
+  revised_date: string;
+  revision_no: number;
+};
+
 export default function Project() {
   const { themeStretch } = useSettingsContext();
-  // router
   const { push, query } = useRouter();
   const { projectId, tab } = query;
+  const projectIdNumber = Number(projectId);
+  const { data: projects } = useGetSavedJobsByUserAndCustomer(
+    {
+      intUserId: typeof window !== 'undefined' && localStorage.getItem('userId'),
+      intUAL: typeof window !== 'undefined' && localStorage.getItem('UAL'),
+    },
+    {
+      enabled: typeof window !== 'undefined',
+    }
+  );
+  const [projectName, setProjectName] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (projects && projects.dbtJobList) {
+      const filteredProject = projects.dbtJobList.find(
+        (item: ProjectItem) => item.id === projectIdNumber
+      );
+
+      if (filteredProject) {
+        setProjectName(filteredProject.job_name);
+      } else {
+        setProjectName(null);
+      }
+    }
+  }, [projects, projectId, projectIdNumber]);
 
   // useTab
   const { currentTab, onChangeTab, setCurrentTab } = useTabs(tab?.toString());
@@ -59,7 +101,12 @@ export default function Project() {
       {
         value: PROJECT_DASHBOARD_TABS.PROJECT_DETAILS,
         title: 'Project Detail',
-        component: <ProjectDetail />,
+        component: (
+          <ProjectDetail
+            projectId={projectId?.toString()}
+            onClose={() => setCurrentTab(PROJECT_DASHBOARD_TABS.UNITLIST)}
+          />
+        ),
       },
       {
         value: PROJECT_DASHBOARD_TABS.QUOTE,
@@ -82,7 +129,7 @@ export default function Project() {
         component: <ProjectNote />,
       },
     ],
-    []
+    [projectId, setCurrentTab]
   );
 
   const onChangeTabHandle = useCallback(
@@ -105,6 +152,9 @@ export default function Project() {
       </Head>
 
       <Container maxWidth={themeStretch ? false : 'xl'}>
+        <Typography sx={{ textAlign: 'center', fontSize: '28px', mt: '4px' }}>
+          {projectName && projectName}
+        </Typography>
         <CustomBreadcrumbs
           heading={tabData?.title || ''}
           links={[{ name: 'Projects', href: PATH_APP.project }, { name: tabData?.title || '' }]}
@@ -120,7 +170,10 @@ export default function Project() {
               <Button
                 variant="contained"
                 startIcon={<Iconify icon="eva:plus-fill" />}
-                onClick={() => projectId && push(PATH_APP.newUnit(projectId?.toString()))}
+                // onClick={() => projectId && push(PATH_APP.newUnit(projectId?.toString()))}
+                onClick={() => 
+
+                  projectId && push(PATH_APP.editUnit(projectId?.toString(), '0'))}
               >
                 Add new unit
               </Button>

@@ -1,4 +1,5 @@
-import { useGetUnitInfo } from 'src/hooks/useApi';
+import { useGetSavedUnit } from 'src/hooks/useApi';
+import { any } from 'prop-types';
 import Selection from './Selection';
 
 interface SelectionWrapperProps {
@@ -7,11 +8,12 @@ interface SelectionWrapperProps {
 }
 
 export default function SelectionWrapper({ projectId, unitId }: SelectionWrapperProps) {
-  const { data: unitData, isLoading: isLoadingUnitInfo } = useGetUnitInfo(
+  const { data: unitData, isLoading: isLoadingUnitInfo } = useGetSavedUnit(
     {
-      intUserID: typeof window !== 'undefined' && localStorage.getItem('userId'),
+      intUserId: typeof window !== 'undefined' && localStorage.getItem('userId'),
       intUAL: typeof window !== 'undefined' && localStorage.getItem('UAL'),
-      intProjectID: projectId,
+      // intProjectID: projectId,
+      intJobId: projectId,
       intUnitNo: unitId,
     },
     {
@@ -19,15 +21,18 @@ export default function SelectionWrapper({ projectId, unitId }: SelectionWrapper
     }
   );
 
-  const { unitInfo } = unitData || { unitInfo: {} };
+ // const { unitInfo  } = unitData || { unitInfo: {} };
+const unitInfo: any = unitData || {};
 
   return !isLoadingUnitInfo ? (
-    <Selection
-      unitTypeData={{
-        intProductTypeID: unitInfo?.productTypeID,
-        intUnitTypeID: unitInfo?.unitTypeID,
-      }}
-      intUnitNo={unitId}
-    />
+    // <Selection
+    //   unitTypeData={{
+    //     intProductTypeID: unitInfo?.productTypeID,
+    //     intUnitTypeID: unitInfo?.unitTypeID,
+    //   }}
+    //   intUnitNo={unitId}
+    // />
+
+    <Selection intJobId={unitInfo?.intProjectID} intUnitNo={unitId} intProdTypeId={unitInfo?.productTypeID}/>
   ) : null;
 }

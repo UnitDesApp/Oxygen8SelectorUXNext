@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 // @mui
 import {
   Box,
@@ -49,9 +49,19 @@ export default function UnitList() {
   const { query, push } = useRouter();
   const { projectId } = query;
 
-  const { data: units, isLoading: isLoadingUnits } = useGetAllUnits({
+  const {
+    data: units,
+    isLoading: isLoadingUnits,
+    refetch,
+    isRefetching,
+  } = useGetAllUnits({
     jobId: Number(projectId),
   });
+
+  useEffect(() => {
+    refetch();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const {
     page,
@@ -82,6 +92,8 @@ export default function UnitList() {
     setIntProductTypeID: state.setIntProductTypeID,
     setIntUnitTypeID: state.setIntUnitTypeID,
   }));
+
+  localStorage.setItem('isNewUnitSelected', '0');
 
   const handleOneConfirmDialogOpen = (id: number) => {
     setDeleteRowID(id);
@@ -125,7 +137,7 @@ export default function UnitList() {
   };
 
   const handleEditRow = (row: any) => {
-    setIntProductTypeID(Number(row.product_type_id));
+    setIntProductTypeID(Number(row.prod_type_id));
     setIntUnitTypeID(Number(row.unit_type_id));
     push(PATH_APP.editUnit(projectId?.toString() || '0', row.unit_no));
   };
@@ -156,7 +168,7 @@ export default function UnitList() {
     [dataFiltered.length, filterName, filterRole, filterStatus]
   );
 
-  return isLoadingUnits ? (
+  return isLoadingUnits || isRefetching ? (
     <Box>
       <CircularProgressLoading />
     </Box>

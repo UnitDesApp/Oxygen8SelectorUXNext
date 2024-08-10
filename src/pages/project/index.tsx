@@ -26,7 +26,7 @@ import {
 import { ROLE_OPTIONS } from 'src/utils/constants';
 import { useAuthContext } from 'src/auth/useAuthContext';
 import CircularProgressLoading from 'src/components/loading/CircularProgressLoading';
-import { useGetAllProjects } from 'src/hooks/useApi';
+import { useGetSavedJobs, useGetJobSelTables, useGetSavedJobsByUserAndCustomer } from 'src/hooks/useApi';
 import { PATH_APP } from 'src/routes/paths';
 import Scrollbar from 'src/components/scrollbar/Scrollbar';
 import ConfirmDialog from 'src/components/dialog/ConfirmDialog';
@@ -36,7 +36,7 @@ import ProjectTableRow from './components/table/ProjectTableRow';
 import { useSettingsContext } from '../../components/settings';
 import DashboardLayout from '../../layouts/dashboard';
 import TableHeadCustom from './components/table/TableHeadCustom';
-import NewProjectDialog from './components/newProjectDialog/NewProjectDialog';
+import ProjectInfoDialog from './components/newProjectDialog/ProjectInfoDialog';
 
 // ----------------------------------------------------------------------
 
@@ -65,7 +65,21 @@ export default function Project() {
   const [openSuccess, setOpenSuccess] = useState<boolean>(false);
   const [openFail, setOpenFail] = useState<boolean>(false);
 
-  const { data: projects, isLoading: isLoadingProjects, refetch } = useGetAllProjects();
+  // const { data: projects, isLoading: isLoadingProjects, refetch } = useGetAllProjects();
+  // const { data: projects, isLoading: isLoadingProjects, refetch } = useGetSavedJobs();
+  const { data: projects, isLoading: isLoadingProjects, refetch } = useGetSavedJobsByUserAndCustomer(
+    {    
+      // oJobs: {
+      intUserId: typeof window !== 'undefined' && localStorage.getItem('userId'),
+      intUAL: typeof window !== 'undefined' && localStorage.getItem('UAL'),
+      // strSearchBy: filterName,
+    },
+    {
+      enabled: typeof window !== 'undefined',
+    }  
+  );
+
+  const { data: jobSelTables } = useGetJobSelTables();
 
   const {
     page,
@@ -80,7 +94,9 @@ export default function Project() {
     onSort,
     onChangePage,
     onChangeRowsPerPage,
-  } = useTable();
+  } = useTable({
+    defaultRowsPerPage: 10,
+  });
 
   const { user } = useAuthContext();
 
@@ -117,7 +133,7 @@ export default function Project() {
   };
 
   const handleDeleteRow = () => {
-    project.deleteProject({ action: 'DELETE_ONE', projectId: deleteRowID }).then(() => {
+    project.deleteJob({ action: 'DELETE_ONE', projectId: deleteRowID }).then(() => {
       refetch();
     });
     setSelected([]);
@@ -143,7 +159,7 @@ export default function Project() {
   };
 
   const handleDeleteRows = () => {
-    project.deleteProject({ action: 'DELETE_MULTIPUL', projectIdData: selected }).then(() => {
+    project.deleteJob({ action: 'DELETE_MULTIPUL', projectIdData: selected }).then(() => {
       refetch();
     });
     setSelected([]);
@@ -151,7 +167,7 @@ export default function Project() {
   };
 
   const handleDuplicate = (row: any) => {
-    project.duplicateProject(row).then(() => refetch());
+    project.duplicateJob(row).then(() => refetch());
     setOpenDuplicateSuccess(true);
   };
 
@@ -163,7 +179,7 @@ export default function Project() {
     () =>
       projects &&
       applySortFilter({
-        tableData: projects.jobList,
+        tableData: projects.dbtJobList,
         comparator: getComparator(order, orderBy),
         filterName,
         filterRole,
@@ -185,18 +201,17 @@ export default function Project() {
       <Head>
         <title> Project | Oxygen8 </title>
       </Head>
-
       <Container maxWidth={themeStretch ? false : 'xl'}>
+      <Alert sx={{ width: '100%', mt: 3, mb: 3 }} severity="info">
+          <b>Pricing module is now availble</b> - select Quote after making a selection to review
+          and generate a PDF. All values shown are Net prices.
+        </Alert>
         <Stack direction="row" alignItems="center" justifyContent="space-between">
           <Typography variant="h3" component="h1" paragraph>
             Projects
           </Typography>
         </Stack>
 
-        <Alert sx={{ width: '100%', mt: 3, mb: 3 }} severity="info">
-          <b>Pricing module is now availble</b> - select Quote after making a selection to review
-          and generate a PDF. All values shown are Net prices.
-        </Alert>
 
         {!dataFiltered && isLoadingProjects ? (
           <Box>
@@ -264,14 +279,20 @@ export default function Project() {
             </Box>
           </Box>
         )}
-        {projects?.jobInitInfo && (
-          <NewProjectDialog
+
+        {/* {projects?.jobInitInfo && ( */}
+        {jobSelTables && (
+          <ProjectInfoDialog
+            loadProjectStep="SHOW_FIRST_DIALOG"
             open={newProjectDialogOpen}
             onClose={() => setNewProjectDialog(false)}
             setOpenSuccess={() => setOpenSuccess(true)}
             setOpenFail={() => setOpenFail(true)}
-            initialInfo={projects?.jobInitInfo}
+            // initialInfo={projects?.jobInitInfo}
+            // initialInfo={projects}
+            initialInfo={jobSelTables}
             refetch={refetch}
+            savedJob={null}
           />
         )}
         <ConfirmDialog

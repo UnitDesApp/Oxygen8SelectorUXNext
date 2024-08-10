@@ -7,18 +7,19 @@ type UnitTypesProps = {
   productTypeID: number;
   productTypeUnitTypeLinkDataTbl: any[];
   onSelectItem: Function;
+  SetIsOpenSideDescriptionOfProductType: (value: boolean) => void;
 };
 
 export default function UnitTypes(props: UnitTypesProps) {
-  const { productTypeID, productTypeUnitTypeLinkDataTbl, onSelectItem } = props;
+  const { productTypeID, productTypeUnitTypeLinkDataTbl,SetIsOpenSideDescriptionOfProductType, onSelectItem } = props;
 
   const units =
     productTypeUnitTypeLinkDataTbl?.filter(
-      (element) => element.product_type_id === productTypeID
+      (element) => element.prod_type_id === productTypeID
     ) || [];
 
   return (
-    <Container>
+    <Container maxWidth="xl">
       <Box
         sx={{
           display: 'grid',
@@ -33,6 +34,7 @@ export default function UnitTypes(props: UnitTypesProps) {
       >
         {units.map((ele) => (
           <UnitTypeItem
+          SetIsOpenSideDescriptionOfProductType = {SetIsOpenSideDescriptionOfProductType}
             key={ele.unit_type_id}
             label={ele.unit_type}
             onSelectItem={() => {

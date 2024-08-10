@@ -14,7 +14,7 @@ export default function SelectApplication(props: SelectApplicationType) {
   const { onSelectItem } = props;
 
   return (
-    <Container>
+    <Container maxWidth="xl">
       <Box
         sx={{
           display: 'grid',

@@ -3,7 +3,9 @@ import React, { useState } from 'react';
 // @mui
 import { Box, Snackbar, Alert } from '@mui/material';
 // hooks
-import { useGetProjectById, useGetProjectInitInfo } from 'src/hooks/useApi';
+// import { useGetJobById, useGetProjectInitInfo } from 'src/hooks/useApi';
+import { useGetSavedJob } from 'src/hooks/useApi';
+
 import { useRouter } from 'next/router';
 import CircularProgressLoading from 'src/components/loading/CircularProgressLoading';
 import ProjectDetailsForm from './ProjectDetailsForm';
@@ -17,8 +19,8 @@ export default function ProjectDetail() {
   const [openSuccess, setOpenSuccess] = useState<boolean>(false);
   const [openError, setOpenError] = useState<boolean>(false);
 
-  const { data: projectInitInfo, isLoading: isLoadingProjectInitInfo } = useGetProjectInitInfo();
-  const { data: project, isLoading: isLoadingProject } = useGetProjectById({
+  // const { data: projectInitInfo, isLoading: isLoadingProjectInitInfo } = useGetProjectInitInfo();
+  const { data: project, isLoading: isLoadingProject } = useGetSavedJob({
     id: Number(projectId),
   });
 
@@ -32,7 +34,7 @@ export default function ProjectDetail() {
 
   return (
     <Box>
-      {isLoadingProjectInitInfo || isLoadingProject ? (
+      {/* {isLoadingProjectInitInfo || isLoadingProject ? (
         <CircularProgressLoading />
       ) : (
         <ProjectDetailsForm
@@ -41,7 +43,7 @@ export default function ProjectDetail() {
           onSuccess={() => setOpenSuccess(true)}
           onFail={() => setOpenError(true)}
         />
-      )}
+      )} */}
       <Snackbar open={openSuccess} autoHideDuration={6000} onClose={handleCloseSuccess}>
         <Alert onClose={handleCloseSuccess} severity="success" sx={{ width: '100%' }}>
           Project was successfully updated!

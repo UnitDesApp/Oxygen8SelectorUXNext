@@ -5,7 +5,7 @@ import { useState, useCallback } from 'react';
 import { Container, CardContent, Card, Box, Tabs, Tab } from '@mui/material';
 
 // components
-import { useGetAllBaseData } from 'src/hooks/useApi';
+import { useGetUnitSelTables } from 'src/hooks/useApi';
 import { ProductTypes, Applications, SideDescription, UnitTypes } from './index';
 
 const productInfomation = {
@@ -22,7 +22,7 @@ type SelectProductInfoProps = {
 };
 
 export default function SelectProductInfo(props: SelectProductInfoProps) {
-  const { data, isLoading } = useGetAllBaseData();
+  const { data, isLoading } = useGetUnitSelTables();
   const { onSelectAppliaionItem, onSelectProductTypeItem, onSelectUnitTypeItem } = props;
   const [applicationValue, setApplicationValue] = useState('Application');
   const [productTypeValue, setProductTypeValue] = useState('Product type');
@@ -61,13 +61,12 @@ export default function SelectProductInfo(props: SelectProductInfoProps) {
     (label: string, id: number) => {
       onSelectUnitTypeItem(id, label);
       setUnitTypeValue(label);
-      SetIsOpenSideDescriptionOfProductType(true);
     },
     [onSelectUnitTypeItem]
   );
 
   return (
-    <Container>
+    <Container maxWidth="xl">
       <Card sx={{ minWidth: 500, mb: '100px' }}>
         <Tabs
           value={value}
@@ -88,12 +87,18 @@ export default function SelectProductInfo(props: SelectProductInfoProps) {
             />
           </TabPanel>
           <TabPanel value={value} index={1}>
-            <ProductTypes productTypes={data?.prodType} onSelectItem={onSelectProductTypeValue} />
+            {/* <ProductTypes productTypes={data?.prodType} onSelectItem={onSelectProductTypeValue} /> */}
+            <ProductTypes
+              productTypes={data?.dbtSelProdType}
+              onSelectItem={onSelectProductTypeValue}
+            />
           </TabPanel>
           <TabPanel value={value} index={2}>
             <UnitTypes
               productTypeID={productTypeID}
-              productTypeUnitTypeLinkDataTbl={data?.prodTypeUnitTypeLink}
+              SetIsOpenSideDescriptionOfProductType={SetIsOpenSideDescriptionOfProductType}
+              // productTypeUnitTypeLinkDataTbl={data?.prodTypeUnitTypeLink}
+              productTypeUnitTypeLinkDataTbl={data?.dbtSelProdTypeUnitTypeLink}
               onSelectItem={onSelectUnitTypeValue}
             />
           </TabPanel>

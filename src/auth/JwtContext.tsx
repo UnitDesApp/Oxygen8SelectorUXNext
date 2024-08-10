@@ -1,6 +1,7 @@
 import { createContext, useEffect, useReducer, useCallback, useMemo } from 'react';
 //
 import { useApiContext } from 'src/contexts/ApiContext';
+import { useRouter } from 'next/router';
 import { isValidToken, setSession } from './utils';
 import { ActionMapType, AuthStateType, AuthUserType, JWTContextType } from './types';
 // utils
@@ -105,6 +106,8 @@ export function AuthProvider({ children }: AuthProviderProps) {
   const [state, dispatch] = useReducer(reducer, initialState);
   const { user: userApi } = useApiContext();
 
+  const { push, query, pathname } = useRouter();
+
   const storageAvailable = localStorageAvailable();
 
   const initialize = useCallback(async () => {
@@ -137,6 +140,9 @@ export function AuthProvider({ children }: AuthProviderProps) {
           },
         });
       } else {
+        if (pathname !== '/login' && pathname !== '/reset-password') {
+          push('/login');
+        }
         dispatch({
           type: Types.INITIAL,
           payload: {
@@ -155,7 +161,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
         },
       });
     }
-  }, [storageAvailable]);
+  }, [pathname, push, storageAvailable]);
 
   useEffect(() => {
     initialize();

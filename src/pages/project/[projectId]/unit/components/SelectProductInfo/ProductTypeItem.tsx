@@ -25,9 +25,7 @@ export default function ProductTypeItem({ label, onSelectItem, id, active }: Pro
       <BoxStyle
         id={id || ''}
         onClick={() => onSelectItem(id)}
-        sx={{
-          borderColor: active ? 'primary.main' : '#a3a3a3',
-        }}
+        sx={{ borderColor: active ? 'primary.main' : '#a3a3a3',}}
       >
         <img src="/assets/Images/img_nova_1.png" width="100%" height="100%" alt={label} />
       </BoxStyle>

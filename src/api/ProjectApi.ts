@@ -2,127 +2,188 @@ import { AxiosResponse } from 'axios';
 import AbstractApi from './AbstractApi';
 
 export default class ProjectApi extends AbstractApi {
-  getProjects = async (): Promise<any> =>
-    this.client.post(`/api/jobs/Get`).then((res: any) => JSON.parse(res.data));
+  // PsyCalc ==================================================================================
+  getRH_By_DB_WB = (params: JSON): Promise<any> =>
+    this.client.post(`/api/PsyCalc/GetRH_By_DB_WB`, params).then((res: any) => res.data);
 
-  getProjectInitInfo = async (): Promise<any> =>
-    this.client.get(`/api/jobs/initinfo`).then((res: any) => JSON.parse(res.data));
+  getWB_By_DB_RH = (params: JSON): Promise<any> =>
+    this.client.post(`/api/PsyCalc/GetWB_By_DB_RH`, params).then((res: any) => res.data);
+  
 
-  getProjectById = async (params: { id: number }): Promise<any> =>
-    this.client.post(`/api/job/get`, params).then((res: any) => res.data);
+  // Job ==================================================================================
+  getJobSelTables = async (): Promise<any> =>
+    this.client.get(`/api/Job/GetJobSelTables`).then((res: any) => JSON.parse(res.data));
 
-  getOutdoorInfo = async (params: any): Promise<any> =>
-    this.client.post(`/api/job/getoutdoorinfo`, params).then((res: any) => res.data);
+  saveJob = (params: JSON): Promise<any> =>
+    this.client.post(`/api/Job/SaveJob`, params).then((res: any) => res.data);
 
-  updateProject = async (data: any) => this.client.post(`/api/job/update`, data);
+  deleteJob = async (data: any) => 
+    this.client.post(`/api/Job/DeleteJob`, data);
 
-  deleteProject = async (data: any) => this.client.post(`/api/job/delete`, data);
+  duplicateJob = async (data: any) => 
+    this.client.post(`/api/Job/DuplicateJob`, data);
 
-  duplicateProject = async (data: any) => this.client.post(`/api/job/duplicate`, data);
+  getSavedJobsByUserAndCustomer = async (params: JSON): Promise<any> =>
+    this.client.post(`/api/Job/GetSavedJobsByUserAndCustomer`, params).then((res: any) => JSON.parse(res.data));
+
+  getSavedJobs = async (): Promise<any> =>
+    this.client.post(`/api/Job/GetSavedJobs`).then((res: any) => JSON.parse(res.data));
+
+  getSavedJob = async (params: JSON): Promise<any> =>
+    this.client.post(`/api/Job/GetSavedJob`, params).then((res: any) => JSON.parse(res.data));
+
+  // getJobInitInfo = async (): Promise<any> =>
+  //   this.client.get(`/api/Job/initinfo`).then((res: any) => JSON.parse(res.data));
+
+
+  // getOutdoorInfo = async (params: any): Promise<any> =>
+  //   this.client.post(`/api/Job/getoutdoorinfo`, params).then((res: any) => res.data);
+
+  // updateProject = async (data: any) => this.client.post(`/api/job/update`, data);
 
   getUnits = async (params: { jobId: number }): Promise<any> =>
     this.client.post(`/api/job/getwithunit`, params).then((res: any) => res.data);
 
-  getProjectQuoteInfo = async (params: {
-    intUserID: string;
-    intUAL: string;
-    intJobID: number;
-    intUnitNo: number;
-  }): Promise<any> => this.client.post(`/api/quote/get`, params).then((res: any) => res.data);
+  
+  // Unit ==================================================================================
+  getUnitSelTables = (): Promise<any> =>
+    this.client.get(`/api/Unit/GetUnitSelTables`).then((res: any) => JSON.parse(res.data));
 
-  saveQuoteInfo = async (params: any): Promise<any> =>
-    this.client.post(`/api/Quote/save`, params).then((res: any) => res.data);
+  saveUnit = (params: JSON): Promise<any> =>
+    this.client.post(`/api/Unit/SaveUnit`, params).then((res: any) => res.data);
+  
+  saveUnitNotes = (params: any): Promise<any> =>
+    this.client.post(`/api/Unit/SaveUnitNotes`, params).then((res: any) => res.data);
 
-  addNewMisc = async (params: any): Promise<any> =>
-    this.client.post(`/api/Quote/addMisc`, params).then((res: any) => res.data);
+  getSavedUnit = (prarms: any): Promise<any> =>
+    this.client.post(`/api/Unit/GetSavedUnit`, prarms).then((res: any) => JSON.parse(res.data));
+  
+  getSavedUnitNotes = (params: any): Promise<any> =>
+    this.client.post(`/api/Unit/GetSavedUnitNotes`, params).then((res: any) => res.data);
 
-  updateMisc = async (params: any): Promise<any> =>
-    this.client.post(`/api/Quote/updateMisc`, params).then((res: any) => res.data);
+  // getUnitSelection = (params: any): Promise<any> =>
+  //   this.client.post(`/api/Unit/GetUnitSelection`, params).then((res: any) => res.data);
+  
+  getUnitSelection = (params: any): Promise<any> =>
+    this.client.post(`/api/Unit/GetUnitSelection`, params).then((
+      res: any) => JSON.parse(res.data));
 
-  deleteMisc = async (params: any): Promise<any> =>
-    this.client.post(`/api/Quote/deleteMisc`, params).then((res: any) => res.data);
 
-  addNewNotes = async (params: any): Promise<any> =>
-    this.client.post(`/api/Quote/addNotes`, params).then((res: any) => res.data);
+  // getAllBaseData = (): Promise<any> =>
+  //   this.client.get(`/api/Selection/GetAll`).then((res: any) => JSON.parse(res.data));
 
-  updateNotes = async (params: any): Promise<any> =>
-    this.client.post(`/api/Quote/updateNotes`, params).then((res: any) => res.data);
 
-  deleteNotes = async (params: any): Promise<any> =>
-    this.client.post(`/api/Quote/deleteNotes`, params).then((res: any) => res.data);
-
-  getSubmittalInfo = (params: any): Promise<any> =>
-    this.client.post(`/api/Submittals/getAllData`, params).then((res: any) => res.data);
-
-  addNewNote = (params: any): Promise<any> =>
-    this.client.post(`/api/Submittals/noteadd`, params).then((res: any) => res.data);
-
-  addNewShippingNote = (params: any): Promise<any> =>
-    this.client.post(`/api/Submittals/shippingnoteadd`, params).then((res: any) => res.data);
-
-  saveSubmittalInfo = (params: any): Promise<any> =>
-    this.client.post(`/api/Submittals/save`, params).then((res: any) => res.data);
-
-  getProjectNote = (params: any): Promise<any> =>
-    this.client.post(`/api/units/getNotes`, params).then((res: any) => res.data);
-
-  saveNotes = (params: any): Promise<any> =>
-    this.client.post(`/api/units/saveNotes`, params).then((res: any) => res.data);
-
-  addNewProject = (params: any): Promise<any> =>
-    this.client.post(`/api/job/add`, params).then((res: any) => res.data);
-
-  getAllBaseData = (): Promise<any> =>
-    this.client.get(`/api/Selection/GetAll`).then((res: any) => JSON.parse(res.data));
-
-  getUnitInfo = (prarms: any): Promise<any> =>
-    this.client.post(`/api/units/GetUnitInfo`, prarms).then((res: any) => res.data);
-
-  getSelectionInfo = (prarms: any): Promise<any> =>
-    this.client.post(`/api/units/ViewSelection`, prarms).then((res: any) => res.data);
-
-  saveUnitInfo = (prarms: any): Promise<any> =>
-    this.client.post(`/api/units/Save`, prarms).then((res: any) => res.data);
-
-  getFileList = (): Promise<any> =>
-    this.client.post('/api/resource/getFiles').then((res: any) => res.data);
-
-  downloadResource = (params: any, config: any): Promise<AxiosResponse<any, any>> =>
-    this.client.post('/api/resource/getFiles', params, config);
-
-  downloadAllSelection = (params: any, config?: any): Promise<AxiosResponse<any, any>> =>
-    this.client.post('/api/units/DownloadAllSelection', params, {
+  downloadUnitSelectionPdf = (params: any, config?: any): Promise<AxiosResponse<any, any>> =>
+    this.client.post('/api/unit/DownloadUnitSelectionPdf', params, {
       responseType: 'blob',
       ...(config || []),
     });
 
-  downloadSelection = (params: any, config?: any): Promise<AxiosResponse<any, any>> =>
-    this.client.post('/api/units/DownloadSelection', params, {
+
+  downloadAllUnitsSelectionPdf = (params: any, config?: any): Promise<AxiosResponse<any, any>> =>
+    this.client.post('/api/unit/DownloadAllUnitsSelectionPdf', params, {
       responseType: 'blob',
       ...(config || []),
     });
 
-  downloadSelectionWithExcel = (params: any, config?: any): Promise<AxiosResponse<any, any>> =>
-    this.client.post('/api/units/downloadselectionwithexcel', params, {
+
+
+  downloadUnitSelectionExcel = (params: any, config?: any): Promise<AxiosResponse<any, any>> =>
+    this.client.post('/api/unit/DownloadUnitSelectionExcel', params, {
       responseType: 'blob',
       ...(config || []),
     });
 
-  submittalExportPDF = (params: any, config?: any): Promise<AxiosResponse<any, any>> =>
-    this.client.post('/api/submittals/exportpdf', params, {
+  // Submittal =============================================================================
+  // saveSubmittalInfo = (params: any): Promise<any> =>
+  //   this.client.post(`/api/Submittals/save`, params).then((res: any) => res.data);
+  
+  saveSubmittal = (params: JSON): Promise<any> =>
+    this.client.post(`/api/Submittal/SaveSubmittal`, params).then((res: any) => res.data);
+
+  saveSubmittalNotes = (params: JSON): Promise<any> =>
+    this.client.post(`/api/Submittal/SaveSubmittalNotes`, params).then((res: any) => JSON.parse(res.data));
+
+  deleteSubmittalNotes = async (params: JSON): Promise<any> =>
+    this.client.post(`/api/Submittal/DeleteSubmittalNotes`, params).then((res: any) => JSON.parse(res.data));
+
+
+  saveSubmittalShippingNotes = (params: JSON): Promise<any> =>
+    this.client.post(`/api/Submittal/SaveSubmittalShippingNotes`, params).then((res: any) => JSON.parse(res.data));
+
+  deleteSubmittalShippingNotes = async (params: JSON): Promise<any> =>
+    this.client.post(`/api/Submittal/DeleteSubmittalShippingNotes`, params).then((res: any) => JSON.parse(res.data));
+
+
+  getSavedSubmittal = (params: any): Promise<any> =>
+    this.client.post(`/api/Submittal/GetSavedSubmittal`, params).then((res: any) => JSON.parse(res.data));
+  // this.client.post(`/api/Submittals/getAllData`, params).then((res: any) => res.data);
+
+  downloadSubmittalPdf = (params: any, config?: any): Promise<AxiosResponse<any, any>> =>
+    this.client.post('/api/Submittal/DownloadSubmittalPdf', params, {
       responseType: 'blob',
       ...(config || []),
     });
 
-  exportEpicor = (params: any, config?: any): Promise<AxiosResponse<any, any>> =>
-    this.client.post('/api/submittals/exportepicor', params, {
+  downloadSubmittalEpicorExcel = (params: any, config?: any): Promise<AxiosResponse<any, any>> =>
+    this.client.post('/api/Submittal/DownloadSubmittalEpicorExcel', params, {
       responseType: 'blob',
       ...(config || []),
     });
 
-  quoteExportPDF = (params: any, config?: any): Promise<AxiosResponse<any, any>> =>
-    this.client.post('/api/quote/exportPdf', params, {
+  // Quote =================================================================================
+  getQuoteSelTables = (): Promise<any> =>
+    this.client.get(`/api/Quote/GetQuoteSelTables`).then((res: any) => JSON.parse(res.data));
+
+  saveQuote = async (params: JSON): Promise<any> =>
+    this.client.post(`/api/Quote/SaveQuote`, params).then((res: any) => JSON.parse(res.data));
+
+  getSavedQuote = async (params: JSON): Promise<any> =>
+    this.client.post(`/api/Quote/GetSavedQuote`, params).then((res: any) => JSON.parse(res.data));
+
+  saveQuoteMisc = async (params: JSON): Promise<any> =>
+    this.client.post(`/api/Quote/SaveQuoteMisc`, params).then((res: any) => JSON.parse(res.data));
+
+    // updateMisc = async (params: any): Promise<any> =>
+  //   this.client.post(`/api/Quote/updateMisc`, params).then((res: any) => res.data);
+
+  deleteQuoteMisc = async (params: JSON): Promise<any> =>
+    this.client.post(`/api/Quote/DeleteQuoteMisc`, params).then((res: any) => JSON.parse(res.data));
+
+
+  saveQuoteNotes = async (params: JSON): Promise<any> =>
+    this.client.post(`/api/Quote/SaveQuoteNotes`, params).then((res: any) => JSON.parse(res.data));
+
+  // updateNotes = async (params: any): Promise<any> =>
+  //   this.client.post(`/api/Quote/updateNotes`, params).then((res: any) => res.data);
+
+  deleteQuoteNotes = async (params: JSON): Promise<any> =>
+    this.client.post(`/api/Quote/DeleteQuoteNotes`, params).then((res: any) => JSON.parse(res.data));
+
+  
+  getSavedQuoteNotes = async (params: JSON): Promise<any> =>
+    this.client.post(`/api/Quote/GetSavedQuoteNotes`, params).then((res: any) => JSON.parse(res.data));
+
+  
+  downloadQuotePdf = (params: any, config?: any): Promise<AxiosResponse<any, any>> =>
+    this.client.post('/api/Quote/DownloadQuotePdf', params, {
       responseType: 'blob',
       ...(config || []),
     });
+
+
+      // getProjectQuoteInfo = async (params: {
+  //   intUserId: number;
+  //   intUAL: number;
+  //   intJobId: number;
+  //   intUnitNo: number;
+  // }): Promise<any> => this.client.post(`/api/quote/get`, params).then((res: any) => JSON.parse(res.data));
+  // // Promise<any> => this.client.post(`/api/quote/get`, params).then((res: any) => res.data);
+
+  // Resources =================================================================================
+  getResourceFiles = (): Promise<any> =>
+    this.client.post('/api/Resources/GetResourceFiles').then((res: any) => res.data);
+
+  downloadResourceFile = (params: any, config: any): Promise<AxiosResponse<any, any>> =>
+    this.client.post('/api/Resources/DownloadResourceFile', params, config);
 }

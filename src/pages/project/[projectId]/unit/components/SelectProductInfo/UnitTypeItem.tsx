@@ -19,9 +19,10 @@ type UnitTypeItemProps = {
   onSelectItem: Function;
   id?: number | string;
   active?: boolean;
+  SetIsOpenSideDescriptionOfProductType: (value: boolean) => void;
 };
 
-export default function UnitTypeItem({ label, onSelectItem, id, active }: UnitTypeItemProps) {
+export default function UnitTypeItem({ label, onSelectItem,SetIsOpenSideDescriptionOfProductType, id, active }: UnitTypeItemProps) {
   return (
     <Box textAlign="center">
       <BoxStyle
@@ -37,11 +38,11 @@ export default function UnitTypeItem({ label, onSelectItem, id, active }: UnitTy
         <Typography>
           {label}
           <span>
-            <IconButton aria-label="info" sx={{ padding: '5px', pt: 0 }}>
+            <IconButton aria-label="info" sx={{ padding: '5px', pt: 0 }} onClick={()=>SetIsOpenSideDescriptionOfProductType(true)}>
               <Iconify icon="ant-design:exclamation-circle-outlined" />
             </IconButton>
           </span>
-        </Typography>
+        </Typography>   
       </Box>
       <Divider />
       <Stack textAlign="center" spacing={2} mt={1}>

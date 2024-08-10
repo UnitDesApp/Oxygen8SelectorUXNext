@@ -9,7 +9,7 @@ import { Alert, Box, Snackbar, Stack } from '@mui/material';
 // hooks
 import { useForm } from 'react-hook-form';
 import { useRouter } from 'next/router';
-import { useGetProjectNote } from 'src/hooks/useApi';
+import { useGetSavedUnitNotes } from 'src/hooks/useApi';
 import { useApiContext } from 'src/contexts/ApiContext';
 import FormProvider from 'src/components/hook-form/FormProvider';
 import { RHFTextField } from 'src/components/hook-form';
@@ -20,7 +20,7 @@ export default function ProjectNote() {
   const { projectId } = useRouter().query;
   const api = useApiContext();
 
-  const { data: projectNote, isLoading: isLoadingProjectNote } = useGetProjectNote({
+  const { data: projectNote, isLoading: isLoadingProjectNote } = useGetSavedUnitNotes({
     projectId,
   });
 
@@ -58,14 +58,14 @@ export default function ProjectNote() {
   const onSubmit = useCallback(
     async (data: any) => {
       try {
-        await api.project.saveNotes({ ...data, projectId });
+        // await api.project.saveNotes({ ...data, projectId });
         setOpenSuccess(true);
       } catch (error) {
         setOpenFail(true);
         console.error(error);
       }
     },
-    [api.project, projectId]
+    []
   );
 
   useEffect(() => {
