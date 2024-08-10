@@ -51,20 +51,6 @@ const STEP_PAGE_NAME = ['Select product type', 'Info', 'Selection'];
 
 AddNewUnit.getLayout = (page: React.ReactElement) => <DashboardLayout>{page}</DashboardLayout>;
 
-type UnitTypeData = {
-  intProductTypeID: number;
-  txbProductType: string;
-  intApplicationTypeID: number;
-  txbApplicationType: string;
-  intUnitTypeID: number;
-  txbUnitType: string;
-};
-
-type UnitTypeProps = {
-  unitTypeData: UnitTypeData;
-  setUnitTypeData: React.Dispatch<React.SetStateAction<UnitTypeData>>;
-};
-
 
 export default function AddNewUnit() {
   // eslint-disable-next-line no-unused-vars
@@ -102,9 +88,6 @@ export default function AddNewUnit() {
     push(PATH_APP.editUnit(projectId?.toString() || '0', '0'));
 
   };
-
-  console.log("Parent unitTypeData:", unitTypeData);
-  console.log("Parent setUnitTypeData:", setUnitTypeData);
 
   const onClickNextStep = () => {    if (currentStep < 2) {
       if (currentStep === 1 && submitButtonRef?.current) {
