@@ -1,5 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import React, { useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 // @mui
 import { LoadingButton } from '@mui/lab';
 import {
@@ -60,17 +60,9 @@ import {
   getValveAndActuatorInfo,
 } from './handleUnitModel';
 import { getUnitModelCodes } from './getUnitNoteCodes';
+import { UnitTypeContext } from './unitTypeDataContext';
 
 //------------------------------------------------
-type UnitTypeData = {
-  intProductTypeID: number;
-  txbProductType: string;
-  intApplicationTypeID: number;
-  txbApplicationType: string;
-  intUnitTypeID: number;
-  txbUnitType: string;
-};
-
 type UnitInfoFormProps = {
   projectId: number;
   unitId?: number;
@@ -90,13 +82,9 @@ type UnitInfoFormProps = {
   submitButtonRef?: any;
   setIsSaving: Function;
   moveNextStep: Function;
-  unitTypeData?: UnitTypeData;
-  setUnitTypeData?: React.Dispatch<React.SetStateAction<UnitTypeData>>;
 };
 
 export default function UnitInfoForm({
-  unitTypeData,
-  setUnitTypeData,
   projectId,
   unitId,
   setIsSavedUnit,
@@ -121,6 +109,7 @@ export default function UnitInfoForm({
   const [remainingOpeningsInfo, setRemainingOpeningsInfo] = useState<any>({});
   const isResetCalled = useRef(false);
   const user = useAuthContext();
+  const { unitTypeData, setUnitTypeData } = useContext(UnitTypeContext);
   // const isNewUnitSelected = localStorage.getItem('isNewUnitSelected');
 
   // ------------------------------- Checkbox State -----------------------------------

@@ -1,4 +1,4 @@
-import React, { useCallback, useRef, useState } from 'react';
+import React, { useCallback, useContext, useRef, useState } from 'react';
 // import PropTypes from 'prop-types';
 // @mui
 import { styled, useTheme } from '@mui/material/styles';
@@ -23,6 +23,7 @@ import SelectProductInfo from './components/SelectProductInfo/SelectProductInfo'
 import UnitInfo from './components/UnitInfo/UnitInfo';
 import Selection from './components/Selection/Selection';
 import SelectionReportDialog from '../components/dialog/SelectionReportDialog';
+import { UnitTypeContext } from './components/UnitInfo/unitTypeDataContext';
 
 // ----------------------------------------------------------------------
 
@@ -45,14 +46,6 @@ const Item = styled(Paper)(({ theme }) => ({
   color: theme.palette.text.secondary,
 }));
 
-const DEFAULT_UNIT_DATA = {
-  intProductTypeID: -1,
-  txbProductType: '',
-  intUnitTypeID: -1,
-  txbUnitType: '',
-  intApplicationTypeID: -1,
-  txbApplicationType: '',
-};
 
 const STEP_PAGE_NAME = ['Select product type', 'Info', 'Selection'];
 
@@ -73,7 +66,7 @@ type UnitTypeProps = {
 };
 
 
-export default function AddNewUnit({unitTypeData,setUnitTypeData}:UnitTypeProps) {
+export default function AddNewUnit() {
   // eslint-disable-next-line no-unused-vars
   const theme = useTheme();
   const { push, query } = useRouter();
@@ -84,7 +77,7 @@ export default function AddNewUnit({unitTypeData,setUnitTypeData}:UnitTypeProps)
   const [openRPDialog, setOpenRPDialog] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const submitButtonRef = useRef<HTMLButtonElement>(null);
-
+  const { unitTypeData, setUnitTypeData } = useContext(UnitTypeContext);
 
 
   const closeDialog = useCallback(() => {
@@ -109,6 +102,9 @@ export default function AddNewUnit({unitTypeData,setUnitTypeData}:UnitTypeProps)
     push(PATH_APP.editUnit(projectId?.toString() || '0', '0'));
 
   };
+
+  console.log("Parent unitTypeData:", unitTypeData);
+  console.log("Parent setUnitTypeData:", setUnitTypeData);
 
   const onClickNextStep = () => {    if (currentStep < 2) {
       if (currentStep === 1 && submitButtonRef?.current) {
@@ -181,7 +177,6 @@ export default function AddNewUnit({unitTypeData,setUnitTypeData}:UnitTypeProps)
           {currentStep === 1 && (
             <>
               <UnitInfo
-                unitTypeData={unitTypeData} setUnitTypeData={setUnitTypeData}
                 projectId={Number(projectId)}
                 isSavedUnit={isSavedUnit}
                 intProductTypeID={unitTypeData.intProductTypeID}

@@ -64,23 +64,6 @@ export default function EditUnit() {
   // const submitButtonRef = useRef<HTMLButtonElement>(null);
   const isNewUnitSelected = localStorage.getItem('isNewUnitSelected');
 
-  const DEFAULT_UNIT_DATA = {
-    intProductTypeID: -1,
-    txbProductType: '',
-    intUnitTypeID: -1,
-    txbUnitType: '',
-    intApplicationTypeID: -1,
-    txbApplicationType: '',
-  };
-  const [unitTypeData, setUnitTypeData] = useState<{
-    intProductTypeID: number;
-    txbProductType: string;
-    intApplicationTypeID: number;
-    txbApplicationType: string;
-    intUnitTypeID: number;
-    txbUnitType: string;
-  }>(DEFAULT_UNIT_DATA);
-
   const closeDialog = useCallback(() => {
     setOpenRPDialog(false);
   }, []);
@@ -125,7 +108,7 @@ export default function EditUnit() {
         <title> New Unit | Oxygen8 </title>
       </Head>
       {Number(isNewUnitSelected) === 0  && Number(unitId) === 0? (
-        <NewUnit unitTypeData={unitTypeData} setUnitTypeData={setUnitTypeData} /> 
+        <NewUnit /> 
       ) : (
           <>
           {isProcessingData ? (
@@ -158,7 +141,6 @@ export default function EditUnit() {
               <Box sx={{ my: 3 }}>
                 {currentStep === 1 && projectId && unitId && (
                     <UnitInfo
-                    unitTypeData={unitTypeData} setUnitTypeData={setUnitTypeData}
                       projectId={Number(projectId)}
                       unitId={Number(unitId)}
                       isSavedUnit={isSavedUnit}
