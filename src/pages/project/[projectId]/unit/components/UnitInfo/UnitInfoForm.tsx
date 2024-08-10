@@ -31,7 +31,7 @@ import Iconify from 'src/components/iconify';
 import { RHFCheckbox, RHFSelect, RHFTextField } from 'src/components/hook-form';
 import { useApiContext } from 'src/contexts/ApiContext';
 import { any, number } from 'prop-types';
-import { indexOf } from 'lodash';
+import { flowRight, indexOf } from 'lodash';
 // import { useGetAllUnits } from 'src/hooks/useApi';
 import Selection from '../Selection/Selection';
 
@@ -121,7 +121,7 @@ export default function UnitInfoForm({
   const [remainingOpeningsInfo, setRemainingOpeningsInfo] = useState<any>({});
   const isResetCalled = useRef(false);
   const user = useAuthContext();
-  const isNewUnitSelected = localStorage.getItem('isNewUnitSelected');
+  // const isNewUnitSelected = localStorage.getItem('isNewUnitSelected');
 
   // ------------------------------- Checkbox State -----------------------------------
   const [ckbBypass, setCkbBypassVal] = useState(false);
@@ -5196,7 +5196,7 @@ export default function UnitInfoForm({
             </Grid>
           </AccordionDetails>
         </Accordion>
-        <Stack direction="row" justifyContent="flex-end">
+        <Stack direction="row" justifyContent="flex-end" textAlign="right">
           <Box sx={{ width: '150px' }}>
             {/* <LoadingButton
               ref={submitButtonRef}
@@ -5212,8 +5212,8 @@ export default function UnitInfoForm({
 
 
 
-
-                {(Number(isNewUnitSelected) === 1 && Number(unitId) === 0) ? (
+                {/* {(Number(isNewUnitSelected) === 1 && Number(unitId) === 0) ? ( */}
+                {(Number(unitId) === 0) ? (
                 <LoadingButton
                   variant="contained"
                   color="primary"
