@@ -1,5 +1,4 @@
-import React, { createContext, useState, ReactNode } from 'react';
-
+import React, { createContext, useState, ReactNode, useMemo } from 'react';
 
 type UnitTypeData = {
   intProductTypeID: number;
@@ -31,9 +30,10 @@ export const UnitTypeContext = createContext<UnitTypeContextType>({
 
 export const UnitTypeProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [unitTypeData, setUnitTypeData] = useState<UnitTypeData>(DEFAULT_UNIT_DATA);
+  const value = useMemo(() => ({ unitTypeData, setUnitTypeData }), [unitTypeData, setUnitTypeData]);
 
   return (
-    <UnitTypeContext.Provider value={{ unitTypeData, setUnitTypeData }}>
+    <UnitTypeContext.Provider value={value}>
       {children}
     </UnitTypeContext.Provider>
   );
