@@ -174,11 +174,11 @@ export default function AddNewUnit() {
                 moveNextStep={moveToNextStep}
                 submitButtonRef={submitButtonRef}
               />
-              <Selection
+              {/* <Selection
                 intJobId={Number(projectId)}
                 intUnitNo={Number(intUnitNo)}
                 intProdTypeId={Number(unitTypeData.intProductTypeID)}
-              />
+              /> */}
             </>
           )}
           {currentStep === 2 && (

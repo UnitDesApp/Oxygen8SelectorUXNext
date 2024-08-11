@@ -110,7 +110,7 @@ export default function UnitInfoForm({
   const isResetCalled = useRef(false);
   const user = useAuthContext();
   const { unitTypeData, setUnitTypeData } = useContext(UnitTypeContext);
-  // const isNewUnitSelected = localStorage.getItem('isNewUnitSelected');
+  const isNewUnitSelected = localStorage?.getItem('isNewUnitSelected') || 0;
 
   // ------------------------------- Checkbox State -----------------------------------
   const [ckbBypass, setCkbBypassVal] = useState(false);

@@ -62,7 +62,7 @@ export default function EditUnit() {
   const [isProcessingData, setIsProcessingData] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   // const submitButtonRef = useRef<HTMLButtonElement>(null);
-  const isNewUnitSelected = localStorage.getItem('isNewUnitSelected');
+  const isNewUnitSelected = localStorage?.getItem('isNewUnitSelected') || 0;
 
   const closeDialog = useCallback(() => {
     setOpenRPDialog(false);
