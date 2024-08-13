@@ -109,6 +109,7 @@ export default function UnitInfoForm({
   const [remainingOpeningsInfo, setRemainingOpeningsInfo] = useState<any>({});
   const isResetCalled = useRef(false);
   const user = useAuthContext();
+  const [isTagValue, setIsTagValue] = useState(false)
   const { unitTypeData, setUnitTypeData } = useContext(UnitTypeContext);
   const isNewUnitSelected = localStorage?.getItem('isNewUnitSelected') || 0;
 
@@ -441,12 +442,14 @@ export default function UnitInfoForm({
 
   // --------------------------- Submit (Save) -----------------------------
   const onSubmit = useCallback(async () => {
-    setIsSaving(true);
+
     try {
+      const oUC: any = getUnitInputs();
+      if(oUC.oUnit.strTag){
+      setIsSaving(true);
       // const data = await api.project.saveUnitInfo(getAllFormData1());
       // formValues = getValues();
       // const oUC = getAllFormData1(formValues);
-      const oUC: any = getUnitInputs();
       const data = await api.project.saveUnit(oUC);
       if (onSuccess) {
         onSuccess(true);
@@ -461,7 +464,11 @@ export default function UnitInfoForm({
 
       push(PATH_APP.editUnit(projectId?.toString() || '0', unitId?.toString() || '0'));
       moveNextStep();
-    } catch (e) {
+    }
+  else{
+    setIsTagValue(true)
+  }
+  } catch (e) {
       console.log(e);
       if (onError) onError(true);
     }
@@ -3378,6 +3385,9 @@ export default function UnitInfoForm({
               <Grid item xs={4} md={4}>
                 <Box sx={{ display: 'grid', rowGap: 1, columnGap: 1 }}>
                   <RHFTextField size="small" name="txtTag" label="Tag" />
+                  {isTagValue &&
+                  <Typography sx={{color: '#e6382c'}}>Tag is required.</Typography>
+                   }
                   <RHFTextField
                     size="small"
                     name="txbQty"
