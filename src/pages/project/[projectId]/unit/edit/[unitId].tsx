@@ -82,7 +82,7 @@ export default function EditUnit() {
       // if (currentStep === 1 && submitButtonRef?.current) {
       //   submitButtonRef?.current.click();
       // } else {
-        setCurrentStep(currentStep + 1);
+      setCurrentStep(currentStep + 1);
       // }
     } else if (currentStep === 2 && projectId)
       push(`/project/${projectId?.toString() || '0'}/unitlist`);
@@ -108,9 +108,9 @@ export default function EditUnit() {
         <title> New Unit | Oxygen8 </title>
       </Head>
       {Number(isNewUnitSelected) === 0  && Number(unitId) === 0? (
-        <NewUnit /> 
+        <NewUnit />
       ) : (
-          <>
+        <>
           {isProcessingData ? (
             <CircularProgressLoading />
           ) : (
@@ -140,20 +140,20 @@ export default function EditUnit() {
               />
               <Box sx={{ my: 3 }}>
                 {currentStep === 1 && projectId && unitId && (
-                    <UnitInfo
-                      projectId={Number(projectId)}
-                      unitId={Number(unitId)}
-                      isSavedUnit={isSavedUnit}
-                      setIsSavedUnit={(no: number) => {
-                        setIsSavedUnit(true);
-                      }}
-                      edit
-                      // submitButtonRef={submitButtonRef}
-                      setIsSaving={setIsSaving}
-                      moveNextStep={() => setCurrentStep(2)}
-                    />
+                  <UnitInfo
+                    projectId={Number(projectId)}
+                    unitId={Number(unitId)}
+                    isSavedUnit={isSavedUnit}
+                    setIsSavedUnit={(no: number) => {
+                      setIsSavedUnit(true);
+                    }}
+                    edit
+                    // submitButtonRef={submitButtonRef}
+                    setIsSaving={setIsSaving}
+                    moveNextStep={() => setCurrentStep(2)}
+                  />
                 )}
-                {currentStep === 2 && projectId && unitId && (
+                {currentStep === 2 && projectId && unitId && Number(unitId) > 0 && (
                   // <SelectionWrapper projectId={Number(projectId)} unitId={Number(unitId)} />
                   <Selection
                     intJobId={Number(projectId)}
@@ -163,7 +163,7 @@ export default function EditUnit() {
                 )}
               </Box>
             </Container>
-          )}            
+          )}
         </>
       )}
       <FooterStepStyle>
@@ -213,8 +213,8 @@ export default function EditUnit() {
             {null}
           </Grid>
           <Grid item xs={2} textAlign="center" alignContent="right">
-                          {/* {currentStep !== 2 ? 'Continue' : 'Done'} */}
-              {/* <Iconify icon={currentStep !== 2 ? 'akar-icons:arrow-right' : 'icons8:cancel-2'} /> */}
+            {/* {currentStep !== 2 ? 'Continue' : 'Done'} */}
+            {/* <Iconify icon={currentStep !== 2 ? 'akar-icons:arrow-right' : 'icons8:cancel-2'} /> */}
 
             {/* <LoadingButton
               variant="contained"
@@ -231,9 +231,9 @@ export default function EditUnit() {
                 </>
               )}
             </LoadingButton> */}
+            
 
-
-              {/* {(Number(isNewUnitSelected) === 1 && Number(unitId) === 0) ? (
+            {/* {(Number(isNewUnitSelected) === 1 && Number(unitId) === 0) ? (
                 <LoadingButton
                   variant="contained"
                   color="primary"
