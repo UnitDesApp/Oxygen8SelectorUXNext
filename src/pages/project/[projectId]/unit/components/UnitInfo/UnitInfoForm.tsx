@@ -33,7 +33,7 @@ import { useApiContext } from 'src/contexts/ApiContext';
 import { any, number } from 'prop-types';
 import { flowRight, indexOf } from 'lodash';
 // import { useGetAllUnits } from 'src/hooks/useApi';
-import Selection from '../Selection/Selection';
+// import Selection from '../Selection/Selection';
 
 import {
   getBypass,
@@ -451,11 +451,11 @@ export default function UnitInfoForm({
       if (onSuccess) {
         onSuccess(true);
         unitId = data?.intUnitNo;
-        <Selection
-        intJobId={Number(projectId)}
-        intUnitNo={Number(unitId)}
-        intProdTypeId={0}
-        />
+        // <Selection
+        // intJobId={Number(projectId)}
+        // intUnitNo={Number(unitId)}
+        // intProdTypeId={0}
+        // />
       }
       if (setIsSavedUnit) setIsSavedUnit(data?.intUnitNo || 0);
 

@@ -151,7 +151,6 @@ export default function Selection({ intJobId, intUnitNo, intProdTypeId }: Select
     refetch()
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
-
   // const viewSelectionInfo = useMemo(
   //   () => ({
   //     pricingDetail: selectionData?.pricingOutput?.pricingDataTbl,
