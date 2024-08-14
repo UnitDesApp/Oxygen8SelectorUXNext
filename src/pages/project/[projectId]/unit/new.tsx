@@ -158,7 +158,6 @@ export default function AddNewUnit() {
             />
           )}
           {currentStep === 1 && (
-            <>
               <UnitInfo
                 projectId={Number(projectId)}
                 isSavedUnit={isSavedUnit}
@@ -172,14 +171,8 @@ export default function AddNewUnit() {
                 txbUnitType={unitTypeData.txbUnitType}
                 setIsSaving={setIsSaving}
                 moveNextStep={moveToNextStep}
-                submitButtonRef={submitButtonRef}
+                // submitButtonRef={submitButtonRef}
               />
-              {/* <Selection
-                intJobId={Number(projectId)}
-                intUnitNo={Number(intUnitNo)}
-                intProdTypeId={Number(unitTypeData.intProductTypeID)}
-              /> */}
-            </>
           )}
           {currentStep === 2 && (
             <Selection

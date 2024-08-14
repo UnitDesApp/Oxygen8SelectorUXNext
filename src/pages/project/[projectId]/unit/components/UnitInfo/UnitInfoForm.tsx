@@ -106,7 +106,6 @@ export default function UnitInfoForm({
 }: UnitInfoFormProps) {
   const api = useApiContext();
   const [isLoading, setIsLoading] = useState(true);
-  const [remainingOpeningsInfo, setRemainingOpeningsInfo] = useState<any>({});
   const isResetCalled = useRef(false);
   const user = useAuthContext();
   const [isTagValue, setIsTagValue] = useState(false)
@@ -275,17 +274,17 @@ export default function UnitInfoForm({
         intUnitTypeId: intUnitTypeID,
         strTag: formCurrValues.txtTag,
         intQty: formCurrValues.txbQty,
-        intUnitVoltageId: formCurrValues.ddlUnitVoltage,
+        intUnitVoltageId: Number(formCurrValues.ddlUnitVoltage),
         intIsVoltageSPP: 0,
         intIsPHI: 0,
         intIsBypass: 0,
-        intUnitModelId: formCurrValues.ddlUnitModel,
+        intUnitModelId: Number(formCurrValues.ddlUnitModel),
         intSelectionTypeId: 0,
-        intLocationId: formCurrValues.ddlLocation,
+        intLocationId: Number(formCurrValues.ddlLocation),
         intIsDownshot: 0,
-        intOrientationId: formCurrValues.ddlOrientation,
-        intControlsPreferenceId: formCurrValues.ddlControlsPref,
-        intControlViaId: 0,
+        intOrientationId: Number(formCurrValues.ddlOrientation),
+        intControlsPreferenceId: Number(formCurrValues.ddlControlsPref),
+        intControlViaId: Number(formCurrValues.ddlControlVia),
       },
       oUnitAirflow: {
         intJobId: projectId,
@@ -332,21 +331,21 @@ export default function UnitInfoForm({
         intUnitNo: edit ? unitId : 0,
         intProdTypeId: intProductTypeID,
         intUnitTypeId: intUnitTypeID,
-        intOAFilterModelId: formCurrValues.ddlOA_FilterModel,
+        intOAFilterModelId: Number(formCurrValues.ddlOA_FilterModel),
         intSAFinalFilterModelId: 0,
-        intRAFilterModelId: formCurrValues.ddlRA_FilterModel,
+        intRAFilterModelId: Number(formCurrValues.ddlRA_FilterModel),
         intIsMixingBox: Number(formCurrValues.ckbMixingBox) === 1 ? 1 : 0,
-        intPreheatCompId: formCurrValues.ddlPreheatComp,
+        intPreheatCompId: Number(formCurrValues.ddlPreheatComp),
         intIsPreheatElecHeatBackupOnly: 0,
         intIsBackupHeating: Number(formCurrValues.ckbBackupHeating) === 1 ? 1 : 0,
-        intHeatExchCompId: formCurrValues.ddlHeatExchComp,
-        intCoolingCompId: formCurrValues.ddlCoolingComp,
-        intHeatingCompId: formCurrValues.ddlHeatingComp,
-        intReheatCompId: formCurrValues.ddlReheatComp,
+        intHeatExchCompId: Number(formCurrValues.ddlHeatExchComp),
+        intCoolingCompId: Number(formCurrValues.ddlCoolingComp),
+        intHeatingCompId: Number(formCurrValues.ddlHeatingComp),
+        intReheatCompId: Number(formCurrValues.ddlReheatComp),
         intIsHeatPump: Number(formCurrValues.ckbHeatPump) === 1 ? 1 : 0, // Do not use formValues.ckbHeatPumpVal === true
         intIsDehumidification: Number(formCurrValues.ckbDehumidification) === 1 ? 1 : 0, // Do not use formValues.ckbDehumidificationVal === true
-        intElecHeaterVoltageId: formCurrValues.ddlElecHeaterVoltage,
-        intPreheatElecHeaterInstallationId: formCurrValues.ddlPreheatElecHeaterInstall,
+        intElecHeaterVoltageId: Number(formCurrValues.ddlElecHeaterVoltage),
+        intPreheatElecHeaterInstallationId: Number(formCurrValues.ddlPreheatElecHeaterInstall),
         intHeatingElecHeaterInstallationId:
           Number(getValues('ddlReheatComp')) === IDs.intCompIdElecHeater
             ? formCurrValues.ddlReheatElecHeaterInstall
@@ -358,7 +357,7 @@ export default function UnitInfoForm({
         intReheatElecHeaterStdCoilNo: 0,
         intReheatHGRC_VRVKitQty: 0,
         dblReheatHGRC_VRVKitTonnage: 0,
-        intDamperAndActuatorId: formCurrValues.ddlDamperAndActuator,
+        intDamperAndActuatorId: Number(formCurrValues.ddlDamperAndActuator),
         intisValveAndActuatorIncluded: Number(formCurrValues.ckbValveAndActuator) === 1 ? 1 : 0,
         intPreheatHWCValveAndActuatorId: 0,
         intCoolingCWCValveAndActuatorId: 0,
@@ -375,8 +374,8 @@ export default function UnitInfoForm({
         dblHeatingSetpointDB: formCurrValues.txbWinterHeatingSetpointDB,
         dblReheatSetpointDB: formCurrValues.txbSummerReheatSetpointDB,
         dblBackupHeatingSetpontDB:  formCurrValues.txbBackupHeatingSetpointDB,
-        intCoolingFluidTypeId: formCurrValues.ddlCoolingFluidType,
-        intCoolingFluidConcentId: formCurrValues.ddlCoolingFluidConcentration,
+        intCoolingFluidTypeId: Number(formCurrValues.ddlCoolingFluidType),
+        intCoolingFluidConcentId: Number(formCurrValues.ddlCoolingFluidConcentration),
         dblCoolingFluidEntTemp: formCurrValues.txbCoolingFluidEntTemp,
         dblCoolingFluidLvgTemp: formCurrValues.txbCoolingFluidLvgTemp,
         intHeatingFluidTypeId: heatingFluidTypeId,
@@ -419,7 +418,7 @@ export default function UnitInfoForm({
         intUnitNo: edit ? unitId : 0,
         intProdTypeId: intProductTypeID,
         intUnitTypeId: intUnitTypeID,
-        intHandingId: formCurrValues.ddlHanding,
+        intHandingId: Number(formCurrValues.ddlHanding),
         intPreheatCoilHandingId: formCurrValues.ddlPreheatCoilHanding,
         intCoolingCoilHandingId: formCurrValues.ddlCoolingCoilHanding,
         intHeatingCoilHandingId: formCurrValues.ddlHeatingCoilHanding,
@@ -476,35 +475,77 @@ export default function UnitInfoForm({
   }, [edit, onSuccess, onError, getAllFormData, setIsSavedUnit]);
 
 
+
+  // ----------------------- Get UnitModel Dropdown List ---------------------------
+  const [unitModel, setUnitModel] = useState<any>([]);
+  useMemo(() => {
+    const { unitModelList, summerSupplyAirCFM } = getUnitModel(
+      db,
+      Number(intUnitTypeID),
+      Number(intProductTypeID),
+      Number(formCurrValues.ddlUnitModel),
+      Number(formValues.ddlLocation),
+      Number(formValues.ddlOrientation),
+      formValues.txbSummerSupplyAirCFM,
+      Number(formValues.ckbBypass),
+      Number(user?.UAL || 0)
+    );
+
+
+    const filteredUnitModel = unitModelList?.filter((item: any) => item.id) || [];
+
+    setUnitModel(filteredUnitModel);
+
+    if (filteredUnitModel.length > 0) {
+      setValue('ddlUnitModel', filteredUnitModel?.[0]?.id);
+    }
+
+    // if (edit) {
+    //   setValue('ddlUnitModel', defaultValues?.ddlUnitModel);
+    // }
+
+    return unitModelList;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [
+    db,
+    intUnitTypeID,
+    intProductTypeID,
+    formValues.ddlLocation,
+    formValues.ddlOrientation,
+    formValues.txbSummerSupplyAirCFM,
+    formValues.ckbBypass,
+    user?.UAL,
+    setValue,
+  ]);
+
+
   // -------------------- Get String Unit Model Codes ----------------------
   const { strUnitModelValue } = useMemo(() => {
     if (!formValues.ddlUnitModel || formValues.ddlUnitModel === '')
       return { strUnitModelValue: '' };
-    let unitModel = [];
+    let fdtUnitModel = [];
 
     switch (Number(intProductTypeID)) {
       case IDs.intProdTypeIdNova:
-        unitModel = db.dbtSelNovaUnitModel;
+        fdtUnitModel = db.dbtSelNovaUnitModel;
         break;
       case IDs.intProdTypeIdVentum:
-        unitModel = db.dbtSelVentumHUnitModel;
+        fdtUnitModel = db.dbtSelVentumHUnitModel;
         break;
       case IDs.intProdTypeIdVentumLite:
-        unitModel = db.dbtSelVentumLiteUnitModel;
+        fdtUnitModel = db.dbtSelVentumLiteUnitModel;
         break;
       case IDs.intProdTypeIdVentumPlus:
-        unitModel = db.dbtSelVentumPlusUnitModel;
+        fdtUnitModel = db.dbtSelVentumPlusUnitModel;
         break;
       case IDs.intProdTypeIdTerra:
-        unitModel = db.dbtSelTerraUnitModel;
+        fdtUnitModel = db.dbtSelTerraUnitModel;
         break;
       default:
         break;
     }
 
-    const unitModelValue = unitModel?.filter(
-      (item: any) => item.id === formValues.ddlUnitModel
-    )?.[0]?.value;
+    const unitModelValue = fdtUnitModel?.filter((item: any) => item.id === formValues.ddlUnitModel)?.[0]?.value;
 
     return getUnitModelCodes(
       unitModelValue,
@@ -1018,111 +1059,6 @@ export default function UnitInfoForm({
     },
     [formCurrValues.txbMixWinterRA_RH]
   );
-
-
-  // useEffect(() => {
-  //   // const inputs: any = {
-  //   //   dblAlt: getValues('txbAltitude') || any,
-  //   //   dblDB: getValues('txbMixSummerOA_DB') || any,
-  //   //   dblWB: getValues('txbMixSummerOA_WB') || any,
-  //   // };
-
-  //   api.project.getRH_By_DB_WB(oMixSummerOA_RH).then((data: any) => {
-  //     setValue('txbMixSummerOA_RH', data.toFixed(1));
-  //   });
-  // }, [getValues('txbMixSummerOA_DB'), getValues('txbMixSummerOA_WB')]);
-
-
-  // useEffect(() => {
-  //   // const inputs: any = {
-  //   //   dblAlt: getValues('txbAltitude') || any,
-  //   //   dblDB: getValues('txbMixSummerOA_DB') || any,
-  //   //   dblRH: getValues('txbMixSummerOA_RH') || any,
-  //   // };
-
-  //   api.project.getWB_By_DB_RH(oMixSummerOA_WB).then((data: any) => {
-  //     setValue('txbMixSummerOA_WB', data.toFixed(1));
-  //   });
-  // }, [getValues('txbMixSummerOA_RH')]);
-
-
-  // useCallback(() => {
-  //   // const inputs: any = {
-  //   //   dblAlt: getValues('txbAltitude') || any,
-  //   //   dblDB: getValues('txbMixSummerRA_DB') || any,
-  //   //   dblWB: getValues('txbMixSummerRA_WB') || any,
-  //   // };
-
-  //   api.project.getRH_By_DB_WB(oMixSummerRA_RH).then((data: any) => {
-  //     setValue('txbMixSummerRA_RH', data.toFixed(1));
-  //   });
-  // }, [getValues('txbMixSummerRA_DB'), getValues('txbMixSummerRA_WB')]);
-
-
-  // useEffect(() => {
-  //   // const inputs: any = {
-  //   //   dblAlt: getValues('txbAltitude') || any,
-  //   //   dblDB: getValues('txbMixSummerRA_DB') || any,
-  //   //   dblRH: getValues('txbMixSummerRA_RH') || any,
-  //   // };
-
-  //   api.project.getWB_By_DB_RH(oMixSummerRA_WB).then((data: any) => {
-  //     setValue('txbMixSummerRA_WB', data.toFixed(1));
-  //   });
-  // }, [getValues('txbMixSummerRA_RH')]);
-
-
-  // useEffect(() => {
-  //   // const inputs: any = {
-  //   //   dblAlt: getValues('txbAltitude') || any,
-  //   //   dblDB: getValues('txbMixWinterOA_DB') || any,
-  //   //   dblWB: getValues('txbMixWinterOA_WB') || any,
-  //   // };
-
-  //   api.project.getRH_By_DB_WB(oMixWinterOA_RH).then((data: any) => {
-  //     setValue('txbMixWinterOA_RH', data.toFixed(1));
-  //   });
-  //   }, [getValues('txbMixWinterOA_DB'), getValues('txbMixWinterOA_WB')]);
-
-
-  // useEffect(() => {
-  //   // const inputs: any = {
-  //   //   dblAlt: getValues('txbAltitude') || any,
-  //   //   dblDB: getValues('txbMixWinterOA_DB') || any,
-  //   //   dblRH: getValues('txbMixWinterOA_RH') || any,
-  //   // };
-
-  //   api.project.getWB_By_DB_RH(oMixWinterOA_WB).then((data: any) => {
-  //     setValue('txbMixWinterOA_WB', data.toFixed(1));
-  //   });
-  // }, [getValues('txbMixWinterOA_RH')]);
-
-
-  // useEffect(() => {
-  //   // const inputs: any = {
-  //   //   dblAlt: getValues('txbAltitude') || any,
-  //   //   dblDB: getValues('txbMixWinterRA_DB') || any,
-  //   //   dblWB: getValues('txbMixWinterRA_WB') || any,
-  //   // };
-
-  //   api.project.getRH_By_DB_WB(oMixWinterRA_RH).then((data: any) => {
-  //     setValue('txbMixWinterRA_RH', data.toFixed(1));
-  //   });
-  //   }, [getValues('txbMixWinterRA_DB'), getValues('txbMixWinterRA_WB')]);
-
-
-  // useEffect(() => {
-  //   // const inputs: any = {
-  //   //   dblAlt: getValues('txbAltitude') || any,
-  //   //   dblDB: getValues('txbMixWinterRA_DB') || any,
-  //   //   dblRH: getValues('txbMixWinterRA_RH') || any,
-  //   // };
-
-  //   api.project.getWB_By_DB_RH(oMixWinterRA_WB).then((data: any) => {
-  //     setValue('txbMixWinterRA_WB', data.toFixed(1));
-  //   });
-  // }, [getValues('txbMixWinterRA_RH')]);
-
 
 
 
@@ -2046,43 +1982,6 @@ export default function UnitInfoForm({
     [setValue]
   );
 
-  // ----------------------- Get UnitModel Dropdown List ---------------------------
-  const unitModel = useMemo(() => {
-    const { unitModelList, summerSupplyAirCFM } = getUnitModel(
-      db,
-      Number(intUnitTypeID),
-      Number(intProductTypeID),
-      Number(formValues.ddlUnitModel),
-      Number(formValues.ddlLocation),
-      Number(formValues.ddlOrientation),
-      formValues.txbSummerSupplyAirCFM,
-      Number(formValues.ckbBypass),
-      Number(user?.UAL || 0)
-    );
-
-    const filteredUnitModel = unitModelList?.filter((item: any) => item.id) || [];
-
-    if (filteredUnitModel.length > 0) {
-      setValue('ddlUnitModel', filteredUnitModel?.[0]?.id);
-    }
-
-    if (edit) {
-      setValue('ddlUnitModel', defaultValues?.ddlUnitModel);
-    }
-
-    return unitModelList;
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [
-    db,
-    intUnitTypeID,
-    intProductTypeID,
-    formValues.ddlLocation,
-    formValues.ddlOrientation,
-    formValues.txbSummerSupplyAirCFM,
-    formValues.ckbBypass,
-    user?.UAL,
-    setValue,
-  ]);
 
 
   // ------------------------------ Get Bypass State -------------------------------
@@ -2148,9 +2047,7 @@ export default function UnitInfoForm({
       intProductTypeID,
       strUnitModelValue
     );
-    if (
-      unitVoltageList?.filter((item: any) => item.id === formValues.ddlUnitVoltage)?.length === 0
-    ) {
+    if ( unitVoltageList?.filter((item: any) => item.id === formValues.ddlUnitVoltage)?.length === 0) {
       setValue('ddlUnitVoltage', ddlUnitVoltageId);
     }
     return unitVoltageList;
@@ -2189,9 +2086,9 @@ export default function UnitInfoForm({
     ) {
       setValue('ddlRA_FilterModel', RAFilterModel?.dataTable[0]?.id);
 
-      if (edit) {
-        setValue('ddlRA_FilterModel', defaultValues?.ddlRA_FilterModel);
-      }
+      // if (edit) {
+      //   setValue('ddlRA_FilterModel', defaultValues?.ddlRA_FilterModel);
+      // }
     }
   }, [setValue, RAFilterModel, formValues.ddlRA_FilterModel]);
 
@@ -2234,10 +2131,11 @@ export default function UnitInfoForm({
       Number(formValues.ddlLocation),
       intProductTypeID
     );
+    setValue('ddlPreheatElecHeaterInstall', result?.ddlPreheatElecHeaterInstallationId || 1);
 
-    if (!edit) {
-      setValue('ddlPreheatElecHeaterInstall', result?.ddlPreheatElecHeaterInstallationId || 1);
-    }
+    // if (!edit) {
+    //   setValue('ddlPreheatElecHeaterInstall', result?.ddlPreheatElecHeaterInstallationId || 1);
+    // }
 
     return result.ddlPreheatElecHeaterInstallationDataTbl;
   }, [edit, db, setValue, intProductTypeID, formValues.ddlLocation, formValues.ddlPreheatComp]);
@@ -2491,7 +2389,8 @@ export default function UnitInfoForm({
       strUnitModelValue
     );
 
-    if (!edit && result?.ddlElecHeaterVoltageDataTbl) {
+    // if (!edit && result?.ddlElecHeaterVoltageDataTbl) {
+      if (result?.ddlElecHeaterVoltageDataTbl) {
       const selectedId = result?.ddlElecHeaterVoltageDataTbl.find(
         (item) => item.id === formValues.ddlElecHeaterVoltage
       );
@@ -2550,19 +2449,10 @@ export default function UnitInfoForm({
   const handingInfo = useMemo(() => {
     const result = db?.dbtSelHanding;
     // if (!edit) setValue('ddlHandingId', defaultValues?.ddlHandingId);
-    setValue('ddlHanding', !edit ? db?.dbtSelHanding[0].id : defaultValues.ddlHanding);
-    setValue(
-      'ddlPreheatCoilHanding',
-      !edit ? db?.dbtSelHanding[0].id : defaultValues.ddlPreheatCoilHanding
-    );
-    setValue(
-      'ddlCoolingCoilHanding',
-      !edit ? db?.dbtSelHanding[0].id : defaultValues.ddlCoolingCoilHanding
-    );
-    setValue(
-      'ddlHeatingCoilHanding',
-      !edit ? db?.dbtSelHanding[0].id : defaultValues.ddlHeatingCoilHanding
-    );
+    setValue('ddlHanding', db?.dbtSelHanding[0].id);
+    setValue('ddlPreheatCoilHanding', db?.dbtSelHanding[0].id);
+    setValue('ddlCoolingCoilHanding', db?.dbtSelHanding[0].id);
+    setValue('ddlHeatingCoilHanding', db?.dbtSelHanding[0].id);
     return result;
   }, [edit, db, setValue]);
 
@@ -2581,7 +2471,7 @@ export default function UnitInfoForm({
       Number(formValues.ddlReheatComp)
     );
 
-    setValue('ddlSupplyAirOpening', !edit ? result?.ddlSupplyAirOpeningId : defaultValues.ddlSupplyAirOpening);
+    setValue('ddlSupplyAirOpening',  result?.ddlSupplyAirOpeningId);
     setValue('ddlSupplyAirOpeningText', result?.ddlSupplyAirOpeningText);
 
     return result;
@@ -2600,6 +2490,7 @@ export default function UnitInfoForm({
   ]);
 
 
+  const [remainingOpeningsInfo, setRemainingOpeningsInfo] = useState<any>({});
   useEffect(() => {
     if (!formValues.ddlOrientation || !formValues.ddlSupplyAirOpeningText || !intProductTypeID)
       return;
@@ -2619,20 +2510,11 @@ export default function UnitInfoForm({
     // if (!edit) setValue('ddlReturnAirOpeningId', result?.ddlReturnAirOpeningId);
     // if (!edit) setValue('ddlReturnAirOpeningText', result?.ddlReturnAirOpeningText);
 
-    setValue(
-      'ddlExhaustAirOpening',
-      !edit ? result?.ddlExhaustAirOpeningId : defaultValues.ddlExhaustAirOpening
-    );
+    setValue('ddlExhaustAirOpening', result?.ddlExhaustAirOpeningId);
     setValue('ddlExhaustAirOpeningText', result?.ddlExhaustAirOpeningText);
-    setValue(
-      'ddlOutdoorAirOpening',
-      !edit ? result?.ddlOutdoorAirOpeningId : defaultValues.ddlOutdoorAirOpening
-    );
+    setValue('ddlOutdoorAirOpening', result?.ddlOutdoorAirOpeningId);
     setValue('ddlOutdoorAirOpeningText', result?.ddlOutdoorAirOpeningText);
-    setValue(
-      'ddlReturnAirOpening',
-      !edit ? result?.ddlReturnAirOpeningId : defaultValues.ddlReturnAirOpening
-    );
+    setValue('ddlReturnAirOpening', result?.ddlReturnAirOpeningId);
     setValue('ddlReturnAirOpeningText', result?.ddlReturnAirOpeningText);
 
     setRemainingOpeningsInfo(result);
@@ -2711,65 +2593,36 @@ export default function UnitInfoForm({
   useEffect(() => {
     if (unitInfo !== null) {
       // if () {
-      setValue(
-        'ddlLocation',
-        unitInfo?.oUnitCompOpt?.intHeatingFluidTypeId > 0
-          ? unitInfo?.oUnit?.intLocationId
-          : getValues('ddlLocation')
-      );
+      setValue('ddlLocation', unitInfo?.oUnitCompOpt?.intHeatingFluidTypeId > 0 ? 
+                unitInfo?.oUnit?.intLocationId : getValues('ddlLocation'));
       // }
 
       // if (unitInfo?.oUnit?.intOrientationId > 0) {
-      setValue(
-        'ddlOrientation',
-        unitInfo?.oUnit?.intOrientationId > 0
-          ? unitInfo?.oUnit?.intOrientationId
-          : getValues('ddlOrientation')
-      );
+      setValue('ddlOrientation', unitInfo?.oUnit?.intOrientationId > 0 ? 
+                unitInfo?.oUnit?.intOrientationId : getValues('ddlOrientation'));
       // }
 
       // if (unitInfo?.oUnit?.intControlsPreferenceId > 0) {
       //   setValue('ddlControlsPreference', unitInfo?.oUnit?.intControlsPreferenceId);
-      setValue(
-        'ddlControlsPref',
-        unitInfo?.oUnit?.intControlsPreferenceId > 0
-          ? unitInfo?.oUnit?.intControlsPreferenceId
-          : getValues('ddlControlsPref')
-      );
+      setValue('ddlControlsPref', unitInfo?.oUnit?.intControlsPreferenceId > 0 ? 
+              unitInfo?.oUnit?.intControlsPreferenceId : getValues('ddlControlsPref'));
       // }
 
-      setValue(
-        'txbSummerSupplyAirCFM',
-        Number(unitInfo?.oUnitAirflow?.intSummerSupplyAirCFM) > 0
-          ? unitInfo?.oUnitAirflow?.intSummerSupplyAirCFM
-          : '325'
-      );
-      setValue(
-        'txbSummerReturnAirCFM',
-        Number(unitInfo?.oUnitAirflow?.intSummerReturnAirCFM) > 0
-          ? unitInfo?.oUnitAirflow?.intSummerReturnAirCFM
-          : '325'
-      );
-      setValue(
-        'txbSupplyAirESP',
-        Number.parseFloat(unitInfo?.oUnitAirflow?.dblSupplyAirESP) > 0.0
-          ? unitInfo?.oUnitAirflow?.dblSupplyAirESP
-          : '0.75'
-      );
-      setValue(
-        'txbExhaustAirESP',
-        Number.parseFloat(unitInfo?.oUnitAirflow?.dblExhaustAirESP) > 0.0
-          ? unitInfo?.oUnitAirflow?.dblExhaustAirESP
-          : '0.75'
-      );
+      setValue('txbSummerSupplyAirCFM', Number(unitInfo?.oUnitAirflow?.intSummerSupplyAirCFM) > 0 ? 
+                unitInfo?.oUnitAirflow?.intSummerSupplyAirCFM : '325');
+
+      setValue('txbSummerReturnAirCFM', Number(unitInfo?.oUnitAirflow?.intSummerReturnAirCFM) > 0 ? 
+                unitInfo?.oUnitAirflow?.intSummerReturnAirCFM : '325');
+
+      setValue('txbSupplyAirESP', Number.parseFloat(unitInfo?.oUnitAirflow?.dblSupplyAirESP) > 0.0 ? 
+                unitInfo?.oUnitAirflow?.dblSupplyAirESP : '0.75');
+
+      setValue('txbExhaustAirESP', Number.parseFloat(unitInfo?.oUnitAirflow?.dblExhaustAirESP) > 0.0 ? 
+                unitInfo?.oUnitAirflow?.dblExhaustAirESP : '0.75');
 
       // if (unitInfo?.oUnit?.intUnitModelId > 0) {
-      setValue(
-        'ddlUnitModel',
-        unitInfo?.oUnit?.intUnitModelId > 0
-          ? unitInfo?.oUnit?.intUnitModelId
-          : getValues('ddlUnitModel')
-      );
+      setValue('ddlUnitModel', unitInfo?.oUnit?.intUnitModelId > 0 ? 
+                unitInfo?.oUnit?.intUnitModelId : getValues('ddlUnitModel'));
       // }
 
       // if (unitInfo?.oUnit?.intUnitVoltageId > 0) {
