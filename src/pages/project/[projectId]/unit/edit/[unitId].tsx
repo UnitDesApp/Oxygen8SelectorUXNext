@@ -57,6 +57,7 @@ export default function EditUnit() {
   const { push, query } = useRouter();
   const { projectId, unitId } = query;
   const [currentStep, setCurrentStep] = useState(1);
+  const [showInfoPage, setShowInfoPage] = useState<boolean>(true)
   const [isSavedUnit, setIsSavedUnit] = useState(false);
   const [openRPDialog, setOpenRPDialog] = useState(false);
   const [isProcessingData, setIsProcessingData] = useState(false);
@@ -108,7 +109,7 @@ export default function EditUnit() {
         <title> New Unit | Oxygen8 </title>
       </Head>
       {Number(isNewUnitSelected) === 0  && Number(unitId) === 0? (
-        <NewUnit />
+        <NewUnit setShowInfoPage = {setShowInfoPage} />
       ) : (
         <>
           {isProcessingData ? (
@@ -139,8 +140,9 @@ export default function EditUnit() {
                 }
               />
               <Box sx={{ my: 3 }}>
-                {currentStep === 1 && projectId && unitId && (
+                {showInfoPage && currentStep === 1 && projectId && unitId && (
                   <UnitInfo
+                  setShowInfoPage = {setShowInfoPage}
                     projectId={Number(projectId)}
                     unitId={Number(unitId)}
                     isSavedUnit={isSavedUnit}
@@ -153,14 +155,16 @@ export default function EditUnit() {
                     moveNextStep={() => setCurrentStep(2)}
                   />
                 )}
-                {currentStep === 2 && projectId && unitId && Number(unitId) > 0 && (
+                {!showInfoPage && currentStep === 2 && projectId && unitId && Number(unitId) > 0 && (
                   // <SelectionWrapper projectId={Number(projectId)} unitId={Number(unitId)} />
                   <Selection
+                  setCurrentStep= {setCurrentStep}
+                  setShowInfoPage={setShowInfoPage}
                     intJobId={Number(projectId)}
                     intUnitNo={Number(unitId)}
                     intProdTypeId={0}
                   />
-                )}
+                )}        
               </Box>
             </Container>
           )}

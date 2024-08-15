@@ -82,10 +82,12 @@ type UnitInfoFormProps = {
   submitButtonRef?: any;
   setIsSaving: Function;
   moveNextStep: Function;
+  setShowInfoPage: (value: boolean) => void;
 };
 
 export default function UnitInfoForm({
   projectId,
+  setShowInfoPage,
   unitId,
   setIsSavedUnit,
   isSavedUnit,
@@ -451,6 +453,7 @@ export default function UnitInfoForm({
       // const oUC = getAllFormData1(formValues);
       const data = await api.project.saveUnit(oUC);
       if (onSuccess) {
+        setShowInfoPage(false)
         onSuccess(true);
         unitId = data?.intUnitNo;
         // <Selection
