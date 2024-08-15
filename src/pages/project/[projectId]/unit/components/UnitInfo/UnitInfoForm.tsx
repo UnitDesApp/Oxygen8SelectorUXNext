@@ -82,12 +82,10 @@ type UnitInfoFormProps = {
   submitButtonRef?: any;
   setIsSaving: Function;
   moveNextStep: Function;
-  setShowInfoPage: (value: boolean) => void;
 };
 
 export default function UnitInfoForm({
   projectId,
-  setShowInfoPage,
   unitId,
   setIsSavedUnit,
   isSavedUnit,
@@ -453,9 +451,9 @@ export default function UnitInfoForm({
       // const oUC = getAllFormData1(formValues);
       const data = await api.project.saveUnit(oUC);
       if (onSuccess) {
-        setShowInfoPage(false)
         onSuccess(true);
         unitId = data?.intUnitNo;
+        push(PATH_APP.selectionUnit(projectId?.toString() || '0', unitId?.toString() || '0'));
         // <Selection
         // intJobId={Number(projectId)}
         // intUnitNo={Number(unitId)}
@@ -464,7 +462,7 @@ export default function UnitInfoForm({
       }
       if (setIsSavedUnit) setIsSavedUnit(data?.intUnitNo || 0);
 
-      push(PATH_APP.editUnit(projectId?.toString() || '0', unitId?.toString() || '0'));
+      push(PATH_APP.selectionUnit(projectId?.toString() || '0', unitId?.toString() || '0'));
       moveNextStep();
     }
   else{
@@ -3203,7 +3201,7 @@ export default function UnitInfoForm({
 
   const onClickUnitInfo = () => {
     // setCurrentStep(1);
-    push(PATH_APP.editUnit(projectId?.toString() || '0', unitId?.toString() || '0'));
+    push(PATH_APP.selectionUnit(projectId?.toString() || '0', unitId?.toString() || '0'));
   };
 
 

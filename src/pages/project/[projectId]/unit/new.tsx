@@ -52,7 +52,7 @@ const STEP_PAGE_NAME = ['Select product type', 'Info', 'Selection'];
 AddNewUnit.getLayout = (page: React.ReactElement) => <DashboardLayout>{page}</DashboardLayout>;
 
 
-export default function AddNewUnit(setShowInfoPage: any) {
+export default function AddNewUnit() {
   // eslint-disable-next-line no-unused-vars
   const theme = useTheme();
   const { push, query } = useRouter();
@@ -159,7 +159,6 @@ export default function AddNewUnit(setShowInfoPage: any) {
           )}
           {currentStep === 1 && (
               <UnitInfo
-              setShowInfoPage={setShowInfoPage}
                 projectId={Number(projectId)}
                 isSavedUnit={isSavedUnit}
                 intProductTypeID={unitTypeData.intProductTypeID}
@@ -178,7 +177,6 @@ export default function AddNewUnit(setShowInfoPage: any) {
           {currentStep === 2 && (
             <Selection
             setCurrentStep= {setCurrentStep}
-            setShowInfoPage={setShowInfoPage}
               intJobId={Number(projectId)}
               intUnitNo={Number(intUnitNo)}
               intProdTypeId={Number(unitTypeData.intProductTypeID)}

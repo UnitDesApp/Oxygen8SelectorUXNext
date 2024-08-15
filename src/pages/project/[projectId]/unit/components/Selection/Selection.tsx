@@ -113,11 +113,10 @@ interface SelectionProps {
   intUnitNo: number;
   intProdTypeId: number;
   setCurrentStep: (value: number) => void;
-  setShowInfoPage: (value: boolean) => void;
 }
 
 // export default function Selection({ unitTypeData, intUnitNo }: SelectionProps) {
-export default function Selection({ intJobId, intUnitNo, intProdTypeId,setShowInfoPage, setCurrentStep }: SelectionProps) {
+export default function Selection({ intJobId, intUnitNo, intProdTypeId, setCurrentStep }: SelectionProps) {
   const { projectId } = useRouter().query;
   const [error, setError] = useState(null);
   const [expanded, setExpanded] = React.useState<{ [key: string]: boolean }>({
@@ -983,10 +982,9 @@ export default function Selection({ intJobId, intUnitNo, intProdTypeId,setShowIn
   // ]);
 
   const onClickUnitInfo = () => {
-   setShowInfoPage(true);
    setCurrentStep(1)
     // setCurrentStep(1);
-    // push(PATH_APP.editUnit(projectId?.toString() || '0', intUnitNo?.toString() || '0'));
+    push(PATH_APP.editUnit(projectId?.toString() || '0', intUnitNo?.toString() || '0'));
   };
 
 

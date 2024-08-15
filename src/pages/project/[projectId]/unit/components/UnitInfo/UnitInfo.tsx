@@ -42,12 +42,10 @@ type UnitInfoProps = {
   submitButtonRef?: any;
   setIsSaving: Function;
   moveNextStep: Function;
-  setShowInfoPage: (value: boolean) => void;
 };
 
 export default function UnitInfo({
   projectId,
-  setShowInfoPage,
   unitId,
   setIsSavedUnit,
   isSavedUnit,
@@ -113,7 +111,6 @@ export default function UnitInfo({
         <Box>
           {unitData && baseData && unitInfo && (
             <UnitInfoForm
-            setShowInfoPage = {setShowInfoPage}
               projectId={projectId}
               unitId={edit ? unitId : -1}
               db={baseData}
