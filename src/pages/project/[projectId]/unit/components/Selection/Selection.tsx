@@ -112,10 +112,11 @@ interface SelectionProps {
   intJobId: any;
   intUnitNo: number;
   intProdTypeId: number;
+  setCurrentStep: (value: number) => void;
 }
 
 // export default function Selection({ unitTypeData, intUnitNo }: SelectionProps) {
-export default function Selection({ intJobId, intUnitNo, intProdTypeId }: SelectionProps) {
+export default function Selection({ intJobId, intUnitNo, intProdTypeId, setCurrentStep }: SelectionProps) {
   const { projectId } = useRouter().query;
   const [error, setError] = useState(null);
   const [expanded, setExpanded] = React.useState<{ [key: string]: boolean }>({
@@ -981,6 +982,7 @@ export default function Selection({ intJobId, intUnitNo, intProdTypeId }: Select
   // ]);
 
   const onClickUnitInfo = () => {
+   setCurrentStep(1)
     // setCurrentStep(1);
     push(PATH_APP.editUnit(projectId?.toString() || '0', intUnitNo?.toString() || '0'));
   };

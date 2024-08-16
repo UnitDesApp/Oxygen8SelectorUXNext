@@ -176,6 +176,7 @@ export default function AddNewUnit() {
           )}
           {currentStep === 2 && (
             <Selection
+            setCurrentStep= {setCurrentStep}
               intJobId={Number(projectId)}
               intUnitNo={Number(intUnitNo)}
               intProdTypeId={Number(unitTypeData.intProductTypeID)}

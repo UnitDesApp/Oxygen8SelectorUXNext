@@ -508,6 +508,7 @@ export default function UnitInfoForm({
       if (onSuccess) {
         onSuccess(true);
         unitId = data?.intUnitNo;
+        push(PATH_APP.selectionUnit(projectId?.toString() || '0', unitId?.toString() || '0'));
         // <Selection
         // intJobId={Number(projectId)}
         // intUnitNo={Number(unitId)}
@@ -516,7 +517,7 @@ export default function UnitInfoForm({
       }
       if (setIsSavedUnit) setIsSavedUnit(data?.intUnitNo || 0);
 
-      push(PATH_APP.editUnit(projectId?.toString() || '0', unitId?.toString() || '0'));
+      push(PATH_APP.selectionUnit(projectId?.toString() || '0', unitId?.toString() || '0'));
       moveNextStep();
     }
   else{
@@ -4881,7 +4882,7 @@ export default function UnitInfoForm({
 
   const onClickUnitInfo = () => {
     // setCurrentStep(1);
-    push(PATH_APP.editUnit(projectId?.toString() || '0', unitId?.toString() || '0'));
+    push(PATH_APP.selectionUnit(projectId?.toString() || '0', unitId?.toString() || '0'));
   };
 
 
