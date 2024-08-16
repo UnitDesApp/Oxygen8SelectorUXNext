@@ -932,11 +932,18 @@ export default function UnitInfoForm({
 
 
   // -------------------- Get String Unit Model Codes ----------------------
-  const { strUnitModelValue } = useMemo(() => {
-    if (!formValues.ddlUnitModel || formValues.ddlUnitModel === '')
-      return { strUnitModelValue: '' };
+  const [umcInfo, setUMCInfo] = useState<any>([]);
+  useEffect(() => {
+    // const info: { umc: any; } = {
+    //   umc: [],
+    // };
+
+    // if (!formValues.ddlUnitModel || formValues.ddlUnitModel === '')
+    //   return { strUnitModelValue: '' };
+
     let fdtUnitModel = [];
 
+    if (Number(getValues('ddlUnitModel')) > 0) {
     switch (Number(intProductTypeID)) {
       case IDs.intProdTypeIdNova:
         fdtUnitModel = db.dbtSelNovaUnitModel;
@@ -957,26 +964,15 @@ export default function UnitInfoForm({
         break;
     }
 
-    const unitModelValue = fdtUnitModel?.filter((item: any) => item.id === formValues.ddlUnitModel)?.[0]?.value;
+    const unitModelValue = fdtUnitModel?.filter((item: {id: number}) => item.id === Number(getValues('ddlUnitModel')))?.[0]?.value;
 
-    return getUnitModelCodes(
-      unitModelValue,
-      intProductTypeID,
-      intUnitTypeID,
-      formValues.ddlLocation,
-      formValues.ddlOrientation,
-      Number(formValues.ckbBypass),
-      db
-    );
-  }, [
-    formValues.ckbBypass,
-    db,
-    intProductTypeID,
-    intUnitTypeID,
-    formValues.ddlLocation,
-    formValues.ddlOrientation,
-    formValues.ddlUnitModel,
-  ]);
+    const umc = getUnitModelCodes(unitModelValue, intProductTypeID, intUnitTypeID, getValues('ddlLocation'),
+                                  getValues('ddlOrientation'), Number(getValues('ckbBypass')), db);
+     setUMCInfo(umc);
+    }
+
+  }, [db, intProductTypeID, intUnitTypeID, getValues('txbSummerSupplyAirCFM'), getValues('ddlUnitModel'), getValues('ddlLocation'), getValues('ddlOrientation'),
+      getValues('ckbBypass')]);
 
 
   const [unitTypeInfo, setUnitTypeInfo] = useState<any>([]);
@@ -1035,8 +1031,6 @@ export default function UnitInfoForm({
   }, [db, intProductTypeID, intUnitTypeID]);
 
 
-
-
   const [controlsPrefInfo, setControlsPrefInfo] = useState<any>([]);
   useMemo(() => {
     const info: { fdtControlsPref: any; isVisible: boolean; defaultId: number } = {
@@ -1046,15 +1040,11 @@ export default function UnitInfoForm({
     };
     // let controlsPrefProdTypeLink: any = [];
     let controlsPrefProdTypeLink: any = [];
-    controlsPrefProdTypeLink = db?.dbtSelControlsPrefProdTypeLink?.filter(
-      (item: { prod_type_id: number }) => item.prod_type_id === intProductTypeID
+    controlsPrefProdTypeLink = db?.dbtSelControlsPrefProdTypeLink?.filter((item: { prod_type_id: number }) => item.prod_type_id === intProductTypeID
     );
 
     info.fdtControlsPref = db?.dbtSelControlsPref?.filter(
-      (e: { id: any }) =>
-        controlsPrefProdTypeLink?.filter(
-          (e_link: { controls_id: any }) => e.id === e_link.controls_id
-        )?.length > 0
+      (e: { id: any }) => controlsPrefProdTypeLink?.filter((e_link: { controls_id: any }) => e.id === e_link.controls_id)?.length > 0
     );
 
     setControlsPrefInfo(info);
@@ -1204,14 +1194,14 @@ export default function UnitInfoForm({
         break;
     }
 
-    const dtLink = modelVoltageLink?.filter((item: { unit_model_value: any }) => item.unit_model_value === strUnitModelValue) || [];
-    let dtVoltage = db?.dbtSelElectricalVoltage;
+    const dtLink =modelVoltageLink?.filter((item: { unit_model_value: any }) => item.unit_model_value === umcInfo?.strUnitModelValue) || [];
+    info.fdtUnitVoltage = db?.dbtSelElectricalVoltage;
 
     if (intProductTypeID === IDs.intProdTypeIdTerra) {
-      dtVoltage = db?.dbtSelElectricalVoltage?.filter((item: { terra_spp: number }) => item.terra_spp === 1);
+      info.fdtUnitVoltage = db?.dbtSelElectricalVoltage?.filter((item: { terra_spp: number }) => item.terra_spp === 1);
     }
   
-    info.fdtUnitVoltage = dtVoltage?.filter((e: { id: any }) => dtLink?.filter((e_link: { voltage_id: any }) => e.id === e_link.voltage_id)?.length > 0);
+    info.fdtUnitVoltage = info.fdtUnitVoltage?.filter((e: { id: any }) => dtLink?.filter((e_link: { voltage_id: any }) => e.id === e_link.voltage_id)?.length > 0);
 
 
 
@@ -1219,7 +1209,7 @@ export default function UnitInfoForm({
     info.defaultId = info.fdtUnitVoltage?.[0]?.id;
     setValue('ddlUnitVoltage', info.fdtUnitVoltage?.[0]?.id);
 
-  }, [db, intProductTypeID]);
+  }, [db, intProductTypeID, getValues('txbSummerSupplyAirCFM'), getValues('ddlUnitModel')]);
 
 
   const [outdoorAirFilterInfo, setOutdoorAirFilterInfo] = useState<any>([]);
@@ -3960,12 +3950,6 @@ export default function UnitInfoForm({
       }
     
 
-
-
-
-
-
-
       setValue('txbSummerSupplyAirCFM', intSummerSupplyAirCFM);
       setValue('txbSummerReturnAirCFM', intSummerSupplyAirCFM);
     },
@@ -6691,7 +6675,7 @@ export default function UnitInfoForm({
           </AccordionDetails>
         </Accordion>
         <Stack direction="row" justifyContent="flex-end" textAlign="right">
-          <Box sx={{ width: '150px' }}>
+          {/* <Box sx={{ width: '150px' }}> */}
             {/* <LoadingButton
               ref={submitButtonRef}
               type="submit"
@@ -6748,7 +6732,7 @@ export default function UnitInfoForm({
                 )}
                 </>
               )}
-          </Box>
+          {/* </Box> */}
         </Stack>
       </Stack>
     </FormProvider>

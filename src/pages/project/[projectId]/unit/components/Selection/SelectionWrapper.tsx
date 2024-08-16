@@ -24,15 +24,15 @@ export default function SelectionWrapper({ projectId, unitId }: SelectionWrapper
  // const { unitInfo  } = unitData || { unitInfo: {} };
 const unitInfo: any = unitData || {};
 
-  return !isLoadingUnitInfo ? (
-    // <Selection
-    //   unitTypeData={{
-    //     intProductTypeID: unitInfo?.productTypeID,
-    //     intUnitTypeID: unitInfo?.unitTypeID,
-    //   }}
-    //   intUnitNo={unitId}
-    // />
+  // return !isLoadingUnitInfo ? (
+  //   // <Selection
+  //   //   unitTypeData={{
+  //   //     intProductTypeID: unitInfo?.productTypeID,
+  //   //     intUnitTypeID: unitInfo?.unitTypeID,
+  //   //   }}
+  //   //   intUnitNo={unitId}
+  //   // />
 
-    <Selection intJobId={unitInfo?.intProjectID} intUnitNo={unitId} intProdTypeId={unitInfo?.productTypeID}/>
-  ) : null;
+  //   <Selection intJobId={unitInfo?.intProjectID} intUnitNo={unitId} intProdTypeId={unitInfo?.productTypeID}/>
+  // ) : null;
 }
