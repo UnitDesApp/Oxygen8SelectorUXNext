@@ -432,11 +432,8 @@ export const getSummerSupplyAirCFM = (
   let intSummerSupplyAirCFM = Number(summerSupplyAirCFM);
   switch (intProductTypeID) {
     case ClsID.intProdTypeIdNova:
-      if (
-        intUAL === ClsID.intUAL_Admin ||
-        intUAL === ClsID.intUAL_IntAdmin ||
-        intUAL === ClsID.intUAL_IntLvl_2 ||
-        intUAL === ClsID.intUAL_IntLvl_1
+      if (intUAL === ClsID.intUAL_Admin || intUAL === ClsID.intUAL_IntAdmin ||
+          intUAL === ClsID.intUAL_IntLvl_2 || intUAL === ClsID.intUAL_IntLvl_1
       ) {
         if (intSummerSupplyAirCFM < intNOVA_MIN_CFM) {
           intSummerSupplyAirCFM = intNOVA_MIN_CFM;
@@ -450,11 +447,8 @@ export const getSummerSupplyAirCFM = (
       }
       break;
     case ClsID.intProdTypeIdVentum:
-      if (
-        intUAL === ClsID.intUAL_Admin ||
-        intUAL === ClsID.intUAL_IntAdmin ||
-        intUAL === ClsID.intUAL_IntLvl_2 ||
-        intUAL === ClsID.intUAL_IntLvl_1
+      if (intUAL === ClsID.intUAL_Admin || intUAL === ClsID.intUAL_IntAdmin ||
+          intUAL === ClsID.intUAL_IntLvl_2 || intUAL === ClsID.intUAL_IntLvl_1
       ) {
         if (ckbPHI === 1) {
           if (intSummerSupplyAirCFM < intVEN_MIN_CFM_PHI) {
@@ -486,11 +480,8 @@ export const getSummerSupplyAirCFM = (
       }
       break;
     case ClsID.intProdTypeIdVentumLite:
-      if (
-        intUAL === ClsID.intUAL_Admin ||
-        intUAL === ClsID.intUAL_IntAdmin ||
-        intUAL === ClsID.intUAL_IntLvl_2 ||
-        intUAL === ClsID.intUAL_IntLvl_1
+      if (intUAL === ClsID.intUAL_Admin || intUAL === ClsID.intUAL_IntAdmin ||
+          intUAL === ClsID.intUAL_IntLvl_2 || intUAL === ClsID.intUAL_IntLvl_1
       ) {
         if (ckbBypassVal === 1) {
           if (intSummerSupplyAirCFM < intVENLITE_INT_USERS_MIN_CFM_WITH_BYPASS) {
@@ -516,11 +507,8 @@ export const getSummerSupplyAirCFM = (
       }
       break;
     case ClsID.intProdTypeIdVentumPlus:
-      if (
-        intUAL === ClsID.intUAL_Admin ||
-        intUAL === ClsID.intUAL_IntAdmin ||
-        intUAL === ClsID.intUAL_IntLvl_2 ||
-        intUAL === ClsID.intUAL_IntLvl_1
+      if (intUAL === ClsID.intUAL_Admin || intUAL === ClsID.intUAL_IntAdmin ||
+          intUAL === ClsID.intUAL_IntLvl_2 || intUAL === ClsID.intUAL_IntLvl_1
       ) {
         if (ckbPHI === 1) {
           if (intSummerSupplyAirCFM < intVENPLUS_MIN_CFM_PHI) {
@@ -612,10 +600,7 @@ export const getSummerReturnAirCFM = (
   const ckbBypass = Number(values.ckbBypass);
   const ckbPHI = Number(values.ckbPHI);
 
-  if (
-    intOrientationID === ClsID.intOrientationIdHorizontal &&
-    intSummerSupplyAirCFM > intNOVA_HORIZONTAL_MAX_CFM
-  ) {
+  if ( intOrientationID === ClsID.intOrientationIdHorizontal && intSummerSupplyAirCFM > intNOVA_HORIZONTAL_MAX_CFM) {
     intSummerReturnAirCFM = intNOVA_HORIZONTAL_MAX_CFM;
   }
 
@@ -629,15 +614,10 @@ export const getSummerReturnAirCFM = (
       }
       break;
     case ClsID.intProdTypeIdVentum:
-      dtModel = db?.dbtSelVentumHUnitModel?.filter(
-        (item: { id: number }) => item.id === intUnitModelID
-      );
+      dtModel = db?.dbtSelVentumHUnitModel?.filter((item: { id: number }) => item.id === intUnitModelID);
 
-      if (
-        intUAL === ClsID.intUAL_Admin ||
-        intUAL === ClsID.intUAL_IntAdmin ||
-        intUAL === ClsID.intUAL_IntLvl_2 ||
-        intUAL === ClsID.intUAL_IntLvl_1
+      if (intUAL === ClsID.intUAL_Admin || intUAL === ClsID.intUAL_IntAdmin || 
+          intUAL === ClsID.intUAL_IntLvl_2 ||  intUAL === ClsID.intUAL_IntLvl_1
       ) {
         if (ckbPHI === 1) {
           if (intSummerReturnAirCFM < Math.max(intSummerSupplyAirCFM * 0.5, intVEN_MIN_CFM_PHI)) {
@@ -669,16 +649,10 @@ export const getSummerReturnAirCFM = (
       }
       break;
     case ClsID.intProdTypeIdVentumLite:
-      dtModel = db?.dbtSelVentumLiteUnitModel?.filter(
-        (item: { id: number }) => item.id === intUnitModelID
-      );
+      dtModel = db?.dbtSelVentumLiteUnitModel?.filter((item: { id: number }) => item.id === intUnitModelID);
 
-      if (
-        intUAL === ClsID.intUAL_Admin ||
-        intUAL === ClsID.intUAL_IntAdmin ||
-        intUAL === ClsID.intUAL_IntLvl_2 ||
-        intUAL === ClsID.intUAL_IntLvl_1
-      ) {
+      if (intUAL === ClsID.intUAL_Admin || intUAL === ClsID.intUAL_IntAdmin ||
+          intUAL === ClsID.intUAL_IntLvl_2 || intUAL === ClsID.intUAL_IntLvl_1) {
         if (ckbPHI === 1) {
           if (intSummerReturnAirCFM < Math.max(intSummerSupplyAirCFM * 0.5, intVENLITE_INT_USERS_MIN_CFM_WITH_BYPASS)) {
             intSummerReturnAirCFM = Number(Math.max(intSummerSupplyAirCFM * 0.5, intVENLITE_INT_USERS_MIN_CFM_WITH_BYPASS));
@@ -703,15 +677,10 @@ export const getSummerReturnAirCFM = (
       }
       break;
     case ClsID.intProdTypeIdVentumPlus:
-      dtModel = db?.dbtSelVentumPlusUnitModel?.filter(
-        (item: { id: number }) => item.id === intUnitModelID
-      );
+      dtModel = db?.dbtSelVentumPlusUnitModel?.filter((item: { id: number }) => item.id === intUnitModelID);
 
-      if (
-        intUAL === ClsID.intUAL_Admin ||
-        intUAL === ClsID.intUAL_IntAdmin ||
-        intUAL === ClsID.intUAL_IntLvl_2 ||
-        intUAL === ClsID.intUAL_IntLvl_1
+      if (intUAL === ClsID.intUAL_Admin || intUAL === ClsID.intUAL_IntAdmin ||
+          intUAL === ClsID.intUAL_IntLvl_2 || intUAL === ClsID.intUAL_IntLvl_1
       ) {
         if (ckbPHI === 1) {
           if (intSummerReturnAirCFM < Math.max(intSummerSupplyAirCFM * 0.5, intVENPLUS_MIN_CFM_PHI)) {
@@ -746,30 +715,21 @@ export const getSummerReturnAirCFM = (
       break;
   }
 
-  if (
-    (intProductTypeID === ClsID.intProdTypeIdVentum ||
-      intProductTypeID === ClsID.intProdTypeIdVentumLite ||
-      intProductTypeID === ClsID.intProdTypeIdVentumPlus) &&
-    intUnitTypeID === ClsID.intUnitTypeIdHRV
-  ) {
+  if ((intProductTypeID === ClsID.intProdTypeIdVentum || intProductTypeID === ClsID.intProdTypeIdVentumLite ||
+      intProductTypeID === ClsID.intProdTypeIdVentumPlus) && intUnitTypeID === ClsID.intUnitTypeIdHRV) {
     if (intSummerReturnAirCFM < intSummerSupplyAirCFM * 0.5) {
       intSummerReturnAirCFM = Math.ceil(intSummerSupplyAirCFM * 0.5);
     } else if (intSummerReturnAirCFM > Number(intSummerSupplyAirCFM) * 2) {
       intSummerReturnAirCFM = Math.ceil(intSummerSupplyAirCFM * 2);
     }
   } else if (
-    (intProductTypeID === ClsID.intProdTypeIdVentum ||
-      intProductTypeID === ClsID.intProdTypeIdVentumLite ||
-      intProductTypeID === ClsID.intProdTypeIdVentumPlus) &&
-    intUnitTypeID === ClsID.intUnitTypeIdERV
+    (intProductTypeID === ClsID.intProdTypeIdVentum || intProductTypeID === ClsID.intProdTypeIdVentumLite ||
+     intProductTypeID === ClsID.intProdTypeIdVentumPlus) && intUnitTypeID === ClsID.intUnitTypeIdERV
   ) {
     switch (intProductTypeID) {
       case ClsID.intProdTypeIdVentum:
-        if (
-          intUAL === ClsID.intUAL_Admin ||
-          intUAL === ClsID.intUAL_IntAdmin ||
-          intUAL === ClsID.intUAL_IntLvl_2 ||
-          intUAL === ClsID.intUAL_IntLvl_1
+        if (intUAL === ClsID.intUAL_Admin || intUAL === ClsID.intUAL_IntAdmin ||
+            intUAL === ClsID.intUAL_IntLvl_2 || intUAL === ClsID.intUAL_IntLvl_1
         ) {
           if (ckbBypass === 1) {
             if (intSummerReturnAirCFM < intVEN_INT_USERS_MIN_CFM_WITH_BYPASS) {
@@ -796,11 +756,8 @@ export const getSummerReturnAirCFM = (
 
         break;
       case ClsID.intProdTypeIdVentumLite:
-        if (
-          intUAL === ClsID.intUAL_Admin ||
-          intUAL === ClsID.intUAL_IntAdmin ||
-          intUAL === ClsID.intUAL_IntLvl_2 ||
-          intUAL === ClsID.intUAL_IntLvl_1
+        if (intUAL === ClsID.intUAL_Admin || intUAL === ClsID.intUAL_IntAdmin ||
+            intUAL === ClsID.intUAL_IntLvl_2 || intUAL === ClsID.intUAL_IntLvl_1
         ) {
           if (ckbBypass === 1) {
             if (intSummerReturnAirCFM < intVENLITE_INT_USERS_MIN_CFM_WITH_BYPASS) {
@@ -827,11 +784,8 @@ export const getSummerReturnAirCFM = (
 
         break;
       case ClsID.intProdTypeIdVentumPlus:
-        if (
-          intUAL === ClsID.intUAL_Admin ||
-          intUAL === ClsID.intUAL_IntAdmin ||
-          intUAL === ClsID.intUAL_IntLvl_2 ||
-          intUAL === ClsID.intUAL_IntLvl_1
+        if (intUAL === ClsID.intUAL_Admin || intUAL === ClsID.intUAL_IntAdmin ||
+            intUAL === ClsID.intUAL_IntLvl_2 || intUAL === ClsID.intUAL_IntLvl_1
         ) {
           if (ckbBypass === 1) {
             if (intSummerReturnAirCFM < intVENPLUS_INT_USERS_MIN_CFM_WITH_BYPASS) {
@@ -1019,6 +973,7 @@ export const getUnitVoltage = (
 
   return { unitVoltageList: unitVoltage, ddlUnitVoltageId };
 };
+
 
 export const getComponentInfo = (
   db: { dbtSelUnitCoolingHeating: any; dbtSelUnitHeatExchanger: any },

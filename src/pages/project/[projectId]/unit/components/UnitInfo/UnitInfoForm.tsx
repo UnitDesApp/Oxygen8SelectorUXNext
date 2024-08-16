@@ -36,28 +36,28 @@ import { flowRight, indexOf } from 'lodash';
 // import Selection from '../Selection/Selection';
 
 import {
-  getBypass,
-  getComponentInfo,
+  // getBypass,
+  // getComponentInfo,
   // getDXCoilRefrigDesignCondInfo,
   // getDamperAndActuatorInfo,
   // getDehumidificationInfo,
-  getDrainPanInfo,
-  getElecHeaterVoltageInfo,
-  getExhaustAirESP,
+  // getDrainPanInfo,
+  // getElecHeaterVoltageInfo,
+  // getExhaustAirESP,
   // getHeatPumpInfo,
-  getLocation,
-  getOrientation,
-  getPreheatElecHeaterInstallationInfo,
-  getReheatInfo,
-  getRemainingOpeningsInfo,
-  getSummerReturnAirCFM,
-  getSummerSupplyAirCFM,
-  getSupplyAirESPInfo,
-  getSupplyAirOpeningInfo,
-  getUALInfo,
-  getUnitModel,
-  getUnitVoltage,
-  getValveAndActuatorInfo,
+  // getLocation,
+  // getOrientation,
+  // getPreheatElecHeaterInstallationInfo,
+  // getReheatInfo,
+  // getRemainingOpeningsInfo,
+  // getSummerReturnAirCFM,
+  // getSummerSupplyAirCFM,
+  // getSupplyAirESPInfo,
+  // getSupplyAirOpeningInfo,
+  // getUALInfo,
+  // getUnitModel,
+  // getUnitVoltage,
+  // getValveAndActuatorInfo,
 } from './handleUnitModel';
 import { getUnitModelCodes } from './getUnitNoteCodes';
 import { UnitTypeContext } from './unitTypeDataContext';
@@ -83,6 +83,61 @@ type UnitInfoFormProps = {
   setIsSaving: Function;
   moveNextStep: Function;
 };
+
+
+const intNOVA_MIN_CFM = 325;
+const intNOVA_MAX_CFM = 9000;
+
+const intNOVA_INT_USERS_MIN_CFM = 325;
+const intNOVA_INT_USERS_MAX_CFM = 8100;
+const intNOVA_HORIZONTAL_MAX_CFM = 3500;
+
+const intVEN_MIN_CFM_NO_BYPASS = 325;
+const intVEN_MAX_CFM_NO_BYPASS = 3000;
+const intVEN_MIN_CFM_WITH_BYPASS = 325;
+const intVEN_MAX_CFM_WITH_BYPASS = 3000;
+
+const intVEN_INT_USERS_MIN_CFM_NO_BYPASS = 300;
+const intVEN_INT_USERS_MAX_CFM_NO_BYPASS = 3048;
+const intVEN_INT_USERS_MIN_CFM_WITH_BYPASS = 300;
+const intVEN_INT_USERS_MAX_CFM_WITH_BYPASS = 3048;
+
+const intVEN_MIN_CFM_PHI = 185;
+const intVEN_MAX_CFM_PHI = 1480;
+
+const intVENLITE_MIN_CFM_NO_BYPASS = 200;
+const intVENLITE_MAX_CFM_NO_BYPASS = 500;
+const intVENLITE_MIN_CFM_WITH_BYPASS = 200;
+const intVENLITE_MAX_CFM_WITH_BYPASS = 500;
+
+const intVENLITE_INT_USERS_MIN_CFM_NO_BYPASS = 170;
+const intVENLITE_INT_USERS_MAX_CFM_NO_BYPASS = 500;
+const intVENLITE_INT_USERS_MIN_CFM_WITH_BYPASS = 170;
+const intVENLITE_INT_USERS_MAX_CFM_WITH_BYPASS = 500;
+
+const intVENPLUS_MIN_CFM_NO_BYPASS = 1200;
+const intVENPLUS_MAX_CFM_NO_BYPASS = 10000;
+const intVENPLUS_MIN_CFM_WITH_BYPASS = 1200;
+const intVENPLUS_MAX_CFM_WITH_BYPASS = 10000;
+
+const intVENPLUS_INT_USERS_MIN_CFM_NO_BYPASS = 1080;
+const intVENPLUS_INT_USERS_MAX_CFM_NO_BYPASS = 10500;
+const intVENPLUS_INT_USERS_MIN_CFM_WITH_BYPASS = 1080;
+const intVENPLUS_INT_USERS_MAX_CFM_WITH_BYPASS = 10500;
+
+const intVENPLUS_MIN_CFM_PHI = 495;
+const intVENPLUS_MAX_CFM_PHI = 7150;
+
+const intTERA_MIN_CFM_NO_BYPASS = 450;
+const intTERA_MAX_CFM_NO_BYPASS = 4800;
+const intTERA_MIN_CFM_WITH_BYPASS = 450;
+const intTERA_MAX_CFM_WITH_BYPASS = 4800;
+
+const intTERA_INT_USERS_MIN_CFM_NO_BYPASS = 450;
+const intTERA_INT_USERS_MAX_CFM_NO_BYPASS = 4800;
+const intTERA_INT_USERS_MIN_CFM_WITH_BYPASS = 450;
+const intTERA_INT_USERS_MAX_CFM_WITH_BYPASS = 4800;
+
 
 export default function UnitInfoForm({
   projectId,
@@ -476,47 +531,404 @@ export default function UnitInfoForm({
 
 
 
-  // ----------------------- Get UnitModel Dropdown List ---------------------------
-  const [unitModel, setUnitModel] = useState<any>([]);
+  // -----------------------  ---------------------------
+  const [internCompInfo, setInternCompInfo] = useState<any>([]);
   useMemo(() => {
-    const { unitModelList, summerSupplyAirCFM } = getUnitModel(
-      db,
-      Number(intUnitTypeID),
-      Number(intProductTypeID),
-      Number(formCurrValues.ddlUnitModel),
-      Number(formValues.ddlLocation),
-      Number(formValues.ddlOrientation),
-      formValues.txbSummerSupplyAirCFM,
-      Number(formValues.ckbBypass),
-      Number(user?.UAL || 0)
-    );
+    const info: { isOADesignCondVisible: boolean; isRADesignCondVisible: boolean; isCustomVisible: boolean; isHandingValveVisible: boolean; } = 
+                { isOADesignCondVisible: false, isRADesignCondVisible: false, isCustomVisible: false, isHandingValveVisible: false,};
+                
+    const intUAL= Number(localStorage?.getItem('UAL')) || 0;
 
-
-    const filteredUnitModel = unitModelList?.filter((item: any) => item.id) || [];
-
-    setUnitModel(filteredUnitModel);
-
-    if (filteredUnitModel.length > 0) {
-      setValue('ddlUnitModel', filteredUnitModel?.[0]?.id);
+    switch (intUAL) {
+      case IDs.intUAL_Admin:
+        info.isOADesignCondVisible = true;
+        info.isRADesignCondVisible = true;
+        info.isCustomVisible = true;
+        info.isHandingValveVisible = true;
+        break;
+      case IDs.intUAL_IntAdmin:
+      case IDs.intUAL_IntLvl_1:
+      case IDs.intUAL_IntLvl_2:
+        info.isOADesignCondVisible = false;
+        info.isRADesignCondVisible = false;
+        info.isCustomVisible = true;
+        info.isHandingValveVisible = true;
+        break;
+      default:
+        info.isOADesignCondVisible = false;
+        info.isRADesignCondVisible = false;
+        info.isCustomVisible = false;
+        info.isHandingValveVisible = false;
+        break;
     }
 
-    // if (edit) {
-    //   setValue('ddlUnitModel', defaultValues?.ddlUnitModel);
-    // }
 
-    return unitModelList;
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [
-    db,
-    intUnitTypeID,
-    intProductTypeID,
-    formValues.ddlLocation,
-    formValues.ddlOrientation,
-    formValues.txbSummerSupplyAirCFM,
-    formValues.ckbBypass,
-    user?.UAL,
-    setValue,
-  ]);
+
+    setInternCompInfo(info);
+
+
+  }, []);
+
+
+  const [locationInfo, setLocationInfo] = useState<any>([]);
+  useMemo(() => {
+    const info: { fdtLocation: any; defaultId: number } = { fdtLocation: [], defaultId: 0,};
+    // let controlsPrefProdTypeLink: any = [];
+    info.fdtLocation = db?.dbtSelGeneralLocation;
+
+    const dtProdUnitLocLink = db?.dbtSelProdTypeUnitTypeLocLink?.filter((item: { prod_type_id: any; unit_type_id: any }) =>
+      item.prod_type_id === intProductTypeID && item.unit_type_id === intUnitTypeID);
+
+    info.fdtLocation = info.fdtLocation?.filter((e: { id: any }) =>
+      dtProdUnitLocLink?.filter((e_link: { location_id: any }) => e_link.location_id === e.id)?.length > 0);
+
+    setLocationInfo(info);
+    info.defaultId = info.fdtLocation?.[0]?.id;
+    setValue('ddlLocation', info.fdtLocation?.[0]?.id);
+
+  }, [db, intProductTypeID, intUnitTypeID]);
+
+
+  const [orientationInfo, setOrientationInfo] = useState<any>([]);
+  useMemo(() => {
+    const info: { fdtOrientation: any; defaultId: number } = { fdtOrientation: [], defaultId: 0,};
+    // let controlsPrefProdTypeLink: any = [];
+    info.fdtOrientation = db?.dbtSelGeneralOrientation;
+
+    const dtLocOriLink = db?.dbtSelLocOriLink?.filter((item: { prod_type_id: any; unit_type_id: any; location_id: any }) => 
+      item.prod_type_id === intProductTypeID &&
+      item.unit_type_id === intUnitTypeID &&
+      item.location_id === Number(getValues('ddlLocation'))
+      );
+
+    // let dtOrientation = getFromLink(data?.generalOrientation, 'orientation_id', dtLocOri, 'max_cfm');
+    info.fdtOrientation = info.fdtOrientation?.filter((e: { id: any }) => 
+      dtLocOriLink?.filter((e_link: { orientation_id: any}) => e.id === e_link.orientation_id)?.length > 0);
+
+    info.fdtOrientation?.sort((a: any, b: any) => a.max_cfm- b.max_cfm);
+
+
+
+    if (intProductTypeID === IDs.intProdTypeIdNova) {
+      info.fdtOrientation = info.fdtOrientation?.filter((item: { max_cfm: number}) => item.max_cfm >= Number(getValues('txbSummerSupplyAirCFM')));
+    }
+
+    setOrientationInfo(info);
+    info.defaultId = info.fdtOrientation?.[0]?.id;
+    setValue('ddlOrientation', info.fdtOrientation?.[0]?.id);
+
+  }, [db, intProductTypeID, intUnitTypeID, getValues('ddlLocation'), getValues('txbSummerSupplyAirCFM')]);
+
+
+  const [bypassInfo, setBypassInfo] = useState<any>([]);
+  useMemo(() => {
+    const info: { isVisible: boolean; isChecked: boolean; defaultId: number; bypassMsg: string } = {
+      isVisible: false,
+      isChecked: false,
+      defaultId: 0,
+      bypassMsg: '',
+    };
+
+
+    switch (Number(intProductTypeID)) {
+      case IDs.intProdTypeIdNova:
+        info.isVisible = true;
+        break;
+      case IDs.intProdTypeIdVentum:
+        info.isVisible = false;
+        info.isChecked = false;
+        break;
+      case IDs.intProdTypeIdVentumLite:
+        info.isVisible = false;
+        info.isChecked = false;
+        break;
+      case IDs.intProdTypeIdVentumPlus:
+        info.isVisible = true;
+        info.isChecked = false;
+        break;
+      case IDs.intProdTypeIdTerra:
+        info.isVisible = false;
+        info.isChecked = false;
+        break;
+      default:
+        break;
+    }
+
+    if (intProductTypeID === IDs.intProdTypeIdNova) {
+      const dtUnitModel = db?.dbtSelNovaUnitModel?.filter((item: { id: number }) => item.id === Number(getValues('ddlUnitModel')));
+  
+      // if (Number(getValues('ckbBypass')) === 1) {
+        info.isVisible = true;
+        info.bypassMsg = '';
+      // } else {
+        // info.checked = 0;
+        info.isVisible = false;
+  
+        if (Number(getValues('ddlUnitModel')) === IDs.intNovaUnitModelIdC70IN || 
+            Number(getValues('ddlUnitModel')) === IDs.intNovaUnitModelIdC70OU
+        ) {
+          info.bypassMsg = ' Contact Oxygen8 applications for Bypass model';
+        } else {
+          info.bypassMsg = ' Not available for selected model';
+        }
+      // }
+  
+      if (Number(getValues('ddlOrientation')) === IDs.intOrientationIdHorizontal) {
+        const drUnitModelBypassHorUnit = dtUnitModel?.filter(
+          (item: { bypass_exist_horizontal_unit: number }) => item.bypass_exist_horizontal_unit === 1);
+  
+        if (drUnitModelBypassHorUnit && drUnitModelBypassHorUnit?.length > 0) {
+          info.isVisible = true;
+          info.bypassMsg = '';
+        } else {
+          // info.isEnabled = true;
+          info.isVisible = false;
+          info.bypassMsg = ' Not available for selected model';
+        }
+      }
+    }
+
+
+    setBypassInfo(info);
+
+  }, [db, intProductTypeID, getValues('ddlUnitModel'), getValues('ddlOrientation'), ]);
+
+
+  const [unitModelInfo, setUnitModelInfo] = useState<any>([]);
+  useMemo(() => {
+    const info: { fdtUnitModel: any; defaultId: number } = { fdtUnitModel: [], defaultId: 0,};
+    // let controlsPrefProdTypeLink: any = [];
+
+    // const dtProdUnitLocLink = db?.dbtSelProdTypeUnitTypeLocLink?.filter((item: { prod_type_id: any; unit_type_id: any }) =>
+    //   item.prod_type_id === intProductTypeID && item.unit_type_id === intUnitTypeID);
+
+    // info.fdtLocation = db?.db?.dbtSelGeneralLocation?.filter((e: { id: any }) =>
+    //   dtProdUnitLocLink?.filter((e_link: { location_id: any }) => e_link.location_id === e.id)?.length > 0);
+
+    const intUAL= Number(localStorage?.getItem('UAL')) || 0;
+    let dtNovaUnitModelLink = db?.dbtSelNovaUnitModelLocOriLink;
+    const dtLocation = db?.dbtSelGeneralLocation?.filter((item: { id: any }) => item.id === Number(getValues('ddlLocation')));
+    const dtOrientation = db?.dbtSelGeneralOrientation?.filter((item: { id: any }) => item.id === Number(getValues('ddlOrientation')));
+    let summerSupplyAirCFM = Number(getValues('txbSummerSupplyAirCFM'));
+
+    switch (intProductTypeID) {
+      case IDs.intProdTypeIdNova:
+        dtNovaUnitModelLink = dtNovaUnitModelLink?.filter(
+          (item: { location_value: any; orientation_value: any }) =>
+            item.location_value === dtLocation?.[0]?.value.toString() &&
+            item.orientation_value === dtOrientation?.[0]?.value.toString()
+        );
+
+        if (intUAL === IDs.intUAL_External || intUAL === IDs.intUAL_ExternalSpecial) {
+          // unitModel = unitModelFilter(data?.novaUnitModel, summerSupplyAirCFM, 'cfm_min_ext_users', 'cfm_max_ext_users', unitModelId);
+          // unitModel = data?.novaUnitModel?.filter((item) => item.terra_spp === 1);
+          // unitModel = data?.novaUnitModel?.filter((item) => (item['cfm_min_ext_users'] >= summerSupplyAirCFM && summerSupplyAirCFM <= item['cfm_max_ext_users']) ).sort((a, b) => a.cfm_max - b.cfm_max);
+          info.fdtUnitModel = db?.dbtSelNovaUnitModel?.filter(
+              (item: { cfm_min_ext_users: number; cfm_max_ext_users: number }) =>
+                item.cfm_min_ext_users <= summerSupplyAirCFM &&
+                item.cfm_max_ext_users >= summerSupplyAirCFM
+            ) || [];
+        } else {
+          // unitModel = unitModelFilter(data?.novaUnitModel, summerSupplyAirCFM, 'cfm_min', 'cfm_max', unitModelId);
+          info.fdtUnitModel = db?.dbtSelNovaUnitModel?.filter(
+            (item: { cfm_min: number; cfm_max: number }) => item.cfm_min <= summerSupplyAirCFM && item.cfm_max >= summerSupplyAirCFM);
+        }
+
+        if (intUAL === IDs.intUAL_External || intUAL === IDs.intUAL_ExternalSpecial) {
+          info.fdtUnitModel = info.fdtUnitModel?.filter((item: { enabled_ext_users: number }) => item.enabled_ext_users === 1);
+        }
+
+        // unitModel = getFromLink(unitModel, 'unit_model_id', unitModelLink, 'cfm_max');
+
+        info.fdtUnitModel = info.fdtUnitModel?.filter((e: { id: any}) => dtNovaUnitModelLink?.filter((e_link: { unit_model_id: any}) => e.id === e_link.unit_model_id)?.length > 0);
+        info.fdtUnitModel?.sort((a: any, b: any) => a.cfm_max- b.cfm_max);
+
+
+        // unitModel = sortColume(unitModel, 'cfm_max');
+
+
+        if (Number(getValues('ckbBypass')) === 1) {
+          const drUnitModelBypass = info.fdtUnitModel?.filter((item: { bypass_exist: number }) => item.bypass_exist === 1);
+          const unitModelBypass = drUnitModelBypass || [];
+
+          if (unitModelBypass?.length > 0) {
+            info.fdtUnitModel = info.fdtUnitModel?.filter((item: { bypass_exist: number }) => item.bypass_exist === 1);
+
+            if (Number(getValues('ddlOrientation')) === IDs.intOrientationIdHorizontal) {
+              const drUnitModelBypassHorUnit = info.fdtUnitModel?.filter(
+                (item: { bypass_exist_horizontal_unit: number }) => item.bypass_exist_horizontal_unit === 1);
+
+              const unitModelBypassHorUnit = drUnitModelBypassHorUnit || [];
+
+              if (unitModelBypassHorUnit?.length > 0) {
+                info.fdtUnitModel = info.fdtUnitModel?.filter((item: { bypass_exist_horizontal_unit: number }) => item.bypass_exist_horizontal_unit === 1);
+              } else {
+                // ckbBypassVal = 0;
+              }
+            }
+          }
+        }
+        break;
+      case IDs.intProdTypeIdVentum:
+        if (Number(getValues('ckbBypass')) === 1) {
+          summerSupplyAirCFM = summerSupplyAirCFM > intVEN_MAX_CFM_WITH_BYPASS ? intVEN_MAX_CFM_WITH_BYPASS : summerSupplyAirCFM;
+        }
+
+        if (intUAL === IDs.intUAL_External || intUAL === IDs.intUAL_ExternalSpecial) {
+          if (intUnitTypeID === IDs.intUnitTypeIdERV) {
+            // unitModel = unitModelFilter(data?.ventumHUnitModel,summerSupplyAirCFM,'erv_cfm_min_ext_users','erv_cfm_max_ext_users',unitModelId);
+            info.fdtUnitModel = db?.dbtSelVentumHUnitModel?.filter(
+                (item: { erv_cfm_min_ext_users: number; erv_cfm_max_ext_users: number }) =>
+                  item.erv_cfm_min_ext_users <= summerSupplyAirCFM &&
+                  item.erv_cfm_max_ext_users >= summerSupplyAirCFM) || [];
+
+              info.fdtUnitModel = info.fdtUnitModel.map((item: { model_erv: any }) => ({
+              ...item,
+              items: item.model_erv,
+            }));
+          } else if (intUnitTypeID === IDs.intUnitTypeIdHRV) {
+            // unitModel = unitModelFilter(data?.ventumHUnitModel,summerSupplyAirCFM,'hrv_cfm_min_ext_users','hrv_cfm_max_ext_users', unitModelId);
+            info.fdtUnitModel = db?.dbtSelVentumHUnitModel?.filter(
+                (item: { hrv_cfm_min_ext_users: number; hrv_cfm_max_ext_users: number }) =>
+                  item.hrv_cfm_min_ext_users <= summerSupplyAirCFM &&
+                  item.hrv_cfm_max_ext_users >= summerSupplyAirCFM) || [];
+
+                  info.fdtUnitModel = info.fdtUnitModel.map((item: { model_hrv: any }) => ({
+              ...item,
+              items: item.model_hrv,
+            }));
+          }
+        } else {
+          // unitModel = unitModelFilter(data?.ventumHUnitModel, summerSupplyAirCFM, 'cfm_min', 'cfm_max', unitModelId);
+          info.fdtUnitModel = db?.dbtSelVentumHUnitModel?.filter(
+              (item: { cfm_min: number; cfm_max: number }) => item.cfm_min <= summerSupplyAirCFM && item.cfm_max >= summerSupplyAirCFM) || [];
+        }
+
+        info.fdtUnitModel = info.fdtUnitModel?.filter((item: { bypass: any }) => item.bypass === Number(getValues('ckbBypass')));
+
+        // getReheatInfo();    //Only for Ventum - H05 has no HGRH option
+        break;
+      case IDs.intProdTypeIdVentumLite:
+        // ckbBypassVal = 0;
+
+        if (intUAL === IDs.intUAL_IntLvl_1 || intUAL === IDs.intUAL_IntLvl_2) {
+          if (intUnitTypeID === IDs.intUnitTypeIdERV) {
+            // unitModel = unitModelFilter(data?.ventumLiteUnitModel,summerSupplyAirCFM,'cfm_min','cfm_max', unitModelId);
+            info.fdtUnitModel = db?.dbtSelVentumLiteUnitModel?.filter((item: { cfm_min: number; cfm_max: number }) => item.cfm_min <= summerSupplyAirCFM && item.cfm_max >= summerSupplyAirCFM ) || [];
+
+            info.fdtUnitModel = info.fdtUnitModel.map((item: { model_erv: any }) => ({
+              ...item,
+              items: item.model_erv,
+            }));
+          } else if (intUnitTypeID === IDs.intUnitTypeIdHRV) {
+            // unitModel = unitModelFilter(data?.ventumLiteUnitModel,summerSupplyAirCFM,'cfm_min','cfm_max',unitModelId);
+            info.fdtUnitModel = db?.dbtSelVentumLiteUnitModel?.filter(
+                (item: { cfm_min: number; cfm_max: number }) => item.cfm_min <= summerSupplyAirCFM && item.cfm_max >= summerSupplyAirCFM) || [];
+
+                info.fdtUnitModel = info.fdtUnitModel.map((item: { model_hrv: any }) => ({
+              ...item,
+              items: item.model_hrv,
+            }));
+          }
+        } else if (intUAL === IDs.intUAL_External || intUAL === IDs.intUAL_ExternalSpecial) {
+          if (intUnitTypeID === IDs.intUnitTypeIdERV) {
+            // unitModel = unitModelFilter(data?.ventumLiteUnitModel,summerSupplyAirCFM,'erv_cfm_min_ext_users','erv_cfm_max_ext_users',unitModelId);
+            info.fdtUnitModel = db?.dbtSelVentumLiteUnitModel?.filter(
+                  (item: { erv_cfm_min_ext_users: number; erv_cfm_max_ext_users: number }) =>
+                  item.erv_cfm_min_ext_users <= summerSupplyAirCFM &&
+                  item.erv_cfm_max_ext_users >= summerSupplyAirCFM
+              ) || [];
+              info.fdtUnitModel = info.fdtUnitModel.map((item: { model_erv: any }) => ({...item, items: item.model_erv,
+            }));
+          } else if (intUnitTypeID === IDs.intUnitTypeIdHRV) {
+            // unitModel = unitModelFilter(data?.ventumLiteUnitModel, summerSupplyAirCFM,'hrv_cfm_min_ext_users','hrv_cfm_max_ext_users',unitModelId);
+            info.fdtUnitModel = db?.dbtSelVentumLiteUnitModel?.filter(
+                (item: { hrv_cfm_min_ext_users: number; hrv_cfm_max_ext_users: number }) =>
+                  item.hrv_cfm_min_ext_users <= summerSupplyAirCFM &&
+                  item.hrv_cfm_max_ext_users >= summerSupplyAirCFM
+              ) || [];
+              info.fdtUnitModel = info.fdtUnitModel.map((item: { model_hrv: any }) => ({...item, items: item.model_hrv,
+            }));
+          }
+
+          const drUnitModel = info.fdtUnitModel?.filter((item: { enabled_ext_users: number }) => item.enabled_ext_users === 1);
+          info.fdtUnitModel = drUnitModel || [];
+        } else {
+          // unitModel = unitModelFilter(data?.ventumLiteUnitModel, summerSupplyAirCFM, 'cfm_min', 'cfm_max', unitModelId);
+          info.fdtUnitModel = db?.dbtSelVentumLiteUnitModel?.filter(
+              (item: { cfm_min: number; cfm_max: number }) => item.cfm_min <= summerSupplyAirCFM && item.cfm_max >= summerSupplyAirCFM) || [];
+        }
+
+        info.fdtUnitModel = info.fdtUnitModel?.filter(
+          (item: { enabled: number; bypass: any }) => item.enabled === 1 && item.bypass === Number(getValues('ckbBypass')));
+        break;
+      case IDs.intProdTypeIdVentumPlus:
+        info.fdtUnitModel =  db?.dbtSelVentumPlusUnitModel;
+
+      if (Number(getValues('ckbBypass')) === 1) {
+          summerSupplyAirCFM = summerSupplyAirCFM > intVENPLUS_MAX_CFM_WITH_BYPASS ? intVENPLUS_MAX_CFM_WITH_BYPASS : summerSupplyAirCFM;
+        }
+        if (summerSupplyAirCFM < 1200) {
+          summerSupplyAirCFM = 1200;
+        }
+
+        if (intUAL === IDs.intUAL_External || intUAL === IDs.intUAL_ExternalSpecial) {
+          if (intUnitTypeID === IDs.intUnitTypeIdERV) {
+            // info.fdtUnitModel = unitModelFilter(db?.dbtSelVentumPlusUnitModel, summerSupplyAirCFM, 'erv_cfm_min_ext_users', 'erv_cfm_max_ext_users');
+            info.fdtUnitModel =  info.fdtUnitModel?.filter((item: any) => item.erv_cfm_min_ext_users <= summerSupplyAirCFM && summerSupplyAirCFM <= item.erv_cfm_max_ext_users).sort((a: any, b: any) => a.erv_cfm_max_ext_users - b.erv_cfm_max_ext_users);
+
+            // info.fdtUnitModel = info.fdtUnitModel.map((item: { model_erv: any }) => ({...item, items: item.model_erv,}));
+
+          } else if (intUnitTypeID === IDs.intUnitTypeIdHRV) {
+            // info.fdtUnitModel = unitModelFilter(db?.dbtSelVentumPlusUnitModel, summerSupplyAirCFM,'hrv_cfm_min_ext_users', 'hrv_cfm_max_ext_users');
+            info.fdtUnitModel =  info.fdtUnitModel?.filter((item: any) => item.hrv_cfm_min_ext_users <= summerSupplyAirCFM && summerSupplyAirCFM <= item.hrv_cfm_min_ext_users).sort((a: any, b: any) => a.hrv_cfm_min_ext_users - b.hrv_cfm_min_ext_users);
+            // info.fdtUnitModel = info.fdtUnitModel.map((item: { model_hrv: any }) => ({...item, items: item.model_hrv, }));
+          }
+        } else {
+          // info.fdtUnitModel = unitModelFilter(db?.dbtSelVentumPlusUnitModel, summerSupplyAirCFM,'cfm_min','cfm_max');
+          info.fdtUnitModel = info.fdtUnitModel?.filter((item: any) => item.cfm_min <= summerSupplyAirCFM && summerSupplyAirCFM <= item.cfm_max).sort((a: any, b: any) => a.cfm_max - b.cfm_max);
+
+          // info.fdtUnitModel = info.fdtUnitModel.map((item: { items: any; cfm_min: any; cfm_max: any }) => ({
+          //   ...item,
+          //   items: `${item.items} - (${item.cfm_min}-${item.cfm_max} CFM)`,
+          // }));
+          info.fdtUnitModel = info.fdtUnitModel.map((item: { items: any; model_erv: any; }) => ({...item, items: `${item.model_erv}`,}));
+        }
+        info.fdtUnitModel = info.fdtUnitModel?.filter(
+          (item: { location_id_key: any; enabled: number; bypass: any }) =>
+            item.location_id_key === dtLocation?.[0]?.id_key &&
+            item.enabled === 1 &&
+            item.bypass === Number(getValues('ckbBypass'))
+        );
+        break;
+      case IDs.intProdTypeIdTerra:
+        if (intUAL === IDs.intUAL_External || intUAL === IDs.intUAL_ExternalSpecial) {
+          // unitModel = unitModelFilter(data?.terraUnitModel,summerSupplyAirCFM,'cfm_min_ext_users','cfm_max_ext_users',unitModelId);
+          info.fdtUnitModel = db?.dbtSelTerraUnitModel?.filter(
+              (item: { cfm_min_ext_users: number; cfm_max_ext_users: number }) =>
+                item.cfm_min_ext_users <= summerSupplyAirCFM &&
+                item.cfm_max_ext_users >= summerSupplyAirCFM
+            ) || [];
+
+          const drUnitModel = info.fdtUnitModel?.filter((item: { enabled_ext_users: number }) => item.enabled_ext_users === 1);
+          info.fdtUnitModel = drUnitModel || [];
+        } else {
+          // unitModel = unitModelFilter(data?.terraUnitModel, summerSupplyAirCFM, 'cfm_min', 'cfm_max', unitModelId);
+          info.fdtUnitModel = db?.dbtSelTerraUnitModel?.filter((item: { cfm_min: number; cfm_max: number }) =>item.cfm_min <= summerSupplyAirCFM && item.cfm_max >= summerSupplyAirCFM) || [];
+        }
+
+        break;
+      default:
+        break;
+    }
+
+
+
+    setUnitModelInfo(info);
+    info.defaultId = info.fdtUnitModel?.[0]?.id;
+    setValue('ddlUnitModel', info.fdtUnitModel?.[0]?.id);
+
+  }, [db, intProductTypeID, intUnitTypeID, getValues('txbSummerSupplyAirCFM'), getValues('ckbBypass'), getValues('ddlLocation'), getValues('ddlOrientation')]);
 
 
   // -------------------- Get String Unit Model Codes ----------------------
@@ -581,6 +993,47 @@ export default function UnitInfoForm({
     setValue('ddlUnitType', intUnitTypeID);
 
   }, [db, intUnitTypeID]);
+
+
+
+  const [drainPanInfo, setDrainPanInfo] = useState<any>([]);
+  useMemo(() => {
+    const info: { isVisible: boolean; defaultId: number } = {
+      isVisible: false,
+      defaultId: 0,
+    };
+
+
+    switch (intProductTypeID) {
+      case IDs.intProdTypeIdNova:
+        info.isVisible = false;
+        setValue('ckbDrainPan', 0); //
+        break;
+      case IDs.intProdTypeIdVentum:
+      case IDs.intProdTypeIdVentumLite:
+      case IDs.intProdTypeIdVentumPlus:
+      case IDs.intProdTypeIdTerra:
+        switch (intUnitTypeID) {
+          case IDs.intUnitTypeIdERV:
+            info.isVisible = false;
+            setValue('ckbDrainPan', 0); //
+            break;
+          case IDs.intUnitTypeIdHRV:
+            info.isVisible = true;
+            setValue('ckbDrainPan', 1); //
+            break;
+          default:
+            break;
+        }
+        break;
+      default:
+        break;
+    }
+
+    setDrainPanInfo(info);
+
+  }, [db, intProductTypeID, intUnitTypeID]);
+
 
 
 
@@ -650,6 +1103,123 @@ export default function UnitInfoForm({
     info.defaultId = info.fdtControlVia?.[0]?.id;
     setValue('ddlControlVia', info.fdtControlVia?.[0]?.id);
   }, [db, intProductTypeID, getValues('ddlControlsPref')]);
+
+
+  // const [supplyAirEspInfo, setSupplyAirEspInfo] = useState<any>([]);
+  // useMemo(() => {
+  //   const info: { isVisible: boolean; defaultId: number } = {
+  //     isVisible: false,
+  //     defaultId: 0,
+  //   };
+
+
+  //   switch (intProductTypeID) {
+  //     case IDs.intProdTypeIdNova:
+  //       switch (Number(getValues('ddlUnitModel'))) {
+  //         case IDs.intNovaUnitModelIdA16IN:
+  //         case IDs.intNovaUnitModelIdB20IN:
+  //         case IDs.intNovaUnitModelIdA18OU:
+  //         case IDs.intNovaUnitModelIdB22OU:
+  //           if (Number(getValues('txbSupplyAirESP')) > 2.0) {
+  //             setValue('txbSupplyAirESP', 2.0);
+  //           }
+  //           break;
+  //         default:
+  //           if (Number(getValues('txbSupplyAirESP')) > 3.0) {
+  //             setValue('txbSupplyAirESP', 3.0);
+  //           }
+  //           break;
+  //       }
+  //       break;
+  //     default:
+  //       break;
+  //   }
+
+  //   setSupplyAirEspInfo(info);
+
+  // }, [intProductTypeID, getValues('ddlUnitModel'), getValues('txbSupplyAirESP')]);
+
+
+
+  // const [exhaustAirEspInfo, setExhaustAirEspInfo] = useState<any>([]);
+  // useMemo(() => {
+  //   const info: { isVisible: boolean; defaultId: number } = {
+  //     isVisible: false,
+  //     defaultId: 0,
+  //   };
+
+
+  //   switch (intProductTypeID) {
+  //     case IDs.intProdTypeIdNova:
+  //       switch (Number(getValues('ddlUnitModel'))) {
+  //         case IDs.intNovaUnitModelIdA16IN:
+  //         case IDs.intNovaUnitModelIdB20IN:
+  //         case IDs.intNovaUnitModelIdA18OU:
+  //         case IDs.intNovaUnitModelIdB22OU:
+  //           if (Number(getValues('txbExhaustAirESP')) > 2.0) {
+  //             setValue('txbExhaustAirESP', 2.0);
+  //           }
+  //           break;
+  //         default:
+  //           if (Number(getValues('txbExhaustAirESP')) > 3.0) {
+  //             setValue('txbExhaustAirESP', 3.0);
+  //           }
+  //           break;
+  //       }
+  //       break;
+  //     default:
+  //       break;
+  //   }
+
+  //   setExhaustAirEspInfo(info);
+
+  // }, [intProductTypeID, getValues('ddlUnitModel'), getValues('txbExhaustAirESP')]);
+
+
+  
+  const [unitVoltageInfo, setUnitVoltageInfo] = useState<any>([]);
+  useMemo(() => {
+    const info: { fdtUnitVoltage: any; defaultId: number } = { fdtUnitVoltage: [], defaultId: 0,};
+    // let controlsPrefProdTypeLink: any = [];
+
+    let modelVoltageLink = [];
+  
+    switch (intProductTypeID) {
+      case IDs.intProdTypeIdNova:
+        modelVoltageLink = db?.dbtSelNovaUnitModelVoltageLink;
+        break;
+      case IDs.intProdTypeIdVentum:
+        modelVoltageLink = db?.dbtSelVentumHUnitModelVoltageLink;
+        break;
+      case IDs.intProdTypeIdVentumLite:
+        modelVoltageLink = db?.dbtSelVentumLiteUnitModelVoltageLink;
+        break;
+      case IDs.intProdTypeIdVentumPlus:
+        modelVoltageLink = db?.dbtSelVentumPlusUnitModelVoltageLink;
+        break;
+      case IDs.intProdTypeIdTerra:
+        modelVoltageLink = db?.dbtSelTerraUnitModelVoltageLink;
+        break;
+      default:
+        break;
+    }
+
+    const dtLink = modelVoltageLink?.filter((item: { unit_model_value: any }) => item.unit_model_value === strUnitModelValue) || [];
+    let dtVoltage = db?.dbtSelElectricalVoltage;
+
+    if (intProductTypeID === IDs.intProdTypeIdTerra) {
+      dtVoltage = db?.dbtSelElectricalVoltage?.filter((item: { terra_spp: number }) => item.terra_spp === 1);
+    }
+  
+    info.fdtUnitVoltage = dtVoltage?.filter((e: { id: any }) => dtLink?.filter((e_link: { voltage_id: any }) => e.id === e_link.voltage_id)?.length > 0);
+
+
+
+    setUnitVoltageInfo(info);
+    info.defaultId = info.fdtUnitVoltage?.[0]?.id;
+    setValue('ddlUnitVoltage', info.fdtUnitVoltage?.[0]?.id);
+
+  }, [db, intProductTypeID]);
 
 
   const [outdoorAirFilterInfo, setOutdoorAirFilterInfo] = useState<any>([]);
@@ -862,6 +1432,7 @@ export default function UnitInfoForm({
     return inputs;
   }, [formCurrValues.txbAltitude, formCurrValues.txbMixSummerOA_DB, formCurrValues.txbMixSummerOA_WB]);
 
+
   const oMixSummerOA_WB = useMemo(() => {
     const inputs: any = {
       dblAlt: formCurrValues.txbAltitude || any,
@@ -870,6 +1441,7 @@ export default function UnitInfoForm({
     };
     return inputs;
   }, [formCurrValues.txbAltitude, formCurrValues.txbMixSummerOA_DB, formCurrValues.txbMixSummerOA_RH]);
+
 
   const oMixWinterOA_RH = useMemo(() => {
     const inputs: any = {
@@ -880,6 +1452,7 @@ export default function UnitInfoForm({
     return inputs;
   }, [formCurrValues.txbAltitude, formCurrValues.txbMixWinterOA_DB, formCurrValues.txbMixWinterOA_WB]);
 
+
   const oMixWinterOA_WB = useMemo(() => {
     const inputs: any = {
       dblAlt: formCurrValues.txbAltitude || any,
@@ -888,6 +1461,7 @@ export default function UnitInfoForm({
     };
     return inputs;
   }, [formCurrValues.txbAltitude, formCurrValues.txbMixWinterOA_DB, formCurrValues.txbMixWinterOA_RH]);
+
 
   const oMixSummerRA_RH = useMemo(() => {
     const inputs: any = {
@@ -898,6 +1472,7 @@ export default function UnitInfoForm({
     return inputs;
   }, [formCurrValues.txbAltitude, formCurrValues.txbMixSummerRA_DB, formCurrValues.txbMixSummerRA_WB]);
 
+
   const oMixSummerRA_WB = useMemo(() => {
     const inputs: any = {
       dblAlt: formCurrValues.txbAltitude || any,
@@ -907,6 +1482,7 @@ export default function UnitInfoForm({
     return inputs;
   }, [formCurrValues.txbAltitude, formCurrValues.txbMixSummerRA_DB, formCurrValues.txbMixSummerRA_RH]);
 
+
   const oMixWinterRA_RH = useMemo(() => {
     const inputs: any = {
       dblAlt: formCurrValues.txbAltitude || any,
@@ -915,6 +1491,7 @@ export default function UnitInfoForm({
     };
     return inputs;
   }, [formCurrValues.txbAltitude, formCurrValues.txbMixWinterRA_DB, formCurrValues.txbMixWinterRA_WB]);
+
 
   const oMixWinterRA_WB = useMemo(() => {
     const inputs: any = {
@@ -1060,6 +1637,244 @@ export default function UnitInfoForm({
     [formCurrValues.txbMixWinterRA_RH]
   );
 
+
+
+  const [preheatCompInfo, setPreheatCompInfo] = useState<any>([]);
+  useMemo(() => {
+    const info: { fdtPreheatComp: any; isVisible: boolean; defaultId: number } = { fdtPreheatComp: [], isVisible: false, defaultId: 0,};
+  
+    let dtPreheatComp = db?.dbtSelUnitCoolingHeating;
+    info.isVisible = true;
+  
+    if (intUnitTypeID === IDs.intUnitTypeIdERV) {
+      info.fdtPreheatComp = dtPreheatComp?.filter((e: { erv_preheat: number }) => Number(e.erv_preheat) === 1) || [];
+  
+      if (intProductTypeID === IDs.intProdTypeIdVentumLite) {
+        info.fdtPreheatComp = info.fdtPreheatComp ?.filter((item: { id: number }) => Number(item.id) !== IDs.intCompIdHWC ) || [];
+      }
+  
+    } else if (intUnitTypeID === IDs.intUnitTypeIdHRV) {
+      dtPreheatComp = dtPreheatComp?.filter((e: { hrv_preheat: number }) => Number(e.hrv_preheat) === 1) || [];
+  
+      if (intProductTypeID === IDs.intProdTypeIdVentumLite) {
+        info.fdtPreheatComp = info.fdtPreheatComp?.filter((e: { id: any }) => parseInt(e.id, 10) !== IDs.intCompIdHWC);        
+      }
+  
+    } else if (intUnitTypeID === IDs.intUnitTypeIdAHU) {
+      info.fdtPreheatComp = dtPreheatComp?.filter((e: { fc_preheat: number }) => Number(e.fc_preheat) === 1) || [];
+    }
+
+    setPreheatCompInfo(info);
+    info.defaultId = info.fdtPreheatComp?.[0]?.id;
+    setValue('ddlPreheatComp', info.fdtPreheatComp?.[0]?.id);
+
+  }, [db, intProductTypeID, intUnitTypeID]);
+
+
+  const [heatExchInfo, setHeatExchInfo] = useState<any>([]);
+  useMemo(() => {
+    const info: { fdtHeatExch: any; isVisible: boolean; defaultId: number } = { fdtHeatExch: [], isVisible: false, defaultId: 0,};
+  
+    const dtHeatExch = db?.dbtSelUnitHeatExchanger;
+  
+    switch (intUnitTypeID) {
+      case IDs.intUnitTypeIdERV:
+        info.fdtHeatExch = dtHeatExch?.filter((e: { erv: number }) => Number(e.erv) === 1) || [];
+        break;
+      case IDs.intUnitTypeIdHRV:
+        info.fdtHeatExch = dtHeatExch?.filter((e: { hrv: number }) => Number(e.hrv) === 1) || [];
+        break;
+      case IDs.intUnitTypeIdAHU:
+        info.fdtHeatExch = dtHeatExch?.filter((e: { fc: number }) => Number(e.fc) === 1) || [];
+        break;
+      default:
+        // code block
+        break;
+    }
+
+
+    setHeatExchInfo(info);
+    info.defaultId = info.fdtHeatExch?.[0]?.id;
+    setValue('ddlHeatExchComp', info.fdtHeatExch?.[0]?.id);
+
+  }, [db, intProductTypeID, intUnitTypeID]);
+
+
+  const [coolingCompInfo, setCoolingCompInfo] = useState<any>([]);
+  useMemo(() => {
+    const info: { fdtCoolingComp: any;  isVisible: boolean; defaultId: number } = { fdtCoolingComp: [], isVisible: false, defaultId: 0,};
+  
+    info.fdtCoolingComp  = db?.dbtSelUnitCoolingHeating;
+    info.isVisible = true;
+
+    if (intProductTypeID === IDs.intProdTypeIdVentumLite) {
+      // info.ftdHeatingComp = info.ftdHeatingComp?.filter((item: { id: { toString: () => any } }) =>  item.id.toString() !== IDs.intCompIdNA.toString());
+      info.fdtCoolingComp  = info.fdtCoolingComp .filter((item: { id: number }) =>  item.id !== IDs.intCompIdNA);
+      info.isVisible = false;
+    } else {
+      switch (intUnitTypeID) {
+        case IDs.intUnitTypeIdERV:
+          info.fdtCoolingComp = info.fdtCoolingComp ?.filter((e: { erv_cooling: number }) => Number(e.erv_cooling) === 1) || [];
+          break;
+        case IDs.intUnitTypeIdHRV:
+          info.fdtCoolingComp = info.fdtCoolingComp ?.filter((e: { hrv_cooling: number }) => Number(e.hrv_cooling) === 1) || [];
+          break;
+        case IDs.intUnitTypeIdAHU:
+          info.fdtCoolingComp = info.fdtCoolingComp ?.filter((e: { fc_cooling: number }) => Number(e.fc_cooling) === 1) || [];
+          break;
+        default:
+          // code block
+          break;
+      }
+    }
+    setCoolingCompInfo(info);
+    info.defaultId = info.fdtCoolingComp?.[0]?.id;
+    setValue('ddlCoolingComp', info.fdtCoolingComp?.[0]?.id);
+
+  }, [db, intProductTypeID, intUnitTypeID]);
+  
+
+  const [heatingCompInfo, setHeatingCompInfo] = useState<any>([]);
+  useMemo(() => {
+    const info: { fdtHeatingComp: any;  isVisible: boolean; defaultId: number } = { fdtHeatingComp: [], isVisible: false, defaultId: 0,};
+    
+    info.fdtHeatingComp = db?.dbtSelUnitCoolingHeating;
+    info.isVisible = true;
+
+    if (intProductTypeID === IDs.intProdTypeIdVentumLite){
+      // info.ftdHeatingComp = info.ftdHeatingComp?.filter((item: { id: { toString: () => any } }) =>  item.id.toString() !== IDs.intCompIdNA.toString());
+      info.fdtHeatingComp = info.fdtHeatingComp?.filter((item: { id: number }) =>  item.id !== IDs.intCompIdNA);
+      info.isVisible = false;
+    } else {
+      switch (intUnitTypeID) {
+        case IDs.intUnitTypeIdERV:
+          info.fdtHeatingComp = info.fdtHeatingComp?.filter((e: { erv_heating: number }) => Number(e.erv_heating) === 1) || [];
+          break;
+        case IDs.intUnitTypeIdHRV:
+          info.fdtHeatingComp = info.fdtHeatingComp?.filter((e: { hrv_heating: number }) => Number(e.hrv_heating) === 1) || [];
+          break;
+          case IDs.intUnitTypeIdAHU:
+            info.fdtHeatingComp = info.fdtHeatingComp?.filter((e: { fc_heating: number }) => Number(e.fc_heating) === 1) || [];
+            break;
+        default:
+          // code block
+          break;
+      }
+    }
+
+
+    setHeatingCompInfo(info);
+    info.defaultId = info.fdtHeatingComp?.[0]?.id;
+    setValue('ddlHeatingComp', info.fdtHeatingComp?.[0]?.id);
+
+  }, [db, intProductTypeID, intUnitTypeID]);
+
+
+  const [reheatCompInfo, setReheatCompInfo] = useState<any>([]);
+  useMemo(() => {
+    const info: { fdtReheatComp: any; isVisible: boolean; defaultId: number } = { fdtReheatComp: [], isVisible: false, defaultId: 0,};
+    // let controlsPrefProdTypeLink: any = [];
+
+    info.fdtReheatComp = db?.dbtSelUnitCoolingHeating;
+    const intUAL= localStorage?.getItem('UAL') || 0;
+
+    switch (intUnitTypeID) {
+      case IDs.intUnitTypeIdERV:
+        info.fdtReheatComp = info.fdtReheatComp?.filter((e: { erv_reheat: number }) => Number(e.erv_reheat) === 1) || [];
+        break;
+      case IDs.intUnitTypeIdHRV:
+        info.fdtReheatComp = info.fdtReheatComp?.filter((e: { hrv_reheat: number }) => Number(e.hrv_reheat) === 1) || [];
+        break;
+      case IDs.intUnitTypeIdAHU:
+        info.fdtReheatComp = info.fdtReheatComp?.filter((e: { fc_reheat: number }) => Number(e.fc_reheat) === 1) || [];
+        break;
+      default:
+        // code block
+        break;
+    }
+
+    if (Number(getValues('ckbDehumidification'))) {
+
+      switch (Number(getValues('ddlCoolingComp'))) {
+        case IDs.intCompIdCWC:
+          info.fdtReheatComp = info.fdtReheatComp?.filter((item: { id: { toString: () => any } }) => item.id.toString() !== IDs.intCompIdHGRH.toString());
+          break;
+        case IDs.intCompIdDX:
+          if (Number(intUAL) === IDs.intUAL_External && (intUnitTypeID === IDs.intUnitTypeIdERV || intUnitTypeID === IDs.intUnitTypeIdHRV)) {
+            info.fdtReheatComp = info.fdtReheatComp?.filter((item: { id: { toString: () => any } }) => item.id.toString() !== IDs.intCompIdHGRH.toString());
+          } else if (intProductTypeID === IDs.intProdTypeIdVentum && 
+              (Number(getValues('ddlUnitModel')) === IDs.intVentumUnitModelIdH05IN_ERV || Number(getValues('ddlUnitModel')) === IDs.intVentumUnitModelIdH05IN_HRV)) {
+            info.fdtReheatComp = info.fdtReheatComp?.filter((item: { id: { toString: () => any } }) =>  item.id.toString() !== IDs.intCompIdHGRH.toString());
+          }
+          break;
+        default:
+          break;
+      } 
+  
+      info.isVisible = true;
+
+    } else {
+        // info.ftdReheatComp = info.ftdReheatComp?.filter((item: { id: { toString: () => any } }) =>  item.id.toString() !== IDs.intCompIdNA.toString());
+        info.fdtReheatComp = info.fdtReheatComp?.filter((item: { id: number }) =>  item.id === IDs.intCompIdNA);
+        info.isVisible = false;
+      }
+
+
+    setReheatCompInfo(info);
+    info.defaultId = info.fdtReheatComp?.[0]?.id;
+    setValue('ddlReheatComp', info.fdtReheatComp?.[0]?.id);
+
+  }, [db, intProductTypeID, intUnitTypeID, getValues('ckbDehumidification'), getValues('ddlCoolingComp'), getValues('ddlUnitModel')]);
+
+
+  const [heatPumpInfo, setHeatPumpInfo] = useState<any>([]);
+  useMemo(() => {
+    const info: { isChecked: boolean; isVisible: boolean; defaultId: number } = {
+      isChecked: false,
+      isVisible: false,
+      defaultId: 0,
+    };
+
+    if (Number(getValues('ddlCoolingComp')) === IDs.intCompIdDX) {
+      info.isChecked = true;
+      info.isVisible = true;
+    } else {
+      info.isChecked = false;
+      info.isVisible = false;
+    }
+
+    setHeatPumpInfo(info);
+
+    setValue('ckbHeatPump', info.isChecked);
+  }, [db, getValues('ddlCoolingComp')]);
+
+
+
+  const [dehumInfo, setDehumInfo] = useState<any>([]);
+  useMemo(() => {
+    const info: { isChecked: boolean; isVisible: boolean; defaultId: number } = {
+      isChecked: false,
+      isVisible: false,
+      defaultId: 0,
+    };
+
+
+    switch (Number(getValues('ddlCoolingComp'))) {
+      case IDs.intCompIdCWC:
+      case IDs.intCompIdDX:
+        info.isChecked = false;
+        info.isVisible = true;  
+        break;
+      default:
+        info.isChecked = false;
+        info.isVisible = false;
+        break;
+    }
+
+    setDehumInfo(info);
+    setValue('ckbDehumidification', info.isChecked);
+
+  }, [db, getValues('ddlCoolingComp')]);
 
 
 
@@ -1242,6 +2057,158 @@ export default function UnitInfoForm({
 
     return info;
   }, [getValues('ddlLocation'), getValues('ddlHeatingComp'), getValues('ddlReheatComp')]);
+
+
+
+  const [elecHeaterVoltageInfo, setElecHeaterVoltageInfo] = useState<any>([]);
+  useMemo(() => {
+    const info: { fdtElecHeaterVoltage: any; isVisible: boolean; isEnabled: boolean; defaultId: number } = 
+                { fdtElecHeaterVoltage: [],  isVisible: false, isEnabled: false, defaultId: 0,};
+    // let controlsPrefProdTypeLink: any = [];
+
+    // let dtElecHeaterVoltage = [];
+    info.fdtElecHeaterVoltage = db?.dbtSelElectricalVoltage;
+    info.defaultId  = Number(getValues('ddlUnitVoltage'));
+  
+    if (Number(getValues('ddlPreheatComp'))  === IDs.intCompIdElecHeater ||
+        Number(getValues('ddlHeatingComp')) === IDs.intCompIdElecHeater ||
+        Number(getValues('ddlReheatComp')) === IDs.intCompIdElecHeater) {
+          info.isVisible = true;
+  
+      let bol208V_1Ph = false;
+      // intProdTypeNovaID
+      if (intProductTypeID === IDs.intProdTypeIdNova) {
+        // if (intUnitModelID) {
+          // info.fdtElecHeaterVoltage = db?.dbtSelElectricalVoltage;
+          // const dtLink = data?.novaElecHeatVoltageLink.filter((x) => x.unit_model_value === strUnitModelValue);
+  
+          // if (Number(getValues('ddlUnitVoltage')) ) {
+          //   info.defaultId = intUnitModelID;
+          // }
+  
+          // dtElecHeaterVoltage = dtElecHeaterVoltage.map(
+          //   (item) => dtLink.filter((el) => el.voltage_id === item.id)?.length > 0
+          // );
+        // }
+        // intProdTypeVentumID
+      } else if (intProductTypeID === IDs.intProdTypeIdVentum) {
+        if (Number(getValues('ddlUnitModel')) === IDs.intVentumUnitModelIdH05IN_ERV ||
+            Number(getValues('ddlUnitModel')) === IDs.intVentumUnitModelIdH10IN_ERV ||
+            Number(getValues('ddlUnitModel')) === IDs.intVentumUnitModelIdH05IN_HRV ||
+            Number(getValues('ddlUnitModel')) === IDs.intVentumUnitModelIdH10IN_HRV) {
+          bol208V_1Ph = true;
+          info.fdtElecHeaterVoltage = info.fdtElecHeaterVoltage?.filter(
+            (item: { electric_heater_2: number; id: any }) => item.electric_heater_2 === 1);
+        } else {
+          info.fdtElecHeaterVoltage = info.fdtElecHeaterVoltage?.filter((item: { electric_heater: number; id: any }) =>
+            item.electric_heater === 1);
+        }
+  
+        if (bol208V_1Ph) {
+          info.defaultId = IDs.intElectricVoltageId208V_1Ph_60Hz;
+          info.isEnabled = false;
+        } else {
+          info.defaultId = IDs.intElectricVoltageId208V_3Ph_60Hz;
+        }
+  
+        if (Number(getValues('ckbVoltageSPP'))) {
+          info.isEnabled = false;
+        } else {
+          info.isEnabled = true;
+        }
+        // intProdTypeVentumLiteID
+      } else if (intProductTypeID === IDs.intProdTypeIdVentumLite) {
+        bol208V_1Ph = true;
+        info.fdtElecHeaterVoltage = info.fdtElecHeaterVoltage?.filter((item: { electric_heater_3: number; id: any }) => item.electric_heater_3 === 1);
+  
+        if (info.fdtElecHeaterVoltage?.length > 0) {
+          if (bol208V_1Ph) {
+            info.defaultId = IDs.intElectricVoltageId208V_1Ph_60Hz;
+          } else {
+            info.defaultId = IDs.intElectricVoltageId208V_3Ph_60Hz;
+          }
+        }
+        // intProdTypeVentumPlusID
+      } else if (intProductTypeID === IDs.intProdTypeIdVentumPlus) {
+        info.fdtElecHeaterVoltage = info.fdtElecHeaterVoltage?.filter(
+          (item: { ventumplus_elec_heater: number; id: any }) => item.ventumplus_elec_heater === 1);
+  
+        if (Number(getValues('ckbVoltageSPP'))) {
+          info.defaultId = Number(getValues('ddlUnitVoltage'));
+          info.isVisible = false;
+          info.isEnabled = false;
+        } else {
+          info.isEnabled = true;
+        }
+  
+        if (info.fdtElecHeaterVoltage?.length > 0) {
+          if (bol208V_1Ph) {
+            info.defaultId = IDs.intElectricVoltageId208V_1Ph_60Hz;
+          } else {
+            info.defaultId = IDs.intElectricVoltageId208V_3Ph_60Hz;
+          }
+        }
+        // intProdTypeTerraID
+      } else if (intProductTypeID === IDs.intProdTypeIdTerra) {
+        if (Number(getValues('ckbVoltageSPP'))) {
+          info.fdtElecHeaterVoltage = info.fdtElecHeaterVoltage?.filter((item: { terra_spp: number; id: any }) =>item.terra_spp === 1);
+          info.defaultId =Number(getValues('ddlUnitVoltage'));
+          info.isEnabled = false;
+        } else {
+          info.fdtElecHeaterVoltage = info.fdtElecHeaterVoltage?.filter((item: { terra_non_spp: number; id: any }) => item.terra_non_spp === 1);
+          info.isEnabled = true;
+        }
+  
+        if (info.fdtElecHeaterVoltage?.length > 0) {
+          if (bol208V_1Ph) {
+            info.defaultId = IDs.intElectricVoltageId208V_1Ph_60Hz;
+          } else {
+            info.defaultId = IDs.intElectricVoltageId208V_3Ph_60Hz;
+          }
+        }
+      }
+
+      if (Number(getValues('ddlPreheatComp')) === IDs.intCompIdAuto &&
+          Number(getValues('ddlHeatingComp')) !== IDs.intCompIdElecHeater &&
+          Number(getValues('ddlReheatComp')) !== IDs.intCompIdElecHeater) {
+        info.isVisible = false;
+      }
+    } else {
+      if (intProductTypeID === IDs.intProdTypeIdVentumLite) {
+        info.fdtElecHeaterVoltage = db?.dbtSelElectricalVoltage?.filter(
+          (item: { electric_heater_3: number; id: any }) => item.electric_heater_3 === 1);
+        info.defaultId = Number(getValues('ddlUnitVoltage'));
+        info.isEnabled = false;
+      } else if (intProductTypeID === IDs.intProdTypeIdTerra && Number(getValues('ckbVoltageSPP'))) {
+        info.fdtElecHeaterVoltage = info.fdtElecHeaterVoltage?.filter((item: { terra_spp: number; id: any }) => item.terra_spp === 1);
+          info.defaultId = Number(getValues('ddlUnitVoltage'));
+          info.isEnabled = false;
+      } else if (intProductTypeID === IDs.intProdTypeIdVentumPlus && (Number(getValues('ckbVoltageSPP')) || Number(getValues('ddlPreheatComp')) === IDs.intCompIdAuto)
+      ) {
+        info.fdtElecHeaterVoltage = info.fdtElecHeaterVoltage?.filter(
+          (item: { ventumplus_elec_heater: number; id: any }) =>
+            item.ventumplus_elec_heater === 1);
+
+        info.defaultId = Number(getValues('ddlUnitVoltage'));
+        info.isEnabled = false;
+      } else {
+        info.fdtElecHeaterVoltage = info.fdtElecHeaterVoltage?.filter(
+          (item: { electric_heater: number; id: any }) => item.electric_heater === 1);
+
+        info.defaultId = IDs.intElectricVoltageId208V_3Ph_60Hz;
+      }
+  
+      info.isVisible = false;
+    }
+
+
+
+    setElecHeaterVoltageInfo(info);
+    info.defaultId = info.fdtElecHeaterVoltage?.[0]?.id;
+    setValue('ddlElecHeaterVoltage', info.defaultId);
+
+  }, [db, intProductTypeID, getValues('ddlPreheatComp'), getValues('ddlHeatingComp'), getValues('ddlReheatComp'), 
+      getValues('ddlUnitVoltage'), getValues('ckbVoltageSPP')]);
 
 
   // const [heatingElecHeaterInfo, setHeatingElecHeaterInfo] = useState<any>([])
@@ -1554,7 +2521,7 @@ export default function UnitInfoForm({
     }
   }, [db, getValues('ddlHeatingComp'), getValues('ddlHeatingFluidType')]);
 
-
+  // Heating Fluid
   useEffect(() => {
     if (
       Number(getValues('ddlHeatingComp')) === IDs.intCompIdHWC &&
@@ -1704,28 +2671,6 @@ export default function UnitInfoForm({
   ]);
 
 
-  const [heatPumpInfo, setHeatPumpInfo] = useState<any>([]);
-  useMemo(() => {
-    const info: { isChecked: boolean; isVisible: boolean; defaultId: number } = {
-      isChecked: false,
-      isVisible: false,
-      defaultId: 0,
-    };
-
-    if (Number(getValues('ddlCoolingComp')) === IDs.intCompIdDX) {
-      info.isChecked = true;
-      info.isVisible = true;
-    } else {
-      info.isChecked = false;
-      info.isVisible = false;
-    }
-
-    setHeatPumpInfo(info);
-
-    setValue('ckbHeatPump', info.isChecked);
-  }, [db, getValues('ddlCoolingComp')]);
-
-
   const [damperActuatorInfo, setDamperActuatorInfo] = useState<any>([]);
   useMemo(() => {
     const info: { fdtDamperActuator: any; isVisible: boolean } = {
@@ -1781,14 +2726,50 @@ export default function UnitInfoForm({
   }, [db, intProductTypeID, getValues('ddlLocation')]);
 
 
+  const [valveAndActuatorInfo, setValveAndActuatorInfo] = useState<any>([]);
+  useMemo(() => {
+    const info: { isVisible: boolean; defaultId: number } = {
+      isVisible: false,
+      defaultId: 0,
+    };
+
+
+    if (Number(getValues('ddlPreheatComp')) === IDs.intCompIdHWC ||
+        Number(getValues('ddlCoolingComp'))  === IDs.intCompIdCWC ||
+        Number(getValues('ddlHeatingComp'))  === IDs.intCompIdHWC ||
+        Number(getValues('ddlReheatComp'))  === IDs.intCompIdHWC
+    ) {
+        info.isVisible = true;
+        setValue('ckbValveAndActuator', 1); //
+      } else {
+        info.isVisible = false;
+        setValue('ckbValveAndActuator', 0); //
+    }
+
+    setValveAndActuatorInfo(info);
+
+  }, [getValues('ddlPreheatComp'), getValues('ddlCoolingComp'), getValues('ddlHeatingComp'), getValues('ddlReheatComp')]);
+
+
   const [valveTypeInfo, setValveTypeInfo] = useState<any>([]);
   useMemo(() => {
     const info: { fdtValveType: any; isVisible: boolean } = { fdtValveType: [], isVisible: false };
 
     info.fdtValveType = db?.dbtSelValveType;
-    info.fdtValveType = info.fdtValveType?.filter(
-      (item: { enabled: number }) => item.enabled === 1
-    );
+    info.fdtValveType = info.fdtValveType?.filter((item: { enabled: number }) => item.enabled === 1);
+
+
+    switch (Number(getValues('ckbValveAndActuator'))) {
+      case 1:
+        info.isVisible = true;
+        break;
+      case 0:
+        info.isVisible = false;
+        break;
+      default:
+        break;
+    }
+
 
     switch (user?.UAL) {
       case IDs.intUAL_Admin:
@@ -1804,9 +2785,318 @@ export default function UnitInfoForm({
 
     setValveTypeInfo(info);
     setValue('ddlValveType', info.fdtValveType?.[0]?.id); //
-  }, [db, intProductTypeID]);
+
+  }, [db, getValues('ckbValveAndActuator')]);
 
 
+  // const handingInfo = useMemo(() => {
+  //   const result = db?.dbtSelHanding;
+  //   // if (!edit) setValue('ddlHandingId', defaultValues?.ddlHandingId);
+  //   setValue('ddlHanding', db?.dbtSelHanding[0].id);
+  //   setValue('ddlPreheatCoilHanding', db?.dbtSelHanding[0].id);
+  //   setValue('ddlCoolingCoilHanding', db?.dbtSelHanding[0].id);
+  //   setValue('ddlHeatingCoilHanding', db?.dbtSelHanding[0].id);
+  //   return result;
+  // }, [edit, db, setValue]);
+
+
+
+  const [handingInfo, setHandingInfo] = useState<any>([]);
+  useMemo(() => {
+    const info: { fdtHanding: any; defaultId: number; isVisible: boolean } = { fdtHanding: [], defaultId: 0, isVisible: false };
+
+    info.fdtHanding = db?.dbtSelHanding;
+    // info.fdtHanding = info.fdtHanding?.filter((item: { enabled: number }) => item.enabled === 1);
+
+    setHandingInfo(info);
+    info.defaultId = info.fdtHanding?.[0]?.id;
+    setValue('ddlHanding', info.defaultId); 
+    setValue('ddlPreheatCoilHanding', info.defaultId);
+    setValue('ddlCoolingCoilHanding', info.defaultId);
+    setValue('ddlHeatingCoilHanding', info.defaultId);
+
+  }, [db]);
+
+
+  const [preheatCoilHandingInfo, setPreheatCoilHandingInfo] = useState<any>([]);
+  useMemo(() => {
+    const info: { fdtHanding: any; isVisible: boolean } = { fdtHanding: [], isVisible: false };
+
+    info.fdtHanding = db?.dbtSelHanding;
+
+
+    switch (Number(getValues('ddlPreheatComp'))) {
+      case IDs.intCompIdHWC:
+      case IDs.intCompIdElecHeater:
+        info.isVisible = true;
+        break;
+      case IDs.intCompIdNA:
+        info.isVisible = false;
+        break;
+      default:
+        break;
+    }
+
+
+    setPreheatCoilHandingInfo(info);
+    setValue('ddlPreheatCoilHanding', info?.fdtHanding[0]?.id);
+
+  }, [db, getValues('ddlPreheatComp')]);
+
+
+  const [coolingCoilHandingInfo, setCoolingCoilHandingInfo] = useState<any>([]);
+  useMemo(() => {
+    const info: { fdtHanding: any; isVisible: boolean } = { fdtHanding: [], isVisible: false };
+
+    info.fdtHanding = db?.dbtSelHanding;
+
+
+    switch (Number(getValues('ddlCoolingComp'))) {
+      case IDs.intCompIdCWC:
+      case IDs.intCompIdDX:
+        info.isVisible = true;
+        break;
+      case IDs.intCompIdNA:
+        info.isVisible = false;
+        break;
+      default:
+        break;
+    }
+
+
+    setCoolingCoilHandingInfo(info);
+    setValue('ddlCoolingCoilHanding', info?.fdtHanding[0].id);
+
+  }, [db, getValues('ddlCoolingComp')]);
+
+
+  const [heatingCoilHandingInfo, setHeatingCoilHandingInfo] = useState<any>([]);
+  useMemo(() => {
+    const info: { fdtHanding: any; isVisible: boolean } = { fdtHanding: [], isVisible: false };
+
+    info.fdtHanding = db?.dbtSelHanding;
+
+    switch (Number(getValues('ddlHeatingComp'))) {
+      case IDs.intCompIdElecHeater:
+      case IDs.intCompIdHWC:
+        info.isVisible = true;
+        break;
+      case IDs.intCompIdNA:
+        info.isVisible = false;
+        break;
+      default:
+        break;
+    }
+
+
+
+    setHeatingCoilHandingInfo(info);
+    setValue('ddlHeatingCoilHanding', info?.fdtHanding[0].id);
+
+  }, [db, getValues('ddlHeatingComp')]);
+
+
+  const [reheatCoilHandingInfo, setReheatCoilHandingInfo] = useState<any>([]);
+  useMemo(() => {
+    const info: { fdtHanding: any; isVisible: boolean } = { fdtHanding: [], isVisible: false };
+
+    info.fdtHanding = db?.dbtSelHanding;
+
+    switch (Number(getValues('ddlReheatComp'))) {
+      case IDs.intCompIdElecHeater:
+      case IDs.intCompIdHWC:
+      case IDs.intCompIdHGRH:
+        info.isVisible = true;
+        break;
+      case IDs.intCompIdNA:
+        info.isVisible = false;
+        break;
+      default:
+        break;
+    }
+
+    setReheatCoilHandingInfo(info);
+    setValue('ddlReheatCoilHanding', info?.fdtHanding[0].id);
+
+  }, [db, getValues('ddlReheatComp')]);
+
+
+  const [supplyAirOpeningInfo, setSupplyAirOpeningInfo] = useState<any>([]);
+  useMemo(() => {
+    const info: { fdtSupplyAirOpening: any; isVisible: boolean; defaultId: number, supplyAirOpeningText: string } = 
+                { fdtSupplyAirOpening: [],  isVisible: false,   defaultId: 0, supplyAirOpeningText: '' };
+
+    const dtOriOpeningERV_SA_Link = db?.dbtSelOrientOpeningsERV_SA_Link;
+    let dtLink: any[] = [];
+  
+
+    switch (intUnitTypeID) {
+      case IDs.intUnitTypeIdERV:
+      case IDs.intUnitTypeIdHRV:
+        info.fdtSupplyAirOpening = db?.dbtSelOpeningsERV_SA;
+        dtLink = dtOriOpeningERV_SA_Link?.filter((item: { prod_type_id: number }) => item.prod_type_id === Number(intProductTypeID))
+        dtLink = dtLink?.filter((item: { location_id: number }) => item.location_id === Number(getValues('ddlLocation')))
+        dtLink = dtLink?.filter((item: { orientation_id: number }) => item.orientation_id === Number(getValues('ddlOrientation')))
+                                                      
+         
+        info.fdtSupplyAirOpening = info.fdtSupplyAirOpening?.filter((item: { prod_type_id: number })  => item.prod_type_id === Number(intProductTypeID));
+    
+        info.fdtSupplyAirOpening = info.fdtSupplyAirOpening?.filter((e: { items: any }) =>
+            dtLink?.filter((e_link) => e.items === e_link.openings_sa)?.length === 1 // 1: Matching items, 0: Not matching items
+        );
+        // info.defaultId = info?.fdtSupplyAirOpening[0]?.id;
+        // info.supplyAirOpeningText = info?.fdtSupplyAirOpening[0]?.items;
+
+    
+        // returnInfo.ddlSupplyAirOpeningDataTbl = dtSelectionFinalTable;
+    
+        if (Number(getValues('ddlOrientation')) === IDs.intOrientationIdVertical && 
+            (Number(getValues('ddlCoolingComp')) > 1 || Number(getValues('ddlHeatingComp')) > 1 || Number(getValues('ddlReheatComp')) > 1)) {
+          info.defaultId = IDs.intSA_OpenId2;
+        }
+    
+        // if (isContain(dtSelectionFinalTable, 'items', strSupplyAirOpening)) {
+        //   returnInfo.ddlSupplyAirOpeningId = intSupplyAirOpeningId;
+        //   returnInfo.ddlSupplyAirOpeningText = strSupplyAirOpening;
+        // } else {
+        //   returnInfo.ddlSupplyAirOpeningId = dtSelectionFinalTable?.[0]?.id;
+        //   returnInfo.ddlSupplyAirOpeningText = dtSelectionFinalTable?.[0]?.items.toString();
+        // }
+          break;
+      case IDs.intUnitTypeIdAHU:
+        info.fdtSupplyAirOpening = db?.dbtSelOpeningsFC_SA;
+        info.defaultId = info?.fdtSupplyAirOpening[0].id;
+
+        // returnInfo.ddlSupplyAirOpeningDataTbl = dtSelectionTable;
+        // if (isContain(dtSelectionFinalTable, 'items', strSupplyAirOpening)) {
+        //   returnInfo.ddlSupplyAirOpeningId = intSupplyAirOpeningId;
+        //   returnInfo.ddlSupplyAirOpeningText = strSupplyAirOpening;
+        // } else {
+          // returnInfo.ddlSupplyAirOpeningId = dtSelectionFinalTable?.[0]?.id;
+          // returnInfo.ddlSupplyAirOpeningText = dtSelectionFinalTable?.[0]?.items.toString();
+        // }
+          break;
+      default:
+        break;
+    }
+
+    info.defaultId = info?.fdtSupplyAirOpening[0]?.id;
+    info.supplyAirOpeningText = info?.fdtSupplyAirOpening[0]?.items;
+
+
+    setSupplyAirOpeningInfo(info);
+    info.defaultId = info?.fdtSupplyAirOpening[0]?.id;
+    setValue('ddlSupplyAirOpening', info.defaultId);
+    setValue('ddlSupplyAirOpeningText', info?.supplyAirOpeningText);
+
+  }, [db, intUnitTypeID, getValues('ddlLocation'), getValues('ddlOrientation'), getValues('ddlCoolingComp'), getValues('ddlHeatingComp'), getValues('ddlReheatComp')]);
+
+
+  const [remainingOpeningsInfo, setRemainingOpeningsInfo] = useState<any>([]);
+  useMemo(() => {
+    const info: { fdtOutdoorAirOpening: any; outdoorAirOpeningId: number, outdoorAirOpeningText: string; isOutdoorAirOpeningVisible: boolean;
+                  fdtReturnAirOpening: any; returnAirOpeningId: number, returnAirOpeningText: string;  isReturnAirOpeningVisible: boolean;
+                  fdtExhaustAirOpening: any; exhaustAirOpeningId: number, exhaustAirOpeningText: string; isExhaustAirOpeningVisible: boolean;} = 
+                { fdtOutdoorAirOpening: [], outdoorAirOpeningId: 0, outdoorAirOpeningText: '', isOutdoorAirOpeningVisible: false,
+                  fdtReturnAirOpening: [], returnAirOpeningId: 0, returnAirOpeningText: '', isReturnAirOpeningVisible: false,
+                  fdtExhaustAirOpening: [], exhaustAirOpeningId: 0, exhaustAirOpeningText: '',  isExhaustAirOpeningVisible: false};
+
+    let dtLink: any[] = [];
+    const dtOpeningsERV_SA_EA_Link = db?.dbtSelOpeningsERV_SA_EA_Link;
+    const dtOpeningsERV_SA_OA_Link = db?.dbtSelOpeningsERV_SA_OA_Link;
+    const dtOpeningsERV_SA_RA_Link = db?.dbtSelOpeningsERV_SA_RA_Link;
+    const dtNoSelectionTable : any = [{ id: 0, items: 'NA' }] || [];
+    const outdoorAirOpeningText = db?.dbtSelOpeningsERV_SA?.filter((item: { id: number }) => item.id === Number(getValues('ddlSupplyAirOpening')))[0]?.items;
+
+
+    switch (intUnitTypeID) {
+      case IDs.intUnitTypeIdERV:
+      case IDs.intUnitTypeIdHRV:
+      // dtLink = data?.openingERV_SA_EA_Link?.filter((item: { prod_type_id: any }) => item.prod_type_id === intProductTypeID);  
+      // dtLink = dtLink?.filter((item: { openings_sa: any }) => item.openings_sa === strSupplyAirOpening);
+      // dtLink1 = dtLink?.filter((item: { orientation_id: number }) => item.orientation_id === Number(intOrientationID));
+  
+      dtLink = dtOpeningsERV_SA_EA_Link?.filter((item: { prod_type_id: number }) => item.prod_type_id === Number(intProductTypeID));
+      dtLink = dtLink?.filter((item: { openings_sa: any }) => item.openings_sa === outdoorAirOpeningText);
+      dtLink = dtLink?.filter((item: { orientation_id: number }) => item.orientation_id === Number(getValues('ddlOrientation')));  
+  
+      info.fdtExhaustAirOpening = db?.dbtSelOpeningsERV_EA?.filter((item: { prod_type_id: number }) => item.prod_type_id === Number(intProductTypeID));
+      info.fdtExhaustAirOpening = info.fdtExhaustAirOpening?.filter((e: { items: any }) => dtLink?.filter((e_link) => e.items === e_link.openings_ea)?.length === 1); // 1: Matching items, 0: Not matching items
+      
+  
+      // info.ddlExhaustAirOpeningDataTbl = dtSelectionFinalTable;
+      info.exhaustAirOpeningId = info.fdtExhaustAirOpening[0]?.id;
+      info.exhaustAirOpeningText = info.fdtExhaustAirOpening[0]?.items;
+      info.isExhaustAirOpeningVisible = true;
+  
+   
+      dtLink = dtOpeningsERV_SA_OA_Link?.filter((item: { prod_type_id: number }) => item.prod_type_id === intProductTypeID);
+      dtLink = dtLink?.filter((item: { openings_sa: any }) => item.openings_sa === outdoorAirOpeningText);
+      dtLink = dtLink?.filter((item: { orientation_id: number }) => item.orientation_id === Number(getValues('ddlOrientation')));
+  
+      
+      info.fdtOutdoorAirOpening = db?.dbtSelOpeningsERV_OA;
+      info.fdtOutdoorAirOpening = info.fdtOutdoorAirOpening?.filter((item: { prod_type_id: number }) => item.prod_type_id === Number(intProductTypeID));
+  
+      info.fdtOutdoorAirOpening = info.fdtOutdoorAirOpening?.filter((e: { items: any }) => dtLink?.filter((e_link) => e.items === e_link.openings_oa)?.length === 1); // 1: Matching items, 0: Not matching items
+  
+      // returnInfo.ddlOutdoorAirOpeningDataTbl = dtSelectionFinalTable;
+      info.outdoorAirOpeningId = info.fdtOutdoorAirOpening[0]?.id;
+      info.outdoorAirOpeningText = info.fdtOutdoorAirOpening[0]?.items;
+      info.isOutdoorAirOpeningVisible = true;
+  
+  
+      dtLink = dtOpeningsERV_SA_RA_Link?.filter((item: { prod_type_id: number }) => item.prod_type_id === intProductTypeID);
+      dtLink = dtLink?.filter((item: { openings_sa: any }) => item.openings_sa === outdoorAirOpeningText);
+      dtLink = dtLink?.filter((item: { orientation_id: number }) => item.orientation_id === Number(Number(getValues('ddlOrientation'))));
+  
+  
+      
+      info.fdtReturnAirOpening = db?.dbtSelOpeningsERV_RA;
+      info.fdtReturnAirOpening = info.fdtReturnAirOpening?.filter((item: { prod_type_id: number }) => item.prod_type_id === Number(intProductTypeID));
+  
+      info.fdtReturnAirOpening = info.fdtReturnAirOpening?.filter((e: { items: any }) => dtLink?.filter((e_link) => e.items === e_link.openings_ra)?.length === 1); // 1: Matching items, 0: Not matching items
+  
+      // returnInfo.ddlReturnAirOpeningDataTbl = dtSelectionFinalTable;
+      info.returnAirOpeningId = info.fdtReturnAirOpening[0]?.id;
+      info.returnAirOpeningText = info.fdtReturnAirOpening[0]?.items;
+      info.isReturnAirOpeningVisible = true;
+          break;
+      case IDs.intUnitTypeIdAHU:
+        info.fdtReturnAirOpening = db?.dbtSelOpeningsFC_OA;
+        info.outdoorAirOpeningId = info.fdtReturnAirOpening[0]?.id;
+        info.outdoorAirOpeningText = info.fdtReturnAirOpening[0]?.items;
+        info.isOutdoorAirOpeningVisible = true;
+
+    
+        info.fdtOutdoorAirOpening = dtNoSelectionTable;
+        info.exhaustAirOpeningId = 0;
+        info.exhaustAirOpeningText = 'NA';
+        info.isExhaustAirOpeningVisible = false;
+    
+        info.fdtReturnAirOpening = dtNoSelectionTable;
+        info.returnAirOpeningId = 0;
+        info.exhaustAirOpeningText = 'NA';
+        info.isReturnAirOpeningVisible = false;
+            break;
+      default:
+        break;
+    }
+
+
+    setRemainingOpeningsInfo(info);
+    setValue('ddlExhaustAirOpening', info?.exhaustAirOpeningId);
+    setValue('ddlExhaustAirOpeningText', info?.exhaustAirOpeningText);
+    setValue('ddlOutdoorAirOpening', info?.outdoorAirOpeningId);
+    setValue('ddlOutdoorAirOpeningText', info?.outdoorAirOpeningText);
+    setValue('ddlReturnAirOpening', info?.returnAirOpeningId);
+    setValue('ddlReturnAirOpeningText', info?.returnAirOpeningText);
+
+  }, [db, intUnitTypeID, getValues('ddlOrientation'), getValues('ddlSupplyAirOpening'), getValues('ddlExhaustAirOpening'), getValues('ddlOutdoorAirOpening'), getValues('ddlReturnAirOpening')]);
+
+
+  /* ---------------------------- Start OnChange functions ---------------------------- */
+  /* ---------------------------- Start OnChange functions ---------------------------- */
   /* ---------------------------- Start OnChange functions ---------------------------- */
   const ddlLocationChanged = useCallback(
     (e: any) => setValue('ddlLocation', Number(e.target.value)),
@@ -1985,73 +3275,73 @@ export default function UnitInfoForm({
 
 
   // ------------------------------ Get Bypass State -------------------------------
-  const ckbBypassInfo = useMemo(() => {
-    const result = getBypass(
-      db,
-      intProductTypeID,
-      formValues.ddlUnitModel,
-      formValues.ddlOrientation,
-      Number(formValues.ckbBypass)
-    );
-    setCkbBypassVal(!!result.checked);
-    return result;
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [db, intProductTypeID, formValues.ddlOrientation, formValues.ddlUnitModel]);
+  // const ckbBypassInfo = useMemo(() => {
+  //   const result = getBypass(
+  //     db,
+  //     intProductTypeID,
+  //     formValues.ddlUnitModel,
+  //     formValues.ddlOrientation,
+  //     Number(formValues.ckbBypass)
+  //   );
+  //   setCkbBypassVal(!!result.checked);
+  //   return result;
+  //   // eslint-disable-next-line react-hooks/exhaustive-deps
+  // }, [db, intProductTypeID, formValues.ddlOrientation, formValues.ddlUnitModel]);
 
 
   // ---------------------------- Get Orientation Info -----------------------------
-  const orientationInfo = useMemo(() => {
-    const orientationData = getOrientation(
-      db,
-      intProductTypeID,
-      intUnitTypeID,
-      formValues.ddlLocation,
-      Number(formValues.txbSummerSupplyAirCFM)
-    );
+  // const orientationInfo = useMemo(() => {
+  //   const orientationData = getOrientation(
+  //     db,
+  //     intProductTypeID,
+  //     intUnitTypeID,
+  //     formValues.ddlLocation,
+  //     Number(formValues.txbSummerSupplyAirCFM)
+  //   );
 
-    if (
-      orientationData?.filter((item: any) => item.id && item.id === formValues.ddlOrientation)
-        .length === 0
-    ) {
-      setValue('ddlOrientation', orientationData?.[0]?.id || 0);
-    }
+  //   if (
+  //     orientationData?.filter((item: any) => item.id && item.id === formValues.ddlOrientation)
+  //       .length === 0
+  //   ) {
+  //     setValue('ddlOrientation', orientationData?.[0]?.id || 0);
+  //   }
 
-    return orientationData;
-  }, [
-    db,
-    intProductTypeID,
-    intUnitTypeID,
-    setValue,
-    formValues.ddlLocation,
-    formValues.ddlOrientation,
-    formValues.txbSummerSupplyAirCFM,
-  ]);
+  //   return orientationData;
+  // }, [
+  //   db,
+  //   intProductTypeID,
+  //   intUnitTypeID,
+  //   setValue,
+  //   formValues.ddlLocation,
+  //   formValues.ddlOrientation,
+  //   formValues.txbSummerSupplyAirCFM,
+  // ]);
 
 
   // ---------------------------- Get Orientation Info -----------------------------
-  const locationInfo = useMemo(() => {
-    const locations = getLocation(db, intProductTypeID, intUnitTypeID);
+  // const locationInfo = useMemo(() => {
+  //   const locations = getLocation(db, intProductTypeID, intUnitTypeID);
 
-    if (locations?.filter((item: any) => item.id === formValues.ddlLocation)?.length === 0) {
-      setValue('ddlLocation', locations[0]?.id);
-    }
+  //   if (locations?.filter((item: any) => item.id === formValues.ddlLocation)?.length === 0) {
+  //     setValue('ddlLocation', locations[0]?.id);
+  //   }
 
-    return locations;
-  }, [db, intProductTypeID, intUnitTypeID, setValue, formValues.ddlLocation]);
+  //   return locations;
+  // }, [db, intProductTypeID, intUnitTypeID, setValue, formValues.ddlLocation]);
 
 
   // ---------------------------- Get Unit Voltage Info -----------------------------
-  const unitVoltage = useMemo(() => {
-    const { unitVoltageList, ddlUnitVoltageId } = getUnitVoltage(
-      db,
-      intProductTypeID,
-      strUnitModelValue
-    );
-    if ( unitVoltageList?.filter((item: any) => item.id === formValues.ddlUnitVoltage)?.length === 0) {
-      setValue('ddlUnitVoltage', ddlUnitVoltageId);
-    }
-    return unitVoltageList;
-  }, [db, intProductTypeID, strUnitModelValue, formValues.ddlUnitVoltage, setValue]);
+  // const unitVoltage = useMemo(() => {
+  //   const { unitVoltageList, ddlUnitVoltageId } = getUnitVoltage(
+  //     db,
+  //     intProductTypeID,
+  //     strUnitModelValue
+  //   );
+  //   if ( unitVoltageList?.filter((item: any) => item.id === formValues.ddlUnitVoltage)?.length === 0) {
+  //     setValue('ddlUnitVoltage', ddlUnitVoltageId);
+  //   }
+  //   return unitVoltageList;
+  // }, [db, intProductTypeID, strUnitModelValue, formValues.ddlUnitVoltage, setValue]);
 
 
   // ---------------------------- Get QAFilter Model DDL -----------------------------
@@ -2094,51 +3384,51 @@ export default function UnitInfoForm({
 
 
   // ------------------------- Get each complete informaiton --------------------------
-  const { dtPreheatComp, dtCoolingComp, dtHeatingComp } = useMemo(
-    () => getComponentInfo(db, Number(intProductTypeID), Number(intUnitTypeID)),
-    [db, intProductTypeID, intUnitTypeID]
-  );
+  // const { dtPreheatComp, dtCoolingComp, dtHeatingComp } = useMemo(
+  //   () => getComponentInfo(db, Number(intProductTypeID), Number(intUnitTypeID)),
+  //   [db, intProductTypeID, intUnitTypeID]
+  // );
 
 
-  const { dtReheatComp } = useMemo(
-    () =>
-      getReheatInfo(
-        db,
-        formValues.ckbDehumidification,
-        Number(formValues.ddlCoolingComp),
-        Number(user?.UAL || 0),
-        Number(intUnitTypeID),
-        Number(intProductTypeID),
-        Number(formValues.ddlUnitModel)
-      ),
-    [
-      formValues.ckbDehumidification,
-      db,
-      intProductTypeID,
-      intUnitTypeID,
-      user?.UAL,
-      formValues.ddlCoolingComp,
-      formValues.ddlUnitModel,
-    ]
-  );
+  // const { dtReheatComp } = useMemo(
+  //   () =>
+  //     getReheatInfo(
+  //       db,
+  //       formValues.ckbDehumidification,
+  //       Number(formValues.ddlCoolingComp),
+  //       Number(user?.UAL || 0),
+  //       Number(intUnitTypeID),
+  //       Number(intProductTypeID),
+  //       Number(formValues.ddlUnitModel)
+  //     ),
+  //   [
+  //     formValues.ckbDehumidification,
+  //     db,
+  //     intProductTypeID,
+  //     intUnitTypeID,
+  //     user?.UAL,
+  //     formValues.ddlCoolingComp,
+  //     formValues.ddlUnitModel,
+  //   ]
+  // );
 
 
   // ---------------- Get Preheat Elec Heater Installation Info --------------------
-  const preheatElecHeaterInstallationInfo = useMemo(() => {
-    const result = getPreheatElecHeaterInstallationInfo(
-      db,
-      Number(formValues.ddlPreheatComp),
-      Number(formValues.ddlLocation),
-      intProductTypeID
-    );
-    setValue('ddlPreheatElecHeaterInstall', result?.ddlPreheatElecHeaterInstallationId || 1);
+  // const preheatElecHeaterInstallationInfo = useMemo(() => {
+  //   const result = getPreheatElecHeaterInstallationInfo(
+  //     db,
+  //     Number(formValues.ddlPreheatComp),
+  //     Number(formValues.ddlLocation),
+  //     intProductTypeID
+  //   );
+  //   setValue('ddlPreheatElecHeaterInstall', result?.ddlPreheatElecHeaterInstallationId || 1);
 
-    // if (!edit) {
-    //   setValue('ddlPreheatElecHeaterInstall', result?.ddlPreheatElecHeaterInstallationId || 1);
-    // }
+  //   // if (!edit) {
+  //   //   setValue('ddlPreheatElecHeaterInstall', result?.ddlPreheatElecHeaterInstallationId || 1);
+  //   // }
 
-    return result.ddlPreheatElecHeaterInstallationDataTbl;
-  }, [edit, db, setValue, intProductTypeID, formValues.ddlLocation, formValues.ddlPreheatComp]);
+  //   return result.ddlPreheatElecHeaterInstallationDataTbl;
+  // }, [edit, db, setValue, intProductTypeID, formValues.ddlLocation, formValues.ddlPreheatComp]);
 
 
   const preheatHWCCapInfo = useMemo(() => {
@@ -2278,10 +3568,10 @@ export default function UnitInfoForm({
 
 
   // -------------- Get User Authentication Level from LocalStorage ----------------
-  const ualInfo = useMemo(
-    () => getUALInfo(Number(typeof window !== 'undefined' && localStorage.getItem('UAL'))),
-    []
-  );
+  // const ualInfo = useMemo(
+  //   () => getUALInfo(Number(typeof window !== 'undefined' && localStorage.getItem('UAL'))),
+  //   []
+  // );
 
 
   // -------------- Get Heating Pump Information ----------------
@@ -2375,188 +3665,540 @@ export default function UnitInfoForm({
   // }, [edit, db, setValue, intProductTypeID, formValues.ddlLocation]);
 
 
-  const elecHeaterVoltageInfo = useMemo(() => {
-    const result = getElecHeaterVoltageInfo(
-      db,
-      Number(formValues.ddlPreheatComp),
-      Number(formValues.ddlHeatingComp),
-      Number(formValues.ddlReheatComp),
-      Number(intProductTypeID),
-      Number(intUnitTypeID),
-      Number(formValues.ddlElecHeaterVoltage),
-      Number(formValues.ddlUnitVoltage),
-      Number(formValues.ckbVoltageSPP),
-      strUnitModelValue
-    );
+  // const elecHeaterVoltageInfo = useMemo(() => {
+  //   const result = getElecHeaterVoltageInfo(
+  //     db,
+  //     Number(formValues.ddlPreheatComp),
+  //     Number(formValues.ddlHeatingComp),
+  //     Number(formValues.ddlReheatComp),
+  //     Number(intProductTypeID),
+  //     Number(intUnitTypeID),
+  //     Number(formValues.ddlElecHeaterVoltage),
+  //     Number(formValues.ddlUnitVoltage),
+  //     Number(formValues.ckbVoltageSPP),
+  //     strUnitModelValue
+  //   );
 
-    // if (!edit && result?.ddlElecHeaterVoltageDataTbl) {
-      if (result?.ddlElecHeaterVoltageDataTbl) {
-      const selectedId = result?.ddlElecHeaterVoltageDataTbl.find(
-        (item) => item.id === formValues.ddlElecHeaterVoltage
-      );
+  //   // if (!edit && result?.ddlElecHeaterVoltageDataTbl) {
+  //     if (result?.ddlElecHeaterVoltageDataTbl) {
+  //     const selectedId = result?.ddlElecHeaterVoltageDataTbl.find(
+  //       (item) => item.id === formValues.ddlElecHeaterVoltage
+  //     );
 
-      if (!selectedId) {
-        setValue('ddlElecHeaterVoltage', result?.ddlElecHeaterVoltageId);
-      }
-    }
+  //     if (!selectedId) {
+  //       setValue('ddlElecHeaterVoltage', result?.ddlElecHeaterVoltageId);
+  //     }
+  //   }
 
-    return result;
-  }, [
-    edit,
-    formValues.ckbVoltageSPP,
-    db,
-    setValue,
-    intProductTypeID,
-    intUnitTypeID,
-    formValues.ddlElecHeaterVoltage,
-    formValues.ddlHeatingComp,
-    formValues.ddlPreheatComp,
-    formValues.ddlReheatComp,
-    formValues.ddlUnitVoltage,
-    strUnitModelValue,
-  ]);
-
-
-  const valveAndActuatorInfo = useMemo(
-    () =>
-      getValveAndActuatorInfo(
-        Number(formValues.ddlCoolingComp),
-        Number(formValues.ddlPreheatComp),
-        Number(formValues.ddlHeatingComp),
-        Number(formValues.ddlReheatComp)
-      ),
-    [
-      formValues.ddlCoolingComp,
-      formValues.ddlHeatingComp,
-      formValues.ddlPreheatComp,
-      formValues.ddlReheatComp,
-    ]
-  );
-
-
-  const drainPanInfo = useMemo(
-    () => getDrainPanInfo(Number(intProductTypeID), Number(intUnitTypeID)),
-    [intProductTypeID, intUnitTypeID]
-  );
-
-  // const handingInfo = useMemo(() => {
-  //   const result = getHandingInfo(db);
-  //   if (!edit) setValue('ddlHandingId', result.ddlHandingId);
   //   return result;
-  // }, [edit, db, setValue]);
+  // }, [
+  //   edit,
+  //   formValues.ckbVoltageSPP,
+  //   db,
+  //   setValue,
+  //   intProductTypeID,
+  //   intUnitTypeID,
+  //   formValues.ddlElecHeaterVoltage,
+  //   formValues.ddlHeatingComp,
+  //   formValues.ddlPreheatComp,
+  //   formValues.ddlReheatComp,
+  //   formValues.ddlUnitVoltage,
+  //   strUnitModelValue,
+  // ]);
 
 
-  const handingInfo = useMemo(() => {
-    const result = db?.dbtSelHanding;
-    // if (!edit) setValue('ddlHandingId', defaultValues?.ddlHandingId);
-    setValue('ddlHanding', db?.dbtSelHanding[0].id);
-    setValue('ddlPreheatCoilHanding', db?.dbtSelHanding[0].id);
-    setValue('ddlCoolingCoilHanding', db?.dbtSelHanding[0].id);
-    setValue('ddlHeatingCoilHanding', db?.dbtSelHanding[0].id);
-    return result;
-  }, [edit, db, setValue]);
+  // const valveAndActuatorInfo = useMemo(
+  //   () =>
+  //     getValveAndActuatorInfo(
+  //       Number(formValues.ddlCoolingComp),
+  //       Number(formValues.ddlPreheatComp),
+  //       Number(formValues.ddlHeatingComp),
+  //       Number(formValues.ddlReheatComp)
+  //     ),
+  //   [
+  //     formValues.ddlCoolingComp,
+  //     formValues.ddlHeatingComp,
+  //     formValues.ddlPreheatComp,
+  //     formValues.ddlReheatComp,
+  //   ]
+  // );
 
 
-  const supplyAirOpeningInfo = useMemo(() => {
-    const result = getSupplyAirOpeningInfo(
-      db,
-      Number(intUnitTypeID),
-      Number(intProductTypeID),
-      Number(formValues.ddlLocation),
-      Number(formValues.ddlOrientation),
-      formValues.ddlSupplyAirOpening,
-      formValues.ddlSupplyAirOpeningText,
-      Number(formValues.ddlCoolingComp),
-      Number(formValues.ddlHeatingComp),
-      Number(formValues.ddlReheatComp)
-    );
+  // const drainPanInfo = useMemo(
+  //   () => getDrainPanInfo(Number(intProductTypeID), Number(intUnitTypeID)),
+  //   [intProductTypeID, intUnitTypeID]
+  // );
 
-    setValue('ddlSupplyAirOpening',  result?.ddlSupplyAirOpeningId);
-    setValue('ddlSupplyAirOpeningText', result?.ddlSupplyAirOpeningText);
-
-    return result;
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [
-    edit,
-    db,
-    setValue,
-    intProductTypeID,
-    intUnitTypeID,
-    formValues.ddlCoolingComp,
-    formValues.ddlHeatingComp,
-    formValues.ddlLocation,
-    formValues.ddlOrientation,
-    formValues.ddlReheatComp,
-  ]);
+  // // const handingInfo = useMemo(() => {
+  // //   const result = getHandingInfo(db);
+  // //   if (!edit) setValue('ddlHandingId', result.ddlHandingId);
+  // //   return result;
+  // // }, [edit, db, setValue]);
 
 
-  const [remainingOpeningsInfo, setRemainingOpeningsInfo] = useState<any>({});
-  useEffect(() => {
-    if (!formValues.ddlOrientation || !formValues.ddlSupplyAirOpeningText || !intProductTypeID)
-      return;
 
-    const result = getRemainingOpeningsInfo(
-      db,
-      Number(intUnitTypeID),
-      Number(intProductTypeID),
-      formValues.ddlSupplyAirOpeningText,
-      Number(formValues.ddlOrientation)
-    );
 
-    // if (!edit) setValue('ddlExhaustAirOpeningId', result?.ddlExhaustAirOpeningId);
-    // if (!edit) setValue('ddlExhaustAirOpeningText', result?.ddlExhaustAirOpeningText);
-    // if (!edit) setValue('ddlOutdoorAirOpeningId', result?.ddlOutdoorAirOpeningId);
-    // if (!edit) setValue('ddlOutdoorAirOpeningText', result?.ddlOutdoorAirOpeningText);
-    // if (!edit) setValue('ddlReturnAirOpeningId', result?.ddlReturnAirOpeningId);
-    // if (!edit) setValue('ddlReturnAirOpeningText', result?.ddlReturnAirOpeningText);
+  // const supplyAirOpeningInfo = useMemo(() => {
+  //   const result = getSupplyAirOpeningInfo(
+  //     db,
+  //     Number(intUnitTypeID),
+  //     Number(intProductTypeID),
+  //     Number(formValues.ddlLocation),
+  //     Number(formValues.ddlOrientation),
+  //     formValues.ddlSupplyAirOpening,
+  //     formValues.ddlSupplyAirOpeningText,
+  //     Number(formValues.ddlCoolingComp),
+  //     Number(formValues.ddlHeatingComp),
+  //     Number(formValues.ddlReheatComp)
+  //   );
 
-    setValue('ddlExhaustAirOpening', result?.ddlExhaustAirOpeningId);
-    setValue('ddlExhaustAirOpeningText', result?.ddlExhaustAirOpeningText);
-    setValue('ddlOutdoorAirOpening', result?.ddlOutdoorAirOpeningId);
-    setValue('ddlOutdoorAirOpeningText', result?.ddlOutdoorAirOpeningText);
-    setValue('ddlReturnAirOpening', result?.ddlReturnAirOpeningId);
-    setValue('ddlReturnAirOpeningText', result?.ddlReturnAirOpeningText);
+  //   setValue('ddlSupplyAirOpening',  result?.ddlSupplyAirOpeningId);
+  //   setValue('ddlSupplyAirOpeningText', result?.ddlSupplyAirOpeningText);
 
-    setRemainingOpeningsInfo(result);
-  }, [
-    edit,
-    db,
-    setValue,
-    intProductTypeID,
-    intUnitTypeID,
-    formValues.ddlOrientation,
-    formValues.ddlSupplyAirOpeningText,
-  ]);
+  //   return result;
+  //   // eslint-disable-next-line react-hooks/exhaustive-deps
+  // }, [
+  //   edit,
+  //   db,
+  //   setValue,
+  //   intProductTypeID,
+  //   intUnitTypeID,
+  //   formValues.ddlCoolingComp,
+  //   formValues.ddlHeatingComp,
+  //   formValues.ddlLocation,
+  //   formValues.ddlOrientation,
+  //   formValues.ddlReheatComp,
+  // ]);
+
+
+  // const [remainingOpeningsInfo, setRemainingOpeningsInfo] = useState<any>({});
+  // useEffect(() => {
+  //   if (!formValues.ddlOrientation || !formValues.ddlSupplyAirOpeningText || !intProductTypeID)
+  //     return;
+
+  //   const result = getRemainingOpeningsInfo(
+  //     db,
+  //     Number(intUnitTypeID),
+  //     Number(intProductTypeID),
+  //     formValues.ddlSupplyAirOpeningText,
+  //     Number(formValues.ddlOrientation)
+  //   );
+
+  //   // if (!edit) setValue('ddlExhaustAirOpeningId', result?.ddlExhaustAirOpeningId);
+  //   // if (!edit) setValue('ddlExhaustAirOpeningText', result?.ddlExhaustAirOpeningText);
+  //   // if (!edit) setValue('ddlOutdoorAirOpeningId', result?.ddlOutdoorAirOpeningId);
+  //   // if (!edit) setValue('ddlOutdoorAirOpeningText', result?.ddlOutdoorAirOpeningText);
+  //   // if (!edit) setValue('ddlReturnAirOpeningId', result?.ddlReturnAirOpeningId);
+  //   // if (!edit) setValue('ddlReturnAirOpeningText', result?.ddlReturnAirOpeningText);
+
+  //   setValue('ddlExhaustAirOpening', result?.ddlExhaustAirOpeningId);
+  //   setValue('ddlExhaustAirOpeningText', result?.ddlExhaustAirOpeningText);
+  //   setValue('ddlOutdoorAirOpening', result?.ddlOutdoorAirOpeningId);
+  //   setValue('ddlOutdoorAirOpeningText', result?.ddlOutdoorAirOpeningText);
+  //   setValue('ddlReturnAirOpening', result?.ddlReturnAirOpeningId);
+  //   setValue('ddlReturnAirOpeningText', result?.ddlReturnAirOpeningText);
+
+  //   setRemainingOpeningsInfo(result);
+  // }, [
+  //   edit,
+  //   db,
+  //   setValue,
+  //   intProductTypeID,
+  //   intUnitTypeID,
+  //   formValues.ddlOrientation,
+  //   formValues.ddlSupplyAirOpeningText,
+  // ]);
 
 
   // onChange functions
-  const handleBlurSummerSupplyAirCFM = useCallback(
-    (e: any) => {
-      const value = getSummerSupplyAirCFM(
-        e.target.value,
-        intProductTypeID,
-        Number(user?.UAL || 0),
-        Number(formValues.ckbBypass),
-        Number(formValues.ckbPHI)
-      );
+  const handleBlurSummerSupplyAirCFM = useCallback((e: any) => {
+      // const value = getSummerSupplyAirCFM(e.target.value, intProductTypeID, Number(user?.UAL || 0), Number(formValues.ckbBypass), Number(formValues.ckbPHI));
 
-      setValue('txbSummerSupplyAirCFM', value);
-      setValue('txbSummerReturnAirCFM', value);
+
+      let intSummerSupplyAirCFM = Number(e.target.value);
+      const intUAL= Number(localStorage?.getItem('UAL')) || 0;
+
+      switch (intProductTypeID) {
+        case IDs.intProdTypeIdNova:
+          if (intUAL === IDs.intUAL_Admin || intUAL === IDs.intUAL_IntAdmin ||
+              intUAL === IDs.intUAL_IntLvl_2 || intUAL === IDs.intUAL_IntLvl_1
+          ) {
+            if (intSummerSupplyAirCFM < intNOVA_MIN_CFM) {
+              intSummerSupplyAirCFM = intNOVA_MIN_CFM;
+            } else if (intSummerSupplyAirCFM > intNOVA_MAX_CFM) {
+              intSummerSupplyAirCFM = intNOVA_MAX_CFM;
+            }
+          } else if (intSummerSupplyAirCFM < intNOVA_INT_USERS_MIN_CFM) {
+            intSummerSupplyAirCFM = intNOVA_INT_USERS_MIN_CFM;
+          } else if (intSummerSupplyAirCFM > intNOVA_INT_USERS_MAX_CFM) {
+            intSummerSupplyAirCFM = intNOVA_INT_USERS_MAX_CFM;
+          }
+          break;
+        case IDs.intProdTypeIdVentum:
+          if (intUAL === IDs.intUAL_Admin || intUAL === IDs.intUAL_IntAdmin ||
+              intUAL === IDs.intUAL_IntLvl_2 || intUAL === IDs.intUAL_IntLvl_1
+          ) {
+            if (Number(getValues('ckbPHI')) === 1) {
+              if (intSummerSupplyAirCFM < intVEN_MIN_CFM_PHI) {
+                intSummerSupplyAirCFM = intVEN_MIN_CFM_PHI;
+              } else if (intSummerSupplyAirCFM > intVEN_MAX_CFM_PHI) {
+                intSummerSupplyAirCFM = intVEN_MAX_CFM_PHI;
+              }
+            } else if (Number(getValues('ckbBypass')) === 1) {
+              if (intSummerSupplyAirCFM < intVEN_INT_USERS_MIN_CFM_WITH_BYPASS) {
+                intSummerSupplyAirCFM = intVEN_INT_USERS_MIN_CFM_WITH_BYPASS;
+              } else if (intSummerSupplyAirCFM > intVEN_INT_USERS_MAX_CFM_WITH_BYPASS) {
+                intSummerSupplyAirCFM = intVEN_INT_USERS_MAX_CFM_WITH_BYPASS;
+              }
+            } else if (intSummerSupplyAirCFM < intVEN_INT_USERS_MIN_CFM_NO_BYPASS) {
+              intSummerSupplyAirCFM = intVEN_INT_USERS_MIN_CFM_NO_BYPASS;
+            } else if (intSummerSupplyAirCFM > intVEN_INT_USERS_MAX_CFM_NO_BYPASS) {
+              intSummerSupplyAirCFM = intVEN_INT_USERS_MAX_CFM_NO_BYPASS;
+            }
+          } else if (Number(getValues('ckbBypass')) === 1) {
+            if (intSummerSupplyAirCFM < intVEN_MIN_CFM_WITH_BYPASS) {
+              intSummerSupplyAirCFM = intVEN_MIN_CFM_WITH_BYPASS;
+            } else if (intSummerSupplyAirCFM > intVEN_MAX_CFM_WITH_BYPASS) {
+              intSummerSupplyAirCFM = intVEN_MAX_CFM_WITH_BYPASS;
+            }
+          } else if (intSummerSupplyAirCFM < intVEN_MIN_CFM_NO_BYPASS) {
+            intSummerSupplyAirCFM = intVEN_MIN_CFM_NO_BYPASS;
+          } else if (intSummerSupplyAirCFM > intVEN_MAX_CFM_NO_BYPASS) {
+            intSummerSupplyAirCFM = intVEN_MAX_CFM_NO_BYPASS;
+          }
+          break;
+        case IDs.intProdTypeIdVentumLite:
+          if (intUAL === IDs.intUAL_Admin || intUAL === IDs.intUAL_IntAdmin ||
+              intUAL === IDs.intUAL_IntLvl_2 || intUAL === IDs.intUAL_IntLvl_1
+          ) {
+            if (Number(getValues('ckbBypass')) === 1) {
+              if (intSummerSupplyAirCFM < intVENLITE_INT_USERS_MIN_CFM_WITH_BYPASS) {
+                intSummerSupplyAirCFM = intVENLITE_INT_USERS_MIN_CFM_WITH_BYPASS;
+              } else if (intSummerSupplyAirCFM > intVENLITE_INT_USERS_MAX_CFM_WITH_BYPASS) {
+                intSummerSupplyAirCFM = intVENLITE_INT_USERS_MAX_CFM_WITH_BYPASS;
+              }
+            } else if (intSummerSupplyAirCFM < intVENLITE_INT_USERS_MIN_CFM_NO_BYPASS) {
+              intSummerSupplyAirCFM = intVENLITE_INT_USERS_MIN_CFM_NO_BYPASS;
+            } else if (intSummerSupplyAirCFM > intVENLITE_INT_USERS_MAX_CFM_NO_BYPASS) {
+              intSummerSupplyAirCFM = intVENLITE_INT_USERS_MAX_CFM_NO_BYPASS;
+            }
+          } else if (Number(getValues('ckbBypass')) === 1) {
+            if (intSummerSupplyAirCFM < intVENLITE_MIN_CFM_WITH_BYPASS) {
+              intSummerSupplyAirCFM = intVENLITE_MIN_CFM_WITH_BYPASS;
+            } else if (intSummerSupplyAirCFM > intVENLITE_MAX_CFM_WITH_BYPASS) {
+              intSummerSupplyAirCFM = intVENLITE_MAX_CFM_WITH_BYPASS;
+            }
+          } else if (intSummerSupplyAirCFM < intVENLITE_MIN_CFM_NO_BYPASS) {
+            intSummerSupplyAirCFM = intVENLITE_MIN_CFM_NO_BYPASS;
+          } else if (intSummerSupplyAirCFM > intVENLITE_MAX_CFM_NO_BYPASS) {
+            intSummerSupplyAirCFM = intVENLITE_MAX_CFM_NO_BYPASS;
+          }
+          break;
+        case IDs.intProdTypeIdVentumPlus:
+          if (intUAL === IDs.intUAL_Admin || intUAL === IDs.intUAL_IntAdmin ||
+              intUAL === IDs.intUAL_IntLvl_2 || intUAL === IDs.intUAL_IntLvl_1
+          ) {
+            if (Number(getValues('ckbPHI')) === 1) {
+              if (intSummerSupplyAirCFM < intVENPLUS_MIN_CFM_PHI) {
+                intSummerSupplyAirCFM = intVENPLUS_MIN_CFM_PHI;
+              } else if (intSummerSupplyAirCFM > intVENPLUS_MAX_CFM_PHI) {
+                intSummerSupplyAirCFM = intVENPLUS_MAX_CFM_PHI;
+              }
+            } else if (Number(getValues('ckbBypass')) === 1) {
+              if (intSummerSupplyAirCFM < intVENPLUS_INT_USERS_MIN_CFM_WITH_BYPASS) {
+                intSummerSupplyAirCFM = intVENPLUS_INT_USERS_MIN_CFM_WITH_BYPASS;
+              } else if (intSummerSupplyAirCFM > intVENPLUS_INT_USERS_MAX_CFM_WITH_BYPASS) {
+                intSummerSupplyAirCFM = intVENPLUS_INT_USERS_MAX_CFM_WITH_BYPASS;
+              }
+            } else if (intSummerSupplyAirCFM < intVENPLUS_INT_USERS_MIN_CFM_NO_BYPASS) {
+              intSummerSupplyAirCFM = intVENPLUS_INT_USERS_MIN_CFM_NO_BYPASS;
+            } else if (intSummerSupplyAirCFM > intVENPLUS_INT_USERS_MAX_CFM_NO_BYPASS) {
+              intSummerSupplyAirCFM = intVENPLUS_INT_USERS_MAX_CFM_NO_BYPASS;
+            }
+          } else if (Number(getValues('ckbBypass')) === 1) {
+            if (intSummerSupplyAirCFM < intVENPLUS_MIN_CFM_WITH_BYPASS) {
+              intSummerSupplyAirCFM = intVENPLUS_MIN_CFM_WITH_BYPASS;
+            } else if (intSummerSupplyAirCFM > intVENPLUS_MAX_CFM_WITH_BYPASS) {
+              intSummerSupplyAirCFM = intVENPLUS_MAX_CFM_WITH_BYPASS;
+            }
+          } else if (intSummerSupplyAirCFM < intVENPLUS_MIN_CFM_NO_BYPASS) {
+            intSummerSupplyAirCFM = intVENPLUS_MIN_CFM_NO_BYPASS;
+          } else if (intSummerSupplyAirCFM > intVENPLUS_MAX_CFM_NO_BYPASS) {
+            intSummerSupplyAirCFM = intVENPLUS_MAX_CFM_NO_BYPASS;
+          }
+          break;
+        case IDs.intProdTypeIdTerra:
+          if (intUAL === IDs.intUAL_Admin || intUAL === IDs.intUAL_IntAdmin || 
+              intUAL === IDs.intUAL_IntLvl_2 || intUAL === IDs.intUAL_IntLvl_1
+          ) {
+            if (Number(getValues('ckbBypass')) === 1) {
+              if (intSummerSupplyAirCFM < intTERA_INT_USERS_MIN_CFM_WITH_BYPASS) {
+                intSummerSupplyAirCFM = intTERA_INT_USERS_MIN_CFM_WITH_BYPASS;
+              } else if (intSummerSupplyAirCFM > intTERA_INT_USERS_MAX_CFM_WITH_BYPASS) {
+                intSummerSupplyAirCFM = intTERA_INT_USERS_MAX_CFM_WITH_BYPASS;
+              }
+            } else if (intSummerSupplyAirCFM < intTERA_INT_USERS_MIN_CFM_NO_BYPASS) {
+              intSummerSupplyAirCFM = intTERA_INT_USERS_MIN_CFM_NO_BYPASS;
+            } else if (intSummerSupplyAirCFM > intTERA_INT_USERS_MAX_CFM_NO_BYPASS) {
+              intSummerSupplyAirCFM = intTERA_INT_USERS_MAX_CFM_NO_BYPASS;
+            }
+          } else if (Number(getValues('ckbBypass')) === 1) {
+            if (intSummerSupplyAirCFM < intTERA_MIN_CFM_WITH_BYPASS) {
+              intSummerSupplyAirCFM = intTERA_MIN_CFM_WITH_BYPASS;
+            } else if (intSummerSupplyAirCFM > intTERA_MAX_CFM_WITH_BYPASS) {
+              intSummerSupplyAirCFM = intTERA_MAX_CFM_WITH_BYPASS;
+            }
+          } else if (intSummerSupplyAirCFM < intTERA_MIN_CFM_NO_BYPASS) {
+            intSummerSupplyAirCFM = intTERA_MIN_CFM_NO_BYPASS;
+          } else if (intSummerSupplyAirCFM > intTERA_MAX_CFM_NO_BYPASS) {
+            intSummerSupplyAirCFM = intTERA_MAX_CFM_NO_BYPASS;
+          }
+          break;
+        default:
+          break;
+      }
+    
+
+
+
+
+
+
+
+      setValue('txbSummerSupplyAirCFM', intSummerSupplyAirCFM);
+      setValue('txbSummerReturnAirCFM', intSummerSupplyAirCFM);
     },
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+
     [formValues.ckbBypass, getAllFormData, setValue, user?.UAL || 0]
   );
 
 
   const handleBlurSummerReturnAirCFM = useCallback(
     (e: any) => {
-      const value = getSummerReturnAirCFM(
-        e.target.value,
-        getAllFormData(),
-        Number(user?.UAL || 0),
-        db
-      );
-      setValue('txbSummerReturnAirCFM', value);
+      // const value = getSummerReturnAirCFM(e.target.value,getAllFormData(),Number(user?.UAL || 0),db);
+      
+      let intSummerReturnAirCFM = Number(e.target.value);
+      const intSummerSupplyAirCFM = Number(getValues('txbSummerSupplyAirCFM'));
+      const intUAL= Number(localStorage?.getItem('UAL')) || 0;
+
+
+      if ( getValues('ddlOrientation') === IDs.intOrientationIdHorizontal && intSummerReturnAirCFM > intNOVA_HORIZONTAL_MAX_CFM) {
+        intSummerReturnAirCFM = intNOVA_HORIZONTAL_MAX_CFM;
+      }
+    
+      let dtModel: any = [];
+      switch (intProductTypeID) {
+        case IDs.intProdTypeIdNova:
+          if (intSummerReturnAirCFM < intNOVA_MIN_CFM) {
+            intSummerReturnAirCFM = intNOVA_MIN_CFM;
+          } else if (intSummerReturnAirCFM > intNOVA_MAX_CFM) {
+            intSummerReturnAirCFM = intNOVA_MAX_CFM;
+          }
+          break;
+        case IDs.intProdTypeIdVentum:
+          dtModel = db?.dbtSelVentumHUnitModel?.filter((item: { id: number }) => item.id === Number(getValues('ddlUnitModel')));
+    
+          if (intUAL === IDs.intUAL_Admin || intUAL === IDs.intUAL_IntAdmin || 
+              intUAL === IDs.intUAL_IntLvl_2 ||  intUAL === IDs.intUAL_IntLvl_1
+          ) {
+            if (Number(getValues('ckbPHI')) === 1) {
+              if (intSummerReturnAirCFM < Math.max(intSummerSupplyAirCFM * 0.5, intVEN_MIN_CFM_PHI)) {
+                intSummerReturnAirCFM = Number(Math.max(intSummerSupplyAirCFM * 0.5, intVEN_MIN_CFM_PHI));
+              } else if (intSummerReturnAirCFM > Math.min(Number(intSummerSupplyAirCFM) * 2, intVEN_MAX_CFM_PHI)) {
+                intSummerReturnAirCFM = Number(Math.min(intSummerSupplyAirCFM * 2, intVEN_MAX_CFM_PHI));
+              }
+            } else if (Number(getValues('ckbBypass')) === 1) {
+              if (intSummerReturnAirCFM < Math.max(intSummerSupplyAirCFM * 0.5, intVEN_INT_USERS_MIN_CFM_WITH_BYPASS)) {
+                intSummerReturnAirCFM = Number(Math.max(intSummerSupplyAirCFM * 0.5, intVEN_INT_USERS_MIN_CFM_WITH_BYPASS));
+              } else if (intSummerReturnAirCFM > Math.min(Number(intSummerSupplyAirCFM) * 2, intVEN_INT_USERS_MAX_CFM_WITH_BYPASS)) {
+                intSummerReturnAirCFM = Number(Math.min(intSummerSupplyAirCFM * 2, intVEN_INT_USERS_MAX_CFM_WITH_BYPASS));
+              }
+            } else if (intSummerReturnAirCFM < Math.max(Number(intSummerSupplyAirCFM) * 0.5, intVEN_INT_USERS_MIN_CFM_NO_BYPASS)) {
+              intSummerReturnAirCFM = Number(Math.max(intSummerSupplyAirCFM * 0.5, intVEN_INT_USERS_MIN_CFM_NO_BYPASS));
+            } else if (intSummerReturnAirCFM > Math.min(intSummerSupplyAirCFM * 2, intVEN_INT_USERS_MAX_CFM_NO_BYPASS) ) {
+              intSummerReturnAirCFM = Number(Math.min(intSummerSupplyAirCFM * 2, intVEN_INT_USERS_MAX_CFM_NO_BYPASS));
+            }
+          } else if (Number(getValues('ckbBypass')) === 1) {
+            if (intSummerReturnAirCFM < Number(dtModel.Rows?.[0]?.erv_cfm_min_ext_users)) {
+              intSummerReturnAirCFM = Number(dtModel.Rows?.[0]?.erv_cfm_min_ext_users);
+            } else if (intSummerReturnAirCFM > Number(dtModel.Rows?.[0]?.erv_cfm_max_ext_users)) {
+              intSummerReturnAirCFM = Number(dtModel.Rows?.[0]?.erv_cfm_max_ext_users);
+            }
+          } else if (intSummerReturnAirCFM < Number(dtModel.Rows?.[0]?.erv_cfm_min_ext_users)) {
+            intSummerReturnAirCFM = Number(dtModel.Rows?.[0]?.erv_cfm_min_ext_users);
+          } else if (intSummerReturnAirCFM > Number(dtModel.Rows?.[0]?.erv_cfm_max_ext_users)) {
+            intSummerReturnAirCFM = Number(dtModel.Rows?.[0]?.erv_cfm_max_ext_users);
+          }
+          break;
+        case IDs.intProdTypeIdVentumLite:
+          dtModel = db?.dbtSelVentumLiteUnitModel?.filter((item: { id: number }) => item.id === Number(getValues('ddlUnitModel')));
+    
+          if (intUAL === IDs.intUAL_Admin || intUAL === IDs.intUAL_IntAdmin ||
+              intUAL === IDs.intUAL_IntLvl_2 || intUAL === IDs.intUAL_IntLvl_1) {
+            if (Number(getValues('ckbPHI')) === 1) {
+              if (intSummerReturnAirCFM < Math.max(intSummerSupplyAirCFM * 0.5, intVENLITE_INT_USERS_MIN_CFM_WITH_BYPASS)) {
+                intSummerReturnAirCFM = Number(Math.max(intSummerSupplyAirCFM * 0.5, intVENLITE_INT_USERS_MIN_CFM_WITH_BYPASS));
+              } else if (intSummerReturnAirCFM >Math.min(intSummerSupplyAirCFM * 2, intVENLITE_INT_USERS_MAX_CFM_WITH_BYPASS)) {
+                intSummerReturnAirCFM = Number( Math.min(intSummerSupplyAirCFM * 2, intVENLITE_INT_USERS_MAX_CFM_WITH_BYPASS));
+              }
+            } else if (intSummerReturnAirCFM < Math.max(intSummerSupplyAirCFM * 0.5, intVENLITE_INT_USERS_MIN_CFM_NO_BYPASS)) {
+              intSummerReturnAirCFM = Number(Math.max(intSummerSupplyAirCFM * 0.5, intVENLITE_INT_USERS_MIN_CFM_NO_BYPASS));
+            } else if (intSummerReturnAirCFM > Math.min(intSummerSupplyAirCFM * 2, intVENLITE_INT_USERS_MAX_CFM_NO_BYPASS)) {
+              intSummerReturnAirCFM = Number(Math.min(intSummerSupplyAirCFM * 2, intVENLITE_INT_USERS_MAX_CFM_NO_BYPASS));
+            }
+          } else if (Number(getValues('ckbBypass')) === 1) {
+            if (intSummerReturnAirCFM < Number(dtModel.Rows?.[0]?.erv_cfm_min_ext_users)) {
+              intSummerReturnAirCFM = Number(dtModel.Rows?.[0]?.erv_cfm_min_ext_users);
+            } else if (intSummerReturnAirCFM > Number(dtModel.Rows?.[0]?.erv_cfm_max_ext_users)) {
+              intSummerReturnAirCFM = Number(dtModel.Rows?.[0]?.erv_cfm_max_ext_users);
+            }
+          } else if (intSummerReturnAirCFM < Number(dtModel.Rows?.[0]?.erv_cfm_min_ext_users)) {
+            intSummerReturnAirCFM = Number(dtModel.Rows?.[0]?.erv_cfm_min_ext_users);
+          } else if (intSummerReturnAirCFM > Number(dtModel.Rows?.[0]?.erv_cfm_max_ext_users)) {
+            intSummerReturnAirCFM = Number(dtModel.Rows?.[0]?.erv_cfm_max_ext_users);
+          }
+          break;
+        case IDs.intProdTypeIdVentumPlus:
+          dtModel = db?.dbtSelVentumPlusUnitModel?.filter((item: { id: number }) => item.id === Number(getValues('ddlUnitModel')));
+    
+          if (intUAL === IDs.intUAL_Admin || intUAL === IDs.intUAL_IntAdmin ||
+              intUAL === IDs.intUAL_IntLvl_2 || intUAL === IDs.intUAL_IntLvl_1
+          ) {
+            if (Number(getValues('ckbPHI')) === 1) {
+              if (intSummerReturnAirCFM < Math.max(intSummerSupplyAirCFM * 0.5, intVENPLUS_MIN_CFM_PHI)) {
+                intSummerReturnAirCFM = Number(Math.max(intSummerSupplyAirCFM * 0.5, intVENPLUS_MIN_CFM_PHI));
+              } else if (intSummerReturnAirCFM > Math.min(intSummerSupplyAirCFM * 2, intVENPLUS_MAX_CFM_PHI)) {
+                intSummerReturnAirCFM = Number(Math.min(intSummerSupplyAirCFM * 2, intVENPLUS_MAX_CFM_PHI));
+              }
+            } else if (Number(getValues('ckbBypass')) === 1) {
+              if (intSummerReturnAirCFM < Math.max(intSummerSupplyAirCFM * 0.5, intVENPLUS_INT_USERS_MIN_CFM_WITH_BYPASS)) {
+                intSummerReturnAirCFM = Number(Math.max(intSummerSupplyAirCFM * 0.5, intVENPLUS_INT_USERS_MIN_CFM_WITH_BYPASS));
+              } else if (intSummerReturnAirCFM > Math.min(intSummerSupplyAirCFM * 2, intVENPLUS_INT_USERS_MAX_CFM_WITH_BYPASS)) {
+                intSummerReturnAirCFM = Number(Math.min(intSummerSupplyAirCFM * 2, intVENPLUS_INT_USERS_MAX_CFM_WITH_BYPASS));
+              }
+            } else if (intSummerReturnAirCFM < Math.max(intSummerSupplyAirCFM * 0.5, intVENPLUS_INT_USERS_MIN_CFM_NO_BYPASS)) {
+              intSummerReturnAirCFM = Number(Math.max(intSummerSupplyAirCFM * 0.5, intVENPLUS_INT_USERS_MIN_CFM_NO_BYPASS));
+            } else if (intSummerReturnAirCFM > Math.min(intSummerSupplyAirCFM * 2, intVENPLUS_INT_USERS_MAX_CFM_NO_BYPASS)) {
+              intSummerReturnAirCFM = Number(Math.min(intSummerSupplyAirCFM * 2, intVENPLUS_INT_USERS_MAX_CFM_NO_BYPASS));
+            }
+          } else if (Number(getValues('ckbBypass')) === 1) {
+            if (intSummerReturnAirCFM < Number(dtModel.Rows?.[0]?.erv_cfm_min_ext_users)) {
+              intSummerReturnAirCFM = Number(dtModel.Rows?.[0]?.erv_cfm_min_ext_users);
+            } else if (intSummerReturnAirCFM > Number(dtModel.Rows?.[0]?.erv_cfm_max_ext_users)) {
+              intSummerReturnAirCFM = Number(dtModel.Rows?.[0]?.erv_cfm_max_ext_users);
+            }
+          } else if (intSummerReturnAirCFM < Number(dtModel.Rows?.[0]?.erv_cfm_min_ext_users)) {
+            intSummerReturnAirCFM = Number(dtModel.Rows?.[0]?.erv_cfm_min_ext_users);
+          } else if (intSummerReturnAirCFM > Number(dtModel.Rows?.[0]?.erv_cfm_max_ext_users)) {
+            intSummerReturnAirCFM = Number(dtModel.Rows?.[0]?.erv_cfm_max_ext_users);
+          }
+          break;
+        default:
+          break;
+      }
+    
+      if ((intProductTypeID === IDs.intProdTypeIdVentum || intProductTypeID === IDs.intProdTypeIdVentumLite ||
+          intProductTypeID === IDs.intProdTypeIdVentumPlus) && intUnitTypeID === IDs.intUnitTypeIdHRV) {
+        if (intSummerReturnAirCFM < intSummerSupplyAirCFM * 0.5) {
+          intSummerReturnAirCFM = Math.ceil(intSummerSupplyAirCFM * 0.5);
+        } else if (intSummerReturnAirCFM > Number(intSummerSupplyAirCFM) * 2) {
+          intSummerReturnAirCFM = Math.ceil(intSummerSupplyAirCFM * 2);
+        }
+      } else if (
+        (intProductTypeID === IDs.intProdTypeIdVentum || intProductTypeID === IDs.intProdTypeIdVentumLite ||
+         intProductTypeID === IDs.intProdTypeIdVentumPlus) && intUnitTypeID === IDs.intUnitTypeIdERV
+      ) {
+        switch (intProductTypeID) {
+          case IDs.intProdTypeIdVentum:
+            if (intUAL === IDs.intUAL_Admin || intUAL === IDs.intUAL_IntAdmin ||
+                intUAL === IDs.intUAL_IntLvl_2 || intUAL === IDs.intUAL_IntLvl_1
+            ) {
+              if (Number(getValues('ckbBypass')) === 1) {
+                if (intSummerReturnAirCFM < intVEN_INT_USERS_MIN_CFM_WITH_BYPASS) {
+                  intSummerReturnAirCFM = intVEN_INT_USERS_MIN_CFM_WITH_BYPASS;
+                } else if (intSummerReturnAirCFM > intVEN_INT_USERS_MAX_CFM_WITH_BYPASS) {
+                  intSummerReturnAirCFM = intVEN_INT_USERS_MAX_CFM_WITH_BYPASS;
+                }
+              } else if (intSummerReturnAirCFM < intVEN_INT_USERS_MIN_CFM_NO_BYPASS) {
+                intSummerReturnAirCFM = intVEN_INT_USERS_MIN_CFM_NO_BYPASS;
+              } else if (intSummerReturnAirCFM > intVEN_INT_USERS_MAX_CFM_NO_BYPASS) {
+                intSummerReturnAirCFM = intVEN_INT_USERS_MAX_CFM_NO_BYPASS;
+              }
+            } else if (Number(getValues('ckbBypass')) === 1) {
+              if (intSummerReturnAirCFM < intVEN_MIN_CFM_WITH_BYPASS) {
+                intSummerReturnAirCFM = intVEN_MIN_CFM_WITH_BYPASS;
+              } else if (intSummerReturnAirCFM > intVEN_MAX_CFM_WITH_BYPASS) {
+                intSummerReturnAirCFM = intVEN_MAX_CFM_WITH_BYPASS;
+              }
+            } else if (intSummerReturnAirCFM < intVEN_MIN_CFM_NO_BYPASS) {
+              intSummerReturnAirCFM = intVEN_MIN_CFM_NO_BYPASS;
+            } else if (intSummerReturnAirCFM > intVEN_MAX_CFM_NO_BYPASS) {
+              intSummerReturnAirCFM = intVEN_MAX_CFM_NO_BYPASS;
+            }
+    
+            break;
+          case IDs.intProdTypeIdVentumLite:
+            if (intUAL === IDs.intUAL_Admin || intUAL === IDs.intUAL_IntAdmin ||
+                intUAL === IDs.intUAL_IntLvl_2 || intUAL === IDs.intUAL_IntLvl_1
+            ) {
+              if (Number(getValues('ckbBypass')) === 1) {
+                if (intSummerReturnAirCFM < intVENLITE_INT_USERS_MIN_CFM_WITH_BYPASS) {
+                  intSummerReturnAirCFM = intVENLITE_INT_USERS_MIN_CFM_WITH_BYPASS;
+                } else if (intSummerReturnAirCFM > intVENLITE_INT_USERS_MAX_CFM_WITH_BYPASS) {
+                  intSummerReturnAirCFM = intVENLITE_INT_USERS_MAX_CFM_WITH_BYPASS;
+                }
+              } else if (intSummerReturnAirCFM < intVENLITE_INT_USERS_MIN_CFM_NO_BYPASS) {
+                intSummerReturnAirCFM = intVENLITE_INT_USERS_MIN_CFM_NO_BYPASS;
+              } else if (intSummerReturnAirCFM > intVENLITE_INT_USERS_MAX_CFM_NO_BYPASS) {
+                intSummerReturnAirCFM = intVENLITE_INT_USERS_MAX_CFM_NO_BYPASS;
+              }
+            } else if (Number(getValues('ckbBypass')) === 1) {
+              if (intSummerReturnAirCFM < intVENLITE_MIN_CFM_WITH_BYPASS) {
+                intSummerReturnAirCFM = intVENLITE_MIN_CFM_WITH_BYPASS;
+              } else if (intSummerReturnAirCFM > intVENLITE_MAX_CFM_WITH_BYPASS) {
+                intSummerReturnAirCFM = intVENLITE_MAX_CFM_WITH_BYPASS;
+              }
+            } else if (intSummerReturnAirCFM < intVENLITE_MIN_CFM_NO_BYPASS) {
+              intSummerReturnAirCFM = intVENLITE_MIN_CFM_NO_BYPASS;
+            } else if (intSummerReturnAirCFM > intVENLITE_MAX_CFM_NO_BYPASS) {
+              intSummerReturnAirCFM = intVENLITE_MAX_CFM_NO_BYPASS;
+            }
+    
+            break;
+          case IDs.intProdTypeIdVentumPlus:
+            if (intUAL === IDs.intUAL_Admin || intUAL === IDs.intUAL_IntAdmin ||
+                intUAL === IDs.intUAL_IntLvl_2 || intUAL === IDs.intUAL_IntLvl_1
+            ) {
+              if (Number(getValues('ckbBypass')) === 1) {
+                if (intSummerReturnAirCFM < intVENPLUS_INT_USERS_MIN_CFM_WITH_BYPASS) {
+                  intSummerReturnAirCFM = intVENPLUS_INT_USERS_MIN_CFM_WITH_BYPASS;
+                } else if (intSummerReturnAirCFM > intVENPLUS_INT_USERS_MAX_CFM_WITH_BYPASS) {
+                  intSummerReturnAirCFM = intVENPLUS_INT_USERS_MAX_CFM_WITH_BYPASS;
+                }
+              } else if (intSummerReturnAirCFM < intVENPLUS_INT_USERS_MIN_CFM_NO_BYPASS) {
+                intSummerReturnAirCFM = intVENPLUS_INT_USERS_MIN_CFM_NO_BYPASS;
+              } else if (intSummerReturnAirCFM > intVENPLUS_INT_USERS_MAX_CFM_NO_BYPASS) {
+                intSummerReturnAirCFM = intVENPLUS_INT_USERS_MAX_CFM_NO_BYPASS;
+              }
+            } else if (Number(getValues('ckbBypass')) === 1) {
+              if (intSummerReturnAirCFM < intVENPLUS_MIN_CFM_WITH_BYPASS) {
+                intSummerReturnAirCFM = intVENPLUS_MIN_CFM_WITH_BYPASS;
+              } else if (intSummerReturnAirCFM > intVENPLUS_MAX_CFM_WITH_BYPASS) {
+                intSummerReturnAirCFM = intVENPLUS_MAX_CFM_WITH_BYPASS;
+              }
+            } else if (intSummerReturnAirCFM < intVENPLUS_MIN_CFM_NO_BYPASS) {
+              intSummerReturnAirCFM = intVENPLUS_MIN_CFM_NO_BYPASS;
+            } else if (intSummerReturnAirCFM > intVENPLUS_MAX_CFM_NO_BYPASS) {
+              intSummerReturnAirCFM = intVENPLUS_MAX_CFM_NO_BYPASS;
+            }
+            break;
+          default:
+            break;
+        }
+      }
+
+
+      setValue('txbSummerReturnAirCFM', intSummerReturnAirCFM);
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [db, getAllFormData, setValue, user?.UAL || 0]
@@ -2565,24 +4207,63 @@ export default function UnitInfoForm({
 
   const handleBlurSupplyAirESP = useCallback(
     (e: any) => {
-      const value = getSupplyAirESPInfo(e.target.value, intProductTypeID, formValues.ddlUnitModel);
-      setValue('txbSupplyAirESP', value);
+      // const value = getSupplyAirESPInfo(e.target.value, intProductTypeID, formValues.ddlUnitModel);
+      // supplyAirEspInfo;
+
+      switch (intProductTypeID) {
+        case IDs.intProdTypeIdNova:
+          switch (Number(getValues('ddlUnitModel'))) {
+            case IDs.intNovaUnitModelIdA16IN:
+            case IDs.intNovaUnitModelIdB20IN:
+            case IDs.intNovaUnitModelIdA18OU:
+            case IDs.intNovaUnitModelIdB22OU:
+              if (Number(getValues('txbSupplyAirESP')) > 2.0) {
+                setValue('txbSupplyAirESP', 2.0);
+              }
+              break;
+            default:
+              if (Number(getValues('txbSupplyAirESP')) > 3.0) {
+                setValue('txbSupplyAirESP', 3.0);
+              }
+              break;
+          }
+          break;
+        default:
+          break;
+      }
     },
-    [setValue, intProductTypeID, formValues.ddlUnitModel]
+    [intProductTypeID, getValues('ddlUnitModel'), getValues('txbSupplyAirESP')]
   );
 
 
   const handleBlurExhaustAirESP = useCallback(
     (e: any) => {
-      const value = getExhaustAirESP(
-        e.target.value,
-        intProductTypeID,
-        intUnitTypeID,
-        formValues.ddlUnitModel
-      );
-      setValue('txbExhaustAirESP', value);
+      // const value = getExhaustAirESP(e.target.value, intProductTypeID, intUnitTypeID, formValues.ddlUnitModel);
+      // setValue('txbExhaustAirESP', value);
+
+      switch (intProductTypeID) {
+        case IDs.intProdTypeIdNova:
+          switch (Number(getValues('ddlUnitModel'))) {
+            case IDs.intNovaUnitModelIdA16IN:
+            case IDs.intNovaUnitModelIdB20IN:
+            case IDs.intNovaUnitModelIdA18OU:
+            case IDs.intNovaUnitModelIdB22OU:
+              if (Number(getValues('txbExhaustAirESP')) > 2.0) {
+                setValue('txbExhaustAirESP', 2.0);
+              }
+              break;
+            default:
+              if (Number(getValues('txbExhaustAirESP')) > 3.0) {
+                setValue('txbExhaustAirESP', 3.0);
+              }
+              break;
+          }
+          break;
+        default:
+          break;
+      }
     },
-    [setValue, intProductTypeID, intUnitTypeID, formValues.ddlUnitModel]
+    [setValue, intProductTypeID, getValues('ddlUnitModel'), getValues('txbExhaustAirESP')]
   );
 
 
@@ -3249,7 +4930,7 @@ export default function UnitInfoForm({
                     //   setValueWithCheck(e, 'txbQty');
                     // }}
                   />
-                  {isAvailable(db?.dbtSelUnitType) && (
+                  {/* {isAvailable(db?.dbtSelUnitType) && ( */}
                     <RHFSelect
                       native
                       size="small"
@@ -3269,8 +4950,8 @@ export default function UnitInfoForm({
                         </option>
                       ))}
                     </RHFSelect>
-                  )}
-                  {isAvailable(locationInfo) && (
+                  {/* )} */}
+                  {/* {isAvailable(locationInfo) && ( */}
                     <RHFSelect
                       native
                       size="small"
@@ -3279,13 +4960,13 @@ export default function UnitInfoForm({
                       placeholder=""
                       onChange={ddlLocationChanged}
                     >
-                      {locationInfo?.map((item: any, index: number) => (
+                      {locationInfo?.fdtLocation?. map((item: any, index: number) => (
                         <option key={index} value={item.id}>
                           {item.items}
                         </option>
                       ))}
                     </RHFSelect>
-                  )}
+                  {/* )} */}
                   {/* <FormControlLabel
                     control={ */}
                   <RHFCheckbox
@@ -3299,7 +4980,7 @@ export default function UnitInfoForm({
                   {/* }
                      label="Downshot"
                    /> */}
-                  {isAvailable(orientationInfo) && (
+                  {/* {isAvailable(orientationInfo) && ( */}
                     <RHFSelect
                       native
                       size="small"
@@ -3308,13 +4989,13 @@ export default function UnitInfoForm({
                       placeholder=""
                       onChange={ddlOrientationChanged}
                     >
-                      {orientationInfo?.map((item: any, index: number) => (
+                      {orientationInfo?.fdtOrientation?.map((item: any, index: number) => (
                         <option key={index} value={item.id}>
                           {item.items}
                         </option>
                       ))}
                     </RHFSelect>
-                  )}
+                  {/* )} */}
                   
                   <RHFSelect
                     native
@@ -3340,9 +5021,7 @@ export default function UnitInfoForm({
                     label="Control Via"
                     placeholder=""
                     sx={getDisplay(controlViaInfo?.isVisible)}
-                    onChange={(e: any) => {
-                      setValue('ddlControlVia', Number(e.target.value));
-                    }}
+                    onChange={(e: any) => {setValue('ddlControlVia', Number(e.target.value));}}
                   >
                     {controlViaInfo?.fdtControlVia?.map((item: any, index: number) => (
                       <option key={index} value={item.id}>
@@ -3409,38 +5088,35 @@ export default function UnitInfoForm({
                     }}
                   />
                   <RHFCheckbox
-                    label={`Bypass for Economizer: ${ckbBypassInfo.text}`}
+                    label={`Bypass for Economizer: ${bypassInfo.text}`}
                     name="ckbBypass"
-                    sx={getDisplay(
-                      intProductTypeID === IDs.intProdTypeIdVentumLite || isUnitTypeAHU()
-                    )}
+                    sx={getDisplay(bypassInfo?.isVisible)}
                     // sx={{color: ckbBypassInfo.text !== '' ? colors.red[500] : 'text.primary', size: 'small', }}
                     checked={formValues.ckbBypass}
                     // onChange={() => setCkbBypassVal(!formValues.ckbBypassVal)}
-                    onChange={(e: any) => {
-                      setValue('ckbBypass', Number(e.target.checked));
-                    }}
-                    disabled={!ckbBypassInfo.enabled}
+                    onChange={(e: any) => {setValue('ckbBypass', Number(e.target.checked));}}
+                    disabled={bypassInfo?.isEnabled}
                   />
                   {/* }
                     label={`Bypass for Economizer: ${ckbBypassInfo.text}`}
                   /> */}
-                  {isAvailable(unitModel) && (
+                  {/* {isAvailable(unitModel) && ( */}
                     <RHFSelect
                       native
                       size="small"
                       name="ddlUnitModel"
                       label="Unit Model"
+                      // sx={getDisplay(unitModelInfo?.isVisible)}
                       onChange={ddlUnitModelChanged}
                     >
-                      {unitModel?.map((item: any, index: number) => (
+                      {unitModelInfo?.fdtUnitModel?.map((item: any, index: number) => (
                         <option key={index} value={item.id}>
                           {item.items}
                         </option>
                       ))}
                     </RHFSelect>
-                  )}
-                  {isAvailable(unitVoltage) && (
+                  {/* )} */}
+                  {/* {isAvailable(unitVoltage) && ( */}
                     <RHFSelect
                       native
                       size="small"
@@ -3448,13 +5124,13 @@ export default function UnitInfoForm({
                       label="Unit Voltage"
                       onChange={ddlUnitVoltageChanged}
                     >
-                      {unitVoltage?.map((item: any, index: number) => (
+                      {unitVoltageInfo?.fdtUnitVoltage?.map((item: any, index: number) => (
                         <option key={index} value={item.id}>
                           {item.items}
                         </option>
                       ))}
                     </RHFSelect>
-                  )}
+                  {/* )} */}
                   <RHFCheckbox
                     label="Single Point Power Connection"
                     name="ckbVoltageSPP"
@@ -3821,7 +5497,7 @@ export default function UnitInfoForm({
         </Accordion>        
         <Accordion
           expanded={expanded.panel2}
-          sx={getDisplay(intProductTypeID !== IDs.intProdTypeIdVentumLite)}
+          sx={getDisplay(preheatCompInfo?.isVisible)}
           onChange={() => setExpanded({ ...expanded, panel2: !expanded.panel2 })}
         >
           <AccordionSummary
@@ -3843,22 +5519,22 @@ export default function UnitInfoForm({
               }}
             >
               <Stack spacing={1}>
-                {isAvailable(dtPreheatComp) && (
+                {/* {isAvailable(dtPreheatComp) && ( */}
                   <RHFSelect
                     native
                     size="small"
                     name="ddlPreheatComp"
                     label="Preheat"
-                    sx={getDisplay(intProductTypeID !== IDs.intProdTypeIdVentumLite)}
+                    sx={getDisplay(preheatCompInfo?.isVisible)}
                     onChange={ddlPreheatCompChanged}
                   >
-                    {dtPreheatComp?.map((item: any, index: number) => (
+                    {preheatCompInfo?.fdtPreheatComp?.map((item: any, index: number) => (
                       <option key={index} value={item.id}>
                         {item.items}
                       </option>
                     ))}
                   </RHFSelect>
-                )}
+                {/* )} */}
                 <RHFTextField
                   size="small"
                   name="txbWinterPreheatSetpointDB"
@@ -3873,26 +5549,22 @@ export default function UnitInfoForm({
                     setValueWithCheck1(e, 'txbWinterPreheatSetpointDB');
                   }}
                 />
-                {isAvailable(db?.dbtSelHanding) && (
+                {/* {isAvailable(db?.dbtSelHanding) && ( */}
                   <RHFSelect
                     native
                     size="small"
                     name="ddlPreheatCoilHanding"
                     label="Preheat Coil Handing"
-                    sx={getDisplay(
-                      formValues.ddlPreheatComp === IDs.intCompIdAuto ||
-                        formValues.ddlPreheatComp === IDs.intCompIdElecHeater ||
-                        formValues.ddlPreheatComp === IDs.intCompIdHWC
-                    )}
+                    sx={getDisplay(preheatCoilHandingInfo?.isVisible)}
                     onChange={(e: any) => setValue('ddlPreheatCoilHanding', Number(e.target.value))}
                   >
-                    {db?.dbtSelHanding?.map((item: any, index: number) => (
+                    {preheatCoilHandingInfo?.fdtHanding?.map((item: any, index: number) => (
                       <option key={index} value={item.id}>
                         {item.items}
                       </option>
                     ))}
                   </RHFSelect>
-                )}
+                {/* )} */}
                 <RHFCheckbox
                   label="Backup Heating"
                   name="ckbBackupHeating"
@@ -3910,16 +5582,15 @@ export default function UnitInfoForm({
                 spacing={1}
                 sx={{ ...getDisplay(formValues.ddlPreheatComp === IDs.intCompIdElecHeater) }}
               >
-                {isAvailable(preheatElecHeaterInstallationInfo) && (
+                {/* {isAvailable(preheatElecHeaterInstallationInfo) && ( */}
                   <RHFSelect
                     native
                     size="small"
                     name="ddlPreheatElecHeaterInstall"
                     label="Preheat Elec. Heater Installation"
                     placeholder=""
-                    onChange={(e: any) =>
-                      setValue('ddlPreheatElecHeaterInstall', Number(e.target.value))
-                    }
+                    sx={getDisplay(preheatElecHeaterInfo?.isVisible)}
+                    onChange={(e: any) => setValue('ddlPreheatElecHeaterInstall', Number(e.target.value))}
                   >
                     {preheatElecHeaterInfo?.fdtElecHeaterInstall?.map(
                       (item: any, index: number) => (
@@ -3929,7 +5600,7 @@ export default function UnitInfoForm({
                       )
                     )}
                   </RHFSelect>
-                )}
+                {/* )} */}
               </Stack>
               <Stack
                 spacing={1}
@@ -3967,9 +5638,7 @@ export default function UnitInfoForm({
                   size="small"
                   name="txbHeatingFluidEntTemp"
                   label="Heating Fluid Ent Temp (F)"
-                  onChange={(e: any) => {
-                    setValueWithCheck1(e, 'txbHeatingFluidEntTemp');
-                  }}
+                  onChange={(e: any) => {setValueWithCheck1(e, 'txbHeatingFluidEntTemp');}}
                 />
                 <RHFTextField
                   size="small"
@@ -3984,10 +5653,7 @@ export default function UnitInfoForm({
                 spacing={1}
                 sx={{
                   mb: 3,
-                  display: getInlineDisplay(
-                    Number(formValues.ddlPreheatComp) === IDs.intCompIdHWC &&
-                      ualInfo.divCustomVisible
-                  ),
+                  display: getInlineDisplay(internCompInfo?.isCutomVisible),
                 }}
               >
                 {/* <FormControlLabel
@@ -4045,7 +5711,7 @@ export default function UnitInfoForm({
         </Accordion>
         <Accordion
           expanded={expanded.panel3}
-          sx={getDisplay(intProductTypeID !== IDs.intProdTypeIdVentumLite)}
+          sx={getDisplay(coolingCompInfo?.isVisible)}
           onChange={() => setExpanded({ ...expanded, panel3: !expanded.panel3 })}
         >
           <AccordionSummary
@@ -4067,21 +5733,22 @@ export default function UnitInfoForm({
               }}
             >
               <Stack spacing={1}>
-                {isAvailable(dtCoolingComp) && (
+                {/* {isAvailable(dtCoolingComp) && ( */}
                   <RHFSelect
                     native
                     size="small"
                     name="ddlCoolingComp"
                     label="Cooling"
+                    // sx={getDisplay(coolingCompInfo?.isVisible)}
                     onChange={ddlCoolingCompChanged}
                   >
-                    {dtCoolingComp?.map((item: any, index: number) => (
+                    {coolingCompInfo?.fdtCoolingComp?.map((item: any, index: number) => (
                       <option key={index} value={item.id}>
                         {item.items}
                       </option>
                     ))}
                   </RHFSelect>
-                )}
+                {/* )} */}
                 <RHFTextField
                   size="small"
                   name="txbSummerCoolingSetpointDB"
@@ -4125,31 +5792,28 @@ export default function UnitInfoForm({
                 <RHFCheckbox
                   label="Dehumidification"
                   name="ckbDehumidification"
-                  sx={getInlineDisplay(
-                    formValues.ddlCoolingComp === IDs.intCompIdCWC ||
-                      formValues.ddlCoolingComp === IDs.intCompIdDX
-                  )}
-                  checked={formValues.ckbDehumidification}
+                  sx={getInlineDisplay(dehumInfo?.isVisible)}
+                  checked={dehumInfo?.isChecked}
                   // onChange={(e: any) => setCkbDehumidificationVal(e.target.checked)}
                   onChange={(e: any) => setValue('ckbDehumidification', Number(e.target.checked))}
                 />
 
-                {isAvailable(db?.dbtSelHanding) && (
+                {/* {isAvailable(db?.dbtSelHanding) && ( */}
                   <RHFSelect
                     native
                     size="small"
                     name="ddlCoolingCoilHanding"
                     label="Cooling Coil Handing"
-                    sx={getDisplay(Number(formValues.ddlCoolingComp) > 1)}
+                    sx={getDisplay(coolingCoilHandingInfo?.isVisible)}
                     onChange={(e: any) => setValue('ddlCoolingCoilHanding', Number(e.target.value))}
                   >
-                    {db?.dbtSelHanding?.map((item: any, index: number) => (
+                    {coolingCoilHandingInfo?.fdtHanding?.map((item: any, index: number) => (
                       <option key={index} value={item.id}>
                         {item.items}
                       </option>
                     ))}
                   </RHFSelect>
-                )}
+                {/* )} */}
               </Stack>
               <Stack
                 spacing={1}
@@ -4291,7 +5955,7 @@ export default function UnitInfoForm({
         </Accordion>
         <Accordion
           expanded={expanded.panel4}
-          sx={getDisplay(intProductTypeID !== IDs.intProdTypeIdVentumLite)}
+          sx={getDisplay(heatingCompInfo?.isVisible)}
           onChange={() => setExpanded({ ...expanded, panel4: !expanded.panel4 })}
         >
           <AccordionSummary
@@ -4313,22 +5977,22 @@ export default function UnitInfoForm({
               }}
             >
               <Stack spacing={1}>
-                {isAvailable(dtHeatingComp) && (
+                {/* {isAvailable(dtHeatingComp) && ( */}
                   <RHFSelect
                     native
                     size="small"
                     name="ddlHeatingComp"
                     label="Heating"
-                    sx={getDisplay(intProductTypeID !== IDs.intProdTypeIdVentumLite)}
+                    // sx={getDisplay(heatingCompInfo?.isVisible)}
                     // onChange={ddlHeatingCompChanged}
                   >
-                    {dtHeatingComp?.map((item: any, index: number) => (
+                    {heatingCompInfo?.fdtHeatingComp?.map((item: any, index: number) => (
                       <option key={index} value={item.id}>
                         {item.items}
                       </option>
                     ))}
                   </RHFSelect>
-                )}
+                {/* )} */}
                 <RHFTextField
                   size="small"
                   name="txbWinterHeatingSetpointDB"
@@ -4343,22 +6007,22 @@ export default function UnitInfoForm({
                     setValueWithCheck1(e, 'txbWinterHeatingSetpointDB');
                   }}
                 />
-                {isAvailable(db?.dbtSelHanding) && (
+                {/* {isAvailable(db?.dbtSelHanding) && ( */}
                   <RHFSelect
                     native
                     size="small"
                     name="ddlHeatingCoilHanding"
                     label="Heating Coil Handing"
-                    sx={getDisplay(Number(formValues.ddlHeatingComp) > 1)}
+                    sx={getDisplay(heatingCoilHandingInfo?.isVisible)}
                     onChange={ddlHeatingCoilHandingChanged}
                   >
-                    {db?.dbtSelHanding?.map((item: any, index: number) => (
+                    {heatingCoilHandingInfo?.fdtHanding?.map((item: any, index: number) => (
                       <option key={index} value={item.id}>
                         {item.items}
                       </option>
                     ))}
                   </RHFSelect>
-                )}
+                {/* )} */}
               </Stack>
               <Stack
                 spacing={1}
@@ -4438,10 +6102,7 @@ export default function UnitInfoForm({
                 spacing={1}
                 sx={{
                   mb: 3,
-                  display: getInlineDisplay(
-                    Number(formValues.ddlHeatingComp) === IDs.intCompIdHWC &&
-                      ualInfo.divCustomVisible
-                  ),
+                  display: getInlineDisplay(internCompInfo?.isCutomVisible),
                 }}
               >
                 {/* <FormControlLabel
@@ -4497,7 +6158,7 @@ export default function UnitInfoForm({
           </AccordionDetails>
         </Accordion>
         <Accordion
-          sx={getDisplay(formValues.ckbDehumidification)}
+          sx={getDisplay(reheatCompInfo?.isVisible)}
           expanded={expanded.panel5}
           onChange={() => setExpanded({ ...expanded, panel5: !expanded.panel5 })}
         >
@@ -4520,23 +6181,23 @@ export default function UnitInfoForm({
               }}
             >
               <Stack spacing={1}>
-                {isAvailable(dtReheatComp) && (
+                {/* {isAvailable(dtReheatComp) && ( */}
                   <RHFSelect
                     native
                     size="small"
                     name="ddlReheatComp"
                     label="Reheat"
                     placeholder=""
-                    sx={getDisplay(formValues.ckbDehumidification)}
+                    // sx={getDisplay(reheatCompInfo?.isVisible)}
                     // onChange={ddlReheatCompChanged}
                   >
-                    {dtReheatComp?.map((item: any, index: number) => (
+                    {reheatCompInfo?.fdtReheatComp?.map((item: any, index: number) => (
                       <option key={index} value={item.id}>
                         {item.items}
                       </option>
                     ))}
                   </RHFSelect>
-                )}
+                {/* )} */}
                 <RHFTextField
                   size="small"
                   name="txbSummerReheatSetpointDB"
@@ -4565,22 +6226,22 @@ export default function UnitInfoForm({
                     setValueWithCheck1(e, 'txbBackupHeatingSetpointDB');
                   }}
                 />
-                {isAvailable(db?.dbtSelHanding) && (
+                {/* {isAvailable(db?.dbtSelHanding) && ( */}
                   <RHFSelect
                     native
                     size="small"
                     name="ddlReheatCoilHanding"
                     label="Reheat Coil Handing"
-                    sx={getDisplay(reheatHandingInfo?.isVisible)}
+                    sx={getDisplay(reheatCoilHandingInfo?.isVisible)}
                     onChange={ddlReheatCoilHandingChanged}
                   >
-                    {reheatHandingInfo?.fdtHanding?.map((item: any, index: number) => (
+                    {reheatCoilHandingInfo?.fdtHanding?.map((item: any, index: number) => (
                       <option key={index} value={item.id}>
                         {item.items}
                       </option>
                     ))}
                   </RHFSelect>
-                )}
+                {/* )} */}
               </Stack>
               <Stack
                 spacing={1}
@@ -4656,13 +6317,8 @@ export default function UnitInfoForm({
               </Stack>
               <Stack
                 spacing={1}
-                sx={{
-                  ...getDisplay(
-                    Number(formValues.ddlReheatComp) === IDs.intCompIdHWC &&
-                      ualInfo.divCustomVisible
-                  ),
-                }}
-              >
+                sx={getDisplay(internCompInfo?.isCustomVisible)}
+                >
                 {/* <FormControlLabel
                   sx={getInlineDisplay(customInputs.divReheatHWC_UseCapVisible)}
                   control={ */}
@@ -4790,17 +6446,18 @@ export default function UnitInfoForm({
                     </option>
                   ))}
                 </RHFSelect>
-                {isAvailable(elecHeaterVoltageInfo.ddlElecHeaterVoltageDataTbl) && (
+                {/* {isAvailable(elecHeaterVoltageInfo.ddlElecHeaterVoltageDataTbl) && ( */}
                   <RHFSelect
                     native
                     size="small"
                     name="ddlElecHeaterVoltage"
                     label="Elec. Heater Voltage"
                     placeholder=""
-                    sx={getDisplay(elecHeaterVoltageInfo.divElecHeaterVoltageVisible)}
+                    sx={getDisplay(elecHeaterVoltageInfo?.isVisible)}
+                    // disabled={elecHeaterVoltageInfo?.isEnabled}
                     onChange={ddlElecHeaterVoltageChanged}
                   >
-                    {elecHeaterVoltageInfo.ddlElecHeaterVoltageDataTbl?.map(
+                    {elecHeaterVoltageInfo?.fdtElecHeaterVoltage?.map(
                       (item: any, index: number) => (
                         <option key={index} value={item.id}>
                           {item.items}
@@ -4808,7 +6465,7 @@ export default function UnitInfoForm({
                       )
                     )}
                   </RHFSelect>
-                )}
+                {/* )} */}
                 {/* <FormControlLabel
                   sx={getDisplay(valveAndActuatorInfo.divValveAndActuatorVisible)}
                   control={ */}
@@ -4829,8 +6486,9 @@ export default function UnitInfoForm({
                 <RHFCheckbox
                   label="Drain Pan Required"
                   name="ckbDrainPan"
-                  sx={getInlineDisplay(drainPanInfo.divDrainPanVisible)}
-                  checked={formValues.ckbDrainPan}
+                  sx={getInlineDisplay(drainPanInfo?.isVisible)}
+                  disabled
+                  // checked={formValues.ckbDrainPan}
                   // onChange={() => setCkbDrainPanVal(!formValues.ckbDrainPanVal)}
                   onChange={(e: any) => setValue('ckbDrainPan', Number(e.target.checked))}
                 />
@@ -4891,7 +6549,6 @@ export default function UnitInfoForm({
             <Grid container spacing={5}>
               <Grid item xs={4} md={4}>
                 <Stack spacing={3}>
-                  {isAvailable(handingInfo) && (
                     <RHFSelect
                       native
                       size="small"
@@ -4901,23 +6558,23 @@ export default function UnitInfoForm({
                       value={getValues('ddlHanding')}
                       onChange={ddlHandingChanged}
                     >
-                      {handingInfo.map((item: any, index: number) => (
+                      {handingInfo?.fdtHanding?.map((item: any, index: number) => (
                         <option key={index} value={item.id}>
                           {item.items}
                         </option>
                       ))}
                     </RHFSelect>
-                  )}
-                  {isAvailable(supplyAirOpeningInfo.ddlSupplyAirOpeningDataTbl) && (
+                  {/* {isAvailable(supplyAirOpeningInfo.ddlSupplyAirOpeningDataTbl) && ( */}
                     <RHFSelect
                       native
                       size="small"
                       name="ddlSupplyAirOpening"
                       label="Supply Air Opening"
                       placeholder=""
+                      // sx={getDisplay(supplyAirOpeningInfo?.isVisible)}
                       onChange={ddlSupplyAirOpeningChanged}
                     >
-                      {supplyAirOpeningInfo.ddlSupplyAirOpeningDataTbl.map(
+                      {supplyAirOpeningInfo?.fdtSupplyAirOpening?.map(
                         (item: any, index: number) => (
                           <option key={index} value={item.id}>
                             {item.items}
@@ -4925,18 +6582,18 @@ export default function UnitInfoForm({
                         )
                       )}
                     </RHFSelect>
-                  )}
-                  {isAvailable(remainingOpeningsInfo.ddlExhaustAirOpeningDataTbl) && (
+                  {/* )} */}
+                  {/* {isAvailable(remainingOpeningsInfo.ddlExhaustAirOpeningDataTbl) && ( */}
                     <RHFSelect
                       native
                       size="small"
                       name="ddlExhaustAirOpening"
                       label="Exhaust Air Opening"
-                      sx={getDisplay(!!remainingOpeningsInfo.ddlExhaustAirOpeningVisible)}
+                      sx={getDisplay(remainingOpeningsInfo?.isExhaustAirOpeningVisible)}
                       placeholder=""
                       onChange={ddlExhaustAirOpeningChanged}
                     >
-                      {remainingOpeningsInfo.ddlExhaustAirOpeningDataTbl.map(
+                      {remainingOpeningsInfo?.fdtExhaustAirOpening?.map(
                         (item: any, index: number) => (
                           <option key={index} value={item.id}>
                             {item.items}
@@ -4944,17 +6601,18 @@ export default function UnitInfoForm({
                         )
                       )}
                     </RHFSelect>
-                  )}
-                  {isAvailable(remainingOpeningsInfo.ddlOutdoorAirOpeningDataTbl) && (
+                  {/* )} */}
+                  {/* {isAvailable(remainingOpeningsInfo.ddlOutdoorAirOpeningDataTbl) && ( */}
                     <RHFSelect
                       native
                       size="small"
                       name="ddlOutdoorAirOpening"
                       label="Outdoor Air Opening"
                       placeholder=""
+                      sx={getDisplay(remainingOpeningsInfo?.isOutdoorAirOpeningVisible)}           
                       onChange={ddlOutdoorAirOpeningChanged}
                     >
-                      {remainingOpeningsInfo.ddlOutdoorAirOpeningDataTbl.map(
+                      {remainingOpeningsInfo?.fdtOutdoorAirOpening?.map(
                         (item: any, index: number) => (
                           <option key={index} value={item.id}>
                             {item.items}
@@ -4962,18 +6620,18 @@ export default function UnitInfoForm({
                         )
                       )}
                     </RHFSelect>
-                  )}
-                  {isAvailable(remainingOpeningsInfo?.ddlReturnAirOpeningDataTbl) && (
+                  {/* )} */}
+                  {/* {isAvailable(remainingOpeningsInfo?.ddlReturnAirOpeningDataTbl) && ( */}
                     <RHFSelect
                       native
                       size="small"
                       name="ddlReturnAirOpening"
                       label="Return Air Opening"
-                      sx={getDisplay(remainingOpeningsInfo?.ddlReturnAirOpeningVisible)}
+                      sx={getDisplay(remainingOpeningsInfo?.isReturnAirOpeningVisible)}
                       placeholder=""
                       onChange={ddlReturnAirOpeningChanged}
                     >
-                      {remainingOpeningsInfo.ddlReturnAirOpeningDataTbl.map(
+                      {remainingOpeningsInfo?.fdtReturnAirOpening?.map(
                         (item: any, index: number) => (
                           <option key={index} value={item.id}>
                             {item.items}
@@ -4981,7 +6639,7 @@ export default function UnitInfoForm({
                         )
                       )}
                     </RHFSelect>
-                  )}
+                  {/* )} */}
                     <RHFSelect
                       native
                       size="small"
