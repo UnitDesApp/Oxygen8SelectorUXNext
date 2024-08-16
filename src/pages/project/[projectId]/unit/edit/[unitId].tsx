@@ -176,8 +176,7 @@ export default function EditUnit() {
               spacing={2}
             >
               <Item
-                sx={{
-                  color: (currentStep === 0 && theme.palette.primary.main) || '',
+                sx={{ color: (currentStep === 0 && theme.palette.primary.main) || '',
                   cursor: 'pointer',
                 }}
               >

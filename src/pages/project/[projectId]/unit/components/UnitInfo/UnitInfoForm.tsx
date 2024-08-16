@@ -254,12 +254,13 @@ export default function UnitInfoForm({
   const formValues = watch(); // watch()
   let formCurrValues = getValues();
 
-  if (Number(unitTypeData?.intUnitTypeID) > 0)
+  // if (Number(unitTypeData?.intUnitTypeID) > 0)
+  if (Number(unitId) === 0)
   {
     intProductTypeID = unitTypeData?.intProductTypeID || 0;
     intUnitTypeID = unitTypeData?.intUnitTypeID || 0;
   }
-
+  
 
   /*
    * Style functions that check if the compoment should be displayed or not
@@ -621,6 +622,20 @@ export default function UnitInfoForm({
   }, [db, intProductTypeID, intUnitTypeID, getValues('ddlLocation'), getValues('txbSummerSupplyAirCFM')]);
 
 
+
+// Initialization
+  useEffect(() => {
+      const supplyCFM = getSupplyAirCFM();
+      setValue('txbSummerSupplyAirCFM', supplyCFM);
+      setValue('txbSummerReturnAirCFM', supplyCFM);
+
+
+      const returnCFM = getReturnAirCFM();
+      setValue('txbSummerSupplyAirCFM', returnCFM);  
+
+  }, [intProductTypeID]);
+
+
   const [bypassInfo, setBypassInfo] = useState<any>([]);
   useMemo(() => {
     const info: { isVisible: boolean; isChecked: boolean; isEnabled: boolean; defaultId: number; bypassMsg: string } = {
@@ -931,50 +946,6 @@ export default function UnitInfoForm({
   }, [db, intProductTypeID, intUnitTypeID, getValues('txbSummerSupplyAirCFM'), getValues('ckbBypass'), getValues('ddlLocation'), getValues('ddlOrientation')]);
 
 
-  // -------------------- Get String Unit Model Codes ----------------------
-  const [umcInfo, setUMCInfo] = useState<any>([]);
-  useEffect(() => {
-    // const info: { umc: any; } = {
-    //   umc: [],
-    // };
-
-    // if (!formValues.ddlUnitModel || formValues.ddlUnitModel === '')
-    //   return { strUnitModelValue: '' };
-
-    let fdtUnitModel = [];
-
-    if (Number(getValues('ddlUnitModel')) > 0) {
-    switch (Number(intProductTypeID)) {
-      case IDs.intProdTypeIdNova:
-        fdtUnitModel = db.dbtSelNovaUnitModel;
-        break;
-      case IDs.intProdTypeIdVentum:
-        fdtUnitModel = db.dbtSelVentumHUnitModel;
-        break;
-      case IDs.intProdTypeIdVentumLite:
-        fdtUnitModel = db.dbtSelVentumLiteUnitModel;
-        break;
-      case IDs.intProdTypeIdVentumPlus:
-        fdtUnitModel = db.dbtSelVentumPlusUnitModel;
-        break;
-      case IDs.intProdTypeIdTerra:
-        fdtUnitModel = db.dbtSelTerraUnitModel;
-        break;
-      default:
-        break;
-    }
-
-    const unitModelValue = fdtUnitModel?.filter((item: {id: number}) => item.id === Number(getValues('ddlUnitModel')))?.[0]?.value;
-
-    const umc = getUnitModelCodes(unitModelValue, intProductTypeID, intUnitTypeID, getValues('ddlLocation'),
-                                  getValues('ddlOrientation'), Number(getValues('ckbBypass')), db);
-     setUMCInfo(umc);
-    }
-
-  }, [db, intProductTypeID, intUnitTypeID, getValues('txbSummerSupplyAirCFM'), getValues('ddlUnitModel'), getValues('ddlLocation'), getValues('ddlOrientation'),
-      getValues('ckbBypass')]);
-
-
   const [unitTypeInfo, setUnitTypeInfo] = useState<any>([]);
   useMemo(() => {
     const info: { fdtUnitType: any; isVisible: boolean; defaultId: number } = {
@@ -1168,9 +1139,11 @@ export default function UnitInfoForm({
 
   
   const [unitVoltageInfo, setUnitVoltageInfo] = useState<any>([]);
-  useMemo(() => {
+  useEffect(() => {
     const info: { fdtUnitVoltage: any; defaultId: number } = { fdtUnitVoltage: [], defaultId: 0,};
     // let controlsPrefProdTypeLink: any = [];
+
+    const umc = getUMC();
 
     let modelVoltageLink = [];
   
@@ -1194,7 +1167,7 @@ export default function UnitInfoForm({
         break;
     }
 
-    const dtLink =modelVoltageLink?.filter((item: { unit_model_value: any }) => item.unit_model_value === umcInfo?.strUnitModelValue) || [];
+    const dtLink =modelVoltageLink?.filter((item: { unit_model_value: any }) => item.unit_model_value === umc?.strUnitModelValue) || [];
     info.fdtUnitVoltage = db?.dbtSelElectricalVoltage;
 
     if (intProductTypeID === IDs.intProdTypeIdTerra) {
@@ -1209,7 +1182,7 @@ export default function UnitInfoForm({
     info.defaultId = info.fdtUnitVoltage?.[0]?.id;
     setValue('ddlUnitVoltage', info.fdtUnitVoltage?.[0]?.id);
 
-  }, [db, intProductTypeID, getValues('txbSummerSupplyAirCFM'), getValues('ddlUnitModel')]);
+  }, [db, intProductTypeID, getValues('ddlUnitModel')]);
 
 
   const [outdoorAirFilterInfo, setOutdoorAirFilterInfo] = useState<any>([]);
@@ -1325,7 +1298,6 @@ export default function UnitInfoForm({
       setValue('ddlMixOADamperPos', SelId);
     }
   }, [db,formCurrValues.ckbMixingBox,formCurrValues.ddlMixRADamperPos]);
-
 
 
   const [mixRADamperPosInfo, setMixRADamperPosInfo] = useState<any>([]);
@@ -3624,569 +3596,174 @@ export default function UnitInfoForm({
     }
   }, [db, intProductTypeID, formValues.ddlHeatingComp, formValues.ddlReheatComp]);
 
-  // const coolingFluidTypeInfo = useMemo(() => {
-  //   const result = getCoolingFluidTypeInfo(db, Number(formValues.ddlCoolingComp));
 
-  //   // if (!edit) {
-  //     setValue('ddlCoolingFluidType', result?.defaultId);
-  //     // setValue('ddlCoolingFluidConcentrationId', result?.defaultId);
-  //   // }
-
-  //   return result;
-  // }, [edit,db,setValue,formValues.ddlCoolingComp,]);
-
-  // const coolingFluidConcenInfo = useMemo(() => {
-  //   const result = getCoolingFluidConcenInfo(db, Number(formValues.ddlCoolingFluidType),);
-
-  //   // if (!edit) {
-  //     setValue('ddlCoolingFluidConcentration', result?.defaultId);
-  //   // }
-
-  //   return result;
-  // }, [edit,db,setValue,formValues.ddlCoolingFluidType,]);
-
-  // const damperAndActuatorInfo = useMemo(() => {
-  //   const result = getDamperAndActuatorInfo(
-  //     db,
-  //     Number(intProductTypeID),
-  //     Number(formValues.ddlLocation)
-  //   );
-  //   if (!edit) setValue('ddlDamperAndActuator', result?.ddlDamperAndActuatorId);
-  //   return result;
-  // }, [edit, db, setValue, intProductTypeID, formValues.ddlLocation]);
-
-
-  // const elecHeaterVoltageInfo = useMemo(() => {
-  //   const result = getElecHeaterVoltageInfo(
-  //     db,
-  //     Number(formValues.ddlPreheatComp),
-  //     Number(formValues.ddlHeatingComp),
-  //     Number(formValues.ddlReheatComp),
-  //     Number(intProductTypeID),
-  //     Number(intUnitTypeID),
-  //     Number(formValues.ddlElecHeaterVoltage),
-  //     Number(formValues.ddlUnitVoltage),
-  //     Number(formValues.ckbVoltageSPP),
-  //     strUnitModelValue
-  //   );
-
-  //   // if (!edit && result?.ddlElecHeaterVoltageDataTbl) {
-  //     if (result?.ddlElecHeaterVoltageDataTbl) {
-  //     const selectedId = result?.ddlElecHeaterVoltageDataTbl.find(
-  //       (item) => item.id === formValues.ddlElecHeaterVoltage
-  //     );
-
-  //     if (!selectedId) {
-  //       setValue('ddlElecHeaterVoltage', result?.ddlElecHeaterVoltageId);
-  //     }
-  //   }
-
-  //   return result;
-  // }, [
-  //   edit,
-  //   formValues.ckbVoltageSPP,
-  //   db,
-  //   setValue,
-  //   intProductTypeID,
-  //   intUnitTypeID,
-  //   formValues.ddlElecHeaterVoltage,
-  //   formValues.ddlHeatingComp,
-  //   formValues.ddlPreheatComp,
-  //   formValues.ddlReheatComp,
-  //   formValues.ddlUnitVoltage,
-  //   strUnitModelValue,
-  // ]);
-
-
-  // const valveAndActuatorInfo = useMemo(
-  //   () =>
-  //     getValveAndActuatorInfo(
-  //       Number(formValues.ddlCoolingComp),
-  //       Number(formValues.ddlPreheatComp),
-  //       Number(formValues.ddlHeatingComp),
-  //       Number(formValues.ddlReheatComp)
-  //     ),
-  //   [
-  //     formValues.ddlCoolingComp,
-  //     formValues.ddlHeatingComp,
-  //     formValues.ddlPreheatComp,
-  //     formValues.ddlReheatComp,
-  //   ]
-  // );
-
-
-  // const drainPanInfo = useMemo(
-  //   () => getDrainPanInfo(Number(intProductTypeID), Number(intUnitTypeID)),
-  //   [intProductTypeID, intUnitTypeID]
-  // );
-
-  // // const handingInfo = useMemo(() => {
-  // //   const result = getHandingInfo(db);
-  // //   if (!edit) setValue('ddlHandingId', result.ddlHandingId);
-  // //   return result;
-  // // }, [edit, db, setValue]);
-
-
-
-
-  // const supplyAirOpeningInfo = useMemo(() => {
-  //   const result = getSupplyAirOpeningInfo(
-  //     db,
-  //     Number(intUnitTypeID),
-  //     Number(intProductTypeID),
-  //     Number(formValues.ddlLocation),
-  //     Number(formValues.ddlOrientation),
-  //     formValues.ddlSupplyAirOpening,
-  //     formValues.ddlSupplyAirOpeningText,
-  //     Number(formValues.ddlCoolingComp),
-  //     Number(formValues.ddlHeatingComp),
-  //     Number(formValues.ddlReheatComp)
-  //   );
-
-  //   setValue('ddlSupplyAirOpening',  result?.ddlSupplyAirOpeningId);
-  //   setValue('ddlSupplyAirOpeningText', result?.ddlSupplyAirOpeningText);
-
-  //   return result;
-  //   // eslint-disable-next-line react-hooks/exhaustive-deps
-  // }, [
-  //   edit,
-  //   db,
-  //   setValue,
-  //   intProductTypeID,
-  //   intUnitTypeID,
-  //   formValues.ddlCoolingComp,
-  //   formValues.ddlHeatingComp,
-  //   formValues.ddlLocation,
-  //   formValues.ddlOrientation,
-  //   formValues.ddlReheatComp,
-  // ]);
-
-
-  // const [remainingOpeningsInfo, setRemainingOpeningsInfo] = useState<any>({});
-  // useEffect(() => {
-  //   if (!formValues.ddlOrientation || !formValues.ddlSupplyAirOpeningText || !intProductTypeID)
-  //     return;
-
-  //   const result = getRemainingOpeningsInfo(
-  //     db,
-  //     Number(intUnitTypeID),
-  //     Number(intProductTypeID),
-  //     formValues.ddlSupplyAirOpeningText,
-  //     Number(formValues.ddlOrientation)
-  //   );
-
-  //   // if (!edit) setValue('ddlExhaustAirOpeningId', result?.ddlExhaustAirOpeningId);
-  //   // if (!edit) setValue('ddlExhaustAirOpeningText', result?.ddlExhaustAirOpeningText);
-  //   // if (!edit) setValue('ddlOutdoorAirOpeningId', result?.ddlOutdoorAirOpeningId);
-  //   // if (!edit) setValue('ddlOutdoorAirOpeningText', result?.ddlOutdoorAirOpeningText);
-  //   // if (!edit) setValue('ddlReturnAirOpeningId', result?.ddlReturnAirOpeningId);
-  //   // if (!edit) setValue('ddlReturnAirOpeningText', result?.ddlReturnAirOpeningText);
-
-  //   setValue('ddlExhaustAirOpening', result?.ddlExhaustAirOpeningId);
-  //   setValue('ddlExhaustAirOpeningText', result?.ddlExhaustAirOpeningText);
-  //   setValue('ddlOutdoorAirOpening', result?.ddlOutdoorAirOpeningId);
-  //   setValue('ddlOutdoorAirOpeningText', result?.ddlOutdoorAirOpeningText);
-  //   setValue('ddlReturnAirOpening', result?.ddlReturnAirOpeningId);
-  //   setValue('ddlReturnAirOpeningText', result?.ddlReturnAirOpeningText);
-
-  //   setRemainingOpeningsInfo(result);
-  // }, [
-  //   edit,
-  //   db,
-  //   setValue,
-  //   intProductTypeID,
-  //   intUnitTypeID,
-  //   formValues.ddlOrientation,
-  //   formValues.ddlSupplyAirOpeningText,
-  // ]);
-
-
-  // onChange functions
+ 
   const handleBlurSummerSupplyAirCFM = useCallback((e: any) => {
       // const value = getSummerSupplyAirCFM(e.target.value, intProductTypeID, Number(user?.UAL || 0), Number(formValues.ckbBypass), Number(formValues.ckbPHI));
 
 
-      let intSummerSupplyAirCFM = Number(e.target.value);
-      const intUAL= Number(localStorage?.getItem('UAL')) || 0;
+      // let intSummerSupplyAirCFM = Number(e.target.value);
+      // const intUAL= Number(localStorage?.getItem('UAL')) || 0;
 
-      switch (intProductTypeID) {
-        case IDs.intProdTypeIdNova:
-          if (intUAL === IDs.intUAL_Admin || intUAL === IDs.intUAL_IntAdmin ||
-              intUAL === IDs.intUAL_IntLvl_2 || intUAL === IDs.intUAL_IntLvl_1
-          ) {
-            if (intSummerSupplyAirCFM < intNOVA_MIN_CFM) {
-              intSummerSupplyAirCFM = intNOVA_MIN_CFM;
-            } else if (intSummerSupplyAirCFM > intNOVA_MAX_CFM) {
-              intSummerSupplyAirCFM = intNOVA_MAX_CFM;
-            }
-          } else if (intSummerSupplyAirCFM < intNOVA_INT_USERS_MIN_CFM) {
-            intSummerSupplyAirCFM = intNOVA_INT_USERS_MIN_CFM;
-          } else if (intSummerSupplyAirCFM > intNOVA_INT_USERS_MAX_CFM) {
-            intSummerSupplyAirCFM = intNOVA_INT_USERS_MAX_CFM;
-          }
-          break;
-        case IDs.intProdTypeIdVentum:
-          if (intUAL === IDs.intUAL_Admin || intUAL === IDs.intUAL_IntAdmin ||
-              intUAL === IDs.intUAL_IntLvl_2 || intUAL === IDs.intUAL_IntLvl_1
-          ) {
-            if (Number(getValues('ckbPHI')) === 1) {
-              if (intSummerSupplyAirCFM < intVEN_MIN_CFM_PHI) {
-                intSummerSupplyAirCFM = intVEN_MIN_CFM_PHI;
-              } else if (intSummerSupplyAirCFM > intVEN_MAX_CFM_PHI) {
-                intSummerSupplyAirCFM = intVEN_MAX_CFM_PHI;
-              }
-            } else if (Number(getValues('ckbBypass')) === 1) {
-              if (intSummerSupplyAirCFM < intVEN_INT_USERS_MIN_CFM_WITH_BYPASS) {
-                intSummerSupplyAirCFM = intVEN_INT_USERS_MIN_CFM_WITH_BYPASS;
-              } else if (intSummerSupplyAirCFM > intVEN_INT_USERS_MAX_CFM_WITH_BYPASS) {
-                intSummerSupplyAirCFM = intVEN_INT_USERS_MAX_CFM_WITH_BYPASS;
-              }
-            } else if (intSummerSupplyAirCFM < intVEN_INT_USERS_MIN_CFM_NO_BYPASS) {
-              intSummerSupplyAirCFM = intVEN_INT_USERS_MIN_CFM_NO_BYPASS;
-            } else if (intSummerSupplyAirCFM > intVEN_INT_USERS_MAX_CFM_NO_BYPASS) {
-              intSummerSupplyAirCFM = intVEN_INT_USERS_MAX_CFM_NO_BYPASS;
-            }
-          } else if (Number(getValues('ckbBypass')) === 1) {
-            if (intSummerSupplyAirCFM < intVEN_MIN_CFM_WITH_BYPASS) {
-              intSummerSupplyAirCFM = intVEN_MIN_CFM_WITH_BYPASS;
-            } else if (intSummerSupplyAirCFM > intVEN_MAX_CFM_WITH_BYPASS) {
-              intSummerSupplyAirCFM = intVEN_MAX_CFM_WITH_BYPASS;
-            }
-          } else if (intSummerSupplyAirCFM < intVEN_MIN_CFM_NO_BYPASS) {
-            intSummerSupplyAirCFM = intVEN_MIN_CFM_NO_BYPASS;
-          } else if (intSummerSupplyAirCFM > intVEN_MAX_CFM_NO_BYPASS) {
-            intSummerSupplyAirCFM = intVEN_MAX_CFM_NO_BYPASS;
-          }
-          break;
-        case IDs.intProdTypeIdVentumLite:
-          if (intUAL === IDs.intUAL_Admin || intUAL === IDs.intUAL_IntAdmin ||
-              intUAL === IDs.intUAL_IntLvl_2 || intUAL === IDs.intUAL_IntLvl_1
-          ) {
-            if (Number(getValues('ckbBypass')) === 1) {
-              if (intSummerSupplyAirCFM < intVENLITE_INT_USERS_MIN_CFM_WITH_BYPASS) {
-                intSummerSupplyAirCFM = intVENLITE_INT_USERS_MIN_CFM_WITH_BYPASS;
-              } else if (intSummerSupplyAirCFM > intVENLITE_INT_USERS_MAX_CFM_WITH_BYPASS) {
-                intSummerSupplyAirCFM = intVENLITE_INT_USERS_MAX_CFM_WITH_BYPASS;
-              }
-            } else if (intSummerSupplyAirCFM < intVENLITE_INT_USERS_MIN_CFM_NO_BYPASS) {
-              intSummerSupplyAirCFM = intVENLITE_INT_USERS_MIN_CFM_NO_BYPASS;
-            } else if (intSummerSupplyAirCFM > intVENLITE_INT_USERS_MAX_CFM_NO_BYPASS) {
-              intSummerSupplyAirCFM = intVENLITE_INT_USERS_MAX_CFM_NO_BYPASS;
-            }
-          } else if (Number(getValues('ckbBypass')) === 1) {
-            if (intSummerSupplyAirCFM < intVENLITE_MIN_CFM_WITH_BYPASS) {
-              intSummerSupplyAirCFM = intVENLITE_MIN_CFM_WITH_BYPASS;
-            } else if (intSummerSupplyAirCFM > intVENLITE_MAX_CFM_WITH_BYPASS) {
-              intSummerSupplyAirCFM = intVENLITE_MAX_CFM_WITH_BYPASS;
-            }
-          } else if (intSummerSupplyAirCFM < intVENLITE_MIN_CFM_NO_BYPASS) {
-            intSummerSupplyAirCFM = intVENLITE_MIN_CFM_NO_BYPASS;
-          } else if (intSummerSupplyAirCFM > intVENLITE_MAX_CFM_NO_BYPASS) {
-            intSummerSupplyAirCFM = intVENLITE_MAX_CFM_NO_BYPASS;
-          }
-          break;
-        case IDs.intProdTypeIdVentumPlus:
-          if (intUAL === IDs.intUAL_Admin || intUAL === IDs.intUAL_IntAdmin ||
-              intUAL === IDs.intUAL_IntLvl_2 || intUAL === IDs.intUAL_IntLvl_1
-          ) {
-            if (Number(getValues('ckbPHI')) === 1) {
-              if (intSummerSupplyAirCFM < intVENPLUS_MIN_CFM_PHI) {
-                intSummerSupplyAirCFM = intVENPLUS_MIN_CFM_PHI;
-              } else if (intSummerSupplyAirCFM > intVENPLUS_MAX_CFM_PHI) {
-                intSummerSupplyAirCFM = intVENPLUS_MAX_CFM_PHI;
-              }
-            } else if (Number(getValues('ckbBypass')) === 1) {
-              if (intSummerSupplyAirCFM < intVENPLUS_INT_USERS_MIN_CFM_WITH_BYPASS) {
-                intSummerSupplyAirCFM = intVENPLUS_INT_USERS_MIN_CFM_WITH_BYPASS;
-              } else if (intSummerSupplyAirCFM > intVENPLUS_INT_USERS_MAX_CFM_WITH_BYPASS) {
-                intSummerSupplyAirCFM = intVENPLUS_INT_USERS_MAX_CFM_WITH_BYPASS;
-              }
-            } else if (intSummerSupplyAirCFM < intVENPLUS_INT_USERS_MIN_CFM_NO_BYPASS) {
-              intSummerSupplyAirCFM = intVENPLUS_INT_USERS_MIN_CFM_NO_BYPASS;
-            } else if (intSummerSupplyAirCFM > intVENPLUS_INT_USERS_MAX_CFM_NO_BYPASS) {
-              intSummerSupplyAirCFM = intVENPLUS_INT_USERS_MAX_CFM_NO_BYPASS;
-            }
-          } else if (Number(getValues('ckbBypass')) === 1) {
-            if (intSummerSupplyAirCFM < intVENPLUS_MIN_CFM_WITH_BYPASS) {
-              intSummerSupplyAirCFM = intVENPLUS_MIN_CFM_WITH_BYPASS;
-            } else if (intSummerSupplyAirCFM > intVENPLUS_MAX_CFM_WITH_BYPASS) {
-              intSummerSupplyAirCFM = intVENPLUS_MAX_CFM_WITH_BYPASS;
-            }
-          } else if (intSummerSupplyAirCFM < intVENPLUS_MIN_CFM_NO_BYPASS) {
-            intSummerSupplyAirCFM = intVENPLUS_MIN_CFM_NO_BYPASS;
-          } else if (intSummerSupplyAirCFM > intVENPLUS_MAX_CFM_NO_BYPASS) {
-            intSummerSupplyAirCFM = intVENPLUS_MAX_CFM_NO_BYPASS;
-          }
-          break;
-        case IDs.intProdTypeIdTerra:
-          if (intUAL === IDs.intUAL_Admin || intUAL === IDs.intUAL_IntAdmin || 
-              intUAL === IDs.intUAL_IntLvl_2 || intUAL === IDs.intUAL_IntLvl_1
-          ) {
-            if (Number(getValues('ckbBypass')) === 1) {
-              if (intSummerSupplyAirCFM < intTERA_INT_USERS_MIN_CFM_WITH_BYPASS) {
-                intSummerSupplyAirCFM = intTERA_INT_USERS_MIN_CFM_WITH_BYPASS;
-              } else if (intSummerSupplyAirCFM > intTERA_INT_USERS_MAX_CFM_WITH_BYPASS) {
-                intSummerSupplyAirCFM = intTERA_INT_USERS_MAX_CFM_WITH_BYPASS;
-              }
-            } else if (intSummerSupplyAirCFM < intTERA_INT_USERS_MIN_CFM_NO_BYPASS) {
-              intSummerSupplyAirCFM = intTERA_INT_USERS_MIN_CFM_NO_BYPASS;
-            } else if (intSummerSupplyAirCFM > intTERA_INT_USERS_MAX_CFM_NO_BYPASS) {
-              intSummerSupplyAirCFM = intTERA_INT_USERS_MAX_CFM_NO_BYPASS;
-            }
-          } else if (Number(getValues('ckbBypass')) === 1) {
-            if (intSummerSupplyAirCFM < intTERA_MIN_CFM_WITH_BYPASS) {
-              intSummerSupplyAirCFM = intTERA_MIN_CFM_WITH_BYPASS;
-            } else if (intSummerSupplyAirCFM > intTERA_MAX_CFM_WITH_BYPASS) {
-              intSummerSupplyAirCFM = intTERA_MAX_CFM_WITH_BYPASS;
-            }
-          } else if (intSummerSupplyAirCFM < intTERA_MIN_CFM_NO_BYPASS) {
-            intSummerSupplyAirCFM = intTERA_MIN_CFM_NO_BYPASS;
-          } else if (intSummerSupplyAirCFM > intTERA_MAX_CFM_NO_BYPASS) {
-            intSummerSupplyAirCFM = intTERA_MAX_CFM_NO_BYPASS;
-          }
-          break;
-        default:
-          break;
-      }
+      // switch (intProductTypeID) {
+      //   case IDs.intProdTypeIdNova:
+      //     if (intUAL === IDs.intUAL_Admin || intUAL === IDs.intUAL_IntAdmin ||
+      //         intUAL === IDs.intUAL_IntLvl_2 || intUAL === IDs.intUAL_IntLvl_1
+      //     ) {
+      //       if (intSummerSupplyAirCFM < intNOVA_MIN_CFM) {
+      //         intSummerSupplyAirCFM = intNOVA_MIN_CFM;
+      //       } else if (intSummerSupplyAirCFM > intNOVA_MAX_CFM) {
+      //         intSummerSupplyAirCFM = intNOVA_MAX_CFM;
+      //       }
+      //     } else if (intSummerSupplyAirCFM < intNOVA_INT_USERS_MIN_CFM) {
+      //       intSummerSupplyAirCFM = intNOVA_INT_USERS_MIN_CFM;
+      //     } else if (intSummerSupplyAirCFM > intNOVA_INT_USERS_MAX_CFM) {
+      //       intSummerSupplyAirCFM = intNOVA_INT_USERS_MAX_CFM;
+      //     }
+      //     break;
+      //   case IDs.intProdTypeIdVentum:
+      //     if (intUAL === IDs.intUAL_Admin || intUAL === IDs.intUAL_IntAdmin ||
+      //         intUAL === IDs.intUAL_IntLvl_2 || intUAL === IDs.intUAL_IntLvl_1
+      //     ) {
+      //       if (Number(getValues('ckbPHI')) === 1) {
+      //         if (intSummerSupplyAirCFM < intVEN_MIN_CFM_PHI) {
+      //           intSummerSupplyAirCFM = intVEN_MIN_CFM_PHI;
+      //         } else if (intSummerSupplyAirCFM > intVEN_MAX_CFM_PHI) {
+      //           intSummerSupplyAirCFM = intVEN_MAX_CFM_PHI;
+      //         }
+      //       } else if (Number(getValues('ckbBypass')) === 1) {
+      //         if (intSummerSupplyAirCFM < intVEN_INT_USERS_MIN_CFM_WITH_BYPASS) {
+      //           intSummerSupplyAirCFM = intVEN_INT_USERS_MIN_CFM_WITH_BYPASS;
+      //         } else if (intSummerSupplyAirCFM > intVEN_INT_USERS_MAX_CFM_WITH_BYPASS) {
+      //           intSummerSupplyAirCFM = intVEN_INT_USERS_MAX_CFM_WITH_BYPASS;
+      //         }
+      //       } else if (intSummerSupplyAirCFM < intVEN_INT_USERS_MIN_CFM_NO_BYPASS) {
+      //         intSummerSupplyAirCFM = intVEN_INT_USERS_MIN_CFM_NO_BYPASS;
+      //       } else if (intSummerSupplyAirCFM > intVEN_INT_USERS_MAX_CFM_NO_BYPASS) {
+      //         intSummerSupplyAirCFM = intVEN_INT_USERS_MAX_CFM_NO_BYPASS;
+      //       }
+      //     } else if (Number(getValues('ckbBypass')) === 1) {
+      //       if (intSummerSupplyAirCFM < intVEN_MIN_CFM_WITH_BYPASS) {
+      //         intSummerSupplyAirCFM = intVEN_MIN_CFM_WITH_BYPASS;
+      //       } else if (intSummerSupplyAirCFM > intVEN_MAX_CFM_WITH_BYPASS) {
+      //         intSummerSupplyAirCFM = intVEN_MAX_CFM_WITH_BYPASS;
+      //       }
+      //     } else if (intSummerSupplyAirCFM < intVEN_MIN_CFM_NO_BYPASS) {
+      //       intSummerSupplyAirCFM = intVEN_MIN_CFM_NO_BYPASS;
+      //     } else if (intSummerSupplyAirCFM > intVEN_MAX_CFM_NO_BYPASS) {
+      //       intSummerSupplyAirCFM = intVEN_MAX_CFM_NO_BYPASS;
+      //     }
+      //     break;
+      //   case IDs.intProdTypeIdVentumLite:
+      //     if (intUAL === IDs.intUAL_Admin || intUAL === IDs.intUAL_IntAdmin ||
+      //         intUAL === IDs.intUAL_IntLvl_2 || intUAL === IDs.intUAL_IntLvl_1
+      //     ) {
+      //       if (Number(getValues('ckbBypass')) === 1) {
+      //         if (intSummerSupplyAirCFM < intVENLITE_INT_USERS_MIN_CFM_WITH_BYPASS) {
+      //           intSummerSupplyAirCFM = intVENLITE_INT_USERS_MIN_CFM_WITH_BYPASS;
+      //         } else if (intSummerSupplyAirCFM > intVENLITE_INT_USERS_MAX_CFM_WITH_BYPASS) {
+      //           intSummerSupplyAirCFM = intVENLITE_INT_USERS_MAX_CFM_WITH_BYPASS;
+      //         }
+      //       } else if (intSummerSupplyAirCFM < intVENLITE_INT_USERS_MIN_CFM_NO_BYPASS) {
+      //         intSummerSupplyAirCFM = intVENLITE_INT_USERS_MIN_CFM_NO_BYPASS;
+      //       } else if (intSummerSupplyAirCFM > intVENLITE_INT_USERS_MAX_CFM_NO_BYPASS) {
+      //         intSummerSupplyAirCFM = intVENLITE_INT_USERS_MAX_CFM_NO_BYPASS;
+      //       }
+      //     } else if (Number(getValues('ckbBypass')) === 1) {
+      //       if (intSummerSupplyAirCFM < intVENLITE_MIN_CFM_WITH_BYPASS) {
+      //         intSummerSupplyAirCFM = intVENLITE_MIN_CFM_WITH_BYPASS;
+      //       } else if (intSummerSupplyAirCFM > intVENLITE_MAX_CFM_WITH_BYPASS) {
+      //         intSummerSupplyAirCFM = intVENLITE_MAX_CFM_WITH_BYPASS;
+      //       }
+      //     } else if (intSummerSupplyAirCFM < intVENLITE_MIN_CFM_NO_BYPASS) {
+      //       intSummerSupplyAirCFM = intVENLITE_MIN_CFM_NO_BYPASS;
+      //     } else if (intSummerSupplyAirCFM > intVENLITE_MAX_CFM_NO_BYPASS) {
+      //       intSummerSupplyAirCFM = intVENLITE_MAX_CFM_NO_BYPASS;
+      //     }
+      //     break;
+      //   case IDs.intProdTypeIdVentumPlus:
+      //     if (intUAL === IDs.intUAL_Admin || intUAL === IDs.intUAL_IntAdmin ||
+      //         intUAL === IDs.intUAL_IntLvl_2 || intUAL === IDs.intUAL_IntLvl_1
+      //     ) {
+      //       if (Number(getValues('ckbPHI')) === 1) {
+      //         if (intSummerSupplyAirCFM < intVENPLUS_MIN_CFM_PHI) {
+      //           intSummerSupplyAirCFM = intVENPLUS_MIN_CFM_PHI;
+      //         } else if (intSummerSupplyAirCFM > intVENPLUS_MAX_CFM_PHI) {
+      //           intSummerSupplyAirCFM = intVENPLUS_MAX_CFM_PHI;
+      //         }
+      //       } else if (Number(getValues('ckbBypass')) === 1) {
+      //         if (intSummerSupplyAirCFM < intVENPLUS_INT_USERS_MIN_CFM_WITH_BYPASS) {
+      //           intSummerSupplyAirCFM = intVENPLUS_INT_USERS_MIN_CFM_WITH_BYPASS;
+      //         } else if (intSummerSupplyAirCFM > intVENPLUS_INT_USERS_MAX_CFM_WITH_BYPASS) {
+      //           intSummerSupplyAirCFM = intVENPLUS_INT_USERS_MAX_CFM_WITH_BYPASS;
+      //         }
+      //       } else if (intSummerSupplyAirCFM < intVENPLUS_INT_USERS_MIN_CFM_NO_BYPASS) {
+      //         intSummerSupplyAirCFM = intVENPLUS_INT_USERS_MIN_CFM_NO_BYPASS;
+      //       } else if (intSummerSupplyAirCFM > intVENPLUS_INT_USERS_MAX_CFM_NO_BYPASS) {
+      //         intSummerSupplyAirCFM = intVENPLUS_INT_USERS_MAX_CFM_NO_BYPASS;
+      //       }
+      //     } else if (Number(getValues('ckbBypass')) === 1) {
+      //       if (intSummerSupplyAirCFM < intVENPLUS_MIN_CFM_WITH_BYPASS) {
+      //         intSummerSupplyAirCFM = intVENPLUS_MIN_CFM_WITH_BYPASS;
+      //       } else if (intSummerSupplyAirCFM > intVENPLUS_MAX_CFM_WITH_BYPASS) {
+      //         intSummerSupplyAirCFM = intVENPLUS_MAX_CFM_WITH_BYPASS;
+      //       }
+      //     } else if (intSummerSupplyAirCFM < intVENPLUS_MIN_CFM_NO_BYPASS) {
+      //       intSummerSupplyAirCFM = intVENPLUS_MIN_CFM_NO_BYPASS;
+      //     } else if (intSummerSupplyAirCFM > intVENPLUS_MAX_CFM_NO_BYPASS) {
+      //       intSummerSupplyAirCFM = intVENPLUS_MAX_CFM_NO_BYPASS;
+      //     }
+      //     break;
+      //   case IDs.intProdTypeIdTerra:
+      //     if (intUAL === IDs.intUAL_Admin || intUAL === IDs.intUAL_IntAdmin || 
+      //         intUAL === IDs.intUAL_IntLvl_2 || intUAL === IDs.intUAL_IntLvl_1
+      //     ) {
+      //       if (Number(getValues('ckbBypass')) === 1) {
+      //         if (intSummerSupplyAirCFM < intTERA_INT_USERS_MIN_CFM_WITH_BYPASS) {
+      //           intSummerSupplyAirCFM = intTERA_INT_USERS_MIN_CFM_WITH_BYPASS;
+      //         } else if (intSummerSupplyAirCFM > intTERA_INT_USERS_MAX_CFM_WITH_BYPASS) {
+      //           intSummerSupplyAirCFM = intTERA_INT_USERS_MAX_CFM_WITH_BYPASS;
+      //         }
+      //       } else if (intSummerSupplyAirCFM < intTERA_INT_USERS_MIN_CFM_NO_BYPASS) {
+      //         intSummerSupplyAirCFM = intTERA_INT_USERS_MIN_CFM_NO_BYPASS;
+      //       } else if (intSummerSupplyAirCFM > intTERA_INT_USERS_MAX_CFM_NO_BYPASS) {
+      //         intSummerSupplyAirCFM = intTERA_INT_USERS_MAX_CFM_NO_BYPASS;
+      //       }
+      //     } else if (Number(getValues('ckbBypass')) === 1) {
+      //       if (intSummerSupplyAirCFM < intTERA_MIN_CFM_WITH_BYPASS) {
+      //         intSummerSupplyAirCFM = intTERA_MIN_CFM_WITH_BYPASS;
+      //       } else if (intSummerSupplyAirCFM > intTERA_MAX_CFM_WITH_BYPASS) {
+      //         intSummerSupplyAirCFM = intTERA_MAX_CFM_WITH_BYPASS;
+      //       }
+      //     } else if (intSummerSupplyAirCFM < intTERA_MIN_CFM_NO_BYPASS) {
+      //       intSummerSupplyAirCFM = intTERA_MIN_CFM_NO_BYPASS;
+      //     } else if (intSummerSupplyAirCFM > intTERA_MAX_CFM_NO_BYPASS) {
+      //       intSummerSupplyAirCFM = intTERA_MAX_CFM_NO_BYPASS;
+      //     }
+      //     break;
+      //   default:
+      //     break;
+      // }
     
+      const supplyCFM = getSupplyAirCFM();
+      setValue('txbSummerSupplyAirCFM', supplyCFM);
+      setValue('txbSummerReturnAirCFM', supplyCFM);
 
-      setValue('txbSummerSupplyAirCFM', intSummerSupplyAirCFM);
-      setValue('txbSummerReturnAirCFM', intSummerSupplyAirCFM);
-    },
 
-    [formValues.ckbBypass, getAllFormData, setValue, user?.UAL || 0]
+
+      // setValue('txbSummerSupplyAirCFM', intSummerSupplyAirCFM);
+      // setValue('txbSummerReturnAirCFM', intSummerSupplyAirCFM);
+    }, []
   );
 
 
   const handleBlurSummerReturnAirCFM = useCallback(
     (e: any) => {
-      // const value = getSummerReturnAirCFM(e.target.value,getAllFormData(),Number(user?.UAL || 0),db);
       
-      let intSummerReturnAirCFM = Number(e.target.value);
-      const intSummerSupplyAirCFM = Number(getValues('txbSummerSupplyAirCFM'));
-      const intUAL= Number(localStorage?.getItem('UAL')) || 0;
+      const returnCFM = getReturnAirCFM();
+      setValue('txbSummerReturnAirCFM', returnCFM);  
 
-
-      if ( getValues('ddlOrientation') === IDs.intOrientationIdHorizontal && intSummerReturnAirCFM > intNOVA_HORIZONTAL_MAX_CFM) {
-        intSummerReturnAirCFM = intNOVA_HORIZONTAL_MAX_CFM;
-      }
-    
-      let dtModel: any = [];
-      switch (intProductTypeID) {
-        case IDs.intProdTypeIdNova:
-          if (intSummerReturnAirCFM < intNOVA_MIN_CFM) {
-            intSummerReturnAirCFM = intNOVA_MIN_CFM;
-          } else if (intSummerReturnAirCFM > intNOVA_MAX_CFM) {
-            intSummerReturnAirCFM = intNOVA_MAX_CFM;
-          }
-          break;
-        case IDs.intProdTypeIdVentum:
-          dtModel = db?.dbtSelVentumHUnitModel?.filter((item: { id: number }) => item.id === Number(getValues('ddlUnitModel')));
-    
-          if (intUAL === IDs.intUAL_Admin || intUAL === IDs.intUAL_IntAdmin || 
-              intUAL === IDs.intUAL_IntLvl_2 ||  intUAL === IDs.intUAL_IntLvl_1
-          ) {
-            if (Number(getValues('ckbPHI')) === 1) {
-              if (intSummerReturnAirCFM < Math.max(intSummerSupplyAirCFM * 0.5, intVEN_MIN_CFM_PHI)) {
-                intSummerReturnAirCFM = Number(Math.max(intSummerSupplyAirCFM * 0.5, intVEN_MIN_CFM_PHI));
-              } else if (intSummerReturnAirCFM > Math.min(Number(intSummerSupplyAirCFM) * 2, intVEN_MAX_CFM_PHI)) {
-                intSummerReturnAirCFM = Number(Math.min(intSummerSupplyAirCFM * 2, intVEN_MAX_CFM_PHI));
-              }
-            } else if (Number(getValues('ckbBypass')) === 1) {
-              if (intSummerReturnAirCFM < Math.max(intSummerSupplyAirCFM * 0.5, intVEN_INT_USERS_MIN_CFM_WITH_BYPASS)) {
-                intSummerReturnAirCFM = Number(Math.max(intSummerSupplyAirCFM * 0.5, intVEN_INT_USERS_MIN_CFM_WITH_BYPASS));
-              } else if (intSummerReturnAirCFM > Math.min(Number(intSummerSupplyAirCFM) * 2, intVEN_INT_USERS_MAX_CFM_WITH_BYPASS)) {
-                intSummerReturnAirCFM = Number(Math.min(intSummerSupplyAirCFM * 2, intVEN_INT_USERS_MAX_CFM_WITH_BYPASS));
-              }
-            } else if (intSummerReturnAirCFM < Math.max(Number(intSummerSupplyAirCFM) * 0.5, intVEN_INT_USERS_MIN_CFM_NO_BYPASS)) {
-              intSummerReturnAirCFM = Number(Math.max(intSummerSupplyAirCFM * 0.5, intVEN_INT_USERS_MIN_CFM_NO_BYPASS));
-            } else if (intSummerReturnAirCFM > Math.min(intSummerSupplyAirCFM * 2, intVEN_INT_USERS_MAX_CFM_NO_BYPASS) ) {
-              intSummerReturnAirCFM = Number(Math.min(intSummerSupplyAirCFM * 2, intVEN_INT_USERS_MAX_CFM_NO_BYPASS));
-            }
-          } else if (Number(getValues('ckbBypass')) === 1) {
-            if (intSummerReturnAirCFM < Number(dtModel.Rows?.[0]?.erv_cfm_min_ext_users)) {
-              intSummerReturnAirCFM = Number(dtModel.Rows?.[0]?.erv_cfm_min_ext_users);
-            } else if (intSummerReturnAirCFM > Number(dtModel.Rows?.[0]?.erv_cfm_max_ext_users)) {
-              intSummerReturnAirCFM = Number(dtModel.Rows?.[0]?.erv_cfm_max_ext_users);
-            }
-          } else if (intSummerReturnAirCFM < Number(dtModel.Rows?.[0]?.erv_cfm_min_ext_users)) {
-            intSummerReturnAirCFM = Number(dtModel.Rows?.[0]?.erv_cfm_min_ext_users);
-          } else if (intSummerReturnAirCFM > Number(dtModel.Rows?.[0]?.erv_cfm_max_ext_users)) {
-            intSummerReturnAirCFM = Number(dtModel.Rows?.[0]?.erv_cfm_max_ext_users);
-          }
-          break;
-        case IDs.intProdTypeIdVentumLite:
-          dtModel = db?.dbtSelVentumLiteUnitModel?.filter((item: { id: number }) => item.id === Number(getValues('ddlUnitModel')));
-    
-          if (intUAL === IDs.intUAL_Admin || intUAL === IDs.intUAL_IntAdmin ||
-              intUAL === IDs.intUAL_IntLvl_2 || intUAL === IDs.intUAL_IntLvl_1) {
-            if (Number(getValues('ckbPHI')) === 1) {
-              if (intSummerReturnAirCFM < Math.max(intSummerSupplyAirCFM * 0.5, intVENLITE_INT_USERS_MIN_CFM_WITH_BYPASS)) {
-                intSummerReturnAirCFM = Number(Math.max(intSummerSupplyAirCFM * 0.5, intVENLITE_INT_USERS_MIN_CFM_WITH_BYPASS));
-              } else if (intSummerReturnAirCFM >Math.min(intSummerSupplyAirCFM * 2, intVENLITE_INT_USERS_MAX_CFM_WITH_BYPASS)) {
-                intSummerReturnAirCFM = Number( Math.min(intSummerSupplyAirCFM * 2, intVENLITE_INT_USERS_MAX_CFM_WITH_BYPASS));
-              }
-            } else if (intSummerReturnAirCFM < Math.max(intSummerSupplyAirCFM * 0.5, intVENLITE_INT_USERS_MIN_CFM_NO_BYPASS)) {
-              intSummerReturnAirCFM = Number(Math.max(intSummerSupplyAirCFM * 0.5, intVENLITE_INT_USERS_MIN_CFM_NO_BYPASS));
-            } else if (intSummerReturnAirCFM > Math.min(intSummerSupplyAirCFM * 2, intVENLITE_INT_USERS_MAX_CFM_NO_BYPASS)) {
-              intSummerReturnAirCFM = Number(Math.min(intSummerSupplyAirCFM * 2, intVENLITE_INT_USERS_MAX_CFM_NO_BYPASS));
-            }
-          } else if (Number(getValues('ckbBypass')) === 1) {
-            if (intSummerReturnAirCFM < Number(dtModel.Rows?.[0]?.erv_cfm_min_ext_users)) {
-              intSummerReturnAirCFM = Number(dtModel.Rows?.[0]?.erv_cfm_min_ext_users);
-            } else if (intSummerReturnAirCFM > Number(dtModel.Rows?.[0]?.erv_cfm_max_ext_users)) {
-              intSummerReturnAirCFM = Number(dtModel.Rows?.[0]?.erv_cfm_max_ext_users);
-            }
-          } else if (intSummerReturnAirCFM < Number(dtModel.Rows?.[0]?.erv_cfm_min_ext_users)) {
-            intSummerReturnAirCFM = Number(dtModel.Rows?.[0]?.erv_cfm_min_ext_users);
-          } else if (intSummerReturnAirCFM > Number(dtModel.Rows?.[0]?.erv_cfm_max_ext_users)) {
-            intSummerReturnAirCFM = Number(dtModel.Rows?.[0]?.erv_cfm_max_ext_users);
-          }
-          break;
-        case IDs.intProdTypeIdVentumPlus:
-          dtModel = db?.dbtSelVentumPlusUnitModel?.filter((item: { id: number }) => item.id === Number(getValues('ddlUnitModel')));
-    
-          if (intUAL === IDs.intUAL_Admin || intUAL === IDs.intUAL_IntAdmin ||
-              intUAL === IDs.intUAL_IntLvl_2 || intUAL === IDs.intUAL_IntLvl_1
-          ) {
-            if (Number(getValues('ckbPHI')) === 1) {
-              if (intSummerReturnAirCFM < Math.max(intSummerSupplyAirCFM * 0.5, intVENPLUS_MIN_CFM_PHI)) {
-                intSummerReturnAirCFM = Number(Math.max(intSummerSupplyAirCFM * 0.5, intVENPLUS_MIN_CFM_PHI));
-              } else if (intSummerReturnAirCFM > Math.min(intSummerSupplyAirCFM * 2, intVENPLUS_MAX_CFM_PHI)) {
-                intSummerReturnAirCFM = Number(Math.min(intSummerSupplyAirCFM * 2, intVENPLUS_MAX_CFM_PHI));
-              }
-            } else if (Number(getValues('ckbBypass')) === 1) {
-              if (intSummerReturnAirCFM < Math.max(intSummerSupplyAirCFM * 0.5, intVENPLUS_INT_USERS_MIN_CFM_WITH_BYPASS)) {
-                intSummerReturnAirCFM = Number(Math.max(intSummerSupplyAirCFM * 0.5, intVENPLUS_INT_USERS_MIN_CFM_WITH_BYPASS));
-              } else if (intSummerReturnAirCFM > Math.min(intSummerSupplyAirCFM * 2, intVENPLUS_INT_USERS_MAX_CFM_WITH_BYPASS)) {
-                intSummerReturnAirCFM = Number(Math.min(intSummerSupplyAirCFM * 2, intVENPLUS_INT_USERS_MAX_CFM_WITH_BYPASS));
-              }
-            } else if (intSummerReturnAirCFM < Math.max(intSummerSupplyAirCFM * 0.5, intVENPLUS_INT_USERS_MIN_CFM_NO_BYPASS)) {
-              intSummerReturnAirCFM = Number(Math.max(intSummerSupplyAirCFM * 0.5, intVENPLUS_INT_USERS_MIN_CFM_NO_BYPASS));
-            } else if (intSummerReturnAirCFM > Math.min(intSummerSupplyAirCFM * 2, intVENPLUS_INT_USERS_MAX_CFM_NO_BYPASS)) {
-              intSummerReturnAirCFM = Number(Math.min(intSummerSupplyAirCFM * 2, intVENPLUS_INT_USERS_MAX_CFM_NO_BYPASS));
-            }
-          } else if (Number(getValues('ckbBypass')) === 1) {
-            if (intSummerReturnAirCFM < Number(dtModel.Rows?.[0]?.erv_cfm_min_ext_users)) {
-              intSummerReturnAirCFM = Number(dtModel.Rows?.[0]?.erv_cfm_min_ext_users);
-            } else if (intSummerReturnAirCFM > Number(dtModel.Rows?.[0]?.erv_cfm_max_ext_users)) {
-              intSummerReturnAirCFM = Number(dtModel.Rows?.[0]?.erv_cfm_max_ext_users);
-            }
-          } else if (intSummerReturnAirCFM < Number(dtModel.Rows?.[0]?.erv_cfm_min_ext_users)) {
-            intSummerReturnAirCFM = Number(dtModel.Rows?.[0]?.erv_cfm_min_ext_users);
-          } else if (intSummerReturnAirCFM > Number(dtModel.Rows?.[0]?.erv_cfm_max_ext_users)) {
-            intSummerReturnAirCFM = Number(dtModel.Rows?.[0]?.erv_cfm_max_ext_users);
-          }
-          break;
-        default:
-          break;
-      }
-    
-      if ((intProductTypeID === IDs.intProdTypeIdVentum || intProductTypeID === IDs.intProdTypeIdVentumLite ||
-          intProductTypeID === IDs.intProdTypeIdVentumPlus) && intUnitTypeID === IDs.intUnitTypeIdHRV) {
-        if (intSummerReturnAirCFM < intSummerSupplyAirCFM * 0.5) {
-          intSummerReturnAirCFM = Math.ceil(intSummerSupplyAirCFM * 0.5);
-        } else if (intSummerReturnAirCFM > Number(intSummerSupplyAirCFM) * 2) {
-          intSummerReturnAirCFM = Math.ceil(intSummerSupplyAirCFM * 2);
-        }
-      } else if (
-        (intProductTypeID === IDs.intProdTypeIdVentum || intProductTypeID === IDs.intProdTypeIdVentumLite ||
-         intProductTypeID === IDs.intProdTypeIdVentumPlus) && intUnitTypeID === IDs.intUnitTypeIdERV
-      ) {
-        switch (intProductTypeID) {
-          case IDs.intProdTypeIdVentum:
-            if (intUAL === IDs.intUAL_Admin || intUAL === IDs.intUAL_IntAdmin ||
-                intUAL === IDs.intUAL_IntLvl_2 || intUAL === IDs.intUAL_IntLvl_1
-            ) {
-              if (Number(getValues('ckbBypass')) === 1) {
-                if (intSummerReturnAirCFM < intVEN_INT_USERS_MIN_CFM_WITH_BYPASS) {
-                  intSummerReturnAirCFM = intVEN_INT_USERS_MIN_CFM_WITH_BYPASS;
-                } else if (intSummerReturnAirCFM > intVEN_INT_USERS_MAX_CFM_WITH_BYPASS) {
-                  intSummerReturnAirCFM = intVEN_INT_USERS_MAX_CFM_WITH_BYPASS;
-                }
-              } else if (intSummerReturnAirCFM < intVEN_INT_USERS_MIN_CFM_NO_BYPASS) {
-                intSummerReturnAirCFM = intVEN_INT_USERS_MIN_CFM_NO_BYPASS;
-              } else if (intSummerReturnAirCFM > intVEN_INT_USERS_MAX_CFM_NO_BYPASS) {
-                intSummerReturnAirCFM = intVEN_INT_USERS_MAX_CFM_NO_BYPASS;
-              }
-            } else if (Number(getValues('ckbBypass')) === 1) {
-              if (intSummerReturnAirCFM < intVEN_MIN_CFM_WITH_BYPASS) {
-                intSummerReturnAirCFM = intVEN_MIN_CFM_WITH_BYPASS;
-              } else if (intSummerReturnAirCFM > intVEN_MAX_CFM_WITH_BYPASS) {
-                intSummerReturnAirCFM = intVEN_MAX_CFM_WITH_BYPASS;
-              }
-            } else if (intSummerReturnAirCFM < intVEN_MIN_CFM_NO_BYPASS) {
-              intSummerReturnAirCFM = intVEN_MIN_CFM_NO_BYPASS;
-            } else if (intSummerReturnAirCFM > intVEN_MAX_CFM_NO_BYPASS) {
-              intSummerReturnAirCFM = intVEN_MAX_CFM_NO_BYPASS;
-            }
-    
-            break;
-          case IDs.intProdTypeIdVentumLite:
-            if (intUAL === IDs.intUAL_Admin || intUAL === IDs.intUAL_IntAdmin ||
-                intUAL === IDs.intUAL_IntLvl_2 || intUAL === IDs.intUAL_IntLvl_1
-            ) {
-              if (Number(getValues('ckbBypass')) === 1) {
-                if (intSummerReturnAirCFM < intVENLITE_INT_USERS_MIN_CFM_WITH_BYPASS) {
-                  intSummerReturnAirCFM = intVENLITE_INT_USERS_MIN_CFM_WITH_BYPASS;
-                } else if (intSummerReturnAirCFM > intVENLITE_INT_USERS_MAX_CFM_WITH_BYPASS) {
-                  intSummerReturnAirCFM = intVENLITE_INT_USERS_MAX_CFM_WITH_BYPASS;
-                }
-              } else if (intSummerReturnAirCFM < intVENLITE_INT_USERS_MIN_CFM_NO_BYPASS) {
-                intSummerReturnAirCFM = intVENLITE_INT_USERS_MIN_CFM_NO_BYPASS;
-              } else if (intSummerReturnAirCFM > intVENLITE_INT_USERS_MAX_CFM_NO_BYPASS) {
-                intSummerReturnAirCFM = intVENLITE_INT_USERS_MAX_CFM_NO_BYPASS;
-              }
-            } else if (Number(getValues('ckbBypass')) === 1) {
-              if (intSummerReturnAirCFM < intVENLITE_MIN_CFM_WITH_BYPASS) {
-                intSummerReturnAirCFM = intVENLITE_MIN_CFM_WITH_BYPASS;
-              } else if (intSummerReturnAirCFM > intVENLITE_MAX_CFM_WITH_BYPASS) {
-                intSummerReturnAirCFM = intVENLITE_MAX_CFM_WITH_BYPASS;
-              }
-            } else if (intSummerReturnAirCFM < intVENLITE_MIN_CFM_NO_BYPASS) {
-              intSummerReturnAirCFM = intVENLITE_MIN_CFM_NO_BYPASS;
-            } else if (intSummerReturnAirCFM > intVENLITE_MAX_CFM_NO_BYPASS) {
-              intSummerReturnAirCFM = intVENLITE_MAX_CFM_NO_BYPASS;
-            }
-    
-            break;
-          case IDs.intProdTypeIdVentumPlus:
-            if (intUAL === IDs.intUAL_Admin || intUAL === IDs.intUAL_IntAdmin ||
-                intUAL === IDs.intUAL_IntLvl_2 || intUAL === IDs.intUAL_IntLvl_1
-            ) {
-              if (Number(getValues('ckbBypass')) === 1) {
-                if (intSummerReturnAirCFM < intVENPLUS_INT_USERS_MIN_CFM_WITH_BYPASS) {
-                  intSummerReturnAirCFM = intVENPLUS_INT_USERS_MIN_CFM_WITH_BYPASS;
-                } else if (intSummerReturnAirCFM > intVENPLUS_INT_USERS_MAX_CFM_WITH_BYPASS) {
-                  intSummerReturnAirCFM = intVENPLUS_INT_USERS_MAX_CFM_WITH_BYPASS;
-                }
-              } else if (intSummerReturnAirCFM < intVENPLUS_INT_USERS_MIN_CFM_NO_BYPASS) {
-                intSummerReturnAirCFM = intVENPLUS_INT_USERS_MIN_CFM_NO_BYPASS;
-              } else if (intSummerReturnAirCFM > intVENPLUS_INT_USERS_MAX_CFM_NO_BYPASS) {
-                intSummerReturnAirCFM = intVENPLUS_INT_USERS_MAX_CFM_NO_BYPASS;
-              }
-            } else if (Number(getValues('ckbBypass')) === 1) {
-              if (intSummerReturnAirCFM < intVENPLUS_MIN_CFM_WITH_BYPASS) {
-                intSummerReturnAirCFM = intVENPLUS_MIN_CFM_WITH_BYPASS;
-              } else if (intSummerReturnAirCFM > intVENPLUS_MAX_CFM_WITH_BYPASS) {
-                intSummerReturnAirCFM = intVENPLUS_MAX_CFM_WITH_BYPASS;
-              }
-            } else if (intSummerReturnAirCFM < intVENPLUS_MIN_CFM_NO_BYPASS) {
-              intSummerReturnAirCFM = intVENPLUS_MIN_CFM_NO_BYPASS;
-            } else if (intSummerReturnAirCFM > intVENPLUS_MAX_CFM_NO_BYPASS) {
-              intSummerReturnAirCFM = intVENPLUS_MAX_CFM_NO_BYPASS;
-            }
-            break;
-          default:
-            break;
-        }
-      }
-
-
-      setValue('txbSummerReturnAirCFM', intSummerReturnAirCFM);
-    },
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [db, getAllFormData, setValue, user?.UAL || 0]
+    }, []
   );
 
 
@@ -4271,14 +3848,14 @@ export default function UnitInfoForm({
       // if (unitInfo?.oUnit?.intControlsPreferenceId > 0) {
       //   setValue('ddlControlsPreference', unitInfo?.oUnit?.intControlsPreferenceId);
       setValue('ddlControlsPref', unitInfo?.oUnit?.intControlsPreferenceId > 0 ? 
-              unitInfo?.oUnit?.intControlsPreferenceId : getValues('ddlControlsPref'));
+                unitInfo?.oUnit?.intControlsPreferenceId : getValues('ddlControlsPref'));
       // }
 
       setValue('txbSummerSupplyAirCFM', Number(unitInfo?.oUnitAirflow?.intSummerSupplyAirCFM) > 0 ? 
-                unitInfo?.oUnitAirflow?.intSummerSupplyAirCFM : '325');
+                unitInfo?.oUnitAirflow?.intSummerSupplyAirCFM : getValues('txbSummerSupplyAirCFM'));
 
       setValue('txbSummerReturnAirCFM', Number(unitInfo?.oUnitAirflow?.intSummerReturnAirCFM) > 0 ? 
-                unitInfo?.oUnitAirflow?.intSummerReturnAirCFM : '325');
+                unitInfo?.oUnitAirflow?.intSummerReturnAirCFM : getValues('txbSummerReturnAirCFM'));
 
       setValue('txbSupplyAirESP', Number.parseFloat(unitInfo?.oUnitAirflow?.dblSupplyAirESP) > 0.0 ? 
                 unitInfo?.oUnitAirflow?.dblSupplyAirESP : '0.75');
@@ -4292,48 +3869,36 @@ export default function UnitInfoForm({
       // }
 
       // if (unitInfo?.oUnit?.intUnitVoltageId > 0) {
-      setValue(
-        'ddlUnitVoltage',
-        unitInfo?.oUnit?.intUnitVoltageId > 0
-          ? unitInfo?.oUnit?.intUnitVoltageId
-          : getValues('ddlUnitVoltage')
-      );
+      setValue('ddlUnitVoltage', unitInfo?.oUnit?.intUnitVoltageId > 0 ? 
+                unitInfo?.oUnit?.intUnitVoltageId : getValues('ddlUnitVoltage'));
       // }
 
       // if (unitInfo?.oCompOpt?.intOAFilterModelId > 0) {
-      setValue(
-        'ddlOA_FilterModel',
-        unitInfo?.oCompOpt?.intOAFilterModelId > 0
-          ? unitInfo?.oCompOpt?.intOAFilterModelId
-          : getValues('ddlOA_FilterModel')
-      );
+      setValue('ddlOA_FilterModel', unitInfo?.oCompOpt?.intOAFilterModelId > 0 ? 
+                unitInfo?.oCompOpt?.intOAFilterModelId : getValues('ddlOA_FilterModel'));
       // }
 
       // if (unitInfo?.oCompOpt?.intRAFilterModelId > 0) {
-      setValue(
-        'ddlRA_FilterModel',
-        unitInfo?.oCompOpt?.intRAFilterModelId > 0
-          ? unitInfo?.oCompOpt?.intRAFilterModelId
-          : getValues('ddlRA_FilterModel')
-      );
+      setValue('ddlRA_FilterModel', unitInfo?.oCompOpt?.intRAFilterModelId > 0 ? 
+                unitInfo?.oCompOpt?.intRAFilterModelId : getValues('ddlRA_FilterModel'));
       // }
 
       // Preheat
       // if (unitInfo?.oUnitCompOpt?.intPreheatCompId > 0) {
-      setValue(
-        'ddlPreheatComp',
-        unitInfo?.oUnitCompOpt?.intPreheatCompId > 0
-          ? unitInfo?.oUnitCompOpt?.intPreheatCompId
-          : getValues('ddlPreheatComp')
-      );
+      setValue('ddlPreheatComp', unitInfo?.oUnitCompOpt?.intPreheatCompId > 0 ? 
+                unitInfo?.oUnitCompOpt?.intPreheatCompId : getValues('ddlPreheatComp'));
       // }
 
-      setValue(
-        'txbWinterPreheatSetpointDB',
-        Number.parseFloat(unitInfo?.oUnitCompOpt?.dblPreheatSetpointDB) > 0.0
-          ? unitInfo?.oUnitCompOpt?.dblPreheatSetpointDB
-          : '40'
-      );
+      setValue('txbWinterPreheatSetpointDB', Number.parseFloat(unitInfo?.oUnitCompOpt?.dblPreheatSetpointDB) > 0.0 ? 
+                unitInfo?.oUnitCompOpt?.dblPreheatSetpointDB : '40');
+
+
+      setValue('ckbBackupHeating', unitInfo?.oUnitCompOpt?.intIsBackupHeating > 0 ? 
+                unitInfo?.oUnitCompOpt?.intIsBackupHeating : 0);
+
+
+      setValue('txbBackupHeatingSetpointDB', Number.parseFloat(unitInfo?.oUnitCompOpt?.dblBackupHeatingSetpontDB) > 0.0 ? 
+                unitInfo?.oUnitCompOpt?.dblBackupHeatingSetpontDB : '40');
 
       // if (unitInfo?.oUnitLayout?.intPreheatCoilHandingId > 0) {
       setValue(
@@ -4864,10 +4429,474 @@ export default function UnitInfoForm({
     }
   }, []); // <-- empty dependency array - This will only trigger when the component mounts and no-render
 
+
+
+
   const onClickUnitInfo = () => {
     // setCurrentStep(1);
     push(PATH_APP.selectionUnit(projectId?.toString() || '0', unitId?.toString() || '0'));
   };
+
+
+  const getSupplyAirCFM = () => {
+    // const jsonData = '{"name":"John", "age":30, "city":"London"}';
+    // let oUnitInputs;
+
+      let intSummerSupplyAirCFM = Number(getValues('txbSummerSupplyAirCFM'));
+      const intUAL= Number(localStorage?.getItem('UAL')) || 0;
+
+      switch (intProductTypeID) {
+        case IDs.intProdTypeIdNova:
+          if (intUAL === IDs.intUAL_Admin || intUAL === IDs.intUAL_IntAdmin ||
+              intUAL === IDs.intUAL_IntLvl_2 || intUAL === IDs.intUAL_IntLvl_1
+          ) {
+            if (intSummerSupplyAirCFM < intNOVA_MIN_CFM) {
+              intSummerSupplyAirCFM = intNOVA_MIN_CFM;
+            } else if (intSummerSupplyAirCFM > intNOVA_MAX_CFM) {
+              intSummerSupplyAirCFM = intNOVA_MAX_CFM;
+            }
+          } else if (intSummerSupplyAirCFM < intNOVA_INT_USERS_MIN_CFM) {
+            intSummerSupplyAirCFM = intNOVA_INT_USERS_MIN_CFM;
+          } else if (intSummerSupplyAirCFM > intNOVA_INT_USERS_MAX_CFM) {
+            intSummerSupplyAirCFM = intNOVA_INT_USERS_MAX_CFM;
+          }
+          break;
+        case IDs.intProdTypeIdVentum:
+          if (intUAL === IDs.intUAL_Admin || intUAL === IDs.intUAL_IntAdmin ||
+              intUAL === IDs.intUAL_IntLvl_2 || intUAL === IDs.intUAL_IntLvl_1
+          ) {
+            if (Number(getValues('ckbPHI')) === 1) {
+              if (intSummerSupplyAirCFM < intVEN_MIN_CFM_PHI) {
+                intSummerSupplyAirCFM = intVEN_MIN_CFM_PHI;
+              } else if (intSummerSupplyAirCFM > intVEN_MAX_CFM_PHI) {
+                intSummerSupplyAirCFM = intVEN_MAX_CFM_PHI;
+              }
+            } else if (Number(getValues('ckbBypass')) === 1) {
+              if (intSummerSupplyAirCFM < intVEN_INT_USERS_MIN_CFM_WITH_BYPASS) {
+                intSummerSupplyAirCFM = intVEN_INT_USERS_MIN_CFM_WITH_BYPASS;
+              } else if (intSummerSupplyAirCFM > intVEN_INT_USERS_MAX_CFM_WITH_BYPASS) {
+                intSummerSupplyAirCFM = intVEN_INT_USERS_MAX_CFM_WITH_BYPASS;
+              }
+            } else if (intSummerSupplyAirCFM < intVEN_INT_USERS_MIN_CFM_NO_BYPASS) {
+              intSummerSupplyAirCFM = intVEN_INT_USERS_MIN_CFM_NO_BYPASS;
+            } else if (intSummerSupplyAirCFM > intVEN_INT_USERS_MAX_CFM_NO_BYPASS) {
+              intSummerSupplyAirCFM = intVEN_INT_USERS_MAX_CFM_NO_BYPASS;
+            }
+          } else if (Number(getValues('ckbBypass')) === 1) {
+            if (intSummerSupplyAirCFM < intVEN_MIN_CFM_WITH_BYPASS) {
+              intSummerSupplyAirCFM = intVEN_MIN_CFM_WITH_BYPASS;
+            } else if (intSummerSupplyAirCFM > intVEN_MAX_CFM_WITH_BYPASS) {
+              intSummerSupplyAirCFM = intVEN_MAX_CFM_WITH_BYPASS;
+            }
+          } else if (intSummerSupplyAirCFM < intVEN_MIN_CFM_NO_BYPASS) {
+            intSummerSupplyAirCFM = intVEN_MIN_CFM_NO_BYPASS;
+          } else if (intSummerSupplyAirCFM > intVEN_MAX_CFM_NO_BYPASS) {
+            intSummerSupplyAirCFM = intVEN_MAX_CFM_NO_BYPASS;
+          }
+          break;
+        case IDs.intProdTypeIdVentumLite:
+          if (intUAL === IDs.intUAL_Admin || intUAL === IDs.intUAL_IntAdmin ||
+              intUAL === IDs.intUAL_IntLvl_2 || intUAL === IDs.intUAL_IntLvl_1
+          ) {
+            if (Number(getValues('ckbBypass')) === 1) {
+              if (intSummerSupplyAirCFM < intVENLITE_INT_USERS_MIN_CFM_WITH_BYPASS) {
+                intSummerSupplyAirCFM = intVENLITE_INT_USERS_MIN_CFM_WITH_BYPASS;
+              } else if (intSummerSupplyAirCFM > intVENLITE_INT_USERS_MAX_CFM_WITH_BYPASS) {
+                intSummerSupplyAirCFM = intVENLITE_INT_USERS_MAX_CFM_WITH_BYPASS;
+              }
+            } else if (intSummerSupplyAirCFM < intVENLITE_INT_USERS_MIN_CFM_NO_BYPASS) {
+              intSummerSupplyAirCFM = intVENLITE_INT_USERS_MIN_CFM_NO_BYPASS;
+            } else if (intSummerSupplyAirCFM > intVENLITE_INT_USERS_MAX_CFM_NO_BYPASS) {
+              intSummerSupplyAirCFM = intVENLITE_INT_USERS_MAX_CFM_NO_BYPASS;
+            }
+          } else if (Number(getValues('ckbBypass')) === 1) {
+            if (intSummerSupplyAirCFM < intVENLITE_MIN_CFM_WITH_BYPASS) {
+              intSummerSupplyAirCFM = intVENLITE_MIN_CFM_WITH_BYPASS;
+            } else if (intSummerSupplyAirCFM > intVENLITE_MAX_CFM_WITH_BYPASS) {
+              intSummerSupplyAirCFM = intVENLITE_MAX_CFM_WITH_BYPASS;
+            }
+          } else if (intSummerSupplyAirCFM < intVENLITE_MIN_CFM_NO_BYPASS) {
+            intSummerSupplyAirCFM = intVENLITE_MIN_CFM_NO_BYPASS;
+          } else if (intSummerSupplyAirCFM > intVENLITE_MAX_CFM_NO_BYPASS) {
+            intSummerSupplyAirCFM = intVENLITE_MAX_CFM_NO_BYPASS;
+          }
+          break;
+        case IDs.intProdTypeIdVentumPlus:
+          if (intUAL === IDs.intUAL_Admin || intUAL === IDs.intUAL_IntAdmin ||
+              intUAL === IDs.intUAL_IntLvl_2 || intUAL === IDs.intUAL_IntLvl_1
+          ) {
+            if (Number(getValues('ckbPHI')) === 1) {
+              if (intSummerSupplyAirCFM < intVENPLUS_MIN_CFM_PHI) {
+                intSummerSupplyAirCFM = intVENPLUS_MIN_CFM_PHI;
+              } else if (intSummerSupplyAirCFM > intVENPLUS_MAX_CFM_PHI) {
+                intSummerSupplyAirCFM = intVENPLUS_MAX_CFM_PHI;
+              }
+            } else if (Number(getValues('ckbBypass')) === 1) {
+              if (intSummerSupplyAirCFM < intVENPLUS_INT_USERS_MIN_CFM_WITH_BYPASS) {
+                intSummerSupplyAirCFM = intVENPLUS_INT_USERS_MIN_CFM_WITH_BYPASS;
+              } else if (intSummerSupplyAirCFM > intVENPLUS_INT_USERS_MAX_CFM_WITH_BYPASS) {
+                intSummerSupplyAirCFM = intVENPLUS_INT_USERS_MAX_CFM_WITH_BYPASS;
+              }
+            } else if (intSummerSupplyAirCFM < intVENPLUS_INT_USERS_MIN_CFM_NO_BYPASS) {
+              intSummerSupplyAirCFM = intVENPLUS_INT_USERS_MIN_CFM_NO_BYPASS;
+            } else if (intSummerSupplyAirCFM > intVENPLUS_INT_USERS_MAX_CFM_NO_BYPASS) {
+              intSummerSupplyAirCFM = intVENPLUS_INT_USERS_MAX_CFM_NO_BYPASS;
+            }
+          } else if (Number(getValues('ckbBypass')) === 1) {
+            if (intSummerSupplyAirCFM < intVENPLUS_MIN_CFM_WITH_BYPASS) {
+              intSummerSupplyAirCFM = intVENPLUS_MIN_CFM_WITH_BYPASS;
+            } else if (intSummerSupplyAirCFM > intVENPLUS_MAX_CFM_WITH_BYPASS) {
+              intSummerSupplyAirCFM = intVENPLUS_MAX_CFM_WITH_BYPASS;
+            }
+          } else if (intSummerSupplyAirCFM < intVENPLUS_MIN_CFM_NO_BYPASS) {
+            intSummerSupplyAirCFM = intVENPLUS_MIN_CFM_NO_BYPASS;
+          } else if (intSummerSupplyAirCFM > intVENPLUS_MAX_CFM_NO_BYPASS) {
+            intSummerSupplyAirCFM = intVENPLUS_MAX_CFM_NO_BYPASS;
+          }
+          break;
+        case IDs.intProdTypeIdTerra:
+          if (intUAL === IDs.intUAL_Admin || intUAL === IDs.intUAL_IntAdmin || 
+              intUAL === IDs.intUAL_IntLvl_2 || intUAL === IDs.intUAL_IntLvl_1
+          ) {
+            if (Number(getValues('ckbBypass')) === 1) {
+              if (intSummerSupplyAirCFM < intTERA_INT_USERS_MIN_CFM_WITH_BYPASS) {
+                intSummerSupplyAirCFM = intTERA_INT_USERS_MIN_CFM_WITH_BYPASS;
+              } else if (intSummerSupplyAirCFM > intTERA_INT_USERS_MAX_CFM_WITH_BYPASS) {
+                intSummerSupplyAirCFM = intTERA_INT_USERS_MAX_CFM_WITH_BYPASS;
+              }
+            } else if (intSummerSupplyAirCFM < intTERA_INT_USERS_MIN_CFM_NO_BYPASS) {
+              intSummerSupplyAirCFM = intTERA_INT_USERS_MIN_CFM_NO_BYPASS;
+            } else if (intSummerSupplyAirCFM > intTERA_INT_USERS_MAX_CFM_NO_BYPASS) {
+              intSummerSupplyAirCFM = intTERA_INT_USERS_MAX_CFM_NO_BYPASS;
+            }
+          } else if (Number(getValues('ckbBypass')) === 1) {
+            if (intSummerSupplyAirCFM < intTERA_MIN_CFM_WITH_BYPASS) {
+              intSummerSupplyAirCFM = intTERA_MIN_CFM_WITH_BYPASS;
+            } else if (intSummerSupplyAirCFM > intTERA_MAX_CFM_WITH_BYPASS) {
+              intSummerSupplyAirCFM = intTERA_MAX_CFM_WITH_BYPASS;
+            }
+          } else if (intSummerSupplyAirCFM < intTERA_MIN_CFM_NO_BYPASS) {
+            intSummerSupplyAirCFM = intTERA_MIN_CFM_NO_BYPASS;
+          } else if (intSummerSupplyAirCFM > intTERA_MAX_CFM_NO_BYPASS) {
+            intSummerSupplyAirCFM = intTERA_MAX_CFM_NO_BYPASS;
+          }
+          break;
+        default:
+          break;
+      }
+
+
+    return intSummerSupplyAirCFM;
+  };
+
+
+  const getReturnAirCFM = () => {
+
+    let intSummerReturnAirCFM = Number(getValues('txbSummerReturnAirCFM'));
+    const intSummerSupplyAirCFM = Number(getValues('txbSummerSupplyAirCFM'));
+    const intUAL= Number(localStorage?.getItem('UAL')) || 0;
+
+
+    if ( getValues('ddlOrientation') === IDs.intOrientationIdHorizontal && intSummerReturnAirCFM > intNOVA_HORIZONTAL_MAX_CFM) {
+      intSummerReturnAirCFM = intNOVA_HORIZONTAL_MAX_CFM;
+    }
+  
+    let dtModel: any = [];
+    switch (intProductTypeID) {
+      case IDs.intProdTypeIdNova:
+        if (intSummerReturnAirCFM < intNOVA_MIN_CFM) {
+          intSummerReturnAirCFM = intNOVA_MIN_CFM;
+        } else if (intSummerReturnAirCFM > intNOVA_MAX_CFM) {
+          intSummerReturnAirCFM = intNOVA_MAX_CFM;
+        }
+        break;
+      case IDs.intProdTypeIdVentum:
+        dtModel = db?.dbtSelVentumHUnitModel?.filter((item: { id: number }) => item.id === Number(getValues('ddlUnitModel')));
+  
+        if (intUAL === IDs.intUAL_Admin || intUAL === IDs.intUAL_IntAdmin || 
+            intUAL === IDs.intUAL_IntLvl_2 ||  intUAL === IDs.intUAL_IntLvl_1
+        ) {
+          if (Number(getValues('ckbPHI')) === 1) {
+            if (intSummerReturnAirCFM < Math.max(intSummerSupplyAirCFM * 0.5, intVEN_MIN_CFM_PHI)) {
+              intSummerReturnAirCFM = Number(Math.max(intSummerSupplyAirCFM * 0.5, intVEN_MIN_CFM_PHI));
+            } else if (intSummerReturnAirCFM > Math.min(Number(intSummerSupplyAirCFM) * 2, intVEN_MAX_CFM_PHI)) {
+              intSummerReturnAirCFM = Number(Math.min(intSummerSupplyAirCFM * 2, intVEN_MAX_CFM_PHI));
+            }
+          } else if (Number(getValues('ckbBypass')) === 1) {
+            if (intSummerReturnAirCFM < Math.max(intSummerSupplyAirCFM * 0.5, intVEN_INT_USERS_MIN_CFM_WITH_BYPASS)) {
+              intSummerReturnAirCFM = Number(Math.max(intSummerSupplyAirCFM * 0.5, intVEN_INT_USERS_MIN_CFM_WITH_BYPASS));
+            } else if (intSummerReturnAirCFM > Math.min(Number(intSummerSupplyAirCFM) * 2, intVEN_INT_USERS_MAX_CFM_WITH_BYPASS)) {
+              intSummerReturnAirCFM = Number(Math.min(intSummerSupplyAirCFM * 2, intVEN_INT_USERS_MAX_CFM_WITH_BYPASS));
+            }
+          } else if (intSummerReturnAirCFM < Math.max(Number(intSummerSupplyAirCFM) * 0.5, intVEN_INT_USERS_MIN_CFM_NO_BYPASS)) {
+            intSummerReturnAirCFM = Number(Math.max(intSummerSupplyAirCFM * 0.5, intVEN_INT_USERS_MIN_CFM_NO_BYPASS));
+          } else if (intSummerReturnAirCFM > Math.min(intSummerSupplyAirCFM * 2, intVEN_INT_USERS_MAX_CFM_NO_BYPASS) ) {
+            intSummerReturnAirCFM = Number(Math.min(intSummerSupplyAirCFM * 2, intVEN_INT_USERS_MAX_CFM_NO_BYPASS));
+          }
+        } else if (Number(getValues('ckbBypass')) === 1) {
+          if (intSummerReturnAirCFM < Number(dtModel.Rows?.[0]?.erv_cfm_min_ext_users)) {
+            intSummerReturnAirCFM = Number(dtModel.Rows?.[0]?.erv_cfm_min_ext_users);
+          } else if (intSummerReturnAirCFM > Number(dtModel.Rows?.[0]?.erv_cfm_max_ext_users)) {
+            intSummerReturnAirCFM = Number(dtModel.Rows?.[0]?.erv_cfm_max_ext_users);
+          }
+        } else if (intSummerReturnAirCFM < Number(dtModel.Rows?.[0]?.erv_cfm_min_ext_users)) {
+          intSummerReturnAirCFM = Number(dtModel.Rows?.[0]?.erv_cfm_min_ext_users);
+        } else if (intSummerReturnAirCFM > Number(dtModel.Rows?.[0]?.erv_cfm_max_ext_users)) {
+          intSummerReturnAirCFM = Number(dtModel.Rows?.[0]?.erv_cfm_max_ext_users);
+        }
+        break;
+      case IDs.intProdTypeIdVentumLite:
+        dtModel = db?.dbtSelVentumLiteUnitModel?.filter((item: { id: number }) => item.id === Number(getValues('ddlUnitModel')));
+  
+        if (intUAL === IDs.intUAL_Admin || intUAL === IDs.intUAL_IntAdmin ||
+            intUAL === IDs.intUAL_IntLvl_2 || intUAL === IDs.intUAL_IntLvl_1) {
+          if (Number(getValues('ckbPHI')) === 1) {
+            if (intSummerReturnAirCFM < Math.max(intSummerSupplyAirCFM * 0.5, intVENLITE_INT_USERS_MIN_CFM_WITH_BYPASS)) {
+              intSummerReturnAirCFM = Number(Math.max(intSummerSupplyAirCFM * 0.5, intVENLITE_INT_USERS_MIN_CFM_WITH_BYPASS));
+            } else if (intSummerReturnAirCFM >Math.min(intSummerSupplyAirCFM * 2, intVENLITE_INT_USERS_MAX_CFM_WITH_BYPASS)) {
+              intSummerReturnAirCFM = Number( Math.min(intSummerSupplyAirCFM * 2, intVENLITE_INT_USERS_MAX_CFM_WITH_BYPASS));
+            }
+          } else if (intSummerReturnAirCFM < Math.max(intSummerSupplyAirCFM * 0.5, intVENLITE_INT_USERS_MIN_CFM_NO_BYPASS)) {
+            intSummerReturnAirCFM = Number(Math.max(intSummerSupplyAirCFM * 0.5, intVENLITE_INT_USERS_MIN_CFM_NO_BYPASS));
+          } else if (intSummerReturnAirCFM > Math.min(intSummerSupplyAirCFM * 2, intVENLITE_INT_USERS_MAX_CFM_NO_BYPASS)) {
+            intSummerReturnAirCFM = Number(Math.min(intSummerSupplyAirCFM * 2, intVENLITE_INT_USERS_MAX_CFM_NO_BYPASS));
+          }
+        } else if (Number(getValues('ckbBypass')) === 1) {
+          if (intSummerReturnAirCFM < Number(dtModel.Rows?.[0]?.erv_cfm_min_ext_users)) {
+            intSummerReturnAirCFM = Number(dtModel.Rows?.[0]?.erv_cfm_min_ext_users);
+          } else if (intSummerReturnAirCFM > Number(dtModel.Rows?.[0]?.erv_cfm_max_ext_users)) {
+            intSummerReturnAirCFM = Number(dtModel.Rows?.[0]?.erv_cfm_max_ext_users);
+          }
+        } else if (intSummerReturnAirCFM < Number(dtModel.Rows?.[0]?.erv_cfm_min_ext_users)) {
+          intSummerReturnAirCFM = Number(dtModel.Rows?.[0]?.erv_cfm_min_ext_users);
+        } else if (intSummerReturnAirCFM > Number(dtModel.Rows?.[0]?.erv_cfm_max_ext_users)) {
+          intSummerReturnAirCFM = Number(dtModel.Rows?.[0]?.erv_cfm_max_ext_users);
+        }
+        break;
+      case IDs.intProdTypeIdVentumPlus:
+        dtModel = db?.dbtSelVentumPlusUnitModel?.filter((item: { id: number }) => item.id === Number(getValues('ddlUnitModel')));
+  
+        if (intUAL === IDs.intUAL_Admin || intUAL === IDs.intUAL_IntAdmin ||
+            intUAL === IDs.intUAL_IntLvl_2 || intUAL === IDs.intUAL_IntLvl_1
+        ) {
+          if (Number(getValues('ckbPHI')) === 1) {
+            if (intSummerReturnAirCFM < Math.max(intSummerSupplyAirCFM * 0.5, intVENPLUS_MIN_CFM_PHI)) {
+              intSummerReturnAirCFM = Number(Math.max(intSummerSupplyAirCFM * 0.5, intVENPLUS_MIN_CFM_PHI));
+            } else if (intSummerReturnAirCFM > Math.min(intSummerSupplyAirCFM * 2, intVENPLUS_MAX_CFM_PHI)) {
+              intSummerReturnAirCFM = Number(Math.min(intSummerSupplyAirCFM * 2, intVENPLUS_MAX_CFM_PHI));
+            }
+          } else if (Number(getValues('ckbBypass')) === 1) {
+            if (intSummerReturnAirCFM < Math.max(intSummerSupplyAirCFM * 0.5, intVENPLUS_INT_USERS_MIN_CFM_WITH_BYPASS)) {
+              intSummerReturnAirCFM = Number(Math.max(intSummerSupplyAirCFM * 0.5, intVENPLUS_INT_USERS_MIN_CFM_WITH_BYPASS));
+            } else if (intSummerReturnAirCFM > Math.min(intSummerSupplyAirCFM * 2, intVENPLUS_INT_USERS_MAX_CFM_WITH_BYPASS)) {
+              intSummerReturnAirCFM = Number(Math.min(intSummerSupplyAirCFM * 2, intVENPLUS_INT_USERS_MAX_CFM_WITH_BYPASS));
+            }
+          } else if (intSummerReturnAirCFM < Math.max(intSummerSupplyAirCFM * 0.5, intVENPLUS_INT_USERS_MIN_CFM_NO_BYPASS)) {
+            intSummerReturnAirCFM = Number(Math.max(intSummerSupplyAirCFM * 0.5, intVENPLUS_INT_USERS_MIN_CFM_NO_BYPASS));
+          } else if (intSummerReturnAirCFM > Math.min(intSummerSupplyAirCFM * 2, intVENPLUS_INT_USERS_MAX_CFM_NO_BYPASS)) {
+            intSummerReturnAirCFM = Number(Math.min(intSummerSupplyAirCFM * 2, intVENPLUS_INT_USERS_MAX_CFM_NO_BYPASS));
+          }
+        } else if (Number(getValues('ckbBypass')) === 1) {
+          if (intSummerReturnAirCFM < Number(dtModel.Rows?.[0]?.erv_cfm_min_ext_users)) {
+            intSummerReturnAirCFM = Number(dtModel.Rows?.[0]?.erv_cfm_min_ext_users);
+          } else if (intSummerReturnAirCFM > Number(dtModel.Rows?.[0]?.erv_cfm_max_ext_users)) {
+            intSummerReturnAirCFM = Number(dtModel.Rows?.[0]?.erv_cfm_max_ext_users);
+          }
+        } else if (intSummerReturnAirCFM < Number(dtModel.Rows?.[0]?.erv_cfm_min_ext_users)) {
+          intSummerReturnAirCFM = Number(dtModel.Rows?.[0]?.erv_cfm_min_ext_users);
+        } else if (intSummerReturnAirCFM > Number(dtModel.Rows?.[0]?.erv_cfm_max_ext_users)) {
+          intSummerReturnAirCFM = Number(dtModel.Rows?.[0]?.erv_cfm_max_ext_users);
+        }
+        break;
+      default:
+        break;
+    }
+  
+    if ((intProductTypeID === IDs.intProdTypeIdVentum || intProductTypeID === IDs.intProdTypeIdVentumLite ||
+        intProductTypeID === IDs.intProdTypeIdVentumPlus) && intUnitTypeID === IDs.intUnitTypeIdHRV) {
+      if (intSummerReturnAirCFM < intSummerSupplyAirCFM * 0.5) {
+        intSummerReturnAirCFM = Math.ceil(intSummerSupplyAirCFM * 0.5);
+      } else if (intSummerReturnAirCFM > Number(intSummerSupplyAirCFM) * 2) {
+        intSummerReturnAirCFM = Math.ceil(intSummerSupplyAirCFM * 2);
+      }
+    } else if (
+      (intProductTypeID === IDs.intProdTypeIdVentum || intProductTypeID === IDs.intProdTypeIdVentumLite ||
+       intProductTypeID === IDs.intProdTypeIdVentumPlus) && intUnitTypeID === IDs.intUnitTypeIdERV
+    ) {
+      switch (intProductTypeID) {
+        case IDs.intProdTypeIdVentum:
+          if (intUAL === IDs.intUAL_Admin || intUAL === IDs.intUAL_IntAdmin ||
+              intUAL === IDs.intUAL_IntLvl_2 || intUAL === IDs.intUAL_IntLvl_1
+          ) {
+            if (Number(getValues('ckbBypass')) === 1) {
+              if (intSummerReturnAirCFM < intVEN_INT_USERS_MIN_CFM_WITH_BYPASS) {
+                intSummerReturnAirCFM = intVEN_INT_USERS_MIN_CFM_WITH_BYPASS;
+              } else if (intSummerReturnAirCFM > intVEN_INT_USERS_MAX_CFM_WITH_BYPASS) {
+                intSummerReturnAirCFM = intVEN_INT_USERS_MAX_CFM_WITH_BYPASS;
+              }
+            } else if (intSummerReturnAirCFM < intVEN_INT_USERS_MIN_CFM_NO_BYPASS) {
+              intSummerReturnAirCFM = intVEN_INT_USERS_MIN_CFM_NO_BYPASS;
+            } else if (intSummerReturnAirCFM > intVEN_INT_USERS_MAX_CFM_NO_BYPASS) {
+              intSummerReturnAirCFM = intVEN_INT_USERS_MAX_CFM_NO_BYPASS;
+            }
+          } else if (Number(getValues('ckbBypass')) === 1) {
+            if (intSummerReturnAirCFM < intVEN_MIN_CFM_WITH_BYPASS) {
+              intSummerReturnAirCFM = intVEN_MIN_CFM_WITH_BYPASS;
+            } else if (intSummerReturnAirCFM > intVEN_MAX_CFM_WITH_BYPASS) {
+              intSummerReturnAirCFM = intVEN_MAX_CFM_WITH_BYPASS;
+            }
+          } else if (intSummerReturnAirCFM < intVEN_MIN_CFM_NO_BYPASS) {
+            intSummerReturnAirCFM = intVEN_MIN_CFM_NO_BYPASS;
+          } else if (intSummerReturnAirCFM > intVEN_MAX_CFM_NO_BYPASS) {
+            intSummerReturnAirCFM = intVEN_MAX_CFM_NO_BYPASS;
+          }
+  
+          break;
+        case IDs.intProdTypeIdVentumLite:
+          if (intUAL === IDs.intUAL_Admin || intUAL === IDs.intUAL_IntAdmin ||
+              intUAL === IDs.intUAL_IntLvl_2 || intUAL === IDs.intUAL_IntLvl_1
+          ) {
+            if (Number(getValues('ckbBypass')) === 1) {
+              if (intSummerReturnAirCFM < intVENLITE_INT_USERS_MIN_CFM_WITH_BYPASS) {
+                intSummerReturnAirCFM = intVENLITE_INT_USERS_MIN_CFM_WITH_BYPASS;
+              } else if (intSummerReturnAirCFM > intVENLITE_INT_USERS_MAX_CFM_WITH_BYPASS) {
+                intSummerReturnAirCFM = intVENLITE_INT_USERS_MAX_CFM_WITH_BYPASS;
+              }
+            } else if (intSummerReturnAirCFM < intVENLITE_INT_USERS_MIN_CFM_NO_BYPASS) {
+              intSummerReturnAirCFM = intVENLITE_INT_USERS_MIN_CFM_NO_BYPASS;
+            } else if (intSummerReturnAirCFM > intVENLITE_INT_USERS_MAX_CFM_NO_BYPASS) {
+              intSummerReturnAirCFM = intVENLITE_INT_USERS_MAX_CFM_NO_BYPASS;
+            }
+          } else if (Number(getValues('ckbBypass')) === 1) {
+            if (intSummerReturnAirCFM < intVENLITE_MIN_CFM_WITH_BYPASS) {
+              intSummerReturnAirCFM = intVENLITE_MIN_CFM_WITH_BYPASS;
+            } else if (intSummerReturnAirCFM > intVENLITE_MAX_CFM_WITH_BYPASS) {
+              intSummerReturnAirCFM = intVENLITE_MAX_CFM_WITH_BYPASS;
+            }
+          } else if (intSummerReturnAirCFM < intVENLITE_MIN_CFM_NO_BYPASS) {
+            intSummerReturnAirCFM = intVENLITE_MIN_CFM_NO_BYPASS;
+          } else if (intSummerReturnAirCFM > intVENLITE_MAX_CFM_NO_BYPASS) {
+            intSummerReturnAirCFM = intVENLITE_MAX_CFM_NO_BYPASS;
+          }
+  
+          break;
+        case IDs.intProdTypeIdVentumPlus:
+          if (intUAL === IDs.intUAL_Admin || intUAL === IDs.intUAL_IntAdmin ||
+              intUAL === IDs.intUAL_IntLvl_2 || intUAL === IDs.intUAL_IntLvl_1
+          ) {
+            if (Number(getValues('ckbBypass')) === 1) {
+              if (intSummerReturnAirCFM < intVENPLUS_INT_USERS_MIN_CFM_WITH_BYPASS) {
+                intSummerReturnAirCFM = intVENPLUS_INT_USERS_MIN_CFM_WITH_BYPASS;
+              } else if (intSummerReturnAirCFM > intVENPLUS_INT_USERS_MAX_CFM_WITH_BYPASS) {
+                intSummerReturnAirCFM = intVENPLUS_INT_USERS_MAX_CFM_WITH_BYPASS;
+              }
+            } else if (intSummerReturnAirCFM < intVENPLUS_INT_USERS_MIN_CFM_NO_BYPASS) {
+              intSummerReturnAirCFM = intVENPLUS_INT_USERS_MIN_CFM_NO_BYPASS;
+            } else if (intSummerReturnAirCFM > intVENPLUS_INT_USERS_MAX_CFM_NO_BYPASS) {
+              intSummerReturnAirCFM = intVENPLUS_INT_USERS_MAX_CFM_NO_BYPASS;
+            }
+          } else if (Number(getValues('ckbBypass')) === 1) {
+            if (intSummerReturnAirCFM < intVENPLUS_MIN_CFM_WITH_BYPASS) {
+              intSummerReturnAirCFM = intVENPLUS_MIN_CFM_WITH_BYPASS;
+            } else if (intSummerReturnAirCFM > intVENPLUS_MAX_CFM_WITH_BYPASS) {
+              intSummerReturnAirCFM = intVENPLUS_MAX_CFM_WITH_BYPASS;
+            }
+          } else if (intSummerReturnAirCFM < intVENPLUS_MIN_CFM_NO_BYPASS) {
+            intSummerReturnAirCFM = intVENPLUS_MIN_CFM_NO_BYPASS;
+          } else if (intSummerReturnAirCFM > intVENPLUS_MAX_CFM_NO_BYPASS) {
+            intSummerReturnAirCFM = intVENPLUS_MAX_CFM_NO_BYPASS;
+          }
+          break;
+        default:
+          break;
+      }
+    }
+
+    return intSummerReturnAirCFM;
+  };
+
+
+  const getUMC = () => {
+    let umc;
+    let fdtUnitModel = [];
+
+    if (Number(getValues('ddlUnitModel')) > 0) {
+    switch (Number(intProductTypeID)) {
+      case IDs.intProdTypeIdNova:
+        fdtUnitModel = db.dbtSelNovaUnitModel;
+        break;
+      case IDs.intProdTypeIdVentum:
+        fdtUnitModel = db.dbtSelVentumHUnitModel;
+        break;
+      case IDs.intProdTypeIdVentumLite:
+        fdtUnitModel = db.dbtSelVentumLiteUnitModel;
+        break;
+      case IDs.intProdTypeIdVentumPlus:
+        fdtUnitModel = db.dbtSelVentumPlusUnitModel;
+        break;
+      case IDs.intProdTypeIdTerra:
+        fdtUnitModel = db.dbtSelTerraUnitModel;
+        break;
+      default:
+        break;
+    }
+
+    const unitModelValue = fdtUnitModel?.filter((item: {id: number}) => item.id === Number(getValues('ddlUnitModel')))?.[0]?.value;
+
+    umc = getUnitModelCodes(unitModelValue, intProductTypeID, intUnitTypeID, getValues('ddlLocation'),
+                                  getValues('ddlOrientation'), Number(getValues('ckbBypass')), db);
+    }
+
+    return umc
+  };
+
+
+
+
+  // const [umcInfo, setUMCInfo] = useState<any>([]);
+  // useEffect(() => {
+  //   // const info: { umc: any; } = {
+  //   //   umc: [],
+  //   // };
+
+  //   // if (!formValues.ddlUnitModel || formValues.ddlUnitModel === '')
+  //   //   return { strUnitModelValue: '' };
+
+  //   let fdtUnitModel = [];
+
+  //   if (Number(getValues('ddlUnitModel')) > 0) {
+  //   switch (Number(intProductTypeID)) {
+  //     case IDs.intProdTypeIdNova:
+  //       fdtUnitModel = db.dbtSelNovaUnitModel;
+  //       break;
+  //     case IDs.intProdTypeIdVentum:
+  //       fdtUnitModel = db.dbtSelVentumHUnitModel;
+  //       break;
+  //     case IDs.intProdTypeIdVentumLite:
+  //       fdtUnitModel = db.dbtSelVentumLiteUnitModel;
+  //       break;
+  //     case IDs.intProdTypeIdVentumPlus:
+  //       fdtUnitModel = db.dbtSelVentumPlusUnitModel;
+  //       break;
+  //     case IDs.intProdTypeIdTerra:
+  //       fdtUnitModel = db.dbtSelTerraUnitModel;
+  //       break;
+  //     default:
+  //       break;
+  //   }
+
+  //   const unitModelValue = fdtUnitModel?.filter((item: {id: number}) => item.id === Number(getValues('ddlUnitModel')))?.[0]?.value;
+
+  //   const umc = getUnitModelCodes(unitModelValue, intProductTypeID, intUnitTypeID, getValues('ddlLocation'),
+  //                                 getValues('ddlOrientation'), Number(getValues('ckbBypass')), db);
+  //    setUMCInfo(umc);
+  //   }
+
+  // }, [db, intProductTypeID, intUnitTypeID, getValues('txbSummerSupplyAirCFM'), getValues('ddlUnitModel'), getValues('ddlLocation'), getValues('ddlOrientation'),
+  //     getValues('ckbBypass')]);
+
+
+
 
 
   return (
@@ -6696,6 +6725,7 @@ export default function UnitInfoForm({
                   variant="contained"
                   color="primary"
                   onClick={onSubmit}
+                  fullWidth
                   // disabled={validateContinue()}
                   // loading={isSaving}
                 >
@@ -6708,6 +6738,7 @@ export default function UnitInfoForm({
                     variant="contained"
                     color="primary"
                     onClick={onSubmit}
+                    fullWidth
                     // disabled={validateContinue()}
                     // loading={isSaving}
                   >
