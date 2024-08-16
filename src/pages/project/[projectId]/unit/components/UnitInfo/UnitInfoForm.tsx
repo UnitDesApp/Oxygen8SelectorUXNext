@@ -534,8 +534,8 @@ export default function UnitInfoForm({
   // -----------------------  ---------------------------
   const [internCompInfo, setInternCompInfo] = useState<any>([]);
   useMemo(() => {
-    const info: { isOADesignCondVisible: boolean; isRADesignCondVisible: boolean; isCustomVisible: boolean; isHandingValveVisible: boolean; } = 
-                { isOADesignCondVisible: false, isRADesignCondVisible: false, isCustomVisible: false, isHandingValveVisible: false,};
+    const info: { isOADesignCondVisible: boolean; isRADesignCondVisible: boolean; isCustomCompVisible: boolean; isHandingValveVisible: boolean; } = 
+                { isOADesignCondVisible: false, isRADesignCondVisible: false, isCustomCompVisible: false, isHandingValveVisible: false,};
                 
     const intUAL= Number(localStorage?.getItem('UAL')) || 0;
 
@@ -543,7 +543,7 @@ export default function UnitInfoForm({
       case IDs.intUAL_Admin:
         info.isOADesignCondVisible = true;
         info.isRADesignCondVisible = true;
-        info.isCustomVisible = true;
+        info.isCustomCompVisible = true;
         info.isHandingValveVisible = true;
         break;
       case IDs.intUAL_IntAdmin:
@@ -551,13 +551,13 @@ export default function UnitInfoForm({
       case IDs.intUAL_IntLvl_2:
         info.isOADesignCondVisible = false;
         info.isRADesignCondVisible = false;
-        info.isCustomVisible = true;
+        info.isCustomCompVisible = true;
         info.isHandingValveVisible = true;
         break;
       default:
         info.isOADesignCondVisible = false;
         info.isRADesignCondVisible = false;
-        info.isCustomVisible = false;
+        info.isCustomCompVisible = false;
         info.isHandingValveVisible = false;
         break;
     }
@@ -622,13 +622,8 @@ export default function UnitInfoForm({
 
   const [bypassInfo, setBypassInfo] = useState<any>([]);
   useMemo(() => {
-    const info: { isVisible: boolean; isChecked: boolean; defaultId: number; bypassMsg: string } = {
-      isVisible: false,
-      isChecked: false,
-      defaultId: 0,
-      bypassMsg: '',
-    };
-
+    const info: { isVisible: boolean; isChecked: boolean; isEnabled: boolean; defaultId: number; bypassMsg: string } = {
+                  isVisible: false,   isChecked: false,   isEnabled: false,   defaultId: 0,      bypassMsg: '',};
 
     switch (Number(intProductTypeID)) {
       case IDs.intProdTypeIdNova:
@@ -657,12 +652,14 @@ export default function UnitInfoForm({
     if (intProductTypeID === IDs.intProdTypeIdNova) {
       const dtUnitModel = db?.dbtSelNovaUnitModel?.filter((item: { id: number }) => item.id === Number(getValues('ddlUnitModel')));
   
-      // if (Number(getValues('ckbBypass')) === 1) {
+      if (Number(dtUnitModel[0]?.bypass_exist) === 1) {
         info.isVisible = true;
+        info.isEnabled = true;
         info.bypassMsg = '';
-      // } else {
-        // info.checked = 0;
-        info.isVisible = false;
+      } else {
+        info.isVisible = true;
+        info.isChecked = false;
+        info.isEnabled = false;
   
         if (Number(getValues('ddlUnitModel')) === IDs.intNovaUnitModelIdC70IN || 
             Number(getValues('ddlUnitModel')) === IDs.intNovaUnitModelIdC70OU
@@ -671,22 +668,24 @@ export default function UnitInfoForm({
         } else {
           info.bypassMsg = ' Not available for selected model';
         }
-      // }
+      }
   
       if (Number(getValues('ddlOrientation')) === IDs.intOrientationIdHorizontal) {
-        const drUnitModelBypassHorUnit = dtUnitModel?.filter(
-          (item: { bypass_exist_horizontal_unit: number }) => item.bypass_exist_horizontal_unit === 1);
+        const drUnitModelBypassHorUnit = dtUnitModel?.filter((item: { bypass_exist_horizontal_unit: number }) => item.bypass_exist_horizontal_unit === 1);
   
         if (drUnitModelBypassHorUnit && drUnitModelBypassHorUnit?.length > 0) {
           info.isVisible = true;
+          info.isEnabled = true;
           info.bypassMsg = '';
         } else {
-          // info.isEnabled = true;
-          info.isVisible = false;
+          info.isVisible = true;
+          info.isEnabled = false;
+          info.isChecked = false;
           info.bypassMsg = ' Not available for selected model';
         }
       }
     }
+
 
 
     setBypassInfo(info);
@@ -3110,15 +3109,16 @@ export default function UnitInfoForm({
   );
 
 
-  const ddlUnitModelChanged = useCallback(
-    (e: any) => setValue('ddlUnitModel', Number(e.target.value)),
+  const ddlUnitModelChanged = useCallback((e: any) => {
+      setValue('ddlUnitModel', Number(e.target.value));
+    },
     [setValue]
   );
 
 
-  const ddlUnitVoltageChanged = useCallback(
-    (e: any) => setValue('ddlUnitVoltage', Number(e.target.value)),
-    [setValue]
+  const ddlUnitVoltageChanged = useCallback((e: any) => 
+    setValue('ddlUnitVoltage', Number(e.target.value)),
+  [setValue]
   );
 
 
@@ -5088,14 +5088,14 @@ export default function UnitInfoForm({
                     }}
                   />
                   <RHFCheckbox
-                    label={`Bypass for Economizer: ${bypassInfo.text}`}
+                    label={`Bypass for Economizer: ${bypassInfo?.bypassMsg}`}
                     name="ckbBypass"
                     sx={getDisplay(bypassInfo?.isVisible)}
                     // sx={{color: ckbBypassInfo.text !== '' ? colors.red[500] : 'text.primary', size: 'small', }}
-                    checked={formValues.ckbBypass}
+                    checked={bypassInfo?.isChecked}
                     // onChange={() => setCkbBypassVal(!formValues.ckbBypassVal)}
                     onChange={(e: any) => {setValue('ckbBypass', Number(e.target.checked));}}
-                    disabled={bypassInfo?.isEnabled}
+                    disabled={!bypassInfo?.isEnabled}
                   />
                   {/* }
                     label={`Bypass for Economizer: ${ckbBypassInfo.text}`}
@@ -5577,10 +5577,18 @@ export default function UnitInfoForm({
                   // onChange={ckbHeatPumpChanged}
                   onChange={(e: any) => setValue('ckbBackupHeating', Number(e.target.checked))}
                 />
+                <RHFTextField
+                  size="small"
+                  name="txbBackupHeatingSetpointDB"
+                  label="Backup Heating Setpoint DB (F):"
+                  autoComplete="off"
+                  sx={getDisplay(formCurrValues.ckbBackupHeating)}
+                  onChange={(e: any) => {setValueWithCheck1(e, 'txbBackupHeatingSetpointDB');}}
+                />
               </Stack>
               <Stack
                 spacing={1}
-                sx={{ ...getDisplay(formValues.ddlPreheatComp === IDs.intCompIdElecHeater) }}
+                sx={{ ...getDisplay(Number(formValues.ddlPreheatComp) === IDs.intCompIdElecHeater) }}
               >
                 {/* {isAvailable(preheatElecHeaterInstallationInfo) && ( */}
                   <RHFSelect
@@ -5589,7 +5597,7 @@ export default function UnitInfoForm({
                     name="ddlPreheatElecHeaterInstall"
                     label="Preheat Elec. Heater Installation"
                     placeholder=""
-                    sx={getDisplay(preheatElecHeaterInfo?.isVisible)}
+                    // sx={getDisplay()}
                     onChange={(e: any) => setValue('ddlPreheatElecHeaterInstall', Number(e.target.value))}
                   >
                     {preheatElecHeaterInfo?.fdtElecHeaterInstall?.map(
@@ -5651,10 +5659,9 @@ export default function UnitInfoForm({
               </Stack>
               <Stack
                 spacing={1}
-                sx={{
-                  mb: 3,
-                  display: getInlineDisplay(internCompInfo?.isCutomVisible),
-                }}
+                // sx={{mb: 3, display: getInlineDisplay(internCompInfo?.isCustomCompVisible),}}
+                sx={getDisplay(Number(formCurrValues.ddlPreheatComp) === IDs.intCompIdHWC &&  internCompInfo?.isCustomCompVisible)}
+
               >
                 {/* <FormControlLabel
                   sx={getInlineDisplay(customInputs.divPreheatHWC_UseCapVisible)}
@@ -5662,7 +5669,7 @@ export default function UnitInfoForm({
                 <RHFCheckbox
                   label="Preheat HWC Use Capacity"
                   name="ckbPreheatHWCUseCap"
-                  // sx={getInlineDisplay(formValues.ddlPreheatCompId === IDs.intCompHWC_ID)}
+                  // sx={getInlineDisplay(internCompInfo?.isCutomVisible)}
                   checked={formValues.ckbPreheatHWCUseCap}
                   onChange={(e: any) => setValue('ckbPreheatHWCUseCap', Number(e.target.checked))}
                 />
@@ -5902,11 +5909,8 @@ export default function UnitInfoForm({
 
               <Stack
                 spacing={1}
-                sx={{
-                  mb: 3,
-                  display: getInlineDisplay(formValues.ddlCoolingComp === IDs.intCompIdCWC),
-                }}
-              >
+                sx={{mb: 3, display: getInlineDisplay(Number(formValues.ddlCoolingComp) === IDs.intCompIdCWC &&  internCompInfo?.isCustomCompVisible),}}
+             >
                 <RHFCheckbox
                   label="Cooling CWC Use Capacity"
                   name="ckbCoolingCWCUseCap"
@@ -6100,10 +6104,7 @@ export default function UnitInfoForm({
               </Stack>
               <Stack
                 spacing={1}
-                sx={{
-                  mb: 3,
-                  display: getInlineDisplay(internCompInfo?.isCutomVisible),
-                }}
+                sx={getDisplay(Number(formCurrValues.ddlHeatingComp) === IDs.intCompIdHWC &&  internCompInfo?.isCustomCompVisible)}
               >
                 {/* <FormControlLabel
                   sx={getInlineDisplay(customInputs.divCoolingCWC_UseFlowRateVisible)}
@@ -6124,9 +6125,7 @@ export default function UnitInfoForm({
                   label="Heating HWC Capacity (MBH)"
                   // sx={getDisplay(customInputs.divHeatingHWC_UseCapVisible)}
                   disabled={heatingHWCCapInfo.isDisabled}
-                  onChange={(e: any) => {
-                    setValueWithCheck1(e, 'txbHeatingHWCCap');
-                  }}
+                  onChange={(e: any) => {setValueWithCheck1(e, 'txbHeatingHWCCap');}}
                 />
                 {/* <FormControlLabel
                   sx={getInlineDisplay(customInputs.divCoolingCWC_UseFlowRateVisible)}
@@ -6136,9 +6135,7 @@ export default function UnitInfoForm({
                   label="Heating HWC Use Flow Rate"
                   name="ckbHeatingHWCUseFlowRate"
                   checked={formValues.ckbHeatingHWCUseFlowRate}
-                  onChange={(e: any) =>
-                    setValue('ckbHeatingHWCUseFlowRate', Number(e.target.checked))
-                  }
+                  onChange={(e: any) => setValue('ckbHeatingHWCUseFlowRate', Number(e.target.checked))}
                 />
                 {/* }
                   label="Heating HWC Use Flow Rate"
@@ -6210,20 +6207,6 @@ export default function UnitInfoForm({
                   )}
                   onChange={(e: any) => {
                     setValueWithCheck1(e, 'txbSummerReheatSetpointDB');
-                  }}
-                />
-                                <RHFTextField
-                  size="small"
-                  name="txbBackupHeatingSetpointDB"
-                  label="Backup Heating Setpoint DB (F):"
-                  autoComplete="off"
-                  // sx={getDisplay(
-                  //   Number(formValues.ddlReheatComp) === IDs.intCompIdElecHeater ||
-                  //     Number(formValues.ddlReheatComp) === IDs.intCompIdHWC ||
-                  //     Number(formValues.ddlReheatComp) === IDs.intCompIdHGRH
-                  // )}
-                  onChange={(e: any) => {
-                    setValueWithCheck1(e, 'txbBackupHeatingSetpointDB');
                   }}
                 />
                 {/* {isAvailable(db?.dbtSelHanding) && ( */}
@@ -6317,7 +6300,7 @@ export default function UnitInfoForm({
               </Stack>
               <Stack
                 spacing={1}
-                sx={getDisplay(internCompInfo?.isCustomVisible)}
+                sx={getDisplay(Number(formCurrValues.ddlReheatComp) === IDs.intCompIdHWC &&  internCompInfo?.isCustomCompVisible)}
                 >
                 {/* <FormControlLabel
                   sx={getInlineDisplay(customInputs.divReheatHWC_UseCapVisible)}
