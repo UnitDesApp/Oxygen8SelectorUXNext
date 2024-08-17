@@ -486,12 +486,12 @@ export default function ProjectSubmittalForm({
 
 
   return (
-    <Container  maxWidth="xl" sx={{ mt: '20px' }}>
+    <Container maxWidth={false} disableGutters sx={{ mt: '20px' }}>
     {isProcessingData ? ( 
       <CircularProgressLoading /> 
     ) : (
-      <FormProvider methods={methods} onSubmit={handleSubmit(onProjectInfoSubmit)}>
-        <Grid container spacing={3} sx={{ mb: 5 }}>
+      <FormProvider methods={methods}  onSubmit={handleSubmit(onProjectInfoSubmit)}>
+        <Grid container  spacing={3} sx={{ mb: 5}}>
           <Grid item xs={12}>
             <Stack direction="row" spacing={3} justifyContent="flex-end" alignItems="flex-end">
               <LoadingButton
