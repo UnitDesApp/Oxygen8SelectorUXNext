@@ -331,13 +331,13 @@ export default function UnitInfoForm({
         strTag: formCurrValues.txtTag,
         intQty: formCurrValues.txbQty,
         intUnitVoltageId: Number(formCurrValues.ddlUnitVoltage),
-        intIsVoltageSPP: 0,
-        intIsPHI: 0,
-        intIsBypass: 0,
+        intIsVoltageSPP: Number(formCurrValues.ckbVoltageSPP) === 1 ? 1 : 0,
+        intIsPHI: Number(formCurrValues.ckbPHI) === 1 ? 1 : 0,
+        intIsBypass: Number(formCurrValues.ckbBypass) === 1 ? 1 : 0,
         intUnitModelId: Number(formCurrValues.ddlUnitModel),
         intSelectionTypeId: 0,
         intLocationId: Number(formCurrValues.ddlLocation),
-        intIsDownshot: 0,
+        intIsDownshot: Number(formCurrValues.ckbDownshot) === 1 ? 1 : 0,
         intOrientationId: Number(formCurrValues.ddlOrientation),
         intControlsPreferenceId: Number(formCurrValues.ddlControlsPref),
         intControlViaId: Number(formCurrValues.ddlControlVia),
@@ -532,6 +532,18 @@ export default function UnitInfoForm({
   }, [edit, onSuccess, onError, getAllFormData, setIsSavedUnit]);
 
 
+  // const [phiInfo, setPHIInfo] = useState<any>([]);
+  const [phiIsVisible, setPHIIsVisible] = useState<boolean>(false);
+  const [phiIsEnabled, setPHIIsEnabled] = useState<boolean>(false);
+  const [phiIsChecked, setPHIIsChecked] = useState<boolean>(false);
+  const [bypassIsVisible, setBypassIsVisible] = useState<boolean>(false);
+  const [bypassIsEnabled, setBypassIsEnabled] = useState<boolean>(false);
+  const [bypassIsChecked, setBypassIsChecked] = useState<boolean>(false);
+  const [bypassMsg, setBypassMsg] = useState<string>('');
+  const [elecHeaterVoltageTable, setElecHeaterVoltageTable] = useState<any>([]);
+  const [elecHeaterVoltageIsVisible, setElecHeaterVoltageIsVisible] = useState<any>([]);
+  const [elecHeaterVoltageIsEnabled, setElecHeaterVoltageIsEnabled] = useState<any>([]);
+
 
   // -----------------------  ---------------------------
   const [internCompInfo, setInternCompInfo] = useState<any>([]);
@@ -564,10 +576,7 @@ export default function UnitInfoForm({
         break;
     }
 
-
-
     setInternCompInfo(info);
-
 
   }, []);
 
@@ -601,7 +610,7 @@ export default function UnitInfoForm({
       item.prod_type_id === intProductTypeID &&
       item.unit_type_id === intUnitTypeID &&
       item.location_id === Number(getValues('ddlLocation'))
-      );
+    );
 
     // let dtOrientation = getFromLink(data?.generalOrientation, 'orientation_id', dtLocOri, 'max_cfm');
     info.fdtOrientation = info.fdtOrientation?.filter((e: { id: any }) => 
@@ -619,7 +628,7 @@ export default function UnitInfoForm({
     info.defaultId = info.fdtOrientation?.[0]?.id;
     setValue('ddlOrientation', info.fdtOrientation?.[0]?.id);
 
-  }, [db, intProductTypeID, intUnitTypeID, getValues('ddlLocation'), getValues('txbSummerSupplyAirCFM')]);
+  }, [db, intProductTypeID, intUnitTypeID, formCurrValues.ddlLocation, formCurrValues.txbSummerSupplyAirCFM]);
 
 
 
@@ -633,30 +642,104 @@ export default function UnitInfoForm({
       const returnCFM = getReturnAirCFM();
       setValue('txbSummerSupplyAirCFM', returnCFM);  
 
-  }, [intProductTypeID]);
+  }, [intProductTypeID, getValues('ckbPHI')]);
+
+
+
+  useMemo(() => {
+    const info: { isVisible: boolean; isChecked: boolean; isEnabled: boolean; defaultId: number; } = {
+                  isVisible: false,   isChecked: false,   isEnabled: false,   defaultId: 0,      };
+
+    switch (Number(intProductTypeID)) {
+      case IDs.intProdTypeIdVentum:
+      case IDs.intProdTypeIdVentumPlus:
+        switch (intUnitTypeID) {
+          case IDs.intUnitTypeIdERV:
+            info.isVisible = true;
+            info.isChecked = true;
+                break;
+          case IDs.intUnitTypeIdHRV:
+            info.isVisible = false;
+            info.isChecked = false;
+                break;
+          default:
+           break;
+         }
+        break;
+      case IDs.intProdTypeIdNova:
+      case IDs.intProdTypeIdVentumLite:
+      case IDs.intProdTypeIdTerra:
+          info.isVisible = false;
+          info.isChecked = false;
+        break;
+      default:
+        break;
+    }
+
+    // setPHIInfo(info);
+    setPHIIsVisible(info.isVisible);
+    setPHIIsEnabled(info.isEnabled);
+    setPHIIsChecked(info.isChecked);
+
+  }, [intProductTypeID, intUnitTypeID ]);
+
 
 
   const [bypassInfo, setBypassInfo] = useState<any>([]);
-  useMemo(() => {
+   useMemo(() => {
     const info: { isVisible: boolean; isChecked: boolean; isEnabled: boolean; defaultId: number; bypassMsg: string } = {
                   isVisible: false,   isChecked: false,   isEnabled: false,   defaultId: 0,      bypassMsg: '',};
+
+    let dtUnitModel = db?.dbtSelNovaUnitModel;
 
     switch (Number(intProductTypeID)) {
       case IDs.intProdTypeIdNova:
         info.isVisible = true;
+        dtUnitModel = dtUnitModel?.filter((item: { id: number }) => item.id === Number(formCurrValues.ddlUnitModel));
+          if (Number(dtUnitModel[0]?.bypass_exist) === 1) {
+            info.isEnabled = true;
+            info.bypassMsg = '';
+          } else {
+            info.isChecked = false;
+            info.isEnabled = false;
+      
+            if (Number(getValues('ddlUnitModel')) === IDs.intNovaUnitModelIdC70IN || 
+                Number(getValues('ddlUnitModel')) === IDs.intNovaUnitModelIdC70OU) {
+
+              info.bypassMsg = ' Contact Oxygen8 applications for Bypass model';
+
+            } else {
+
+              info.bypassMsg = ' Not available for selected model';
+            }
+          }
+      
+          if (Number(formCurrValues.ddlOrientation) === IDs.intOrientationIdHorizontal) {
+            dtUnitModel = dtUnitModel?.filter((item: { bypass_exist_horizontal_unit: number }) => item.bypass_exist_horizontal_unit === 1);
+      
+            if (dtUnitModel && dtUnitModel?.length > 0) {
+              info.isEnabled = true;
+              info.bypassMsg = '';
+            } else {
+              info.isEnabled = false;
+              info.isChecked = false;
+              info.bypassMsg = ' Not available for selected model';
+            }
+          }
         break;
       case IDs.intProdTypeIdVentum:
-        info.isVisible = false;
-        info.isChecked = false;
-        break;
-      case IDs.intProdTypeIdVentumLite:
-        info.isVisible = false;
-        info.isChecked = false;
-        break;
       case IDs.intProdTypeIdVentumPlus:
         info.isVisible = true;
-        info.isChecked = false;
+
+        if (Number(formCurrValues.ckbPHI) === 1) {
+          info.isChecked = true;
+          info.isEnabled = false;
+        } else {
+          // info.isChecked = false;
+          info.isEnabled = true;
+        }
         break;
+      case IDs.intProdTypeIdVentumLite:
       case IDs.intProdTypeIdTerra:
         info.isVisible = false;
         info.isChecked = false;
@@ -665,48 +748,15 @@ export default function UnitInfoForm({
         break;
     }
 
-    if (intProductTypeID === IDs.intProdTypeIdNova) {
-      const dtUnitModel = db?.dbtSelNovaUnitModel?.filter((item: { id: number }) => item.id === Number(getValues('ddlUnitModel')));
-  
-      if (Number(dtUnitModel[0]?.bypass_exist) === 1) {
-        info.isVisible = true;
-        info.isEnabled = true;
-        info.bypassMsg = '';
-      } else {
-        info.isVisible = true;
-        info.isChecked = false;
-        info.isEnabled = false;
-  
-        if (Number(getValues('ddlUnitModel')) === IDs.intNovaUnitModelIdC70IN || 
-            Number(getValues('ddlUnitModel')) === IDs.intNovaUnitModelIdC70OU
-        ) {
-          info.bypassMsg = ' Contact Oxygen8 applications for Bypass model';
-        } else {
-          info.bypassMsg = ' Not available for selected model';
-        }
-      }
-  
-      if (Number(getValues('ddlOrientation')) === IDs.intOrientationIdHorizontal) {
-        const drUnitModelBypassHorUnit = dtUnitModel?.filter((item: { bypass_exist_horizontal_unit: number }) => item.bypass_exist_horizontal_unit === 1);
-  
-        if (drUnitModelBypassHorUnit && drUnitModelBypassHorUnit?.length > 0) {
-          info.isVisible = true;
-          info.isEnabled = true;
-          info.bypassMsg = '';
-        } else {
-          info.isVisible = true;
-          info.isEnabled = false;
-          info.isChecked = false;
-          info.bypassMsg = ' Not available for selected model';
-        }
-      }
-    }
+    // setBypassInfo(info);
+    setBypassIsVisible(info.isVisible);
+    setBypassIsEnabled(info.isEnabled);
+    setBypassIsChecked(info.isChecked);
+    setBypassMsg(info.bypassMsg);
+
+  }, [db, intProductTypeID, formCurrValues.ddlUnitModel, formCurrValues.ddlOrientation, formCurrValues.ckbPHI]);
 
 
-
-    setBypassInfo(info);
-
-  }, [db, intProductTypeID, getValues('ddlUnitModel'), getValues('ddlOrientation'), ]);
 
 
   const [unitModelInfo, setUnitModelInfo] = useState<any>([]);
@@ -721,10 +771,11 @@ export default function UnitInfoForm({
     //   dtProdUnitLocLink?.filter((e_link: { location_id: any }) => e_link.location_id === e.id)?.length > 0);
 
     const intUAL= Number(localStorage?.getItem('UAL')) || 0;
+    const customerId = Number(localStorage?.getItem('customerId')) || 0;
     let dtNovaUnitModelLink = db?.dbtSelNovaUnitModelLocOriLink;
-    const dtLocation = db?.dbtSelGeneralLocation?.filter((item: { id: any }) => item.id === Number(getValues('ddlLocation')));
-    const dtOrientation = db?.dbtSelGeneralOrientation?.filter((item: { id: any }) => item.id === Number(getValues('ddlOrientation')));
-    let summerSupplyAirCFM = Number(getValues('txbSummerSupplyAirCFM'));
+    const dtLocation = db?.dbtSelGeneralLocation?.filter((item: { id: any }) => item.id === Number(formCurrValues.ddlLocation));
+    const dtOrientation = db?.dbtSelGeneralOrientation?.filter((item: { id: any }) => item.id === Number(formCurrValues.ddlOrientation));
+    const summerSupplyAirCFM = Number(formCurrValues.txbSummerSupplyAirCFM);
 
     switch (intProductTypeID) {
       case IDs.intProdTypeIdNova:
@@ -762,14 +813,14 @@ export default function UnitInfoForm({
         // unitModel = sortColume(unitModel, 'cfm_max');
 
 
-        if (Number(getValues('ckbBypass')) === 1) {
+        if (Number(formCurrValues.ckbBypass) === 1) {
           const drUnitModelBypass = info.fdtUnitModel?.filter((item: { bypass_exist: number }) => item.bypass_exist === 1);
           const unitModelBypass = drUnitModelBypass || [];
 
           if (unitModelBypass?.length > 0) {
             info.fdtUnitModel = info.fdtUnitModel?.filter((item: { bypass_exist: number }) => item.bypass_exist === 1);
 
-            if (Number(getValues('ddlOrientation')) === IDs.intOrientationIdHorizontal) {
+            if (Number(formCurrValues.ddlOrientation) === IDs.intOrientationIdHorizontal) {
               const drUnitModelBypassHorUnit = info.fdtUnitModel?.filter(
                 (item: { bypass_exist_horizontal_unit: number }) => item.bypass_exist_horizontal_unit === 1);
 
@@ -785,41 +836,75 @@ export default function UnitInfoForm({
         }
         break;
       case IDs.intProdTypeIdVentum:
-        if (Number(getValues('ckbBypass')) === 1) {
-          summerSupplyAirCFM = summerSupplyAirCFM > intVEN_MAX_CFM_WITH_BYPASS ? intVEN_MAX_CFM_WITH_BYPASS : summerSupplyAirCFM;
-        }
+        // if (Number(getValues('ckbBypass')) === 1) {
+        //   summerSupplyAirCFM = summerSupplyAirCFM > intVEN_MAX_CFM_WITH_BYPASS ? intVEN_MAX_CFM_WITH_BYPASS : summerSupplyAirCFM;
+        // }
+        info.fdtUnitModel = db?.dbtSelVentumHUnitModel;
 
-        if (intUAL === IDs.intUAL_External || intUAL === IDs.intUAL_ExternalSpecial) {
-          if (intUnitTypeID === IDs.intUnitTypeIdERV) {
-            // unitModel = unitModelFilter(data?.ventumHUnitModel,summerSupplyAirCFM,'erv_cfm_min_ext_users','erv_cfm_max_ext_users',unitModelId);
-            info.fdtUnitModel = db?.dbtSelVentumHUnitModel?.filter(
-                (item: { erv_cfm_min_ext_users: number; erv_cfm_max_ext_users: number }) =>
-                  item.erv_cfm_min_ext_users <= summerSupplyAirCFM &&
-                  item.erv_cfm_max_ext_users >= summerSupplyAirCFM) || [];
+        // if (intUAL === IDs.intUAL_External || intUAL === IDs.intUAL_ExternalSpecial) {
+        //   if (intUnitTypeID === IDs.intUnitTypeIdERV) {
+        //     // unitModel = unitModelFilter(data?.ventumHUnitModel,summerSupplyAirCFM,'erv_cfm_min_ext_users','erv_cfm_max_ext_users',unitModelId);
+        //     info.fdtUnitModel = info.fdtUnitModel?.filter((item: { erv_cfm_min_ext_users: number; erv_cfm_max_ext_users: number }) =>
+        //           item.erv_cfm_min_ext_users <= summerSupplyAirCFM &&
+        //           item.erv_cfm_max_ext_users >= summerSupplyAirCFM) || [];
 
-              info.fdtUnitModel = info.fdtUnitModel.map((item: { model_erv: any }) => ({
-              ...item,
-              items: item.model_erv,
-            }));
-          } else if (intUnitTypeID === IDs.intUnitTypeIdHRV) {
-            // unitModel = unitModelFilter(data?.ventumHUnitModel,summerSupplyAirCFM,'hrv_cfm_min_ext_users','hrv_cfm_max_ext_users', unitModelId);
-            info.fdtUnitModel = db?.dbtSelVentumHUnitModel?.filter(
-                (item: { hrv_cfm_min_ext_users: number; hrv_cfm_max_ext_users: number }) =>
-                  item.hrv_cfm_min_ext_users <= summerSupplyAirCFM &&
-                  item.hrv_cfm_max_ext_users >= summerSupplyAirCFM) || [];
+        //       info.fdtUnitModel = info.fdtUnitModel.map((item: { model_erv: any }) => ({
+        //       ...item,
+        //       items: item.model_erv,
+        //     }));
+        //   } else if (intUnitTypeID === IDs.intUnitTypeIdHRV) {
+        //     // unitModel = unitModelFilter(data?.ventumHUnitModel,summerSupplyAirCFM,'hrv_cfm_min_ext_users','hrv_cfm_max_ext_users', unitModelId);
+        //     info.fdtUnitModel = db?.dbtSelVentumHUnitModel?.filter(
+        //         (item: { hrv_cfm_min_ext_users: number; hrv_cfm_max_ext_users: number }) =>
+        //           item.hrv_cfm_min_ext_users <= summerSupplyAirCFM &&
+        //           item.hrv_cfm_max_ext_users >= summerSupplyAirCFM) || [];
 
-                  info.fdtUnitModel = info.fdtUnitModel.map((item: { model_hrv: any }) => ({
-              ...item,
-              items: item.model_hrv,
-            }));
-          }
+        //           info.fdtUnitModel = info.fdtUnitModel.map((item: { model_hrv: any }) => ({
+        //       ...item,
+        //       items: item.model_hrv,
+        //     }));
+        //   }
+        // } else {
+        //   // unitModel = unitModelFilter(data?.ventumHUnitModel, summerSupplyAirCFM, 'cfm_min', 'cfm_max', unitModelId);
+        //   info.fdtUnitModel = db?.dbtSelVentumHUnitModel?.filter(
+        //       (item: { cfm_min: number; cfm_max: number }) => item.cfm_min <= summerSupplyAirCFM && item.cfm_max >= summerSupplyAirCFM) || [];
+        // }
+        if (intUAL === IDs.intUAL_Admin || intUAL === IDs.intUAL_IntAdmin ||
+          intUAL === IDs.intUAL_IntLvl_1 || intUAL === IDs.intUAL_IntLvl_2 ||
+          customerId === IDs.intCustomerIdPHI) {
+            if (Number(formCurrValues?.ckbPHI)) {
+              info.fdtUnitModel = info.fdtUnitModel?.filter((item: any) => item.phi_erv_cfm_min <= summerSupplyAirCFM && summerSupplyAirCFM <= item.phi_erv_cfm_max).sort((a: any, b: any) => a.cfm_max - b.cfm_max);
+            } else {
+              info.fdtUnitModel = info.fdtUnitModel?.filter((item: any) => item.cfm_min <= summerSupplyAirCFM && summerSupplyAirCFM <= item.cfm_max).sort((a: any, b: any) => a.cfm_max - b.cfm_max);
+            }
+      } else if (intUAL === IDs.intUAL_External || intUAL === IDs.intUAL_ExternalSpecial) {
+        switch (intUnitTypeID) {
+          case IDs.intUnitTypeIdERV:
+            info.fdtUnitModel =  info.fdtUnitModel?.filter((item: any) => item.erv_cfm_min_ext_users <= summerSupplyAirCFM && summerSupplyAirCFM <= item.erv_cfm_max_ext_users).sort((a: any, b: any) => a.erv_cfm_max_ext_users - b.erv_cfm_max_ext_users);
+            break;
+          case IDs.intUnitTypeIdHRV:
+            info.fdtUnitModel =  info.fdtUnitModel?.filter((item: any) => item.hrv_cfm_min_ext_users <= summerSupplyAirCFM && summerSupplyAirCFM <= item.hrv_cfm_min_ext_users).sort((a: any, b: any) => a.hrv_cfm_min_ext_users - b.hrv_cfm_min_ext_users);
+            break;
+          default:
+           break;
+         }
+      }
+
+      switch (intUnitTypeID) {
+       case IDs.intUnitTypeIdERV:
+        if (Number(formCurrValues?.ckbPHI)) {
+          info.fdtUnitModel = info.fdtUnitModel.map((item: { items: any; phi_model_erv: any; }) => ({...item, items: `${item.phi_model_erv}`,}));
         } else {
-          // unitModel = unitModelFilter(data?.ventumHUnitModel, summerSupplyAirCFM, 'cfm_min', 'cfm_max', unitModelId);
-          info.fdtUnitModel = db?.dbtSelVentumHUnitModel?.filter(
-              (item: { cfm_min: number; cfm_max: number }) => item.cfm_min <= summerSupplyAirCFM && item.cfm_max >= summerSupplyAirCFM) || [];
+          info.fdtUnitModel = info.fdtUnitModel.map((item: { items: any; model_erv: any; }) => ({...item, items: `${item.model_erv}`,}));
         }
-
-        info.fdtUnitModel = info.fdtUnitModel?.filter((item: { bypass: any }) => item.bypass === Number(getValues('ckbBypass')));
+        break;
+       case IDs.intUnitTypeIdHRV:
+        info.fdtUnitModel = info.fdtUnitModel.map((item: { items: any; model_hrv: any; }) => ({...item, items: `${item.model_hrv}`,}));
+        break;
+       default:
+        break;
+      }
+        info.fdtUnitModel = info.fdtUnitModel?.filter((item: { bypass: any }) => item.bypass === Number(formCurrValues.ckbBypass));
 
         // getReheatInfo();    //Only for Ventum - H05 has no HGRH option
         break;
@@ -880,41 +965,53 @@ export default function UnitInfoForm({
       case IDs.intProdTypeIdVentumPlus:
         info.fdtUnitModel =  db?.dbtSelVentumPlusUnitModel;
 
-      if (Number(getValues('ckbBypass')) === 1) {
-          summerSupplyAirCFM = summerSupplyAirCFM > intVENPLUS_MAX_CFM_WITH_BYPASS ? intVENPLUS_MAX_CFM_WITH_BYPASS : summerSupplyAirCFM;
+      // if (Number(getValues('ckbBypass')) === 1) {
+      //     summerSupplyAirCFM = summerSupplyAirCFM > intVENPLUS_MAX_CFM_WITH_BYPASS ? intVENPLUS_MAX_CFM_WITH_BYPASS : summerSupplyAirCFM;
+      // }
+        // if (summerSupplyAirCFM < 1200) {
+        //   summerSupplyAirCFM = 1200;
+        // }
+
+
+        if (intUAL === IDs.intUAL_Admin || intUAL === IDs.intUAL_IntAdmin ||
+            intUAL === IDs.intUAL_IntLvl_1 || intUAL === IDs.intUAL_IntLvl_2 ||
+            customerId === IDs.intCustomerIdPHI) {
+              if (Number(formCurrValues?.ckbPHI)) {
+                info.fdtUnitModel = info.fdtUnitModel?.filter((item: any) => item.phi_erv_cfm_min <= summerSupplyAirCFM && summerSupplyAirCFM <= item.phi_erv_cfm_max).sort((a: any, b: any) => a.cfm_max - b.cfm_max);
+              } else {
+                info.fdtUnitModel = info.fdtUnitModel?.filter((item: any) => item.cfm_min <= summerSupplyAirCFM && summerSupplyAirCFM <= item.cfm_max).sort((a: any, b: any) => a.cfm_max - b.cfm_max);
+              }
+        } else if (intUAL === IDs.intUAL_External || intUAL === IDs.intUAL_ExternalSpecial) {
+          switch (intUnitTypeID) {
+            case IDs.intUnitTypeIdERV:
+              info.fdtUnitModel =  info.fdtUnitModel?.filter((item: any) => item.erv_cfm_min_ext_users <= summerSupplyAirCFM && summerSupplyAirCFM <= item.erv_cfm_max_ext_users).sort((a: any, b: any) => a.erv_cfm_max_ext_users - b.erv_cfm_max_ext_users);
+              break;
+            case IDs.intUnitTypeIdHRV:
+              info.fdtUnitModel =  info.fdtUnitModel?.filter((item: any) => item.hrv_cfm_min_ext_users <= summerSupplyAirCFM && summerSupplyAirCFM <= item.hrv_cfm_min_ext_users).sort((a: any, b: any) => a.hrv_cfm_min_ext_users - b.hrv_cfm_min_ext_users);
+              break;
+            default:
+             break;
+           }
         }
-        if (summerSupplyAirCFM < 1200) {
-          summerSupplyAirCFM = 1200;
-        }
 
-        if (intUAL === IDs.intUAL_External || intUAL === IDs.intUAL_ExternalSpecial) {
-          if (intUnitTypeID === IDs.intUnitTypeIdERV) {
-            // info.fdtUnitModel = unitModelFilter(db?.dbtSelVentumPlusUnitModel, summerSupplyAirCFM, 'erv_cfm_min_ext_users', 'erv_cfm_max_ext_users');
-            info.fdtUnitModel =  info.fdtUnitModel?.filter((item: any) => item.erv_cfm_min_ext_users <= summerSupplyAirCFM && summerSupplyAirCFM <= item.erv_cfm_max_ext_users).sort((a: any, b: any) => a.erv_cfm_max_ext_users - b.erv_cfm_max_ext_users);
+        info.fdtUnitModel = info.fdtUnitModel?.filter((item: { location_id_key: any; enabled: number; bypass: any }) =>
+          item.location_id_key === dtLocation?.[0]?.id_key && item.enabled === 1 && item.bypass === Number(getValues('ckbBypass')));
 
-            // info.fdtUnitModel = info.fdtUnitModel.map((item: { model_erv: any }) => ({...item, items: item.model_erv,}));
-
-          } else if (intUnitTypeID === IDs.intUnitTypeIdHRV) {
-            // info.fdtUnitModel = unitModelFilter(db?.dbtSelVentumPlusUnitModel, summerSupplyAirCFM,'hrv_cfm_min_ext_users', 'hrv_cfm_max_ext_users');
-            info.fdtUnitModel =  info.fdtUnitModel?.filter((item: any) => item.hrv_cfm_min_ext_users <= summerSupplyAirCFM && summerSupplyAirCFM <= item.hrv_cfm_min_ext_users).sort((a: any, b: any) => a.hrv_cfm_min_ext_users - b.hrv_cfm_min_ext_users);
-            // info.fdtUnitModel = info.fdtUnitModel.map((item: { model_hrv: any }) => ({...item, items: item.model_hrv, }));
+        switch (intUnitTypeID) {
+         case IDs.intUnitTypeIdERV:
+          if (Number(formCurrValues?.ckbPHI)) {
+            info.fdtUnitModel = info.fdtUnitModel.map((item: { items: any; phi_model_erv: any; }) => ({...item, items: `${item.phi_model_erv}`,}));
+          } else {
+            info.fdtUnitModel = info.fdtUnitModel.map((item: { items: any; model_erv: any; }) => ({...item, items: `${item.model_erv}`,}));
           }
-        } else {
-          // info.fdtUnitModel = unitModelFilter(db?.dbtSelVentumPlusUnitModel, summerSupplyAirCFM,'cfm_min','cfm_max');
-          info.fdtUnitModel = info.fdtUnitModel?.filter((item: any) => item.cfm_min <= summerSupplyAirCFM && summerSupplyAirCFM <= item.cfm_max).sort((a: any, b: any) => a.cfm_max - b.cfm_max);
-
-          // info.fdtUnitModel = info.fdtUnitModel.map((item: { items: any; cfm_min: any; cfm_max: any }) => ({
-          //   ...item,
-          //   items: `${item.items} - (${item.cfm_min}-${item.cfm_max} CFM)`,
-          // }));
-          info.fdtUnitModel = info.fdtUnitModel.map((item: { items: any; model_erv: any; }) => ({...item, items: `${item.model_erv}`,}));
+          break;
+         case IDs.intUnitTypeIdHRV:
+          info.fdtUnitModel = info.fdtUnitModel.map((item: { items: any; model_hrv: any; }) => ({...item, items: `${item.model_hrv}`,}));
+          break;
+         default:
+          break;
         }
-        info.fdtUnitModel = info.fdtUnitModel?.filter(
-          (item: { location_id_key: any; enabled: number; bypass: any }) =>
-            item.location_id_key === dtLocation?.[0]?.id_key &&
-            item.enabled === 1 &&
-            item.bypass === Number(getValues('ckbBypass'))
-        );
+
         break;
       case IDs.intProdTypeIdTerra:
         if (intUAL === IDs.intUAL_External || intUAL === IDs.intUAL_ExternalSpecial) {
@@ -943,7 +1040,8 @@ export default function UnitInfoForm({
     info.defaultId = info.fdtUnitModel?.[0]?.id;
     setValue('ddlUnitModel', info.fdtUnitModel?.[0]?.id);
 
-  }, [db, intProductTypeID, intUnitTypeID, getValues('txbSummerSupplyAirCFM'), getValues('ckbBypass'), getValues('ddlLocation'), getValues('ddlOrientation')]);
+  }, [db, intProductTypeID, intUnitTypeID, formCurrValues.txbSummerSupplyAirCFM, 
+    formCurrValues.ddlLocation, formCurrValues.ddlOrientation, formCurrValues.ckbPHI, formCurrValues.ckbBypass]);
 
 
   const [unitTypeInfo, setUnitTypeInfo] = useState<any>([]);
@@ -1064,78 +1162,6 @@ export default function UnitInfoForm({
     info.defaultId = info.fdtControlVia?.[0]?.id;
     setValue('ddlControlVia', info.fdtControlVia?.[0]?.id);
   }, [db, intProductTypeID, getValues('ddlControlsPref')]);
-
-
-  // const [supplyAirEspInfo, setSupplyAirEspInfo] = useState<any>([]);
-  // useMemo(() => {
-  //   const info: { isVisible: boolean; defaultId: number } = {
-  //     isVisible: false,
-  //     defaultId: 0,
-  //   };
-
-
-  //   switch (intProductTypeID) {
-  //     case IDs.intProdTypeIdNova:
-  //       switch (Number(getValues('ddlUnitModel'))) {
-  //         case IDs.intNovaUnitModelIdA16IN:
-  //         case IDs.intNovaUnitModelIdB20IN:
-  //         case IDs.intNovaUnitModelIdA18OU:
-  //         case IDs.intNovaUnitModelIdB22OU:
-  //           if (Number(getValues('txbSupplyAirESP')) > 2.0) {
-  //             setValue('txbSupplyAirESP', 2.0);
-  //           }
-  //           break;
-  //         default:
-  //           if (Number(getValues('txbSupplyAirESP')) > 3.0) {
-  //             setValue('txbSupplyAirESP', 3.0);
-  //           }
-  //           break;
-  //       }
-  //       break;
-  //     default:
-  //       break;
-  //   }
-
-  //   setSupplyAirEspInfo(info);
-
-  // }, [intProductTypeID, getValues('ddlUnitModel'), getValues('txbSupplyAirESP')]);
-
-
-
-  // const [exhaustAirEspInfo, setExhaustAirEspInfo] = useState<any>([]);
-  // useMemo(() => {
-  //   const info: { isVisible: boolean; defaultId: number } = {
-  //     isVisible: false,
-  //     defaultId: 0,
-  //   };
-
-
-  //   switch (intProductTypeID) {
-  //     case IDs.intProdTypeIdNova:
-  //       switch (Number(getValues('ddlUnitModel'))) {
-  //         case IDs.intNovaUnitModelIdA16IN:
-  //         case IDs.intNovaUnitModelIdB20IN:
-  //         case IDs.intNovaUnitModelIdA18OU:
-  //         case IDs.intNovaUnitModelIdB22OU:
-  //           if (Number(getValues('txbExhaustAirESP')) > 2.0) {
-  //             setValue('txbExhaustAirESP', 2.0);
-  //           }
-  //           break;
-  //         default:
-  //           if (Number(getValues('txbExhaustAirESP')) > 3.0) {
-  //             setValue('txbExhaustAirESP', 3.0);
-  //           }
-  //           break;
-  //       }
-  //       break;
-  //     default:
-  //       break;
-  //   }
-
-  //   setExhaustAirEspInfo(info);
-
-  // }, [intProductTypeID, getValues('ddlUnitModel'), getValues('txbExhaustAirESP')]);
-
 
   
   const [unitVoltageInfo, setUnitVoltageInfo] = useState<any>([]);
@@ -1466,143 +1492,8 @@ export default function UnitInfoForm({
   }, [formCurrValues.txbAltitude, formCurrValues.txbMixWinterRA_DB, formCurrValues.txbMixWinterRA_RH]);
 
 
-
-  // Summer Mix Outdoor Air DB
-  const handleMixSummerOA_DBChanged = useCallback(
-    (e: any) => {
-      setValue('txbMixSummerOA_DB', parseFloat(e.target.value).toFixed(1));
-      api.project.getRH_By_DB_WB(oMixSummerOA_RH).then((data: any) => {
-        setValue('txbMixSummerOA_RH', data.toFixed(1));
-      });
-    },
-    [formCurrValues.txbMixSummerOA_DB]
-  );
-
-  // Summer Mix Outdoor Air WB
-  const handleMixSummerOA_WBChanged = useCallback(
-    (e: any) => {
-      setValue('txbMixSummerOA_WB', parseFloat(e.target.value).toFixed(1));
-      api.project.getRH_By_DB_WB(oMixSummerOA_RH).then((data: any) => {
-        setValue('txbMixSummerOA_RH', data.toFixed(1));
-      });
-    },
-    [formCurrValues.txbMixSummerOA_WB]
-  );
-
-  // Summer Mix Outdoor Air RH
-  const handleMixSummerOA_RHChanged = useCallback(
-    (e: any) => {
-      setValue('txbMixSummerOA_RH', parseFloat(e.target.value).toFixed(1));
-      api.project.getWB_By_DB_RH(oMixSummerOA_WB).then((data: any) => {
-        setValue('txbMixSummerOA_WB', data.toFixed(1));
-      });
-    },
-    [formCurrValues.txbMixSummerOA_RH]
-  );
-
-  // Winter Mix Outdoor Air DB
-  const handleMixWinterOA_DBChanged = useCallback(
-    (e: any) => {
-      setValue('txbMixWinterOA_DB', parseFloat(e.target.value).toFixed(1));
-      api.project.getRH_By_DB_WB(oMixWinterOA_RH).then((data: any) => {
-        setValue('txbMixWinterOA_RH', data.toFixed(1));
-      });
-    },
-    [formCurrValues.txbMixWinterOA_DB]
-  );
-
-  // Winter Mix Outdoor Air WB
-  const handleMixWinterOA_WBChanged = useCallback(
-    (e: any) => {
-      setValue('txbMixWinterOA_WB', parseFloat(e.target.value).toFixed(1));
-      api.project.getRH_By_DB_WB(oMixWinterOA_RH).then((data: any) => {
-        setValue('txbMixWinterOA_RH', data.toFixed(1));
-      });
-    },
-    [formCurrValues.txbMixWinterOA_WB]
-  );
-
-  // Winter Mix Outdoor Air RH
-  const handleMixWinterOA_RHChanged = useCallback(
-    (e: any) => {
-      setValue('txbMixWinterOA_RH', parseFloat(e.target.value).toFixed(1));
-      api.project.getWB_By_DB_RH(oMixWinterOA_WB).then((data: any) => {
-        setValue('txbMixWinterOA_WB', data.toFixed(1));
-      });
-    },
-    [formCurrValues.txbMixWinterOA_RH]
-  );
-
-  // Summer Mix Return Air DB
-  const handleMixSummerRA_DBChanged = useCallback(
-    (e: any) => {
-      setValue('txbMixSummerRA_DB', parseFloat(e.target.value).toFixed(1));
-      api.project.getRH_By_DB_WB(oMixSummerRA_RH).then((data: any) => {
-        setValue('txbMixSummerRA_RH', data.toFixed(1));
-      });
-    },
-    [formCurrValues.txbMixSummerRA_DB]
-  );
-
-  // Summer Mix Return Air WB
-  const handleMixSummerRA_WBChanged = useCallback(
-    (e: any) => {
-      setValue('txbMixSummerRA_WB', parseFloat(e.target.value).toFixed(1));
-      api.project.getRH_By_DB_WB(oMixSummerRA_RH).then((data: any) => {
-        setValue('txbMixSummerRA_RH', data.toFixed(1));
-      });
-    },
-    [formCurrValues.txbMixSummerOA_WB]
-  );
-
-  // Summer Mix Return Air RH
-  const handleMixSummerRA_RHChanged = useCallback(
-    (e: any) => {
-      setValue('txbMixSummerRA_RH', parseFloat(e.target.value).toFixed(1));
-      api.project.getWB_By_DB_RH(oMixSummerRA_WB).then((data: any) => {
-        setValue('txbMixSummerRA_WB', data.toFixed(1));
-      });
-    },
-    [formCurrValues.txbMixSummerOA_RH]
-  );
-
-  // Winter Mix Return Air DB
-  const handleMixWinterRA_DBChanged = useCallback(
-    (e: any) => {
-      setValue('txbMixWinterRA_DB', parseFloat(e.target.value).toFixed(1));
-      api.project.getRH_By_DB_WB(oMixWinterRA_RH).then((data: any) => {
-        setValue('txbMixWinterRA_RH', data.toFixed(1));
-      });
-    },
-    [formCurrValues.txbMixWinterRA_DB]
-  );
-
-  // Winter Mix Return Air WB
-  const handleMixWinterRA_WBChanged = useCallback(
-    (e: any) => {
-      setValue('txbMixWinterRA_WB', parseFloat(e.target.value).toFixed(1));
-      api.project.getRH_By_DB_WB(oMixWinterRA_RH).then((data: any) => {
-        setValue('txbMixWinterRA_RH', data.toFixed(1));
-      });
-    },
-    [formCurrValues.txbMixWinterRA_WB]
-  );
-
-  // Winter Mix Return Air RH
-  const handleMixWinterRA_RHChanged = useCallback(
-    (e: any) => {
-      setValue('txbMixWinterRA_RH', parseFloat(e.target.value).toFixed(1));
-      api.project.getWB_By_DB_RH(oMixWinterRA_WB).then((data: any) => {
-        setValue('txbMixWinterRA_WB', data.toFixed(1));
-      });
-    },
-    [formCurrValues.txbMixWinterRA_RH]
-  );
-
-
-
   const [preheatCompInfo, setPreheatCompInfo] = useState<any>([]);
-  useMemo(() => {
+  useEffect(() => {
     const info: { fdtPreheatComp: any; isVisible: boolean; defaultId: number } = { fdtPreheatComp: [], isVisible: false, defaultId: 0,};
   
     let dtPreheatComp = db?.dbtSelUnitCoolingHeating;
@@ -1806,8 +1697,8 @@ export default function UnitInfoForm({
     }
 
     setHeatPumpInfo(info);
-
     setValue('ckbHeatPump', info.isChecked);
+
   }, [db, getValues('ddlCoolingComp')]);
 
 
@@ -1841,7 +1732,7 @@ export default function UnitInfoForm({
 
 
   // Keep preheat elec heater separate even if the logic is same as heating/reheat logic.
-  const [preheatElecHeaterInfo, setPreheatElecHeaterInfo] = useState<any>([]);
+  const [preheatElecHeaterInstallInfo, setPreheatElecHeaterInstallInfo] = useState<any>([]);
   useMemo(() => {
     const info: { fdtElecHeaterInstall: any; isVisible: boolean; defaultId: number } = {
       fdtElecHeaterInstall: [],
@@ -1925,13 +1816,13 @@ export default function UnitInfoForm({
       info.defaultId = info.fdtElecHeaterInstall?.[0]?.id;
     }
 
-    setPreheatElecHeaterInfo(info);
+    setPreheatElecHeaterInstallInfo(info);
     setValue('ddlPreheatElecHeaterInstall', info.defaultId);
   }, [getValues('ddlLocation'), getValues('ddlPreheatComp')]);
 
 
   // Same logic applies for Heating and Reheat since it's the same component
-  const [heatingElecHeaterInfo, setHeatingElecHeaterInfo] = useState<any>([]);
+  const [heatingElecHeaterInstallInfo, setHeatingElecHeaterInstallInfo] = useState<any>([]);
   const HeatingElecHeaterInfo = useMemo(() => {
     const info: { fdtElecHeaterInstall: any; isVisible: boolean; defaultId: number } = {
       fdtElecHeaterInstall: [],
@@ -1940,8 +1831,7 @@ export default function UnitInfoForm({
     };
     info.fdtElecHeaterInstall = db?.dbtSelElecHeaterInstallation;
     let dtLink = db?.dbtSelElectricHeaterInstallProdTypeLink;
-    dtLink =
-      dtLink?.filter((item: { prod_type_id: any }) => item.prod_type_id === intProductTypeID) || [];
+    dtLink = dtLink?.filter((item: { prod_type_id: any }) => item.prod_type_id === intProductTypeID) || [];
 
     if (
       Number(getValues('ddlHeatingComp')) === IDs.intCompIdElecHeater ||
@@ -1958,15 +1848,11 @@ export default function UnitInfoForm({
             case IDs.intProdTypeIdVentum:
             case IDs.intProdTypeIdVentumLite:
             case IDs.intProdTypeIdTerra:
-              info.fdtElecHeaterInstall = info.fdtElecHeaterInstall?.filter(
-                (item: { id: any }) => item.id === IDs.intElecHeaterInstallIdInCasingField
-              );
+              info.fdtElecHeaterInstall = info.fdtElecHeaterInstall?.filter((item: { id: any }) => item.id === IDs.intElecHeaterInstallIdInCasingField);
               info.defaultId = info.fdtElecHeaterInstall?.[0]?.id;
               break;
             case IDs.intProdTypeIdVentumPlus:
-              info.fdtElecHeaterInstall = info.fdtElecHeaterInstall?.filter(
-                (item: { id: any }) => item.id === IDs.intElecHeaterInstallIdInCasingFactory
-              );
+              info.fdtElecHeaterInstall = info.fdtElecHeaterInstall?.filter((item: { id: any }) => item.id === IDs.intElecHeaterInstallIdInCasingFactory);
               info.defaultId = info.fdtElecHeaterInstall?.[0]?.id;
               break;
             default:
@@ -1974,17 +1860,10 @@ export default function UnitInfoForm({
           }
           break;
         case IDs.intLocationIdIndoor:
-          dtLink =
-            dtLink?.filter(
-              (item: { prod_type_id: any }) => item.prod_type_id === intProductTypeID
-            ) || [];
+          dtLink = dtLink?.filter((item: { prod_type_id: any }) => item.prod_type_id === intProductTypeID) || [];
 
-          info.fdtElecHeaterInstall = info.fdtElecHeaterInstall?.filter(
-            (e: { id: any }) =>
-              dtLink?.filter(
-                (e_link: { elec_heater_install_id: any }) => e.id === e_link.elec_heater_install_id
-              )?.length === 1
-          ); // 1: Matching items, 0: Not matching items
+          info.fdtElecHeaterInstall = info.fdtElecHeaterInstall?.filter((e: { id: any }) => 
+            dtLink?.filter((e_link: { elec_heater_install_id: any }) => e.id === e_link.elec_heater_install_id)?.length === 1); // 1: Matching items, 0: Not matching items
 
           switch (intProductTypeID) {
             case IDs.intProdTypeIdNova:
@@ -1996,9 +1875,7 @@ export default function UnitInfoForm({
               info.defaultId = info.fdtElecHeaterInstall?.[0]?.id;
               break;
             case IDs.intProdTypeIdVentumLite:
-              info.fdtElecHeaterInstall = info.fdtElecHeaterInstall?.filter(
-                (item: { id: any }) => item.id === IDs.intElecHeaterInstallIdDuctMounted
-              );
+              info.fdtElecHeaterInstall = info.fdtElecHeaterInstall?.filter((item: { id: any }) => item.id === IDs.intElecHeaterInstallIdDuctMounted);
               info.defaultId = info.fdtElecHeaterInstall?.[0]?.id;
               break;
             default:
@@ -2015,7 +1892,7 @@ export default function UnitInfoForm({
       info.defaultId = info.fdtElecHeaterInstall?.[0]?.id;
     }
 
-    setHeatingElecHeaterInfo(info);
+    setHeatingElecHeaterInstallInfo(info);
 
     return info;
   }, [getValues('ddlLocation'), getValues('ddlHeatingComp'), getValues('ddlReheatComp')]);
@@ -2029,41 +1906,41 @@ export default function UnitInfoForm({
     // let controlsPrefProdTypeLink: any = [];
 
     // let dtElecHeaterVoltage = [];
+    let dtLink = db?.dbtSelNovaElecHeatVoltageUnitModelLink;
     info.fdtElecHeaterVoltage = db?.dbtSelElectricalVoltage;
     info.defaultId  = Number(getValues('ddlUnitVoltage'));
   
-    if (Number(getValues('ddlPreheatComp'))  === IDs.intCompIdElecHeater ||
-        Number(getValues('ddlHeatingComp')) === IDs.intCompIdElecHeater ||
-        Number(getValues('ddlReheatComp')) === IDs.intCompIdElecHeater) {
+    if (Number(formCurrValues.ddlPreheatComp)  === IDs.intCompIdElecHeater ||
+        Number(formCurrValues.ddlHeatingComp) === IDs.intCompIdElecHeater ||
+        Number(formCurrValues.ddlReheatComp) === IDs.intCompIdElecHeater) {
           info.isVisible = true;
   
       let bol208V_1Ph = false;
       // intProdTypeNovaID
-      if (intProductTypeID === IDs.intProdTypeIdNova) {
-        // if (intUnitModelID) {
-          // info.fdtElecHeaterVoltage = db?.dbtSelElectricalVoltage;
-          // const dtLink = data?.novaElecHeatVoltageLink.filter((x) => x.unit_model_value === strUnitModelValue);
+      switch (intProductTypeID) {
+        case IDs.intProdTypeIdNova:
+          // const dtLink = db?.dbtSelNovaElecHeatVoltageUnitModelLink.filter((x) => x.unit_model_value === strUnitModelValue);
+          dtLink = dtLink?.filter((item: { unit_model_value: any }) => item.unit_model_value === getUMC()?.strUnitModelValue) || [];
+         
+          info.fdtElecHeaterVoltage = info.fdtElecHeaterVoltage?.filter((e: { id: any }) => 
+            dtLink?.filter((e_link: { voltage_id: any }) => e.id === e_link.voltage_id)?.length === 1); // 1: Matching items, 0: Not matching items
+
+          if (Number(getValues('ddlUnitVoltage')) ) {
+            info.defaultId = Number(getValues('ddlUnitVoltage'));
+          }
   
-          // if (Number(getValues('ddlUnitVoltage')) ) {
-          //   info.defaultId = intUnitModelID;
-          // }
-  
-          // dtElecHeaterVoltage = dtElecHeaterVoltage.map(
-          //   (item) => dtLink.filter((el) => el.voltage_id === item.id)?.length > 0
-          // );
+          // dtElecHeaterVoltage = dtElecHeaterVoltage.map((item) => dtLink.filter((el) => el.voltage_id === item.id)?.length > 0);
         // }
-        // intProdTypeVentumID
-      } else if (intProductTypeID === IDs.intProdTypeIdVentum) {
-        if (Number(getValues('ddlUnitModel')) === IDs.intVentumUnitModelIdH05IN_ERV ||
-            Number(getValues('ddlUnitModel')) === IDs.intVentumUnitModelIdH10IN_ERV ||
-            Number(getValues('ddlUnitModel')) === IDs.intVentumUnitModelIdH05IN_HRV ||
-            Number(getValues('ddlUnitModel')) === IDs.intVentumUnitModelIdH10IN_HRV) {
+      break;
+      case IDs.intProdTypeIdVentum:
+        if (Number(formCurrValues.ddlUnitModel) === IDs.intVentumUnitModelIdH05IN_ERV ||
+            Number(formCurrValues.ddlUnitModel) === IDs.intVentumUnitModelIdH10IN_ERV ||
+            Number(formCurrValues.ddlUnitModel) === IDs.intVentumUnitModelIdH05IN_HRV ||
+            Number(formCurrValues.ddlUnitModel) === IDs.intVentumUnitModelIdH10IN_HRV) {
           bol208V_1Ph = true;
-          info.fdtElecHeaterVoltage = info.fdtElecHeaterVoltage?.filter(
-            (item: { electric_heater_2: number; id: any }) => item.electric_heater_2 === 1);
+          info.fdtElecHeaterVoltage = info.fdtElecHeaterVoltage?.filter((item: { electric_heater_2: number; id: any }) => item.electric_heater_2 === 1);
         } else {
-          info.fdtElecHeaterVoltage = info.fdtElecHeaterVoltage?.filter((item: { electric_heater: number; id: any }) =>
-            item.electric_heater === 1);
+          info.fdtElecHeaterVoltage = info.fdtElecHeaterVoltage?.filter((item: { electric_heater: number; id: any }) => item.electric_heater === 1);
         }
   
         if (bol208V_1Ph) {
@@ -2073,13 +1950,15 @@ export default function UnitInfoForm({
           info.defaultId = IDs.intElectricVoltageId208V_3Ph_60Hz;
         }
   
-        if (Number(getValues('ckbVoltageSPP'))) {
+        if (Number(formCurrValues.ckbVoltageSPP)) {
+          info.defaultId = Number(formCurrValues.ddlUnitVoltage);
           info.isEnabled = false;
         } else {
           info.isEnabled = true;
         }
         // intProdTypeVentumLiteID
-      } else if (intProductTypeID === IDs.intProdTypeIdVentumLite) {
+      break;
+      case IDs.intProdTypeIdVentumLite:
         bol208V_1Ph = true;
         info.fdtElecHeaterVoltage = info.fdtElecHeaterVoltage?.filter((item: { electric_heater_3: number; id: any }) => item.electric_heater_3 === 1);
   
@@ -2091,12 +1970,12 @@ export default function UnitInfoForm({
           }
         }
         // intProdTypeVentumPlusID
-      } else if (intProductTypeID === IDs.intProdTypeIdVentumPlus) {
-        info.fdtElecHeaterVoltage = info.fdtElecHeaterVoltage?.filter(
-          (item: { ventumplus_elec_heater: number; id: any }) => item.ventumplus_elec_heater === 1);
+      break;
+      case IDs.intProdTypeIdVentumPlus:
+        info.fdtElecHeaterVoltage = info.fdtElecHeaterVoltage?.filter((item: { ventumplus_elec_heater: number; id: any }) => item.ventumplus_elec_heater === 1);
   
-        if (Number(getValues('ckbVoltageSPP'))) {
-          info.defaultId = Number(getValues('ddlUnitVoltage'));
+        if (Number(formCurrValues.ckbVoltageSPP)) {
+          info.defaultId = Number(formCurrValues.ddlUnitVoltage);
           info.isVisible = false;
           info.isEnabled = false;
         } else {
@@ -2111,10 +1990,11 @@ export default function UnitInfoForm({
           }
         }
         // intProdTypeTerraID
-      } else if (intProductTypeID === IDs.intProdTypeIdTerra) {
-        if (Number(getValues('ckbVoltageSPP'))) {
+      break;
+      case IDs.intProdTypeIdTerra:
+        if (Number(formCurrValues.ckbVoltageSPP)) {
           info.fdtElecHeaterVoltage = info.fdtElecHeaterVoltage?.filter((item: { terra_spp: number; id: any }) =>item.terra_spp === 1);
-          info.defaultId =Number(getValues('ddlUnitVoltage'));
+          info.defaultId =Number(formCurrValues.ddlUnitVoltage);
           info.isEnabled = false;
         } else {
           info.fdtElecHeaterVoltage = info.fdtElecHeaterVoltage?.filter((item: { terra_non_spp: number; id: any }) => item.terra_non_spp === 1);
@@ -2128,35 +2008,36 @@ export default function UnitInfoForm({
             info.defaultId = IDs.intElectricVoltageId208V_3Ph_60Hz;
           }
         }
+        break;
+        default:
+          break;
       }
 
-      if (Number(getValues('ddlPreheatComp')) === IDs.intCompIdAuto &&
-          Number(getValues('ddlHeatingComp')) !== IDs.intCompIdElecHeater &&
-          Number(getValues('ddlReheatComp')) !== IDs.intCompIdElecHeater) {
+      if (Number(formCurrValues.ddlPreheatComp) === IDs.intCompIdAuto &&
+          Number(formCurrValues.ddlHeatingComp) !== IDs.intCompIdElecHeater &&
+          Number(formCurrValues.ddlReheatComp) !== IDs.intCompIdElecHeater) {
         info.isVisible = false;
       }
     } else {
       if (intProductTypeID === IDs.intProdTypeIdVentumLite) {
-        info.fdtElecHeaterVoltage = db?.dbtSelElectricalVoltage?.filter(
-          (item: { electric_heater_3: number; id: any }) => item.electric_heater_3 === 1);
-        info.defaultId = Number(getValues('ddlUnitVoltage'));
+        info.fdtElecHeaterVoltage = info.fdtElecHeaterVoltage?.filter((item: { electric_heater_3: number; id: any }) => item.electric_heater_3 === 1);
+        info.defaultId = Number(formCurrValues.ddlUnitVoltage);
         info.isEnabled = false;
-      } else if (intProductTypeID === IDs.intProdTypeIdTerra && Number(getValues('ckbVoltageSPP'))) {
+
+      } else if (intProductTypeID === IDs.intProdTypeIdTerra && Number(formCurrValues.ckbVoltageSPP)) {
         info.fdtElecHeaterVoltage = info.fdtElecHeaterVoltage?.filter((item: { terra_spp: number; id: any }) => item.terra_spp === 1);
-          info.defaultId = Number(getValues('ddlUnitVoltage'));
-          info.isEnabled = false;
-      } else if (intProductTypeID === IDs.intProdTypeIdVentumPlus && (Number(getValues('ckbVoltageSPP')) || Number(getValues('ddlPreheatComp')) === IDs.intCompIdAuto)
-      ) {
-        info.fdtElecHeaterVoltage = info.fdtElecHeaterVoltage?.filter(
-          (item: { ventumplus_elec_heater: number; id: any }) =>
-            item.ventumplus_elec_heater === 1);
-
-        info.defaultId = Number(getValues('ddlUnitVoltage'));
+        info.defaultId = Number(formCurrValues.ddlUnitVoltage);
         info.isEnabled = false;
-      } else {
-        info.fdtElecHeaterVoltage = info.fdtElecHeaterVoltage?.filter(
-          (item: { electric_heater: number; id: any }) => item.electric_heater === 1);
 
+      } else if (intProductTypeID === IDs.intProdTypeIdVentumPlus && 
+                (Number(formCurrValues.ckbVoltageSPP) || Number(formCurrValues.ddlPreheatComp) === IDs.intCompIdAuto)) {
+        info.fdtElecHeaterVoltage = info.fdtElecHeaterVoltage?.filter((item: { ventumplus_elec_heater: number; id: any }) => item.ventumplus_elec_heater === 1);
+
+        info.defaultId = Number(formCurrValues.ddlUnitVoltage);
+        info.isEnabled = false;
+
+      } else {
+        info.fdtElecHeaterVoltage = info.fdtElecHeaterVoltage?.filter((item: { electric_heater: number; id: any }) => item.electric_heater === 1);
         info.defaultId = IDs.intElectricVoltageId208V_3Ph_60Hz;
       }
   
@@ -2165,12 +2046,16 @@ export default function UnitInfoForm({
 
 
 
-    setElecHeaterVoltageInfo(info);
-    info.defaultId = info.fdtElecHeaterVoltage?.[0]?.id;
+    // setElecHeaterVoltageInfo(info);
+
+    // info.defaultId = info.fdtElecHeaterVoltage?.[0]?.id;
+    setElecHeaterVoltageTable(info.fdtElecHeaterVoltage);
+    setElecHeaterVoltageIsVisible(info.isVisible);
+    setElecHeaterVoltageIsEnabled(info.isEnabled);
     setValue('ddlElecHeaterVoltage', info.defaultId);
 
-  }, [db, intProductTypeID, getValues('ddlPreheatComp'), getValues('ddlHeatingComp'), getValues('ddlReheatComp'), 
-      getValues('ddlUnitVoltage'), getValues('ckbVoltageSPP')]);
+  }, [db, intProductTypeID, formCurrValues.ddlPreheatComp, formCurrValues.ddlHeatingComp, formCurrValues.ddlReheatComp, 
+        formCurrValues.ddlUnitVoltage, ]);
 
 
   // const [heatingElecHeaterInfo, setHeatingElecHeaterInfo] = useState<any>([])
@@ -2267,21 +2152,14 @@ export default function UnitInfoForm({
 
     if (Number(getValues('ddlPreheatComp')) === IDs.intCompIdHWC) {
       fluidConFluidTypLink = db?.dbtSelFluidConcenFluidTypeLink?.filter(
-        (item: { fluid_type_id: number }) =>
-          item.fluid_type_id === Number(getValues('ddlPreheatFluidType'))
-      );
+        (item: { fluid_type_id: number }) => item.fluid_type_id === Number(getValues('ddlPreheatFluidType')));
     } else {
       fluidConFluidTypLink = db?.dbtSelFluidConcenFluidTypeLink?.filter(
-        (item: { fluid_type_id: number }) => item.fluid_type_id === preheatFluidTypeInfo?.defaultId
-      );
+        (item: { fluid_type_id: number }) => item.fluid_type_id === preheatFluidTypeInfo?.defaultId);
     }
 
-    info.fdtFluidConcen = db?.dbtSelFluidConcentration?.filter(
-      (e: { id: any }) =>
-        fluidConFluidTypLink?.filter(
-          (e_link: { fluid_concen_id: any }) => e.id === e_link.fluid_concen_id
-        )?.length > 0
-    );
+    info.fdtFluidConcen = db?.dbtSelFluidConcentration?.filter((e: { id: any }) => fluidConFluidTypLink?.filter(
+          (e_link: { fluid_concen_id: any }) => e.id === e_link.fluid_concen_id) ?.length > 0);
 
     setPreheatFluidConcenInfo(info);
 
@@ -3072,16 +2950,286 @@ export default function UnitInfoForm({
   );
 
 
-  const ddlUnitModelChanged = useCallback((e: any) => {
+  const handleBlurSummerSupplyAirCFM = useCallback((e: any) => {
+    
+      const supplyCFM = getSupplyAirCFM();
+      setValue('txbSummerSupplyAirCFM', supplyCFM);
+      setValue('txbSummerReturnAirCFM', supplyCFM);
+    }, []
+  );
+
+
+ const handleBlurSummerReturnAirCFM = useCallback((e: any) => {
+     
+     const returnCFM = getReturnAirCFM();
+     setValue('txbSummerReturnAirCFM', returnCFM);  
+
+   }, []
+ );
+
+
+ const handleBlurSupplyAirESP = useCallback(
+   (e: any) => {
+     // const value = getSupplyAirESPInfo(e.target.value, intProductTypeID, formValues.ddlUnitModel);
+     // supplyAirEspInfo;
+
+     switch (intProductTypeID) {
+       case IDs.intProdTypeIdNova:
+         switch (Number(getValues('ddlUnitModel'))) {
+           case IDs.intNovaUnitModelIdA16IN:
+           case IDs.intNovaUnitModelIdB20IN:
+           case IDs.intNovaUnitModelIdA18OU:
+           case IDs.intNovaUnitModelIdB22OU:
+             if (Number(getValues('txbSupplyAirESP')) > 2.0) {
+               setValue('txbSupplyAirESP', 2.0);
+             }
+             break;
+           default:
+             if (Number(getValues('txbSupplyAirESP')) > 3.0) {
+               setValue('txbSupplyAirESP', 3.0);
+             }
+             break;
+         }
+         break;
+       default:
+         break;
+     }
+   },
+   [intProductTypeID, getValues('ddlUnitModel'), getValues('txbSupplyAirESP')]
+ );
+
+
+ const handleBlurExhaustAirESP = useCallback(
+   (e: any) => {
+     // const value = getExhaustAirESP(e.target.value, intProductTypeID, intUnitTypeID, formValues.ddlUnitModel);
+     // setValue('txbExhaustAirESP', value);
+
+     switch (intProductTypeID) {
+       case IDs.intProdTypeIdNova:
+         switch (Number(getValues('ddlUnitModel'))) {
+           case IDs.intNovaUnitModelIdA16IN:
+           case IDs.intNovaUnitModelIdB20IN:
+           case IDs.intNovaUnitModelIdA18OU:
+           case IDs.intNovaUnitModelIdB22OU:
+             if (Number(getValues('txbExhaustAirESP')) > 2.0) {
+               setValue('txbExhaustAirESP', 2.0);
+             }
+             break;
+           default:
+             if (Number(getValues('txbExhaustAirESP')) > 3.0) {
+               setValue('txbExhaustAirESP', 3.0);
+             }
+             break;
+         }
+         break;
+       default:
+         break;
+     }
+   },
+   [setValue, intProductTypeID, getValues('ddlUnitModel'), getValues('txbExhaustAirESP')]
+ );
+
+
+
+ const ckbPHIOnChange = useCallback((e: any) => {
+  setValue('ckbPHI', Number(e.target.value),);
+
+  switch(Number(formCurrValues.ckbPHI)) {
+    case 1:
+      setValue('ckbBypass', 1);
+      setBypassIsEnabled(false);
+    break;
+    case 0:
+      setValue('ckbBypass', 0);
+      setBypassIsEnabled(true);  
+      break;
+    default:
+      break;
+  };
+},
+[]
+);
+
+
+const ckbBypassOnChange = useCallback((e: any) => {
+    setValue('ckbBypass', Number(e.target.value),);
+
+    // switch(Number(formCurrValues.ckbBypass)) {
+    //   case 1:
+    //   break;
+    //   case 0:
+    //     break;
+    //   default:
+    //     break;
+    // }
+  },
+  [setValue]
+);
+
+
+const ddlUnitModelChanged = useCallback((e: any) => {
       setValue('ddlUnitModel', Number(e.target.value));
     },
     [setValue]
-  );
+);
 
 
   const ddlUnitVoltageChanged = useCallback((e: any) => 
     setValue('ddlUnitVoltage', Number(e.target.value)),
   [setValue]
+  );
+
+
+  const ckbVoltageSPPOnChange = useCallback((e: any) => {
+    setValue('ckbVoltageSPP', Number(e.target.value),);
+
+    switch(Number(formCurrValues.ckbVoltageSPP)) {
+      case 1:
+        setValue('ddlElecHeaterVoltage', formCurrValues?.ddlUnitVoltage)
+        setElecHeaterVoltageIsEnabled(false);
+      break;
+      case 0:
+        setElecHeaterVoltageIsEnabled(true);  
+        break;
+      default:
+        break;
+    }
+    // setElecHeaterVoltageInfo();
+  },
+  [setValue]
+);
+
+
+  // Summer Mix Outdoor Air DB
+  const handleMixSummerOA_DBChanged = useCallback(
+    (e: any) => {
+      setValue('txbMixSummerOA_DB', parseFloat(e.target.value).toFixed(1));
+      api.project.getRH_By_DB_WB(oMixSummerOA_RH).then((data: any) => {
+        setValue('txbMixSummerOA_RH', data.toFixed(1));
+      });
+    },
+    [formCurrValues.txbMixSummerOA_DB]
+  );
+
+  // Summer Mix Outdoor Air WB
+  const handleMixSummerOA_WBChanged = useCallback(
+    (e: any) => {
+      setValue('txbMixSummerOA_WB', parseFloat(e.target.value).toFixed(1));
+      api.project.getRH_By_DB_WB(oMixSummerOA_RH).then((data: any) => {
+        setValue('txbMixSummerOA_RH', data.toFixed(1));
+      });
+    },
+    [formCurrValues.txbMixSummerOA_WB]
+  );
+
+  // Summer Mix Outdoor Air RH
+  const handleMixSummerOA_RHChanged = useCallback(
+    (e: any) => {
+      setValue('txbMixSummerOA_RH', parseFloat(e.target.value).toFixed(1));
+      api.project.getWB_By_DB_RH(oMixSummerOA_WB).then((data: any) => {
+        setValue('txbMixSummerOA_WB', data.toFixed(1));
+      });
+    },
+    [formCurrValues.txbMixSummerOA_RH]
+  );
+
+  // Winter Mix Outdoor Air DB
+  const handleMixWinterOA_DBChanged = useCallback(
+    (e: any) => {
+      setValue('txbMixWinterOA_DB', parseFloat(e.target.value).toFixed(1));
+      api.project.getRH_By_DB_WB(oMixWinterOA_RH).then((data: any) => {
+        setValue('txbMixWinterOA_RH', data.toFixed(1));
+      });
+    },
+    [formCurrValues.txbMixWinterOA_DB]
+  );
+
+  // Winter Mix Outdoor Air WB
+  const handleMixWinterOA_WBChanged = useCallback(
+    (e: any) => {
+      setValue('txbMixWinterOA_WB', parseFloat(e.target.value).toFixed(1));
+      api.project.getRH_By_DB_WB(oMixWinterOA_RH).then((data: any) => {
+        setValue('txbMixWinterOA_RH', data.toFixed(1));
+      });
+    },
+    [formCurrValues.txbMixWinterOA_WB]
+  );
+
+  // Winter Mix Outdoor Air RH
+  const handleMixWinterOA_RHChanged = useCallback(
+    (e: any) => {
+      setValue('txbMixWinterOA_RH', parseFloat(e.target.value).toFixed(1));
+      api.project.getWB_By_DB_RH(oMixWinterOA_WB).then((data: any) => {
+        setValue('txbMixWinterOA_WB', data.toFixed(1));
+      });
+    },
+    [formCurrValues.txbMixWinterOA_RH]
+  );
+
+  // Summer Mix Return Air DB
+  const handleMixSummerRA_DBChanged = useCallback(
+    (e: any) => {
+      setValue('txbMixSummerRA_DB', parseFloat(e.target.value).toFixed(1));
+      api.project.getRH_By_DB_WB(oMixSummerRA_RH).then((data: any) => {
+        setValue('txbMixSummerRA_RH', data.toFixed(1));
+      });
+    },
+    [formCurrValues.txbMixSummerRA_DB]
+  );
+
+  // Summer Mix Return Air WB
+  const handleMixSummerRA_WBChanged = useCallback(
+    (e: any) => {
+      setValue('txbMixSummerRA_WB', parseFloat(e.target.value).toFixed(1));
+      api.project.getRH_By_DB_WB(oMixSummerRA_RH).then((data: any) => {
+        setValue('txbMixSummerRA_RH', data.toFixed(1));
+      });
+    },
+    [formCurrValues.txbMixSummerOA_WB]
+  );
+
+  // Summer Mix Return Air RH
+  const handleMixSummerRA_RHChanged = useCallback(
+    (e: any) => {
+      setValue('txbMixSummerRA_RH', parseFloat(e.target.value).toFixed(1));
+      api.project.getWB_By_DB_RH(oMixSummerRA_WB).then((data: any) => {
+        setValue('txbMixSummerRA_WB', data.toFixed(1));
+      });
+    },
+    [formCurrValues.txbMixSummerOA_RH]
+  );
+
+  // Winter Mix Return Air DB
+  const handleMixWinterRA_DBChanged = useCallback(
+    (e: any) => {
+      setValue('txbMixWinterRA_DB', parseFloat(e.target.value).toFixed(1));
+      api.project.getRH_By_DB_WB(oMixWinterRA_RH).then((data: any) => {
+        setValue('txbMixWinterRA_RH', data.toFixed(1));
+      });
+    },
+    [formCurrValues.txbMixWinterRA_DB]
+  );
+
+  // Winter Mix Return Air WB
+  const handleMixWinterRA_WBChanged = useCallback(
+    (e: any) => {
+      setValue('txbMixWinterRA_WB', parseFloat(e.target.value).toFixed(1));
+      api.project.getRH_By_DB_WB(oMixWinterRA_RH).then((data: any) => {
+        setValue('txbMixWinterRA_RH', data.toFixed(1));
+      });
+    },
+    [formCurrValues.txbMixWinterRA_WB]
+  );
+
+  // Winter Mix Return Air RH
+  const handleMixWinterRA_RHChanged = useCallback(
+    (e: any) => {
+      setValue('txbMixWinterRA_RH', parseFloat(e.target.value).toFixed(1));
+      api.project.getWB_By_DB_RH(oMixWinterRA_WB).then((data: any) => {
+        setValue('txbMixWinterRA_WB', data.toFixed(1));
+      });
+    },
+    [formCurrValues.txbMixWinterRA_RH]
   );
 
 
@@ -3237,80 +3385,6 @@ export default function UnitInfoForm({
 
 
 
-  // ------------------------------ Get Bypass State -------------------------------
-  // const ckbBypassInfo = useMemo(() => {
-  //   const result = getBypass(
-  //     db,
-  //     intProductTypeID,
-  //     formValues.ddlUnitModel,
-  //     formValues.ddlOrientation,
-  //     Number(formValues.ckbBypass)
-  //   );
-  //   setCkbBypassVal(!!result.checked);
-  //   return result;
-  //   // eslint-disable-next-line react-hooks/exhaustive-deps
-  // }, [db, intProductTypeID, formValues.ddlOrientation, formValues.ddlUnitModel]);
-
-
-  // ---------------------------- Get Orientation Info -----------------------------
-  // const orientationInfo = useMemo(() => {
-  //   const orientationData = getOrientation(
-  //     db,
-  //     intProductTypeID,
-  //     intUnitTypeID,
-  //     formValues.ddlLocation,
-  //     Number(formValues.txbSummerSupplyAirCFM)
-  //   );
-
-  //   if (
-  //     orientationData?.filter((item: any) => item.id && item.id === formValues.ddlOrientation)
-  //       .length === 0
-  //   ) {
-  //     setValue('ddlOrientation', orientationData?.[0]?.id || 0);
-  //   }
-
-  //   return orientationData;
-  // }, [
-  //   db,
-  //   intProductTypeID,
-  //   intUnitTypeID,
-  //   setValue,
-  //   formValues.ddlLocation,
-  //   formValues.ddlOrientation,
-  //   formValues.txbSummerSupplyAirCFM,
-  // ]);
-
-
-  // ---------------------------- Get Orientation Info -----------------------------
-  // const locationInfo = useMemo(() => {
-  //   const locations = getLocation(db, intProductTypeID, intUnitTypeID);
-
-  //   if (locations?.filter((item: any) => item.id === formValues.ddlLocation)?.length === 0) {
-  //     setValue('ddlLocation', locations[0]?.id);
-  //   }
-
-  //   return locations;
-  // }, [db, intProductTypeID, intUnitTypeID, setValue, formValues.ddlLocation]);
-
-
-  // ---------------------------- Get Unit Voltage Info -----------------------------
-  // const unitVoltage = useMemo(() => {
-  //   const { unitVoltageList, ddlUnitVoltageId } = getUnitVoltage(
-  //     db,
-  //     intProductTypeID,
-  //     strUnitModelValue
-  //   );
-  //   if ( unitVoltageList?.filter((item: any) => item.id === formValues.ddlUnitVoltage)?.length === 0) {
-  //     setValue('ddlUnitVoltage', ddlUnitVoltageId);
-  //   }
-  //   return unitVoltageList;
-  // }, [db, intProductTypeID, strUnitModelValue, formValues.ddlUnitVoltage, setValue]);
-
-
-  // ---------------------------- Get QAFilter Model DDL -----------------------------
-  // const OAFilterModel = useMemo(
-  //   () => db?.dbtSelFilterModel?.filter((item: any) => item.outdoor_air === 1),
-  //   [db]);
 
   // ---------------------------- Get RAFilter Model DDL -----------------------------
   const RAFilterModel = useMemo(() => {
@@ -3537,37 +3611,6 @@ export default function UnitInfoForm({
   // );
 
 
-  // -------------- Get Heating Pump Information ----------------
-  // const heatPumpInfo = useMemo(() => {
-  //   const result = getHeatPumpInfo(Number(formValues.ddlCoolingComp));
-  //   // ckbHeatPumpChanged();
-  //   return result;
-  // }, [formValues.ddlCoolingComp]);
-
-  // -------------- Get Dehumidification Information ----------------
-  // const dehumidificationInfo = useMemo(
-  //   () => getDehumidificationInfo(Number(formValues.ddlCoolingComp)),
-  //   [formValues.ddlCoolingComp]);
-
-  // -------------- Get Coil Refrigerate Design Condition Information ----------------
-  // const dxCoilRefrigDesignCondInfo = useMemo(
-  //   () =>
-  //     getDXCoilRefrigDesignCondInfo(
-  //       Number(typeof window !== 'undefined' && localStorage.getItem('UAL')),
-  //       Number(formValues.ddlCoolingComp)
-  //     ),
-  //   [formValues.ddlCoolingComp]);
-
-  // const heatElecHeaterInstallationInfo = useMemo(
-  //   () =>
-  //     getHeatElecHeaterInstallationInfo(
-  //       db,
-  //       Number(formValues.ddlHeatingComp),
-  //       Number(formValues.ddlReheatComp)
-  //     ),
-  //   [db, intProductTypeID, formValues.ddlHeatingComp, formValues.ddlReheatComp]);
-
-
   const [reheatHandingInfo, setReheattHandingInfo] = useState<any>([]);
   useMemo(() => {
     const info: { fdtHanding: any; isVisible: boolean } = { fdtHanding: [], isVisible: false };
@@ -3598,235 +3641,6 @@ export default function UnitInfoForm({
 
 
  
-  const handleBlurSummerSupplyAirCFM = useCallback((e: any) => {
-      // const value = getSummerSupplyAirCFM(e.target.value, intProductTypeID, Number(user?.UAL || 0), Number(formValues.ckbBypass), Number(formValues.ckbPHI));
-
-
-      // let intSummerSupplyAirCFM = Number(e.target.value);
-      // const intUAL= Number(localStorage?.getItem('UAL')) || 0;
-
-      // switch (intProductTypeID) {
-      //   case IDs.intProdTypeIdNova:
-      //     if (intUAL === IDs.intUAL_Admin || intUAL === IDs.intUAL_IntAdmin ||
-      //         intUAL === IDs.intUAL_IntLvl_2 || intUAL === IDs.intUAL_IntLvl_1
-      //     ) {
-      //       if (intSummerSupplyAirCFM < intNOVA_MIN_CFM) {
-      //         intSummerSupplyAirCFM = intNOVA_MIN_CFM;
-      //       } else if (intSummerSupplyAirCFM > intNOVA_MAX_CFM) {
-      //         intSummerSupplyAirCFM = intNOVA_MAX_CFM;
-      //       }
-      //     } else if (intSummerSupplyAirCFM < intNOVA_INT_USERS_MIN_CFM) {
-      //       intSummerSupplyAirCFM = intNOVA_INT_USERS_MIN_CFM;
-      //     } else if (intSummerSupplyAirCFM > intNOVA_INT_USERS_MAX_CFM) {
-      //       intSummerSupplyAirCFM = intNOVA_INT_USERS_MAX_CFM;
-      //     }
-      //     break;
-      //   case IDs.intProdTypeIdVentum:
-      //     if (intUAL === IDs.intUAL_Admin || intUAL === IDs.intUAL_IntAdmin ||
-      //         intUAL === IDs.intUAL_IntLvl_2 || intUAL === IDs.intUAL_IntLvl_1
-      //     ) {
-      //       if (Number(getValues('ckbPHI')) === 1) {
-      //         if (intSummerSupplyAirCFM < intVEN_MIN_CFM_PHI) {
-      //           intSummerSupplyAirCFM = intVEN_MIN_CFM_PHI;
-      //         } else if (intSummerSupplyAirCFM > intVEN_MAX_CFM_PHI) {
-      //           intSummerSupplyAirCFM = intVEN_MAX_CFM_PHI;
-      //         }
-      //       } else if (Number(getValues('ckbBypass')) === 1) {
-      //         if (intSummerSupplyAirCFM < intVEN_INT_USERS_MIN_CFM_WITH_BYPASS) {
-      //           intSummerSupplyAirCFM = intVEN_INT_USERS_MIN_CFM_WITH_BYPASS;
-      //         } else if (intSummerSupplyAirCFM > intVEN_INT_USERS_MAX_CFM_WITH_BYPASS) {
-      //           intSummerSupplyAirCFM = intVEN_INT_USERS_MAX_CFM_WITH_BYPASS;
-      //         }
-      //       } else if (intSummerSupplyAirCFM < intVEN_INT_USERS_MIN_CFM_NO_BYPASS) {
-      //         intSummerSupplyAirCFM = intVEN_INT_USERS_MIN_CFM_NO_BYPASS;
-      //       } else if (intSummerSupplyAirCFM > intVEN_INT_USERS_MAX_CFM_NO_BYPASS) {
-      //         intSummerSupplyAirCFM = intVEN_INT_USERS_MAX_CFM_NO_BYPASS;
-      //       }
-      //     } else if (Number(getValues('ckbBypass')) === 1) {
-      //       if (intSummerSupplyAirCFM < intVEN_MIN_CFM_WITH_BYPASS) {
-      //         intSummerSupplyAirCFM = intVEN_MIN_CFM_WITH_BYPASS;
-      //       } else if (intSummerSupplyAirCFM > intVEN_MAX_CFM_WITH_BYPASS) {
-      //         intSummerSupplyAirCFM = intVEN_MAX_CFM_WITH_BYPASS;
-      //       }
-      //     } else if (intSummerSupplyAirCFM < intVEN_MIN_CFM_NO_BYPASS) {
-      //       intSummerSupplyAirCFM = intVEN_MIN_CFM_NO_BYPASS;
-      //     } else if (intSummerSupplyAirCFM > intVEN_MAX_CFM_NO_BYPASS) {
-      //       intSummerSupplyAirCFM = intVEN_MAX_CFM_NO_BYPASS;
-      //     }
-      //     break;
-      //   case IDs.intProdTypeIdVentumLite:
-      //     if (intUAL === IDs.intUAL_Admin || intUAL === IDs.intUAL_IntAdmin ||
-      //         intUAL === IDs.intUAL_IntLvl_2 || intUAL === IDs.intUAL_IntLvl_1
-      //     ) {
-      //       if (Number(getValues('ckbBypass')) === 1) {
-      //         if (intSummerSupplyAirCFM < intVENLITE_INT_USERS_MIN_CFM_WITH_BYPASS) {
-      //           intSummerSupplyAirCFM = intVENLITE_INT_USERS_MIN_CFM_WITH_BYPASS;
-      //         } else if (intSummerSupplyAirCFM > intVENLITE_INT_USERS_MAX_CFM_WITH_BYPASS) {
-      //           intSummerSupplyAirCFM = intVENLITE_INT_USERS_MAX_CFM_WITH_BYPASS;
-      //         }
-      //       } else if (intSummerSupplyAirCFM < intVENLITE_INT_USERS_MIN_CFM_NO_BYPASS) {
-      //         intSummerSupplyAirCFM = intVENLITE_INT_USERS_MIN_CFM_NO_BYPASS;
-      //       } else if (intSummerSupplyAirCFM > intVENLITE_INT_USERS_MAX_CFM_NO_BYPASS) {
-      //         intSummerSupplyAirCFM = intVENLITE_INT_USERS_MAX_CFM_NO_BYPASS;
-      //       }
-      //     } else if (Number(getValues('ckbBypass')) === 1) {
-      //       if (intSummerSupplyAirCFM < intVENLITE_MIN_CFM_WITH_BYPASS) {
-      //         intSummerSupplyAirCFM = intVENLITE_MIN_CFM_WITH_BYPASS;
-      //       } else if (intSummerSupplyAirCFM > intVENLITE_MAX_CFM_WITH_BYPASS) {
-      //         intSummerSupplyAirCFM = intVENLITE_MAX_CFM_WITH_BYPASS;
-      //       }
-      //     } else if (intSummerSupplyAirCFM < intVENLITE_MIN_CFM_NO_BYPASS) {
-      //       intSummerSupplyAirCFM = intVENLITE_MIN_CFM_NO_BYPASS;
-      //     } else if (intSummerSupplyAirCFM > intVENLITE_MAX_CFM_NO_BYPASS) {
-      //       intSummerSupplyAirCFM = intVENLITE_MAX_CFM_NO_BYPASS;
-      //     }
-      //     break;
-      //   case IDs.intProdTypeIdVentumPlus:
-      //     if (intUAL === IDs.intUAL_Admin || intUAL === IDs.intUAL_IntAdmin ||
-      //         intUAL === IDs.intUAL_IntLvl_2 || intUAL === IDs.intUAL_IntLvl_1
-      //     ) {
-      //       if (Number(getValues('ckbPHI')) === 1) {
-      //         if (intSummerSupplyAirCFM < intVENPLUS_MIN_CFM_PHI) {
-      //           intSummerSupplyAirCFM = intVENPLUS_MIN_CFM_PHI;
-      //         } else if (intSummerSupplyAirCFM > intVENPLUS_MAX_CFM_PHI) {
-      //           intSummerSupplyAirCFM = intVENPLUS_MAX_CFM_PHI;
-      //         }
-      //       } else if (Number(getValues('ckbBypass')) === 1) {
-      //         if (intSummerSupplyAirCFM < intVENPLUS_INT_USERS_MIN_CFM_WITH_BYPASS) {
-      //           intSummerSupplyAirCFM = intVENPLUS_INT_USERS_MIN_CFM_WITH_BYPASS;
-      //         } else if (intSummerSupplyAirCFM > intVENPLUS_INT_USERS_MAX_CFM_WITH_BYPASS) {
-      //           intSummerSupplyAirCFM = intVENPLUS_INT_USERS_MAX_CFM_WITH_BYPASS;
-      //         }
-      //       } else if (intSummerSupplyAirCFM < intVENPLUS_INT_USERS_MIN_CFM_NO_BYPASS) {
-      //         intSummerSupplyAirCFM = intVENPLUS_INT_USERS_MIN_CFM_NO_BYPASS;
-      //       } else if (intSummerSupplyAirCFM > intVENPLUS_INT_USERS_MAX_CFM_NO_BYPASS) {
-      //         intSummerSupplyAirCFM = intVENPLUS_INT_USERS_MAX_CFM_NO_BYPASS;
-      //       }
-      //     } else if (Number(getValues('ckbBypass')) === 1) {
-      //       if (intSummerSupplyAirCFM < intVENPLUS_MIN_CFM_WITH_BYPASS) {
-      //         intSummerSupplyAirCFM = intVENPLUS_MIN_CFM_WITH_BYPASS;
-      //       } else if (intSummerSupplyAirCFM > intVENPLUS_MAX_CFM_WITH_BYPASS) {
-      //         intSummerSupplyAirCFM = intVENPLUS_MAX_CFM_WITH_BYPASS;
-      //       }
-      //     } else if (intSummerSupplyAirCFM < intVENPLUS_MIN_CFM_NO_BYPASS) {
-      //       intSummerSupplyAirCFM = intVENPLUS_MIN_CFM_NO_BYPASS;
-      //     } else if (intSummerSupplyAirCFM > intVENPLUS_MAX_CFM_NO_BYPASS) {
-      //       intSummerSupplyAirCFM = intVENPLUS_MAX_CFM_NO_BYPASS;
-      //     }
-      //     break;
-      //   case IDs.intProdTypeIdTerra:
-      //     if (intUAL === IDs.intUAL_Admin || intUAL === IDs.intUAL_IntAdmin || 
-      //         intUAL === IDs.intUAL_IntLvl_2 || intUAL === IDs.intUAL_IntLvl_1
-      //     ) {
-      //       if (Number(getValues('ckbBypass')) === 1) {
-      //         if (intSummerSupplyAirCFM < intTERA_INT_USERS_MIN_CFM_WITH_BYPASS) {
-      //           intSummerSupplyAirCFM = intTERA_INT_USERS_MIN_CFM_WITH_BYPASS;
-      //         } else if (intSummerSupplyAirCFM > intTERA_INT_USERS_MAX_CFM_WITH_BYPASS) {
-      //           intSummerSupplyAirCFM = intTERA_INT_USERS_MAX_CFM_WITH_BYPASS;
-      //         }
-      //       } else if (intSummerSupplyAirCFM < intTERA_INT_USERS_MIN_CFM_NO_BYPASS) {
-      //         intSummerSupplyAirCFM = intTERA_INT_USERS_MIN_CFM_NO_BYPASS;
-      //       } else if (intSummerSupplyAirCFM > intTERA_INT_USERS_MAX_CFM_NO_BYPASS) {
-      //         intSummerSupplyAirCFM = intTERA_INT_USERS_MAX_CFM_NO_BYPASS;
-      //       }
-      //     } else if (Number(getValues('ckbBypass')) === 1) {
-      //       if (intSummerSupplyAirCFM < intTERA_MIN_CFM_WITH_BYPASS) {
-      //         intSummerSupplyAirCFM = intTERA_MIN_CFM_WITH_BYPASS;
-      //       } else if (intSummerSupplyAirCFM > intTERA_MAX_CFM_WITH_BYPASS) {
-      //         intSummerSupplyAirCFM = intTERA_MAX_CFM_WITH_BYPASS;
-      //       }
-      //     } else if (intSummerSupplyAirCFM < intTERA_MIN_CFM_NO_BYPASS) {
-      //       intSummerSupplyAirCFM = intTERA_MIN_CFM_NO_BYPASS;
-      //     } else if (intSummerSupplyAirCFM > intTERA_MAX_CFM_NO_BYPASS) {
-      //       intSummerSupplyAirCFM = intTERA_MAX_CFM_NO_BYPASS;
-      //     }
-      //     break;
-      //   default:
-      //     break;
-      // }
-    
-      const supplyCFM = getSupplyAirCFM();
-      setValue('txbSummerSupplyAirCFM', supplyCFM);
-      setValue('txbSummerReturnAirCFM', supplyCFM);
-
-
-
-      // setValue('txbSummerSupplyAirCFM', intSummerSupplyAirCFM);
-      // setValue('txbSummerReturnAirCFM', intSummerSupplyAirCFM);
-    }, []
-  );
-
-
-  const handleBlurSummerReturnAirCFM = useCallback(
-    (e: any) => {
-      
-      const returnCFM = getReturnAirCFM();
-      setValue('txbSummerReturnAirCFM', returnCFM);  
-
-    }, []
-  );
-
-
-  const handleBlurSupplyAirESP = useCallback(
-    (e: any) => {
-      // const value = getSupplyAirESPInfo(e.target.value, intProductTypeID, formValues.ddlUnitModel);
-      // supplyAirEspInfo;
-
-      switch (intProductTypeID) {
-        case IDs.intProdTypeIdNova:
-          switch (Number(getValues('ddlUnitModel'))) {
-            case IDs.intNovaUnitModelIdA16IN:
-            case IDs.intNovaUnitModelIdB20IN:
-            case IDs.intNovaUnitModelIdA18OU:
-            case IDs.intNovaUnitModelIdB22OU:
-              if (Number(getValues('txbSupplyAirESP')) > 2.0) {
-                setValue('txbSupplyAirESP', 2.0);
-              }
-              break;
-            default:
-              if (Number(getValues('txbSupplyAirESP')) > 3.0) {
-                setValue('txbSupplyAirESP', 3.0);
-              }
-              break;
-          }
-          break;
-        default:
-          break;
-      }
-    },
-    [intProductTypeID, getValues('ddlUnitModel'), getValues('txbSupplyAirESP')]
-  );
-
-
-  const handleBlurExhaustAirESP = useCallback(
-    (e: any) => {
-      // const value = getExhaustAirESP(e.target.value, intProductTypeID, intUnitTypeID, formValues.ddlUnitModel);
-      // setValue('txbExhaustAirESP', value);
-
-      switch (intProductTypeID) {
-        case IDs.intProdTypeIdNova:
-          switch (Number(getValues('ddlUnitModel'))) {
-            case IDs.intNovaUnitModelIdA16IN:
-            case IDs.intNovaUnitModelIdB20IN:
-            case IDs.intNovaUnitModelIdA18OU:
-            case IDs.intNovaUnitModelIdB22OU:
-              if (Number(getValues('txbExhaustAirESP')) > 2.0) {
-                setValue('txbExhaustAirESP', 2.0);
-              }
-              break;
-            default:
-              if (Number(getValues('txbExhaustAirESP')) > 3.0) {
-                setValue('txbExhaustAirESP', 3.0);
-              }
-              break;
-          }
-          break;
-        default:
-          break;
-      }
-    },
-    [setValue, intProductTypeID, getValues('ddlUnitModel'), getValues('txbExhaustAirESP')]
-  );
 
 
   const isAvailable = useCallback((value: any[]) => !!value && value.length > 0, []);
@@ -3835,597 +3649,167 @@ export default function UnitInfoForm({
   // Load saved Values
   useEffect(() => {
     if (unitInfo !== null) {
-      // if () {
-      setValue('ddlLocation', unitInfo?.oUnitCompOpt?.intHeatingFluidTypeId > 0 ? 
-                unitInfo?.oUnit?.intLocationId : getValues('ddlLocation'));
-      // }
-
-      // if (unitInfo?.oUnit?.intOrientationId > 0) {
-      setValue('ddlOrientation', unitInfo?.oUnit?.intOrientationId > 0 ? 
-                unitInfo?.oUnit?.intOrientationId : getValues('ddlOrientation'));
-      // }
-
-      // if (unitInfo?.oUnit?.intControlsPreferenceId > 0) {
-      //   setValue('ddlControlsPreference', unitInfo?.oUnit?.intControlsPreferenceId);
-      setValue('ddlControlsPref', unitInfo?.oUnit?.intControlsPreferenceId > 0 ? 
-                unitInfo?.oUnit?.intControlsPreferenceId : getValues('ddlControlsPref'));
-      // }
-
-      setValue('txbSummerSupplyAirCFM', Number(unitInfo?.oUnitAirflow?.intSummerSupplyAirCFM) > 0 ? 
-                unitInfo?.oUnitAirflow?.intSummerSupplyAirCFM : getValues('txbSummerSupplyAirCFM'));
-
-      setValue('txbSummerReturnAirCFM', Number(unitInfo?.oUnitAirflow?.intSummerReturnAirCFM) > 0 ? 
-                unitInfo?.oUnitAirflow?.intSummerReturnAirCFM : getValues('txbSummerReturnAirCFM'));
-
-      setValue('txbSupplyAirESP', Number.parseFloat(unitInfo?.oUnitAirflow?.dblSupplyAirESP) > 0.0 ? 
-                unitInfo?.oUnitAirflow?.dblSupplyAirESP : '0.75');
-
-      setValue('txbExhaustAirESP', Number.parseFloat(unitInfo?.oUnitAirflow?.dblExhaustAirESP) > 0.0 ? 
-                unitInfo?.oUnitAirflow?.dblExhaustAirESP : '0.75');
-
-      // if (unitInfo?.oUnit?.intUnitModelId > 0) {
-      setValue('ddlUnitModel', unitInfo?.oUnit?.intUnitModelId > 0 ? 
-                unitInfo?.oUnit?.intUnitModelId : getValues('ddlUnitModel'));
-      // }
-
-      // if (unitInfo?.oUnit?.intUnitVoltageId > 0) {
-      setValue('ddlUnitVoltage', unitInfo?.oUnit?.intUnitVoltageId > 0 ? 
-                unitInfo?.oUnit?.intUnitVoltageId : getValues('ddlUnitVoltage'));
-      // }
-
-      // if (unitInfo?.oCompOpt?.intOAFilterModelId > 0) {
-      setValue('ddlOA_FilterModel', unitInfo?.oCompOpt?.intOAFilterModelId > 0 ? 
-                unitInfo?.oCompOpt?.intOAFilterModelId : getValues('ddlOA_FilterModel'));
-      // }
-
-      // if (unitInfo?.oCompOpt?.intRAFilterModelId > 0) {
-      setValue('ddlRA_FilterModel', unitInfo?.oCompOpt?.intRAFilterModelId > 0 ? 
-                unitInfo?.oCompOpt?.intRAFilterModelId : getValues('ddlRA_FilterModel'));
-      // }
-
-      // Preheat
-      // if (unitInfo?.oUnitCompOpt?.intPreheatCompId > 0) {
-      setValue('ddlPreheatComp', unitInfo?.oUnitCompOpt?.intPreheatCompId > 0 ? 
-                unitInfo?.oUnitCompOpt?.intPreheatCompId : getValues('ddlPreheatComp'));
-      // }
-
-      setValue('txbWinterPreheatSetpointDB', Number.parseFloat(unitInfo?.oUnitCompOpt?.dblPreheatSetpointDB) > 0.0 ? 
-                unitInfo?.oUnitCompOpt?.dblPreheatSetpointDB : '40');
-
-
-      setValue('ckbBackupHeating', unitInfo?.oUnitCompOpt?.intIsBackupHeating > 0 ? 
-                unitInfo?.oUnitCompOpt?.intIsBackupHeating : 0);
-
-
-      setValue('txbBackupHeatingSetpointDB', Number.parseFloat(unitInfo?.oUnitCompOpt?.dblBackupHeatingSetpontDB) > 0.0 ? 
-                unitInfo?.oUnitCompOpt?.dblBackupHeatingSetpontDB : '40');
-
-      // if (unitInfo?.oUnitLayout?.intPreheatCoilHandingId > 0) {
-      setValue(
-        'ddlPreheatCoilHanding',
-        unitInfo?.oUnitLayout?.intPreheatCoilHandingId > 0
-          ? unitInfo?.oUnitLayout?.intPreheatCoilHandingId
-          : getValues('ddlLocation')
-      );
-      // }
-
-      // if (unitInfo?.oUnitCompOpt?.intPreheatElecHeaterInstallationId > 0) {
-      setValue(
-        'ddlPreheatElecHeaterInstall',
-        unitInfo?.oUnitCompOpt?.intPreheatElecHeaterInstallationId > 0
-          ? unitInfo?.oUnitCompOpt?.intPreheatElecHeaterInstallationId
-          : getValues('ddlPreheatElecHeaterInstall')
-      );
-      // }
-
-      // if (unitInfo?.oUnitCompOpt?.intHeatingFluidTypeId > 0) {
-      setValue(
-        'ddlPreheatFluidType',
-        unitInfo?.oUnitCompOpt?.intHeatingFluidTypeId > 0
-          ? unitInfo?.oUnitCompOpt?.intHeatingFluidTypeId
-          : getValues('ddlPreheatFluidType')
-      );
-      // }
-
-      // if (unitInfo?.oUnitCompOpt?.intHeatingFluidConcentId > 0) {
-      setValue(
-        'ddlPreheatFluidConcentration',
-        unitInfo?.oUnitCompOpt?.intHeatingFluidConcentId > 0
-          ? unitInfo?.oUnitCompOpt?.intHeatingFluidConcentId
-          : getValues('ddlPreheatFluidConcentration')
-      );
-      // }
-
-      // if (unitInfo?.oUnitCompOpt?.dblHeatingFluidEntTemp > 0) {
-      setValue(
-        'txbPreheatFluidEntTemp',
-        Number.parseFloat(unitInfo?.oUnitCompOpt?.dblHeatingFluidEntTemp) > 0.0
-          ? unitInfo?.oUnitCompOpt?.dblHeatingFluidEntTemp
-          : '140'
-      );
-      // }
-
-      // if (unitInfo?.oUnitCompOpt?.dblHeatingFluidLvgTemp > 0) {
-      setValue(
-        'txbPreheatFluidLvgTemp',
-        Number.parseFloat(unitInfo?.oUnitCompOpt?.dblHeatingFluidLvgTemp) > 0.0
-          ? unitInfo?.oUnitCompOpt?.dblHeatingFluidLvgTemp
-          : '120'
-      );
-      // }
-
-      // if (unitInfo?.oUnitCompOpt?.intIsPreheatHWCUseCap != null) {
-      setValue(
-        'ckbPreheatHWCUseCap',
-        unitInfo?.oUnitCompOpt?.intIsPreheatHWCUseCap > 0
-          ? unitInfo?.oUnitCompOpt?.intIsPreheatHWCUseCap
-          : 0
-      );
-      // }
-
-      setValue(
-        'txbPreheatHWCCap',
-        Number.parseFloat(unitInfo?.oUnitCompOpt?.dblPreheatHWCCap) > 0.0
-          ? unitInfo?.oUnitCompOpt?.dblPreheatHWCCap
-          : '0'
-      );
-
-      // if (unitInfo?.oUnitCompOpt?.intIsPreheatHWCUseFlowRate != null) {
-      setValue(
-        'ckbPreheatHWCUseFlowRate',
-        unitInfo?.oUnitCompOpt?.intIsPreheatHWCUseFlowRate != null
-          ? unitInfo?.oUnitCompOpt?.intIsPreheatHWCUseFlowRate
-          : 0
-      );
-      // }
-
-      setValue(
-        'txbPreheatHWCFlowRate',
-        Number.parseFloat(unitInfo?.oUnitCompOpt?.dblPreheatHWCFlowRate) > 0.0
-          ? unitInfo?.oUnitCompOpt?.dblPreheatHWCFlowRate
-          : '0'
-      );
-
-      // Cooling
-      // if (unitInfo?.oUnitCompOpt?.intCoolingCompId > 0) {
-      setValue(
-        'ddlCoolingComp',
-        unitInfo?.oUnitCompOpt?.intCoolingCompId > 0
-          ? unitInfo?.oUnitCompOpt?.intCoolingCompId
-          : getValues('ddlCoolingComp')
-      );
-      // }
-
-      setValue(
-        'txbSummerCoolingSetpointDB',
-        Number.parseFloat(unitInfo?.oUnitCompOpt?.dblCoolingSetpointDB) > 0.0
-          ? unitInfo?.oUnitCompOpt?.dblCoolingSetpointDB
-          : '55'
-      );
-      setValue(
-        'txbSummerCoolingSetpointWB',
-        Number.parseFloat(unitInfo?.oUnitCompOpt?.dblCoolingSetpointWB) > 0.0
-          ? unitInfo?.oUnitCompOpt?.dblCoolingSetpointWB
-          : '54'
-      );
-
-      // if (unitInfo?.oUnitCompOpt?.intIsHeatPump > 0 ) {
-      setValue(
-        'ckbHeatPump',
-        unitInfo?.oUnitCompOpt?.intIsHeatPump > 0 ? unitInfo?.oUnitCompOpt?.intIsHeatPump : 0
-      );
-      // }
-
-      // if (unitInfo?.oUnitCompOpt?.intIsDehumidification > 0) {
-      setValue(
-        'ckbDehumidification',
-        unitInfo?.oUnitCompOpt?.intIsDehumidification > 0
-          ? unitInfo?.oUnitCompOpt?.intIsDehumidification
-          : 0
-      );
-      // }
-
-      // if (unitInfo?.oUnitLayout?.intCoolingCoilHandingId > 0) {
-      setValue(
-        'ddlCoolingCoilHanding',
-        unitInfo?.oUnitLayout?.intCoolingCoilHandingId > 0
-          ? unitInfo?.oUnitLayout?.intCoolingCoilHandingId
-          : getValues('ddlCoolingCoilHanding')
-      );
-      // }
-
-      // if (unitInfo?.oUnitCompOpt?.intCoolingFluidTypeId > 0) {
-      setValue(
-        'ddlCoolingFluidType',
-        unitInfo?.oUnitCompOpt?.intCoolingFluidTypeId > 0
-          ? unitInfo?.oUnitCompOpt?.intCoolingFluidTypeId
-          : getValues('ddlCoolingFluidType')
-      );
-      // }
-
-      // if (unitInfo?.oUnitCompOpt?.intCoolingFluidConcentId > 0) {
-      setValue(
-        'ddlCoolingFluidConcentration',
-        unitInfo?.oUnitCompOpt?.intCoolingFluidConcentId > 0
-          ? unitInfo?.oUnitCompOpt?.intCoolingFluidConcentId
-          : getValues('ddlCoolingFluidConcentration')
-      );
-      // }
-
-      // if (unitInfo?.oUnitCompOpt?.dblCoolingFluidEntTemp > 0) {
-      setValue(
-        'txbCoolingFluidEntTemp',
-        Number.parseFloat(unitInfo?.oUnitCompOpt?.dblCoolingFluidEntTemp) > 0.0
-          ? unitInfo?.oUnitCompOpt?.dblCoolingFluidEntTemp
-          : '45'
-      );
-      // }
-
-      // if (unitInfo?.oUnitCompOpt?.dblCoolingFluidLvgTemp > 0) {
-      setValue(
-        'txbCoolingFluidLvgTemp',
-        Number.parseFloat(unitInfo?.oUnitCompOpt?.dblCoolingFluidLvgTemp) > 0.0
-          ? unitInfo?.oUnitCompOpt?.dblCoolingFluidLvgTemp
-          : '55'
-      );
-      // }
-
-      // if (unitInfo?.oUnitCompOpt?.intIsCoolingHWCUseCap != null) {
-      setValue(
-        'ckbCoolingCWCUseCap',
-        unitInfo?.oUnitCompOpt?.intIsCoolingHWCUseCap != null
-          ? unitInfo?.oUnitCompOpt?.intIsCoolingCWCUseCap
-          : 0
-      );
-      // }
-
-      setValue(
-        'txbCoolingCWCCap',
-        Number.parseFloat(unitInfo?.oUnitCompOpt?.dblCoolingWCCap) > 0.0
-          ? unitInfo?.oUnitCompOpt?.dblCoolingWCCap
-          : '0'
-      );
-
-      // if (unitInfo?.oUnitCompOpt?.intIsCoolingCWCUseFlowRate != null) {
-      setValue(
-        'ckbCoolingCWCUseFlowRate',
-        unitInfo?.oUnitCompOpt?.intIsCoolingCWCUseFlowRate != null
-          ? unitInfo?.oUnitCompOpt?.intIsCoolingCWCUseFlowRate
-          : 0
-      );
-      // }
-
-      setValue(
-        'txbCoolingCWCFlowRate',
-        Number.parseFloat(unitInfo?.oUnitCompOpt?.dblCoolingCWCFlowRate) > 0.0
-          ? unitInfo?.oUnitCompOpt?.dblCoolingCWCFlowRate
-          : '0'
-      );
-
-      setValue(
-        'txbRefrigSuctionTemp',
-        Number.parseFloat(unitInfo?.oUnitCompOpt?.dblRefrigSuctionTemp) > 0.0
-          ? unitInfo?.oUnitCompOpt?.dblRefrigSuctionTemp
-          : '43'
-      );
-      setValue(
-        'txbRefrigLiquidTemp',
-        Number.parseFloat(unitInfo?.oUnitCompOpt?.dblRefrigLiquidTemp) > 0.0
-          ? unitInfo?.oUnitCompOpt?.dblRefrigLiquidTemp
-          : '77'
-      );
-      setValue(
-        'txbRefrigSuperheatTemp',
-        Number.parseFloat(unitInfo?.oUnitCompOpt?.dblRefrigSuperheatTemp) > 0.0
-          ? unitInfo?.oUnitCompOpt?.dblRefrigSuperheatTemp
-          : '9'
-      );
-
-      // Heating
-      // if (unitInfo?.oUnitCompOpt?.intHeatingCompId > 0) {
-      setValue(
-        'ddlHeatingComp',
-        unitInfo?.oUnitCompOpt?.intHeatingCompId > 0
-          ? unitInfo?.oUnitCompOpt?.intHeatingCompId
-          : getValues('ddlHeatingComp')
-      );
-      // }
-
-      setValue(
-        'txbWinterHeatingSetpointDB',
-        Number.parseFloat(unitInfo?.oUnitCompOpt?.dblHeatingSetpointDB) > 0.0
-          ? unitInfo?.oUnitCompOpt?.dblHeatingSetpointDB
-          : '72'
-      );
-
-      // if (unitInfo?.oUnitLayout?.intHeatingCoilHandingId > 0) {
-      setValue(
-        'ddlHeatingCoilHanding',
-        unitInfo?.oUnitLayout?.intHeatingCoilHandingId > 0
-          ? unitInfo?.oUnitLayout?.intHeatingCoilHandingId
-          : getValues('ddlHeatingCoilHanding')
-      );
-      // }
-
-      // if (unitInfo?.oUnitCompOpt?.intHeatingElecHeaterInstallationId > 0) {
-      setValue(
-        'ddlHeatingElecHeaterInstall',
-        unitInfo?.oUnitCompOpt?.intHeatingElecHeaterInstallationId > 0
-          ? unitInfo?.oUnitCompOpt?.intHeatingElecHeaterInstallationId
-          : getValues('ddlHeatingElecHeaterInstall')
-      );
-      // }
-
-      // if (unitInfo?.oUnitCompOpt?.intHeatingFluidTypeId > 0) {
-      setValue(
-        'ddlHeatingFluidType',
-        unitInfo?.oUnitCompOpt?.intHeatingFluidTypeId > 0
-          ? unitInfo?.oUnitCompOpt?.intHeatingFluidTypeId
-          : getValues('ddlHeatingFluidType')
-      );
-      // }
-
-      // if (unitInfo?.oUnitCompOpt?.intHeatingFluidConcentId > 0) {
-      setValue(
-        'ddlHeatingFluidConcentration',
-        unitInfo?.oUnitCompOpt?.intHeatingFluidConcentId > 0
-          ? unitInfo?.oUnitCompOpt?.intHeatingFluidConcentId
-          : getValues('ddlHeatingFluidConcentration')
-      );
-      // }
-
-      // if (unitInfo?.oUnitCompOpt?.dblHeatingFluidEntTemp > 0) {
-      setValue(
-        'txbHeatingFluidEntTemp',
-        Number.parseFloat(unitInfo?.oUnitCompOpt?.dblHeatingFluidEntTemp) > 0.0
-          ? unitInfo?.oUnitCompOpt?.dblHeatingFluidEntTemp
-          : '140'
-      );
-      // }
-
-      // if (unitInfo?.oUnitCompOpt?.dblHeatingFluidLvgTemp > 0) {
-      setValue(
-        'txbHeatingFluidLvgTemp',
-        Number.parseFloat(unitInfo?.oUnitCompOpt?.dblHeatingFluidLvgTemp) > 0.0
-          ? unitInfo?.oUnitCompOpt?.dblHeatingFluidLvgTemp
-          : '120'
-      );
-      // }
-
-      // if (unitInfo?.oUnitCompOpt?.intIsHeatingHWCUseCap != null) {
-      setValue(
-        'ckbHeatingHWCUseCap',
-        unitInfo?.oUnitCompOpt?.intIsHeatingHWCUseCap != null
-          ? unitInfo?.oUnitCompOpt?.intIsHeatingHWCUseCap
-          : 0
-      );
-      // }
-
-      setValue(
-        'txbHeatingHWCCap',
-        Number.parseFloat(unitInfo?.oUnitCompOpt?.dblHeatingHWCCap) > 0.0
-          ? unitInfo?.oUnitCompOpt?.dblHeatingHWCCap
-          : '0'
-      );
-
-      // if (unitInfo?.oUnitCompOpt?.intIsHeatingHWCUseFlowRate != null) {
-      setValue(
-        'ckbHeatingHWCUseFlowRate',
-        unitInfo?.oUnitCompOpt?.intIsHeatingHWCUseFlowRate != null
-          ? unitInfo?.oUnitCompOpt?.intIsHeatingHWCUseFlowRate
-          : 0
-      );
-      // }
-
-      setValue(
-        'txbHeatingHWCFlowRate',
-        Number.parseFloat(unitInfo?.oUnitCompOpt?.dblHeatingHWCFlowRate) > 0.0
-          ? unitInfo?.oUnitCompOpt?.dblHeatingHWCFlowRate
-          : '0'
-      );
-
-      // Reheat
-      // if (unitInfo?.oUnitCompOpt?.intReheatCompId > 0) {
-      setValue(
-        'ddlReheatComp',
-        unitInfo?.oUnitCompOpt?.intReheatCompId > 0
-          ? unitInfo?.oUnitCompOpt?.intReheatCompId
-          : getValues('ddlReheatComp')
-      );
-      // }
-
-      setValue(
-        'txbSummerReheatSetpointDB',
-        Number.parseFloat(unitInfo?.oUnitCompOpt?.dblReheatSetpointDB) > 0.0
-          ? unitInfo?.oUnitCompOpt?.dblReheatSetpointDB
-          : '70'
-      );
-
-      // if (unitInfo?.oUnitLayout?.intHeatingCoilHandingId > 0) {
-      setValue(
-        'ddlReheatCoilHanding',
-        unitInfo?.oUnitLayout?.intHeatingCoilHandingId > 0
-          ? unitInfo?.oUnitLayout?.intHeatingCoilHandingId
-          : getValues('ddlReheatCoilHanding')
-      );
-      // }
-
-      // if (unitInfo?.oUnitCompOpt?.intHeatingElecHeaterInstallationId > 0) {
-      setValue(
-        'ddlReheatElecHeaterInstall',
-        unitInfo?.oUnitCompOpt?.intHeatingElecHeaterInstallationId > 0
-          ? unitInfo?.oUnitCompOpt?.intHeatingElecHeaterInstallationId
-          : getValues('ddlReheatElecHeaterInstall')
-      );
-      // }
-
-      // if (unitInfo?.oUnitCompOpt?.intHeatingFluidTypeId > 0) {
-      setValue(
-        'ddlReheatFluidType',
-        unitInfo?.oUnitCompOpt?.intHeatingFluidTypeId > 0
-          ? unitInfo?.oUnitCompOpt?.intHeatingFluidTypeId
-          : getValues('ddlReheatFluidType')
-      );
-      // }
-
-      // if (unitInfo?.oUnitCompOpt?.intHeatingFluidConcentId > 0) {
-      setValue(
-        'ddlReheatFluidConcentration',
-        unitInfo?.oUnitCompOpt?.intHeatingFluidConcentId > 0
-          ? unitInfo?.oUnitCompOpt?.intHeatingFluidConcentId
-          : getValues('ddlReheatFluidConcentration')
-      );
-      // }
-
-      // if (unitInfo?.oUnitCompOpt?.dblHeatingFluidEntTemp > 0) {
-      setValue(
-        'txbReheatFluidEntTemp',
-        Number.parseFloat(unitInfo?.oUnitCompOpt?.dblHeatingFluidEntTemp) > 0.0
-          ? unitInfo?.oUnitCompOpt?.dblHeatingFluidEntTemp
-          : '140'
-      );
-      // }
-
-      // if (unitInfo?.oUnitCompOpt?.dblHeatingFluidLvgTemp > 0) {
-      setValue(
-        'txbReheatFluidLvgTemp',
-        Number.parseFloat(unitInfo?.oUnitCompOpt?.dblHeatingFluidLvgTemp) > 0.0
-          ? unitInfo?.oUnitCompOpt?.dblHeatingFluidLvgTemp
-          : '120'
-      );
-      // }
-
-      // if (unitInfo?.oUnitCompOpt?.intIsReheatHWCUseCap > 0 ? ) {
-      setValue(
-        'ckbReheatHWCUseCap',
-        unitInfo?.oUnitCompOpt?.intIsReheatHWCUseCap > 0
-          ? unitInfo?.oUnitCompOpt?.intIsReheatHWCUseCap
-          : 0
-      );
-      // }
-
-      setValue(
-        'txbReheatHWCCap',
-        Number.parseFloat(unitInfo?.oUnitCompOpt?.dblReheatHWCCap) > 0.0
-          ? unitInfo?.oUnitCompOpt?.dblReheatHWCCap
-          : '0'
-      );
-
-      // if (unitInfo?.oUnitCompOpt?.intIsReheatHWCUseFlowRate > 0 ? ) {
-      setValue(
-        'ckbReheatHWCUseFlowRate',
-        unitInfo?.oUnitCompOpt?.intIsReheatHWCUseFlowRate > 0
-          ? unitInfo?.oUnitCompOpt?.intIsReheatHWCUseFlowRate
-          : 0
-      );
-      // }
-
-      setValue(
-        'txbReheatHWCFlowRate',
-        Number.parseFloat(unitInfo?.oUnitCompOpt?.dblReheatHWCFlowRate) > 0.0
-          ? unitInfo?.oUnitCompOpt?.dblReheatHWCFlowRate
-          : '0'
-      );
-
-      setValue(
-        'txbRefrigCondensingTemp',
-        Number.parseFloat(unitInfo?.oUnitCompOpt?.dblRefrigCondensingTemp) > 0.0
-          ? unitInfo?.oUnitCompOpt?.dblRefrigCondensingTemp
-          : '115'
-      );
-      setValue(
-        'txbRefrigVaporTemp',
-        Number.parseFloat(unitInfo?.oUnitCompOpt?.dblRefrigVaporTemp) > 0.0
-          ? unitInfo?.oUnitCompOpt?.dblRefrigVaporTemp
-          : '140'
-      );
-      setValue(
-        'txbRefrigSubcoolingTemp',
-        Number.parseFloat(unitInfo?.oUnitCompOpt?.dblRefrigSubcoolingTemp) > 0.0
-          ? unitInfo?.oUnitCompOpt?.dblRefrigSubcoolingTemp
-          : '5.4'
-      );
-
-      // if (unitInfo?.oUnitCompOpt?.intDamperAndActuatorId > 0) {
-      setValue(
-        'ddlDamperAndActuator',
-        unitInfo?.oUnitCompOpt?.intDamperAndActuatorId > 0
-          ? unitInfo?.oUnitCompOpt?.intDamperAndActuatorId
-          : getValues('ddlDamperAndActuator')
-      );
-      // }
-
-      // if (unitInfo?.oUnitCompOpt?.intElecHeaterVoltageId > 0) {
-      setValue(
-        'ddlElecHeaterVoltage',
-        unitInfo?.oUnitCompOpt?.intElecHeaterVoltageId > 0
-          ? unitInfo?.oUnitCompOpt?.intElecHeaterVoltageId
-          : getValues('ddlElecHeaterVoltage')
-      );
-      // }
-
-      // if (unitInfo?.oUnitCompOpt?.intIsValveAndActuatorIncluded > 0 ) {
-      setValue(
-        'ckbValveAndActuator',
-        unitInfo?.oUnitCompOpt?.intIsValveAndActuatorIncluded > 0
-          ? unitInfo?.oUnitCompOpt?.intIsValveAndActuatorIncluded
-          : 0
-      );
-      // }
-
-      // if (unitInfo?.oUnitCompOpt?.intValveTypeId > 0) {
-      setValue(
-        'ddlValveType',
-        unitInfo?.oUnitCompOpt?.intValveTypeId > 0
-          ? unitInfo?.oUnitCompOpt?.intValveTypeId
-          : getValues('ddlValveType')
-      );
-      // }
-
-      // if (unitInfo?.oUnitLayout?.intHandingId > 0) {
-      setValue(
-        'ddlHanding',
-        unitInfo?.oUnitLayout?.intHandingId > 0
-          ? unitInfo?.oUnitLayout?.intHandingId
-          : getValues('ddlHanding')
-      );
-      // }
-
-      // if (unitInfo?.oUnitLayout?.intSAOpeningId > 0) {
-      setValue(
-        'ddlSupplyAirOpening',
-        unitInfo?.oUnitLayout?.intSAOpeningId > 0
-          ? unitInfo?.oUnitLayout?.intSAOpeningId
-          : getValues('ddlSupplyAirOpening')
-      );
-      // }
-
-      // if (unitInfo?.oUnitLayout?.intEAOpeningId > 0) {
-      setValue(
-        'ddlExhaustAirOpening',
-        unitInfo?.oUnitLayout?.intEAOpeningId > 0
-          ? unitInfo?.oUnitLayout?.intEAOpeningId
-          : getValues('ddlExhaustAirOpening')
-      );
-      // }
-
-      // if (unitInfo?.oUnitLayout?.intOAOpeningId > 0) {
-      setValue(
-        'ddlOutdoorAirOpening',
-        unitInfo?.oUnitLayout?.intOAOpeningId > 0
-          ? unitInfo?.oUnitLayout?.intOAOpeningId
-          : getValues('ddlOutdoorAirOpening')
-      );
-      // }
-
-      // if (unitInfo?.oUnitLayout?.intRAOpeningId > 0) {
-      setValue(
-        'ddlReturnAirOpening',
-        unitInfo?.oUnitLayout?.intRAOpeningId > 0
-          ? unitInfo?.oUnitLayout?.intRAOpeningId
-          : getValues('ddlReturnAirOpening')
-      );
-      // }
+      setValue('ddlLocation', unitInfo?.oUnitCompOpt?.intHeatingFluidTypeId > 0 ?  unitInfo?.oUnit?.intLocationId : getValues('ddlLocation'));
+
+      setValue('ddlOrientation', unitInfo?.oUnit?.intOrientationId > 0 ?  unitInfo?.oUnit?.intOrientationId : getValues('ddlOrientation'));
+
+      setValue('ddlControlsPref', unitInfo?.oUnit?.intControlsPreferenceId > 0 ?  unitInfo?.oUnit?.intControlsPreferenceId : getValues('ddlControlsPref'));
+
+      setValue('txbSummerSupplyAirCFM', Number(unitInfo?.oUnitAirflow?.intSummerSupplyAirCFM) > 0 ?  unitInfo?.oUnitAirflow?.intSummerSupplyAirCFM : getValues('txbSummerSupplyAirCFM'));
+
+      setValue('txbSummerReturnAirCFM', Number(unitInfo?.oUnitAirflow?.intSummerReturnAirCFM) > 0 ?  unitInfo?.oUnitAirflow?.intSummerReturnAirCFM : getValues('txbSummerReturnAirCFM'));
+
+      setValue('txbSupplyAirESP', Number.parseFloat(unitInfo?.oUnitAirflow?.dblSupplyAirESP) > 0.0 ?  unitInfo?.oUnitAirflow?.dblSupplyAirESP : '0.75');
+
+      setValue('txbExhaustAirESP', Number.parseFloat(unitInfo?.oUnitAirflow?.dblExhaustAirESP) > 0.0 ?  unitInfo?.oUnitAirflow?.dblExhaustAirESP : '0.75');
+
+      setValue('ckbPHI', unitInfo?.oUnit?.intIsPHI > 0 ?  unitInfo?.oUnit?.intIsPHI : 0);
+
+      setValue('ckbBypass', unitInfo?.oUnit?.intIsBypass > 0 ?  unitInfo?.oUnit?.intIsBypass : 0);
+
+      setValue('ddlUnitModel', unitInfo?.oUnit?.intUnitModelId > 0 ?  unitInfo?.oUnit?.intUnitModelId : getValues('ddlUnitModel'));
+
+      setValue('ddlUnitVoltage', unitInfo?.oUnit?.intUnitVoltageId > 0 ?  unitInfo?.oUnit?.intUnitVoltageId : getValues('ddlUnitVoltage'));
+
+      setValue('ckbVoltageSPP', unitInfo?.oUnit?.intIsVoltageSPP > 0 ?  unitInfo?.oUnit?.intIsVoltageSPP : 0);
+      
+      setValue('ddlOA_FilterModel', unitInfo?.oCompOpt?.intOAFilterModelId > 0 ?  unitInfo?.oCompOpt?.intOAFilterModelId : getValues('ddlOA_FilterModel'));
+
+      setValue('ddlRA_FilterModel', unitInfo?.oCompOpt?.intRAFilterModelId > 0 ?  unitInfo?.oCompOpt?.intRAFilterModelId : getValues('ddlRA_FilterModel'));
+
+      setValue('ddlPreheatComp', unitInfo?.oUnitCompOpt?.intPreheatCompId > 0 ?  unitInfo?.oUnitCompOpt?.intPreheatCompId : getValues('ddlPreheatComp'));
+
+      setValue('txbWinterPreheatSetpointDB', Number.parseFloat(unitInfo?.oUnitCompOpt?.dblPreheatSetpointDB) > 0.0 ?  unitInfo?.oUnitCompOpt?.dblPreheatSetpointDB : '40');
+
+      setValue('ckbBackupHeating', unitInfo?.oUnitCompOpt?.intIsBackupHeating > 0 ?  unitInfo?.oUnitCompOpt?.intIsBackupHeating : 0);
+
+      setValue('txbBackupHeatingSetpointDB', Number.parseFloat(unitInfo?.oUnitCompOpt?.dblBackupHeatingSetpontDB) > 0.0 ?  unitInfo?.oUnitCompOpt?.dblBackupHeatingSetpontDB : '40');
+
+      setValue('ddlPreheatCoilHanding',unitInfo?.oUnitLayout?.intPreheatCoilHandingId > 0 ?  unitInfo?.oUnitLayout?.intPreheatCoilHandingId : getValues('ddlLocation'));
+
+      setValue('ddlPreheatElecHeaterInstall', unitInfo?.oUnitCompOpt?.intPreheatElecHeaterInstallationId > 0 ? unitInfo?.oUnitCompOpt?.intPreheatElecHeaterInstallationId : getValues('ddlPreheatElecHeaterInstall'));
+
+      setValue('ddlPreheatFluidType', unitInfo?.oUnitCompOpt?.intHeatingFluidTypeId > 0 ? unitInfo?.oUnitCompOpt?.intHeatingFluidTypeId : getValues('ddlPreheatFluidType'));
+
+      setValue('ddlPreheatFluidConcentration', unitInfo?.oUnitCompOpt?.intHeatingFluidConcentId > 0 ? unitInfo?.oUnitCompOpt?.intHeatingFluidConcentId : getValues('ddlPreheatFluidConcentration'));
+
+      setValue('txbPreheatFluidEntTemp', Number.parseFloat(unitInfo?.oUnitCompOpt?.dblHeatingFluidEntTemp) > 0.0 ? unitInfo?.oUnitCompOpt?.dblHeatingFluidEntTemp : '140');
+
+      setValue('txbPreheatFluidLvgTemp', Number.parseFloat(unitInfo?.oUnitCompOpt?.dblHeatingFluidLvgTemp) > 0.0 ? unitInfo?.oUnitCompOpt?.dblHeatingFluidLvgTemp : '120');
+
+      setValue('ckbPreheatHWCUseCap', unitInfo?.oUnitCompOpt?.intIsPreheatHWCUseCap > 0 ? unitInfo?.oUnitCompOpt?.intIsPreheatHWCUseCap : 0);
+
+      setValue('txbPreheatHWCCap', Number.parseFloat(unitInfo?.oUnitCompOpt?.dblPreheatHWCCap) > 0.0 ? unitInfo?.oUnitCompOpt?.dblPreheatHWCCap : '0');
+
+      setValue('ckbPreheatHWCUseFlowRate', unitInfo?.oUnitCompOpt?.intIsPreheatHWCUseFlowRate != null ? unitInfo?.oUnitCompOpt?.intIsPreheatHWCUseFlowRate : 0);
+
+      setValue('txbPreheatHWCFlowRate', Number.parseFloat(unitInfo?.oUnitCompOpt?.dblPreheatHWCFlowRate) > 0.0 ? unitInfo?.oUnitCompOpt?.dblPreheatHWCFlowRate : '0');
+
+      setValue('ddlCoolingComp', unitInfo?.oUnitCompOpt?.intCoolingCompId > 0 ? unitInfo?.oUnitCompOpt?.intCoolingCompId : getValues('ddlCoolingComp'));
+
+      setValue('txbSummerCoolingSetpointDB', Number.parseFloat(unitInfo?.oUnitCompOpt?.dblCoolingSetpointDB) > 0.0 ? unitInfo?.oUnitCompOpt?.dblCoolingSetpointDB : '55');
+
+      setValue('txbSummerCoolingSetpointWB', Number.parseFloat(unitInfo?.oUnitCompOpt?.dblCoolingSetpointWB) > 0.0 ?  unitInfo?.oUnitCompOpt?.dblCoolingSetpointWB : '54');
+
+      setValue('ckbHeatPump', unitInfo?.oUnitCompOpt?.intIsHeatPump > 0 ? unitInfo?.oUnitCompOpt?.intIsHeatPump : 0 );
+
+      setValue('ckbDehumidification', unitInfo?.oUnitCompOpt?.intIsDehumidification > 0 ? unitInfo?.oUnitCompOpt?.intIsDehumidification : 0);
+
+      setValue('ddlCoolingCoilHanding', unitInfo?.oUnitLayout?.intCoolingCoilHandingId > 0 ? unitInfo?.oUnitLayout?.intCoolingCoilHandingId : getValues('ddlCoolingCoilHanding'));
+
+      setValue('ddlCoolingFluidType', unitInfo?.oUnitCompOpt?.intCoolingFluidTypeId > 0 ? unitInfo?.oUnitCompOpt?.intCoolingFluidTypeId: getValues('ddlCoolingFluidType'));
+
+      setValue('ddlCoolingFluidConcentration', unitInfo?.oUnitCompOpt?.intCoolingFluidConcentId > 0 ? unitInfo?.oUnitCompOpt?.intCoolingFluidConcentId : getValues('ddlCoolingFluidConcentration'));
+
+      setValue('txbCoolingFluidEntTemp', Number.parseFloat(unitInfo?.oUnitCompOpt?.dblCoolingFluidEntTemp) > 0.0 ? unitInfo?.oUnitCompOpt?.dblCoolingFluidEntTemp : '45');
+
+      setValue('txbCoolingFluidLvgTemp', Number.parseFloat(unitInfo?.oUnitCompOpt?.dblCoolingFluidLvgTemp) > 0.0 ? unitInfo?.oUnitCompOpt?.dblCoolingFluidLvgTemp : '55');
+
+      setValue('ckbCoolingCWCUseCap', unitInfo?.oUnitCompOpt?.intIsCoolingHWCUseCap != null ? unitInfo?.oUnitCompOpt?.intIsCoolingCWCUseCap : 0);
+
+      setValue('txbCoolingCWCCap', Number.parseFloat(unitInfo?.oUnitCompOpt?.dblCoolingWCCap) > 0.0 ? unitInfo?.oUnitCompOpt?.dblCoolingWCCap : '0');
+
+      setValue('ckbCoolingCWCUseFlowRate', unitInfo?.oUnitCompOpt?.intIsCoolingCWCUseFlowRate != null ? unitInfo?.oUnitCompOpt?.intIsCoolingCWCUseFlowRate : 0);
+
+      setValue('txbCoolingCWCFlowRate', Number.parseFloat(unitInfo?.oUnitCompOpt?.dblCoolingCWCFlowRate) > 0.0 ? unitInfo?.oUnitCompOpt?.dblCoolingCWCFlowRate : '0');
+
+      setValue('txbRefrigSuctionTemp', Number.parseFloat(unitInfo?.oUnitCompOpt?.dblRefrigSuctionTemp) > 0.0 ? unitInfo?.oUnitCompOpt?.dblRefrigSuctionTemp: '43');
+
+      setValue('txbRefrigLiquidTemp', Number.parseFloat(unitInfo?.oUnitCompOpt?.dblRefrigLiquidTemp) > 0.0 ? unitInfo?.oUnitCompOpt?.dblRefrigLiquidTemp : '77');
+
+      setValue('txbRefrigSuperheatTemp', Number.parseFloat(unitInfo?.oUnitCompOpt?.dblRefrigSuperheatTemp) > 0.0 ? unitInfo?.oUnitCompOpt?.dblRefrigSuperheatTemp : '9');
+
+      setValue('ddlHeatingComp', unitInfo?.oUnitCompOpt?.intHeatingCompId > 0 ? unitInfo?.oUnitCompOpt?.intHeatingCompId : getValues('ddlHeatingComp'));
+
+      setValue('txbWinterHeatingSetpointDB', Number.parseFloat(unitInfo?.oUnitCompOpt?.dblHeatingSetpointDB) > 0.0 ? unitInfo?.oUnitCompOpt?.dblHeatingSetpointDB  : '72');
+
+      setValue('ddlHeatingCoilHanding', unitInfo?.oUnitLayout?.intHeatingCoilHandingId > 0 ? unitInfo?.oUnitLayout?.intHeatingCoilHandingId : getValues('ddlHeatingCoilHanding'));
+
+      setValue('ddlHeatingElecHeaterInstall', unitInfo?.oUnitCompOpt?.intHeatingElecHeaterInstallationId > 0 ? unitInfo?.oUnitCompOpt?.intHeatingElecHeaterInstallationId : getValues('ddlHeatingElecHeaterInstall'));
+
+      setValue('ddlHeatingFluidType', unitInfo?.oUnitCompOpt?.intHeatingFluidTypeId > 0 ? unitInfo?.oUnitCompOpt?.intHeatingFluidTypeId : getValues('ddlHeatingFluidType'));
+
+      setValue('ddlHeatingFluidConcentration', unitInfo?.oUnitCompOpt?.intHeatingFluidConcentId > 0 ? unitInfo?.oUnitCompOpt?.intHeatingFluidConcentId : getValues('ddlHeatingFluidConcentration'));
+
+      setValue('txbHeatingFluidEntTemp', Number.parseFloat(unitInfo?.oUnitCompOpt?.dblHeatingFluidEntTemp) > 0.0 ? unitInfo?.oUnitCompOpt?.dblHeatingFluidEntTemp : '140');
+
+      setValue('txbHeatingFluidLvgTemp', Number.parseFloat(unitInfo?.oUnitCompOpt?.dblHeatingFluidLvgTemp) > 0.0 ? unitInfo?.oUnitCompOpt?.dblHeatingFluidLvgTemp : '120');
+
+      setValue('ckbHeatingHWCUseCap', unitInfo?.oUnitCompOpt?.intIsHeatingHWCUseCap != null ? unitInfo?.oUnitCompOpt?.intIsHeatingHWCUseCap : 0);
+
+      setValue('txbHeatingHWCCap', Number.parseFloat(unitInfo?.oUnitCompOpt?.dblHeatingHWCCap) > 0.0 ? unitInfo?.oUnitCompOpt?.dblHeatingHWCCap : '0');
+
+      setValue('ckbHeatingHWCUseFlowRate', unitInfo?.oUnitCompOpt?.intIsHeatingHWCUseFlowRate != null ? unitInfo?.oUnitCompOpt?.intIsHeatingHWCUseFlowRate : 0);
+
+      setValue('txbHeatingHWCFlowRate', Number.parseFloat(unitInfo?.oUnitCompOpt?.dblHeatingHWCFlowRate) > 0.0 ? unitInfo?.oUnitCompOpt?.dblHeatingHWCFlowRate : '0');
+
+      setValue('ddlReheatComp', unitInfo?.oUnitCompOpt?.intReheatCompId > 0 ? unitInfo?.oUnitCompOpt?.intReheatCompId : getValues('ddlReheatComp'));
+
+      setValue('txbSummerReheatSetpointDB', Number.parseFloat(unitInfo?.oUnitCompOpt?.dblReheatSetpointDB) > 0.0 ? unitInfo?.oUnitCompOpt?.dblReheatSetpointDB : '70');
+
+      setValue('ddlReheatCoilHanding', unitInfo?.oUnitLayout?.intHeatingCoilHandingId > 0 ? unitInfo?.oUnitLayout?.intHeatingCoilHandingId : getValues('ddlReheatCoilHanding'));
+
+      setValue('ddlReheatElecHeaterInstall', unitInfo?.oUnitCompOpt?.intHeatingElecHeaterInstallationId > 0 ? unitInfo?.oUnitCompOpt?.intHeatingElecHeaterInstallationId : getValues('ddlReheatElecHeaterInstall'));
+
+      setValue('ddlReheatFluidType', unitInfo?.oUnitCompOpt?.intHeatingFluidTypeId > 0 ?  unitInfo?.oUnitCompOpt?.intHeatingFluidTypeId : getValues('ddlReheatFluidType'));
+
+      setValue('ddlReheatFluidConcentration', unitInfo?.oUnitCompOpt?.intHeatingFluidConcentId > 0 ?  unitInfo?.oUnitCompOpt?.intHeatingFluidConcentId : getValues('ddlReheatFluidConcentration'));
+
+      setValue('txbReheatFluidEntTemp', Number.parseFloat(unitInfo?.oUnitCompOpt?.dblHeatingFluidEntTemp) > 0.0 ?  unitInfo?.oUnitCompOpt?.dblHeatingFluidEntTemp : '140');
+
+      setValue('txbReheatFluidLvgTemp', Number.parseFloat(unitInfo?.oUnitCompOpt?.dblHeatingFluidLvgTemp) > 0.0 ?  unitInfo?.oUnitCompOpt?.dblHeatingFluidLvgTemp : '120');
+
+      setValue('ckbReheatHWCUseCap', unitInfo?.oUnitCompOpt?.intIsReheatHWCUseCap > 0 ?  unitInfo?.oUnitCompOpt?.intIsReheatHWCUseCap : 0);
+
+      setValue('txbReheatHWCCap', Number.parseFloat(unitInfo?.oUnitCompOpt?.dblReheatHWCCap) > 0.0 ?  unitInfo?.oUnitCompOpt?.dblReheatHWCCap : '0');
+
+      setValue('ckbReheatHWCUseFlowRate', unitInfo?.oUnitCompOpt?.intIsReheatHWCUseFlowRate > 0 ?  unitInfo?.oUnitCompOpt?.intIsReheatHWCUseFlowRate : 0);
+
+      setValue('txbReheatHWCFlowRate', Number.parseFloat(unitInfo?.oUnitCompOpt?.dblReheatHWCFlowRate) > 0.0 ?  unitInfo?.oUnitCompOpt?.dblReheatHWCFlowRate : '0');
+
+      setValue('txbRefrigCondensingTemp', Number.parseFloat(unitInfo?.oUnitCompOpt?.dblRefrigCondensingTemp) > 0.0  ? unitInfo?.oUnitCompOpt?.dblRefrigCondensingTemp : '115');
+
+      setValue('txbRefrigVaporTemp', Number.parseFloat(unitInfo?.oUnitCompOpt?.dblRefrigVaporTemp) > 0.0 ?  unitInfo?.oUnitCompOpt?.dblRefrigVaporTemp : '140');
+
+      setValue('txbRefrigSubcoolingTemp', Number.parseFloat(unitInfo?.oUnitCompOpt?.dblRefrigSubcoolingTemp) > 0.0 ?  unitInfo?.oUnitCompOpt?.dblRefrigSubcoolingTemp : '5.4');
+
+      setValue('ddlDamperAndActuator', unitInfo?.oUnitCompOpt?.intDamperAndActuatorId > 0 ?  unitInfo?.oUnitCompOpt?.intDamperAndActuatorId : getValues('ddlDamperAndActuator'));
+
+      setValue('ddlElecHeaterVoltage', unitInfo?.oUnitCompOpt?.intElecHeaterVoltageId > 0 ?  unitInfo?.oUnitCompOpt?.intElecHeaterVoltageId : getValues('ddlElecHeaterVoltage'));
+
+      setValue('ckbValveAndActuator', unitInfo?.oUnitCompOpt?.intIsValveAndActuatorIncluded > 0 ?  unitInfo?.oUnitCompOpt?.intIsValveAndActuatorIncluded : 0);
+
+      setValue('ddlValveType', unitInfo?.oUnitCompOpt?.intValveTypeId > 0 ?  unitInfo?.oUnitCompOpt?.intValveTypeId: getValues('ddlValveType'));
+
+      setValue('ddlHanding', unitInfo?.oUnitLayout?.intHandingId > 0 ?  unitInfo?.oUnitLayout?.intHandingId : getValues('ddlHanding'));
+
+      setValue('ddlSupplyAirOpening', unitInfo?.oUnitLayout?.intSAOpeningId > 0 ?  unitInfo?.oUnitLayout?.intSAOpeningId : getValues('ddlSupplyAirOpening'));
+
+      setValue('ddlExhaustAirOpening', unitInfo?.oUnitLayout?.intEAOpeningId > 0 ?  unitInfo?.oUnitLayout?.intEAOpeningId : getValues('ddlExhaustAirOpening'));
+
+      setValue('ddlOutdoorAirOpening', unitInfo?.oUnitLayout?.intOAOpeningId > 0 ?  unitInfo?.oUnitLayout?.intOAOpeningId : getValues('ddlOutdoorAirOpening'));
+
+      setValue('ddlReturnAirOpening', unitInfo?.oUnitLayout?.intRAOpeningId > 0 ?  unitInfo?.oUnitLayout?.intRAOpeningId : getValues('ddlReturnAirOpening'));
     }
   }, []); // <-- empty dependency array - This will only trigger when the component mounts and no-render
 
@@ -4815,6 +4199,40 @@ export default function UnitInfoForm({
     return intSummerReturnAirCFM;
   };
 
+//   const ckbPHIChange = useCallback((e: any) => {
+//     setValue('ckbPHI', Number(e.target.checked));
+
+//     if (Number(getValues('ckbPHI')) === 1) {
+//       setValue('ckbBypass', 1);
+//     }
+//   },[]
+// )
+
+
+// const ckbPHIChange = useCallback((e: any) => {
+//     setValue('ckbPHI', Number(e.target.value));
+
+//     if (Number(getValues('ckbPHI')) === 1) {
+//       setValue('ckbBypass', 1);
+//     };
+//   },[]
+// );
+
+
+// useEffect(() => {
+//   switch (Number(getValues('ckbPHI'))) {
+//     case 1:
+//       setValue('ckbBypass', 1);
+//       break;
+//     case 0:
+//       setValue('ckbBypass', 0);
+//       break;
+//     default:
+//       break;
+//   };
+
+// }, [getValues('ckbPHI')]);
+
 
   const getUMC = () => {
     let umc;
@@ -4850,59 +4268,12 @@ export default function UnitInfoForm({
     return umc
   };
 
-
-
-
-  // const [umcInfo, setUMCInfo] = useState<any>([]);
-  // useEffect(() => {
-  //   // const info: { umc: any; } = {
-  //   //   umc: [],
-  //   // };
-
-  //   // if (!formValues.ddlUnitModel || formValues.ddlUnitModel === '')
-  //   //   return { strUnitModelValue: '' };
-
-  //   let fdtUnitModel = [];
-
-  //   if (Number(getValues('ddlUnitModel')) > 0) {
-  //   switch (Number(intProductTypeID)) {
-  //     case IDs.intProdTypeIdNova:
-  //       fdtUnitModel = db.dbtSelNovaUnitModel;
-  //       break;
-  //     case IDs.intProdTypeIdVentum:
-  //       fdtUnitModel = db.dbtSelVentumHUnitModel;
-  //       break;
-  //     case IDs.intProdTypeIdVentumLite:
-  //       fdtUnitModel = db.dbtSelVentumLiteUnitModel;
-  //       break;
-  //     case IDs.intProdTypeIdVentumPlus:
-  //       fdtUnitModel = db.dbtSelVentumPlusUnitModel;
-  //       break;
-  //     case IDs.intProdTypeIdTerra:
-  //       fdtUnitModel = db.dbtSelTerraUnitModel;
-  //       break;
-  //     default:
-  //       break;
-  //   }
-
-  //   const unitModelValue = fdtUnitModel?.filter((item: {id: number}) => item.id === Number(getValues('ddlUnitModel')))?.[0]?.value;
-
-  //   const umc = getUnitModelCodes(unitModelValue, intProductTypeID, intUnitTypeID, getValues('ddlLocation'),
-  //                                 getValues('ddlOrientation'), Number(getValues('ckbBypass')), db);
-  //    setUMCInfo(umc);
-  //   }
-
-  // }, [db, intProductTypeID, intUnitTypeID, getValues('txbSummerSupplyAirCFM'), getValues('ddlUnitModel'), getValues('ddlLocation'), getValues('ddlOrientation'),
-  //     getValues('ckbBypass')]);
-
-
-
-
+// ------------------------------------------------------------------------------------------------------------------------------------------------
 
   return (
     <FormProvider methods={methods} onSubmit={handleSubmit(onSubmit)}>
       <Stack spacing={2} sx={{ marginBottom: '150px' }}>
-        {edit ? (
+        {Number(unitId) > 0 ? (
           <Stack direction="row" alignContent="center" justifyContent="center">
             <Typography variant="h3" color="primary.main">
               {getValues('txtTag')}
@@ -4911,7 +4282,7 @@ export default function UnitInfoForm({
         ) : (
           <Stack direction="row" alignContent="center" justifyContent="center">
             <Typography variant="h3" color="primary.main">
-              {txbProductType || ''}/{txbUnitType || ''}
+              {unitTypeData?.txbProductType || ''}/{unitTypeData?.txbUnitType || ''}
             </Typography>
           </Stack>
         )}
@@ -5093,23 +4464,25 @@ export default function UnitInfoForm({
                   <RHFCheckbox
                     label={`Passive House Certification: `}
                     name="ckbPHI"
-                    sx={getDisplay(intProductTypeID === IDs.intProdTypeIdVentumPlus)}
+                    sx={getDisplay(phiIsVisible)}
                     // sx={{color: ckbBypassInfo.text !== '' ? colors.red[500] : 'text.primary', size: 'small', }}
-                    checked={formValues.ckbBypass}
-                    // onChange={() => setCkbBypassVal(!formValues.ckbBypassVal)}
-                    onChange={(e: any) => {
-                      setValue('ckbPHI', Number(e.target.checked));
-                    }}
+                    // checked={phiInfo?.isChecked}
+                    // disabled={!phiInfo?.isEnabled}
+                    onChange={(e: any) => setValue('ckbPHI', Number(e.target.checked))}
+
+                    // onChange={ckbPHIOnChange}
                   />
                   <RHFCheckbox
-                    label={`Bypass for Economizer: ${bypassInfo?.bypassMsg}`}
+                    label={`Bypass for Economizer: ${bypassMsg}`}
                     name="ckbBypass"
-                    sx={getDisplay(bypassInfo?.isVisible)}
+                    sx={getDisplay(bypassIsVisible)}
                     // sx={{color: ckbBypassInfo.text !== '' ? colors.red[500] : 'text.primary', size: 'small', }}
-                    checked={bypassInfo?.isChecked}
+                    checked={bypassIsChecked}
+                    disabled={!bypassIsEnabled}
                     // onChange={() => setCkbBypassVal(!formValues.ckbBypassVal)}
-                    onChange={(e: any) => {setValue('ckbBypass', Number(e.target.checked));}}
-                    disabled={!bypassInfo?.isEnabled}
+                    onChange={(e: any) => setValue('ckbBypass', Number(e.target.checked))}
+
+                    // onChange={ckbBypassOnChange}
                   />
                   {/* }
                     label={`Bypass for Economizer: ${ckbBypassInfo.text}`}
@@ -5148,8 +4521,8 @@ export default function UnitInfoForm({
                   <RHFCheckbox
                     label="Single Point Power Connection"
                     name="ckbVoltageSPP"
-                    checked={formValues.ckbVoltageSPP}
-                    onChange={(e: any) => setValue('ckbVoltageSPP', Number(e.target.checked))}
+                    // checked={}
+                    onChange={(e: any) => ckbVoltageSPPOnChange}
                     sx={getDisplay(
                       intProductTypeID === IDs.intProdTypeIdNova ||
                         intProductTypeID === IDs.intProdTypeIdVentum ||
@@ -5191,7 +4564,7 @@ export default function UnitInfoForm({
                   <RHFCheckbox
                     label="Mixing Section"
                     name="ckbMixingBox"
-                    checked={formValues.ckbVoltageSPP}
+                    // checked={formValues.ckbVoltageSPP}
                     onChange={(e: any) => setValue('ckbMixingBox', Number(e.target.checked))}
                     sx={getDisplay(intProductTypeID === IDs.intProdTypeIdTerra)}
                   />                
@@ -5614,7 +4987,7 @@ export default function UnitInfoForm({
                     // sx={getDisplay()}
                     onChange={(e: any) => setValue('ddlPreheatElecHeaterInstall', Number(e.target.value))}
                   >
-                    {preheatElecHeaterInfo?.fdtElecHeaterInstall?.map(
+                    {preheatElecHeaterInstallInfo?.fdtElecHeaterInstall?.map(
                       (item: any, index: number) => (
                         <option key={index} value={item.id}>
                           {item.items}
@@ -6048,7 +5421,7 @@ export default function UnitInfoForm({
                   ...getDisplay(Number(formValues.ddlHeatingComp) === IDs.intCompIdElecHeater),
                 }}
               >
-                {isAvailable(heatingElecHeaterInfo?.fdtElecHeaterInstall) && (
+                {isAvailable(heatingElecHeaterInstallInfo?.fdtElecHeaterInstall) && (
                   <RHFSelect
                     native
                     label="Heating Elec. Heater Installation"
@@ -6057,7 +5430,7 @@ export default function UnitInfoForm({
                     placeholder=""
                     // onChange={(e: any) => setValue('ddlHeatingElecHeaterInstall', Number(e.target.value)) }
                   >
-                    {heatingElecHeaterInfo?.fdtElecHeaterInstall?.map(
+                    {heatingElecHeaterInstallInfo?.fdtElecHeaterInstall?.map(
                       (item: any, index: number) => (
                         <option key={index} value={item.id}>
                           {item.items}
@@ -6244,7 +5617,7 @@ export default function UnitInfoForm({
                 spacing={1}
                 sx={{ ...getDisplay(Number(formValues.ddlReheatComp) === IDs.intCompIdElecHeater) }}
               >
-                {isAvailable(heatingElecHeaterInfo?.fdtElecHeaterInstall) && (
+                {isAvailable(heatingElecHeaterInstallInfo?.fdtElecHeaterInstall) && (
                   <RHFSelect
                     native
                     size="small"
@@ -6253,7 +5626,7 @@ export default function UnitInfoForm({
                     // onChange={(e: any) => setValue('ddlReheatElecHeaterInstall', Number(e.target.value))}
                     placeholder=""
                   >
-                    {heatingElecHeaterInfo?.fdtElecHeaterInstall?.map(
+                    {heatingElecHeaterInstallInfo?.fdtElecHeaterInstall?.map(
                       (item: any, index: number) => (
                         <option key={index} value={item.id}>
                           {item.items}
@@ -6450,11 +5823,11 @@ export default function UnitInfoForm({
                     name="ddlElecHeaterVoltage"
                     label="Elec. Heater Voltage"
                     placeholder=""
-                    sx={getDisplay(elecHeaterVoltageInfo?.isVisible)}
-                    // disabled={elecHeaterVoltageInfo?.isEnabled}
+                    sx={getDisplay(elecHeaterVoltageIsVisible)}
+                    disabled={!elecHeaterVoltageIsEnabled}
                     onChange={ddlElecHeaterVoltageChanged}
                   >
-                    {elecHeaterVoltageInfo?.fdtElecHeaterVoltage?.map(
+                    {elecHeaterVoltageTable?.map(
                       (item: any, index: number) => (
                         <option key={index} value={item.id}>
                           {item.items}

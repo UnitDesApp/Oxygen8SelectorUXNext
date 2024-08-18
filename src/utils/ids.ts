@@ -150,6 +150,8 @@ export const intCustomerTypeIdRep = 4;
 export const intCustomerTypeIdSpecifying = 5;
 export const intCustomerIdTypeIdCertFirm = 6;
 
+export const intCustomerIdOxygen8 = 3;
+export const intCustomerIdPHI = 219;
 
 export const intUserIdAdmin = 1; // ID
 export const intUserIdDorothy = 8;

@@ -160,6 +160,7 @@ export default function EditSelection() {
             {null}
           </Grid>
           <Grid item xs={2} textAlign="center" alignContent="right">
+          {null}
           </Grid>
         </Grid>
       </FooterStepStyle>

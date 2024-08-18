@@ -123,7 +123,7 @@ export default function EditUnit() {
                     name: 'Dashboard',
                     href: PATH_APP.projectDashboard(projectId?.toString() || '', 'unitlist'),
                   },
-                  { name: 'Edit Unit' },
+                  { name: Number(unitId) === 0 ? 'New Unit' : 'Edit Unit' },
                 ]}
                 sx={{ paddingLeft: '24px', paddingTop: '24px' }}
                 action={
