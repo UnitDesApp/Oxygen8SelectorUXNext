@@ -151,7 +151,8 @@ export default function Project() {
         <title> Project | Oxygen8 </title>
       </Head>
 
-      <Container maxWidth={themeStretch ? false : 'xl'}>
+      {/* <Container maxWidth={themeStretch ? false : 'xl'}> */}
+      <Container style={{maxWidth:"100%"}} >
         <Typography sx={{ textAlign: 'center', fontSize: '28px', mt: '4px' }}>
           {projectName && projectName}
         </Typography>
@@ -189,7 +190,7 @@ export default function Project() {
         >
           {TABS.map((tabItem) => (
             <Tab
-              disableRipple
+                        disableRipple
               key={tabItem.value}
               label={capitalCase(tabItem.title)}
               value={tabItem.value}
