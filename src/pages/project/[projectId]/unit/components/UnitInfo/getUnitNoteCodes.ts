@@ -78,18 +78,12 @@ export const getUnitModelCodes = (
     case ClsID.intUnitTypeIdERV:
       strUnitModelUnitTypeValue = strUnitModelUnitTypeValue?.replace('_HRV', '');
       strUnitModelLocUnitTypeBypassValue = strUnitModelLocUnitTypeBypassValue?.replace('_HRV', '');
-      strUnitModelOriLocUnitTypeBypassValue = strUnitModelOriLocUnitTypeBypassValue?.replace(
-        '_HRV',
-        ''
-      );
+      strUnitModelOriLocUnitTypeBypassValue = strUnitModelOriLocUnitTypeBypassValue?.replace('_HRV', '');
       break;
     case ClsID.intUnitTypeIdHRV:
       strUnitModelUnitTypeValue = strUnitModelUnitTypeValue?.replace('_ERV', '');
       strUnitModelLocUnitTypeBypassValue = strUnitModelLocUnitTypeBypassValue?.replace('_ERV', '');
-      strUnitModelOriLocUnitTypeBypassValue = strUnitModelOriLocUnitTypeBypassValue?.replace(
-        '_ERV',
-        ''
-      );
+      strUnitModelOriLocUnitTypeBypassValue = strUnitModelOriLocUnitTypeBypassValue?.replace('_ERV', '');
       break;
     default:
       break;
@@ -101,20 +95,14 @@ export const getUnitModelCodes = (
       strUnitModelOriLocValue = strUnitModelOriLocValue?.replace('_OU', '');
       strUnitModelLocBypassValue = strUnitModelLocBypassValue?.replace('_OU', '');
       strUnitModelLocUnitTypeBypassValue = strUnitModelLocUnitTypeBypassValue?.replace('_OU', '');
-      strUnitModelOriLocUnitTypeBypassValue = strUnitModelOriLocUnitTypeBypassValue?.replace(
-        '_OU',
-        ''
-      );
+      strUnitModelOriLocUnitTypeBypassValue = strUnitModelOriLocUnitTypeBypassValue?.replace('_OU', '');
       break;
     case ClsID.intLocationIdOutdoor:
       strUnitModelLocValue = strUnitModelLocValue?.replace('_IN', '');
       strUnitModelOriLocValue = strUnitModelOriLocValue?.replace('_IN', '');
       strUnitModelLocBypassValue = strUnitModelLocBypassValue?.replace('_IN', '');
       strUnitModelLocUnitTypeBypassValue = strUnitModelLocUnitTypeBypassValue?.replace('_IN', '');
-      strUnitModelOriLocUnitTypeBypassValue = strUnitModelOriLocUnitTypeBypassValue?.replace(
-        '_IN',
-        ''
-      );
+      strUnitModelOriLocUnitTypeBypassValue = strUnitModelOriLocUnitTypeBypassValue?.replace('_IN', '');
       break;
     default:
       break;
@@ -125,19 +113,13 @@ export const getUnitModelCodes = (
       strUnitModelOriValue = strUnitModelOriValue?.replace('_VER', '');
       strUnitModelOriBypassValue = strUnitModelOriBypassValue?.replace('_VER', '');
       strUnitModelOriLocValue = strUnitModelOriLocValue?.replace('_VER', '');
-      strUnitModelOriLocUnitTypeBypassValue = strUnitModelOriLocUnitTypeBypassValue?.replace(
-        '_VER',
-        ''
-      );
+      strUnitModelOriLocUnitTypeBypassValue = strUnitModelOriLocUnitTypeBypassValue?.replace('_VER', '');
       break;
     case ClsID.intOrientationIdVertical:
       strUnitModelOriValue = strUnitModelOriValue?.replace('_HOR', '');
       strUnitModelOriBypassValue = strUnitModelOriBypassValue?.replace('_VER', '');
       strUnitModelOriLocValue = strUnitModelOriLocValue?.replace('_HOR', '');
-      strUnitModelOriLocUnitTypeBypassValue = strUnitModelOriLocUnitTypeBypassValue?.replace(
-        '_HOR',
-        ''
-      );
+      strUnitModelOriLocUnitTypeBypassValue = strUnitModelOriLocUnitTypeBypassValue?.replace('_HOR', '');
       break;
     default:
       break;
@@ -147,23 +129,19 @@ export const getUnitModelCodes = (
     strUnitModelLocBypassValue = strUnitModelLocBypassValue?.replace('_BP', '');
     strUnitModelOriBypassValue = strUnitModelOriBypassValue?.replace('_BP', '');
     strUnitModelLocUnitTypeBypassValue = strUnitModelLocUnitTypeBypassValue?.replace('_BP', '');
-    strUnitModelOriLocUnitTypeBypassValue = strUnitModelOriLocUnitTypeBypassValue?.replace(
-      '_BP',
-      ''
-    );
+    strUnitModelOriLocUnitTypeBypassValue = strUnitModelOriLocUnitTypeBypassValue?.replace('_BP', '');
   }
 
   if (_intUnitProdId === ClsID.intProdTypeIdNova && _intIsBypass === 1) {
-    const dtModelBypassAccs = data.novaUnitModelBypass.filter(
+    const dtModelBypassAccs = data.novaUnitModelBypass?.filter(
       (item: any) => item.unit_model_value === strUnitModelLocValue
     );
 
     if (dtModelBypassAccs && dtModelBypassAccs?.length > 0) {
-      strUnitModelValueNovaBypass = dtModelBypassAccs[0].model_bypass_dwg_code.ToString();
-      strUnitModelValueNovaBypassAccCoupled = dtModelBypassAccs[0].coupled_dwg_code.ToString();
-      strUnitModelValueNovaBypassAccElecCoil =
-        dtModelBypassAccs[0].electric_coil_dwg_code.ToString();
-      strUnitModelValueNovaBypassAccDecoupled = dtModelBypassAccs[0].decoupled_dwg_code.ToString();
+      strUnitModelValueNovaBypass = dtModelBypassAccs[0]?.model_bypass_dwg_code.ToString();
+      strUnitModelValueNovaBypassAccCoupled = dtModelBypassAccs[0]?.coupled_dwg_code.ToString();
+      strUnitModelValueNovaBypassAccElecCoil = dtModelBypassAccs[0]?.electric_coil_dwg_code.ToString();
+      strUnitModelValueNovaBypassAccDecoupled = dtModelBypassAccs[0]?.decoupled_dwg_code.ToString();
     }
   }
 

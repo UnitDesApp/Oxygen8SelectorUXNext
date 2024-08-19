@@ -93,7 +93,7 @@ export default function UnitList() {
     setIntUnitTypeID: state.setIntUnitTypeID,
   }));
 
-  // localStorage.setItem('isNewUnitSelected', '0');
+  localStorage.setItem('isNewUnitSelected', '0');
 
   const handleOneConfirmDialogOpen = (id: number) => {
     setDeleteRowID(id);

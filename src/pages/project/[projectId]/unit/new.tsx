@@ -1,4 +1,4 @@
-import React, { useCallback, useRef, useState } from 'react';
+import React, { useCallback, useContext, useRef, useState } from 'react';
 // import PropTypes from 'prop-types';
 // @mui
 import { styled, useTheme } from '@mui/material/styles';
@@ -23,6 +23,7 @@ import SelectProductInfo from './components/SelectProductInfo/SelectProductInfo'
 import UnitInfo from './components/UnitInfo/UnitInfo';
 import Selection from './components/Selection/Selection';
 import SelectionReportDialog from '../components/dialog/SelectionReportDialog';
+import { UnitTypeContext } from './components/UnitInfo/unitTypeDataContext';
 
 // ----------------------------------------------------------------------
 
@@ -45,35 +46,13 @@ const Item = styled(Paper)(({ theme }) => ({
   color: theme.palette.text.secondary,
 }));
 
-const DEFAULT_UNIT_DATA = {
-  intProductTypeID: -1,
-  txbProductType: '',
-  intUnitTypeID: -1,
-  txbUnitType: '',
-  intApplicationTypeID: -1,
-  txbApplicationType: '',
-};
 
 const STEP_PAGE_NAME = ['Select product type', 'Info', 'Selection'];
 
 AddNewUnit.getLayout = (page: React.ReactElement) => <DashboardLayout>{page}</DashboardLayout>;
 
-type UnitTypeData = {
-  intProductTypeID: number;
-  txbProductType: string;
-  intApplicationTypeID: number;
-  txbApplicationType: string;
-  intUnitTypeID: number;
-  txbUnitType: string;
-};
 
-type UnitTypeProps = {
-  unitTypeData: UnitTypeData;
-  setUnitTypeData: React.Dispatch<React.SetStateAction<UnitTypeData>>;
-};
-
-
-export default function AddNewUnit({unitTypeData,setUnitTypeData}:UnitTypeProps) {
+export default function AddNewUnit() {
   // eslint-disable-next-line no-unused-vars
   const theme = useTheme();
   const { push, query } = useRouter();
@@ -84,7 +63,7 @@ export default function AddNewUnit({unitTypeData,setUnitTypeData}:UnitTypeProps)
   const [openRPDialog, setOpenRPDialog] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const submitButtonRef = useRef<HTMLButtonElement>(null);
-
+  const { unitTypeData, setUnitTypeData } = useContext(UnitTypeContext);
 
 
   const closeDialog = useCallback(() => {
@@ -179,9 +158,7 @@ export default function AddNewUnit({unitTypeData,setUnitTypeData}:UnitTypeProps)
             />
           )}
           {currentStep === 1 && (
-            <>
               <UnitInfo
-                unitTypeData={unitTypeData} setUnitTypeData={setUnitTypeData}
                 projectId={Number(projectId)}
                 isSavedUnit={isSavedUnit}
                 intProductTypeID={unitTypeData.intProductTypeID}
@@ -194,17 +171,12 @@ export default function AddNewUnit({unitTypeData,setUnitTypeData}:UnitTypeProps)
                 txbUnitType={unitTypeData.txbUnitType}
                 setIsSaving={setIsSaving}
                 moveNextStep={moveToNextStep}
-                submitButtonRef={submitButtonRef}
+                // submitButtonRef={submitButtonRef}
               />
-              <Selection
-                intJobId={Number(projectId)}
-                intUnitNo={Number(intUnitNo)}
-                intProdTypeId={Number(unitTypeData.intProductTypeID)}
-              />
-            </>
           )}
           {currentStep === 2 && (
             <Selection
+            setCurrentStep= {setCurrentStep}
               intJobId={Number(projectId)}
               intUnitNo={Number(intUnitNo)}
               intProdTypeId={Number(unitTypeData.intProductTypeID)}
