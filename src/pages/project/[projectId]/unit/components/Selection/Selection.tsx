@@ -1108,7 +1108,7 @@ export default function Selection({ intJobId, intUnitNo, intProdTypeId, setCurre
               </Typography>
               </AccordionSummary>
               <Typography color="primary.main" variant="body2">
-                  {selectionData?.strElecReqQty} {selectionData?.strOutElecReqUnitData}
+                  {selectionData?.strElecReqQty}
               </Typography>                
               <Grid item xs={12} sx={{margin:'15px 0px !important'}}>
                 <Grid container spacing={2}>
