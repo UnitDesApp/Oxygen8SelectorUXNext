@@ -165,7 +165,7 @@ export default function UnitInfoForm({
   const user = useAuthContext();
   const [isTagValue, setIsTagValue] = useState(false)
   const { unitTypeData, setUnitTypeData } = useContext(UnitTypeContext);
-  const isNewUnitSelected = localStorage?.getItem('isNewUnitSelected') || 0;
+  // const isNewUnitSelected = localStorage?.getItem('isNewUnitSelected') || 0;
 
   // ------------------------------- Checkbox State -----------------------------------
   const [ckbBypass, setCkbBypassVal] = useState(false);
@@ -591,7 +591,7 @@ export default function UnitInfoForm({
     // let oUnitInputs;
 
       let intSummerSupplyAirCFM = Number(getValues('txbSummerSupplyAirCFM'));
-      const intUAL= Number(localStorage?.getItem('UAL')) || 0;
+      const intUAL = typeof window !== 'undefined' && Number(localStorage?.getItem('UAL')) || 0;
 
       switch (intProductTypeID) {
         case IDs.intProdTypeIdNova:
@@ -742,7 +742,7 @@ export default function UnitInfoForm({
 
     let intSummerReturnAirCFM = Number(getValues('txbSummerReturnAirCFM'));
     const intSummerSupplyAirCFM = Number(getValues('txbSummerSupplyAirCFM'));
-    const intUAL= Number(localStorage?.getItem('UAL')) || 0;
+    const intUAL = typeof window !== 'undefined' && Number(localStorage?.getItem('UAL')) || 0;
 
 
     if ( getValues('ddlOrientation') === IDs.intOrientationIdHorizontal && intSummerReturnAirCFM > intNOVA_HORIZONTAL_MAX_CFM) {
@@ -971,7 +971,7 @@ export default function UnitInfoForm({
     const info: { isOADesignCondVisible: boolean; isRADesignCondVisible: boolean; isCustomCompVisible: boolean; isHandingValveVisible: boolean; } = 
                 { isOADesignCondVisible: false, isRADesignCondVisible: false, isCustomCompVisible: false, isHandingValveVisible: false,};
                 
-    const intUAL= Number(localStorage?.getItem('UAL')) || 0;
+    const intUAL = typeof window !== 'undefined' && Number(localStorage?.getItem('UAL')) || 0;
 
     switch (intUAL) {
       case IDs.intUAL_Admin:
@@ -1116,7 +1116,7 @@ export default function UnitInfoForm({
       case IDs.intProdTypeIdNova:
         info.isVisible = true;
         dtUnitModel = dtUnitModel?.filter((item: { id: number }) => item.id === Number(formCurrValues.ddlUnitModel));
-          if (Number(dtUnitModel[0]?.bypass_exist) === 1) {
+          if (Number(dtUnitModel?.[0]?.bypass_exist) === 1) {
             info.isEnabled = true;
             info.bypassMsg = '';
           } else {
@@ -1190,8 +1190,8 @@ export default function UnitInfoForm({
     // info.fdtLocation = db?.db?.dbtSelGeneralLocation?.filter((e: { id: any }) =>
     //   dtProdUnitLocLink?.filter((e_link: { location_id: any }) => e_link.location_id === e.id)?.length > 0);
 
-    const intUAL= Number(localStorage?.getItem('UAL')) || 0;
-    const customerId = Number(localStorage?.getItem('customerId')) || 0;
+    const intUAL = typeof window !== 'undefined' && Number(localStorage.getItem('UAL')) || 0;
+    const customerId = typeof window !== 'undefined' && Number(localStorage?.getItem('customerId')) || 0;
     let dtNovaUnitModelLink = db?.dbtSelNovaUnitModelLocOriLink;
     const dtLocation = db?.dbtSelGeneralLocation?.filter((item: { id: any }) => item.id === Number(formCurrValues.ddlLocation));
     const dtOrientation = db?.dbtSelGeneralOrientation?.filter((item: { id: any }) => item.id === Number(formCurrValues.ddlOrientation));
@@ -2052,7 +2052,7 @@ export default function UnitInfoForm({
     // let controlsPrefProdTypeLink: any = [];
 
     info.fdtReheatComp = db?.dbtSelUnitCoolingHeating;
-    const intUAL= localStorage?.getItem('UAL') || 0;
+    const intUAL = typeof window !== 'undefined' && Number(localStorage?.getItem('UAL')) || 0;
 
     switch (intUnitTypeID) {
       case IDs.intUnitTypeIdERV:
@@ -3097,7 +3097,7 @@ export default function UnitInfoForm({
 
 
     setPreheatCoilHandingInfo(info);
-    setValue('ddlPreheatCoilHanding', info?.fdtHanding[0]?.id);
+    setValue('ddlPreheatCoilHanding', info?.fdtHanding?.[0]?.id);
 
   }, [db, getValues('ddlPreheatComp')]);
 
@@ -3123,7 +3123,7 @@ export default function UnitInfoForm({
 
 
     setCoolingCoilHandingInfo(info);
-    setValue('ddlCoolingCoilHanding', info?.fdtHanding[0].id);
+    setValue('ddlCoolingCoilHanding', info?.fdtHanding?.[0].id);
 
   }, [db, getValues('ddlCoolingComp')]);
 
@@ -3149,7 +3149,7 @@ export default function UnitInfoForm({
 
 
     setHeatingCoilHandingInfo(info);
-    setValue('ddlHeatingCoilHanding', info?.fdtHanding[0].id);
+    setValue('ddlHeatingCoilHanding', info?.fdtHanding?.[0].id);
 
   }, [db, getValues('ddlHeatingComp')]);
 
@@ -3174,7 +3174,7 @@ export default function UnitInfoForm({
     }
 
     setReheatCoilHandingInfo(info);
-    setValue('ddlReheatCoilHanding', info?.fdtHanding[0].id);
+    setValue('ddlReheatCoilHanding', info?.fdtHanding?.[0]?.id);
 
   }, [db, getValues('ddlReheatComp')]);
 
@@ -3223,7 +3223,7 @@ export default function UnitInfoForm({
           break;
       case IDs.intUnitTypeIdAHU:
         info.fdtSupplyAirOpening = db?.dbtSelOpeningsFC_SA;
-        info.defaultId = info?.fdtSupplyAirOpening[0].id;
+        info.defaultId = info?.fdtSupplyAirOpening?.[0].id;
 
         // returnInfo.ddlSupplyAirOpeningDataTbl = dtSelectionTable;
         // if (isContain(dtSelectionFinalTable, 'items', strSupplyAirOpening)) {
@@ -3238,12 +3238,12 @@ export default function UnitInfoForm({
         break;
     }
 
-    info.defaultId = info?.fdtSupplyAirOpening[0]?.id;
-    info.supplyAirOpeningText = info?.fdtSupplyAirOpening[0]?.items;
+    info.defaultId = info?.fdtSupplyAirOpening?.[0]?.id;
+    info.supplyAirOpeningText = info?.fdtSupplyAirOpening?.[0]?.items;
 
 
     setSupplyAirOpeningInfo(info);
-    info.defaultId = info?.fdtSupplyAirOpening[0]?.id;
+    info.defaultId = info?.fdtSupplyAirOpening?.[0]?.id;
     setValue('ddlSupplyAirOpening', info.defaultId);
     setValue('ddlSupplyAirOpeningText', info?.supplyAirOpeningText);
 
@@ -3264,7 +3264,7 @@ export default function UnitInfoForm({
     const dtOpeningsERV_SA_OA_Link = db?.dbtSelOpeningsERV_SA_OA_Link;
     const dtOpeningsERV_SA_RA_Link = db?.dbtSelOpeningsERV_SA_RA_Link;
     const dtNoSelectionTable : any = [{ id: 0, items: 'NA' }] || [];
-    const outdoorAirOpeningText = db?.dbtSelOpeningsERV_SA?.filter((item: { id: number }) => item.id === Number(getValues('ddlSupplyAirOpening')))[0]?.items;
+    const outdoorAirOpeningText = db?.dbtSelOpeningsERV_SA?.filter((item: { id: number }) => item.id === Number(getValues('ddlSupplyAirOpening')))?.[0]?.items;
 
 
     switch (intUnitTypeID) {
@@ -3283,8 +3283,8 @@ export default function UnitInfoForm({
       
   
       // info.ddlExhaustAirOpeningDataTbl = dtSelectionFinalTable;
-      info.exhaustAirOpeningId = info.fdtExhaustAirOpening[0]?.id;
-      info.exhaustAirOpeningText = info.fdtExhaustAirOpening[0]?.items;
+      info.exhaustAirOpeningId = info.fdtExhaustAirOpening?.[0]?.id;
+      info.exhaustAirOpeningText = info.fdtExhaustAirOpening?.[0]?.items;
       info.isExhaustAirOpeningVisible = true;
   
    
@@ -3299,8 +3299,8 @@ export default function UnitInfoForm({
       info.fdtOutdoorAirOpening = info.fdtOutdoorAirOpening?.filter((e: { items: any }) => dtLink?.filter((e_link) => e.items === e_link.openings_oa)?.length === 1); // 1: Matching items, 0: Not matching items
   
       // returnInfo.ddlOutdoorAirOpeningDataTbl = dtSelectionFinalTable;
-      info.outdoorAirOpeningId = info.fdtOutdoorAirOpening[0]?.id;
-      info.outdoorAirOpeningText = info.fdtOutdoorAirOpening[0]?.items;
+      info.outdoorAirOpeningId = info.fdtOutdoorAirOpening?.[0]?.id;
+      info.outdoorAirOpeningText = info.fdtOutdoorAirOpening?.[0]?.items;
       info.isOutdoorAirOpeningVisible = true;
   
   
@@ -3316,14 +3316,14 @@ export default function UnitInfoForm({
       info.fdtReturnAirOpening = info.fdtReturnAirOpening?.filter((e: { items: any }) => dtLink?.filter((e_link) => e.items === e_link.openings_ra)?.length === 1); // 1: Matching items, 0: Not matching items
   
       // returnInfo.ddlReturnAirOpeningDataTbl = dtSelectionFinalTable;
-      info.returnAirOpeningId = info.fdtReturnAirOpening[0]?.id;
-      info.returnAirOpeningText = info.fdtReturnAirOpening[0]?.items;
+      info.returnAirOpeningId = info.fdtReturnAirOpening?.[0]?.id;
+      info.returnAirOpeningText = info.fdtReturnAirOpening?.[0]?.items;
       info.isReturnAirOpeningVisible = true;
           break;
       case IDs.intUnitTypeIdAHU:
         info.fdtReturnAirOpening = db?.dbtSelOpeningsFC_OA;
-        info.outdoorAirOpeningId = info.fdtReturnAirOpening[0]?.id;
-        info.outdoorAirOpeningText = info.fdtReturnAirOpening[0]?.items;
+        info.outdoorAirOpeningId = info.fdtReturnAirOpening?.[0]?.id;
+        info.outdoorAirOpeningText = info.fdtReturnAirOpening?.[0]?.items;
         info.isOutdoorAirOpeningVisible = true;
 
     
@@ -3757,7 +3757,7 @@ const ddlUnitModelChanged = useCallback((e: any) => {
   // ------------------------------- Drop Files Option --------------------------------
   const handleDrop = useCallback(
     (acceptedFiles: any) => {
-      const file = acceptedFiles[0];
+      const file = acceptedFiles?.[0];
 
       if (file) {
         setValue(
@@ -3799,7 +3799,7 @@ const ddlUnitModelChanged = useCallback((e: any) => {
       RAFilterModel?.dataTable?.filter((item: any) => item?.id === formValues.ddlRA_FilterModel)
         .length === 0
     ) {
-      setValue('ddlRA_FilterModel', RAFilterModel?.dataTable[0]?.id);
+      setValue('ddlRA_FilterModel', RAFilterModel?.dataTable?.[0]?.id);
 
       // if (edit) {
       //   setValue('ddlRA_FilterModel', defaultValues?.ddlRA_FilterModel);
