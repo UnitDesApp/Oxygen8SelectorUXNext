@@ -28,7 +28,7 @@ export const UnitTypeContext = createContext<UnitTypeContextType>({
   setUnitTypeData: () => {},
 });
 
-export const UnitTypeProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
+const UnitTypeProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [unitTypeData, setUnitTypeData] = useState<UnitTypeData>(DEFAULT_UNIT_DATA);
   const value = useMemo(() => ({ unitTypeData, setUnitTypeData }), [unitTypeData, setUnitTypeData]);
 
@@ -38,3 +38,4 @@ export const UnitTypeProvider: React.FC<{ children: ReactNode }> = ({ children }
     </UnitTypeContext.Provider>
   );
 };
+export default UnitTypeProvider;

@@ -28,7 +28,7 @@ import SnackbarProvider from '../components/snackbar';
 import { MotionLazyContainer } from '../components/animate';
 import { SettingsProvider } from '../components/settings';
 import { AuthProvider } from '../auth/JwtContext';
-import { UnitTypeProvider } from './project/[projectId]/unit/components/UnitInfo/unitTypeDataContext';
+import  UnitTypeProvider  from './project/[projectId]/unit/components/UnitInfo/unitTypeDataContext';
 
 // ----------------------------------------------------------------------
 

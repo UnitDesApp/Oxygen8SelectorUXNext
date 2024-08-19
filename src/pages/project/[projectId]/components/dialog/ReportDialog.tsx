@@ -66,21 +66,22 @@ export default function ReportDialog({ isOpen, onClose, intProjectID }: ReportDi
     setIsLoading(true);
     if (methods.submittal) {
       const isSubmittalSuccess = await ExportSubmittal(Number(intProjectID));
-      const isSubmitallEpicorSuccess = await ExportSubmittalEpicor(Number(intProjectID));
+      // const isSubmitallEpicorSuccess = await ExportSubmittalEpicor(Number(intProjectID));
 
-      if (isSubmittalSuccess && isSubmitallEpicorSuccess) {
+      // if (isSubmittalSuccess && isSubmitallEpicorSuccess) {
+      if (isSubmittalSuccess) {
         setSuccessNotifyText('Success export report for Submitall!');
         setOpenSuccessNotify(true);
       } else if (!isSubmittalSuccess) {
-        setFailNotifyText('Unfortunately, fail in downloading Submttal Data!');
+        setFailNotifyText('Unfortunately, fail in downloading Submttal Data.! Submittal must be saved!');
         setOpenFailNotify(true);
-      } else if (!isSubmitallEpicorSuccess) {
-        setFailNotifyText(
-          'Unfortunately, fail in downloading file, please check  Submttal and Quote data!'
-        );
-        setOpenFailNotify(true);
+      // } else if (!isSubmitallEpicorSuccess) {
+      //   setFailNotifyText(
+      //     'Unfortunately, fail in downloading file, please check  Submttal and Quote data!'
+      //   );
+      //   setOpenFailNotify(true);
       } else {
-        setFailNotifyText('Please check the project submittal project!');
+        setFailNotifyText('Please check the project submittal!');
         setOpenFailNotify(true);
       }
     }
@@ -111,7 +112,7 @@ export default function ReportDialog({ isOpen, onClose, intProjectID }: ReportDi
     methods.quote,
     ExportSubmittal,
     intProjectID,
-    ExportSubmittalEpicor,
+    // ExportSubmittalEpicor,
     ExportAllSelectionPDF,
     ExportRevit,
     ExportQuote,

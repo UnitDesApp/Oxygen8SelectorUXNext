@@ -93,7 +93,9 @@ export default function UnitList() {
     setIntUnitTypeID: state.setIntUnitTypeID,
   }));
 
-  localStorage.setItem('isNewUnitSelected', '0');
+  useEffect(() => {
+    localStorage.setItem('isNewUnitSelected', '0');
+  }, []);
 
   const handleOneConfirmDialogOpen = (id: number) => {
     setDeleteRowID(id);
@@ -297,13 +299,13 @@ const applySortFilter = ({
 
   if (filterRole !== 'All') {
     if (filterRole === 'My Projects') {
-      tableData = tableData.filter(
+    tableData = tableData.filter(
         (item: any) => item.created_user_id.toString() === localStorage.getItem('userId')
       );
     } else {
       tableData = tableData.filter(
         (item: any) => item.created_user_id.toString() !== localStorage.getItem('userId')
-      );
+    );
     }
   }
 

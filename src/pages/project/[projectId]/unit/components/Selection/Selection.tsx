@@ -1107,49 +1107,56 @@ export default function Selection({ intJobId, intUnitNo, intProdTypeId, setCurre
                 Electrical Requirements
               </Typography>
               </AccordionSummary>
+              <Typography color="primary.main" variant="body2">
+                  {selectionData?.strElecReqQty}
+              </Typography>                
               <Grid item xs={12} sx={{margin:'15px 0px !important'}}>
                 <Grid container spacing={2}>
-                <Grid item xs={3} sx={{display: selectionData?.dtElecReqUnitOnlyElecData?.length > 0 ? 'block' : 'none' }}>
-                <CustomGroupBox title="Unit">
-                                <TableContainer component={Paper}>
-                                  <Table size="small">
-                                  <TableBody>
-                                    {selectionData?.dtElecReqUnitOnlyElecData?.map((item: any, i: number) => (
-                                      <TableRow key={i} sx={{'&:last-child td, &:last-child th': {border: 0,}, }}>
-                                        <TableCell component="th" scope="row" align="left" sx={{fontWeight: 300}}>
-                                          {item.cLabel}
-                                        </TableCell>
-                                        <TableCell component="th" scope="row" align="left" sx={{fontWeight: 300}}>
-                                          {item.cValue}
-                                        </TableCell>
-                                      </TableRow>
-                                    ))}
-                                  </TableBody>
-                                  </Table>
-                                </TableContainer>
-                    </CustomGroupBox>
-                  </Grid>  
-                  <Grid item xs={3} sx={{display: selectionData?.dtElecReqUnitPlusElecData?.length > 0 ? 'block' : 'none' }}>
-                <CustomGroupBox title="Unit">
-                                <TableContainer component={Paper}>
-                                  <Table size="small">
-                                  <TableBody>
-                                    {selectionData?.dtElecReqUnitPlusElecData?.map((item: any, i: number) => (
-                                      <TableRow key={i} sx={{'&:last-child td, &:last-child th': {border: 0,}, }}>
-                                        <TableCell component="th" scope="row" align="left" sx={{fontWeight: 300}}>
-                                          {item.cLabel}
-                                        </TableCell>
-                                        <TableCell component="th" scope="row" align="left" sx={{fontWeight: 300}}>
-                                          {item.cValue}
-                                        </TableCell>
-                                      </TableRow>
-                                    ))}
-                                  </TableBody>
-                                  </Table>
-                                </TableContainer>
-                    </CustomGroupBox>
-                  </Grid>  
-                  <Grid item xs={3} sx={{display: selectionData?.dtElecReqCoolingDXC?.length > 0 ? 'block' : 'none' }}>
+              <Grid item xs={3} sx={{margin:'0px 0px !important'}}>
+                  <Grid container spacing={2}>
+                    <Grid item xs={12} sx={{display: selectionData?.dtElecReqUnitPlusElecData?.length > 0 ? 'block' : 'none' }}>
+                    <CustomGroupBox title={selectionData?.strOutElecReqUnitData}>
+                                    <TableContainer component={Paper}>
+                                      <Table size="small">
+                                      <TableBody>
+                                        {selectionData?.dtElecReqUnitPlusElecData?.map((item: any, i: number) => (
+                                          <TableRow key={i} sx={{'&:last-child td, &:last-child th': {border: 0,}, }}>
+                                            <TableCell component="th" scope="row" align="left" sx={{fontWeight: 300}}>
+                                              {item.cLabel}
+                                            </TableCell>
+                                            <TableCell component="th" scope="row" align="left" sx={{fontWeight: 300}}>
+                                              {item.cValue}
+                                            </TableCell>
+                                          </TableRow>
+                                        ))}
+                                      </TableBody>
+                                      </Table>
+                                    </TableContainer>
+                        </CustomGroupBox>
+                    </Grid>  
+                    <Grid item xs={12} sx={{display: selectionData?.dtElecReqUnitOnlyElecData?.length > 0 ? 'block' : 'none' }}>
+                      <CustomGroupBox title="Unit">
+                        <TableContainer component={Paper}>
+                          <Table size="small">
+                            <TableBody>
+                              {selectionData?.dtElecReqUnitOnlyElecData?.map((item: any, i: number) => (
+                                <TableRow key={i} sx={{'&:last-child td, &:last-child th': {border: 0,}, }}>
+                                  <TableCell component="th" scope="row" align="left" sx={{fontWeight: 300}}>
+                                    {item.cLabel}
+                                  </TableCell>
+                                  <TableCell component="th" scope="row" align="left" sx={{fontWeight: 300}}>
+                                    {item.cValue}
+                                  </TableCell>
+                                </TableRow>
+                              ))}
+                            </TableBody>
+                          </Table>
+                        </TableContainer>
+                      </CustomGroupBox>
+                    </Grid>  
+                  </Grid>
+                </Grid>
+                <Grid item xs={3} sx={{display: selectionData?.dtElecReqCoolingDXC?.length > 0 ? 'block' : 'none' }}>
                     <CustomGroupBox title="W-controller">
                                 <TableContainer component={Paper}>
                                   <Table size="small">
@@ -1168,9 +1175,9 @@ export default function Selection({ intJobId, intUnitNo, intProdTypeId, setCurre
                                   </Table>
                                 </TableContainer>
                     </CustomGroupBox>
-                  </Grid> 
-                  <Grid item xs={3} sx={{display: selectionData?.dtElecReqPreheatElecHeater?.length > 0 ? 'block' : 'none' }}>
-                    <CustomGroupBox title="Preheat Electric Heater">
+                </Grid> 
+                <Grid item xs={3} sx={{display: selectionData?.dtElecReqPreheatElecHeater?.length > 0 ? 'block' : 'none' }}>
+                  <CustomGroupBox title="Preheat Electric Heater">
                                 <TableContainer component={Paper}>
                                   <Table size="small">
                                   <TableBody>
@@ -1188,9 +1195,9 @@ export default function Selection({ intJobId, intUnitNo, intProdTypeId, setCurre
                                   </Table>
                                 </TableContainer>
                     </CustomGroupBox>
-                  </Grid> 
-                  <Grid item xs={3} sx={{display: selectionData?.dtElecReqHeatingElecHeater?.length > 0 ? 'block' : 'none' }}>
-                              <CustomGroupBox title="Heating Electric Heater">
+                </Grid> 
+                <Grid item xs={3} sx={{display: selectionData?.dtElecReqHeatingElecHeater?.length > 0 ? 'block' : 'none' }}>
+                  <CustomGroupBox title="Heating Electric Heater">
                                 <TableContainer component={Paper}>
                                   <Table size="small">
                                   <TableBody>
@@ -1208,29 +1215,47 @@ export default function Selection({ intJobId, intUnitNo, intProdTypeId, setCurre
                                   </Table>
                                 </TableContainer>
                               </CustomGroupBox>
-                  </Grid>    
+                </Grid>    
                   <Grid item xs={3} sx={{display: selectionData?.dtElecReqReheatElecHeater?.length > 0 ? 'block' : 'none' }}>
-                              <CustomGroupBox title="Heating Electric Heater">
-                                <TableContainer component={Paper}>
-                                  <Table size="small">
-                                  <TableBody>
-                                    {selectionData?.dtElecReqReheatElecHeater?.map((item: any, i: number) => (
-                                      <TableRow key={i} sx={{'&:last-child td, &:last-child th': {border: 0,}, }}>
-                                        <TableCell component="th" scope="row" align="left" sx={{fontWeight: 300}}>
-                                          {item.cLabel}
-                                        </TableCell>
-                                        <TableCell component="th" scope="row" align="left" sx={{fontWeight: 300}}>
-                                          {item.cValue}
-                                        </TableCell>
-                                      </TableRow>
-                                    ))}
-                                  </TableBody>
-                                  </Table>
-                                </TableContainer>
-                              </CustomGroupBox>
+                    <CustomGroupBox title="Heating Electric Heater">
+                      <TableContainer component={Paper}>
+                        <Table size="small">
+                          <TableBody>
+                            {selectionData?.dtElecReqReheatElecHeater?.map((item: any, i: number) => (
+                              <TableRow key={i} sx={{'&:last-child td, &:last-child th': {border: 0,}, }}>
+                                <TableCell component="th" scope="row" align="left" sx={{fontWeight: 300}}>
+                                  {item.cLabel}
+                                </TableCell>
+                                <TableCell component="th" scope="row" align="left" sx={{fontWeight: 300}}>
+                                  {item.cValue}
+                                </TableCell>
+                              </TableRow>
+                            ))}
+                          </TableBody>
+                        </Table>
+                      </TableContainer>
+                    </CustomGroupBox>
                   </Grid>    
                 </Grid>
               </Grid>
+              <Grid container spacing={2} sx={{display: selectionData?.dtElecReqNotesWarnings?.length > 0 ? 'block' : 'none' }}> 
+                <Grid item xs={2}/>
+                <Grid item xs={10}>
+                    <TableContainer component={Paper}>
+                      <Table size="small">
+                        <TableBody>
+                            {selectionData?.dtElecReqNotesWarnings?.map((item: any, i: number) => (
+                              <TableRow key={i} sx={{'&:last-child td, &:last-child th': {border: 0,}, }}>
+                                <TableCell component="th" scope="row" align="left" sx={{ width: '100%', fontWeight: 300}}>
+                                  {item.cValue}
+                                </TableCell>
+                              </TableRow>
+                            ))}
+                          </TableBody>
+                          </Table>
+                    </TableContainer>
+                </Grid>
+              </Grid>            
             </Grid>
 
 
@@ -1424,8 +1449,7 @@ export default function Selection({ intJobId, intUnitNo, intProdTypeId, setCurre
                   </Grid>
                   <Grid container spacing={2} sx={{display: selectionData?.dtPreheatHWC_ValveActuatorSize?.length > 0 ? 'block' : 'none' }}>
                     <Grid item xs={8}>
-                      <CustomGroupBox title="Valve & Actuator" 
-                                      bordersx={{ width: '100%', m: '30px 0px !important', padding: '0px',}}>
+                      <CustomGroupBox title="Valve & Actuator"  bordersx={{ width: '100%', m: '30px 0px !important', padding: '0px',}}>
                         <TableContainer component={Paper}>
                           <Table size="small">
                           <TableBody>
@@ -1583,8 +1607,7 @@ export default function Selection({ intJobId, intUnitNo, intProdTypeId, setCurre
                 </AccordionSummary>
               <Grid container spacing={2}>
                 <Grid item xs={10}>
-                <CustomGroupBox title="Design Conditions" 
-                                      bordersx={{ width: '100%', m: '50px !important', padding: '0px',}}>
+                <CustomGroupBox title="Design Conditions"  bordersx={{ width: '100%', m: '50px !important', padding: '0px',}}>
                   <TableContainer component={Paper}>
                     <Table size="small">
                     <TableBody>
@@ -1605,8 +1628,7 @@ export default function Selection({ intJobId, intUnitNo, intProdTypeId, setCurre
                     </Table>
                   </TableContainer>
                 </CustomGroupBox>
-                <CustomGroupBox title="Performance Leaving Air" 
-                                      bordersx={{ width: '100%', m: '10px !important', padding: '0px',}}>
+                <CustomGroupBox title="Performance Leaving Air" bordersx={{ width: '100%', m: '10px !important', padding: '0px',}}>
                   <TableContainer component={Paper}>
                     <Table size="small">
                     <TableBody>
