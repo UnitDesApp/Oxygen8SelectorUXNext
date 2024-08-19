@@ -579,7 +579,7 @@ export default function ProjectSubmittalForm({
               <AccordionDetails>
                 <TableContainer component={Paper} sx={{ mt: 1.5 }}>
                   <Scrollbar>
-                    <Table  sx={{ pt: '5px' }}>
+                    <Table  sx={{overflow:'hidden', tableLayout:'fixed', pt: '5px' }}>
                       <TableHead>
                         <TableRow>
                           {PROJECT_INFO_TABLE_HEADER.map((item, index) => (
