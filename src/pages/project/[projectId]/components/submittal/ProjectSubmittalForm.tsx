@@ -195,11 +195,6 @@ export default function ProjectSubmittalForm({
 
 
 
-
-
-
-
-
   let formCurrValues = getValues();
   const today = new Date();
 
@@ -653,7 +648,7 @@ export default function ProjectSubmittalForm({
                         </TableHead>
                         <TableBody>
                           {scheduleInfo?.fdtSchedule?.map((item: any, i: number) => (
-                            <TableRow style={{color:'red'}} key={i} sx={{ '&:last-child td, &:last-child th': { border: 0, } }}>
+                            <TableRow key={i} sx={{ '&:last-child td, &:last-child th': { border: 0, } }}>
                               {/* <TableRow key={i} sx={{border: 0, fontWeight: Number(item?.is_unit_bold) === 1 ? 700 : 300}}> */}
                               <TableBodyCellStyled component="th" scope="row" align="center">
                                 {/* <TableCell component="th" scope="row" align="left" sx={{fontWeight: item?.is_unit_bold ? 700 : 300}}> */}
