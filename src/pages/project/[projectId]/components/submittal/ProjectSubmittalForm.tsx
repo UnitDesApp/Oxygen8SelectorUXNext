@@ -607,35 +607,37 @@ export default function ProjectSubmittalForm({
                       <Table size="small" sx={{ textsize: 'small', overflow: 'hidden', tableLayout: 'fixed', pt: '5px' }}>
                         <TableHead color="primary.main">
                           <TableRow>
-                            <TableHeaderCellStyled component="th" scope="row" align="center" sx={{ width: '2.5%' }}>
+                            <TableHeaderCellStyled component="th" scope="row" align="center" sx={{ width: '5%' }}>
                               {/* <TableCell component="th" scope="row" align="left" sx={{fontWeight: item?.is_unit_bold ? 700 : 300}}> */}
                               QTY
                             </TableHeaderCellStyled>
-                            <TableHeaderCellStyled component="th" scope="row" align="center" sx={{ width: '7.5%' }}>
+                            <TableHeaderCellStyled component="th" scope="row" align="center" sx={{ width: '10%' }}>
                               TAG
                             </TableHeaderCellStyled>
-                            <TableHeaderCellStyled component="th" scope="row" align="center" sx={{ width: '10%' }}>
+                            <TableHeaderCellStyled component="th" scope="row" align="center" sx={{ width: '15%' }}>
                               ITEM
                             </TableHeaderCellStyled>
-                            <TableHeaderCellStyled component="th" scope="row" align="center" sx={{ width: '10%' }}>
+                            <TableHeaderCellStyled component="th" scope="row" align="center" sx={{ width: '15%' }}>
                               MODEL
                             </TableHeaderCellStyled>
-                            <TableHeaderCellStyled component="th" scope="row" align="center" sx={{ width: '15%' }}>
+                            <TableHeaderCellStyled component="th" scope="row" align="center" sx={{ width: '12.5%' }}>
                               VOLTAGE
                             </TableHeaderCellStyled>
                             <TableHeaderCellStyled component="th" scope="row" align="center" sx={{ width: '10%' }}>
-                              CONTROLS PREFERENCE
+                              CONTROLS
+                              PREFERENCE
                             </TableHeaderCellStyled>
-                            <TableHeaderCellStyled component="th" scope="row" align="center" sx={{ width: '10%' }}>
+                            <TableHeaderCellStyled component="th" scope="row" align="center" sx={{ width: '12.5%' }}>
                               INSTALLATION
                             </TableHeaderCellStyled>
-                            <TableHeaderCellStyled component="th" scope="row" align="center" sx={{ width: '7.5%' }}>
-                              DUCT CONNECTION
+                            <TableHeaderCellStyled component="th" scope="row" align="center" sx={{ width: '10%' }}>
+                              DUCT
+                              CONNECTION
                             </TableHeaderCellStyled>
-                            <TableHeaderCellStyled component="th" scope="row" align="center" sx={{ width: '7.5%' }}>
+                            <TableHeaderCellStyled component="th" scope="row" align="center" sx={{ width: '8%' }}>
                               HANDING
                             </TableHeaderCellStyled>
-                            <TableHeaderCellStyled component="th" scope="row" align="center" sx={{ width: '25%' }} >
+                            <TableHeaderCellStyled component="th" scope="row" align="center" sx={{ width: '22%' }} >
                               PART DESC
                             </TableHeaderCellStyled>
                             <TableHeaderCellStyled component="th" scope="row" align="center" sx={{ width: '12.5%' }} >

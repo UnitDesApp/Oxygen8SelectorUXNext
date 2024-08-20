@@ -132,7 +132,7 @@ export default function UserTableToolbar({
           size="small"
           value={filterName}
           onChange={(event) => onFilterName(event.target.value)}
-          placeholder="Search Users..."
+          placeholder="Search User..."
           InputProps={{
             startAdornment: (
               <InputAdornment position="start">
