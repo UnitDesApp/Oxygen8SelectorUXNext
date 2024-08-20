@@ -27,7 +27,7 @@ export default function ResetPassword() {
         <Stack direction="row" alignItems="center" sx={{ mb: 5 }}>
           <Box alignItems="center" sx={{ flexGrow: 1 }}>
             <Typography variant="h3" textAlign="center">
-              Forgot password?
+              Forgot Password?
             </Typography>
           </Box>
         </Stack>

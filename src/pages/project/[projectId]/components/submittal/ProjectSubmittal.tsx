@@ -57,7 +57,7 @@ export default function SubmittalInternal() {
   if (!submittalInfo)
     return (
       <Stack direction="row" alignItems="center" justifyContent="center" sx={{ pt: '30px' }}>
-        <Box sx={{ fontSize: '30px' }}>Unable to lead submittal data due to NO UNIT!</Box>{' '}
+        <Box sx={{ fontSize: '30px' }}>Unable to load submittal data due to NO UNIT!</Box>{' '}
       </Stack>
     );
   return <ProjectSubmittalForm projectId={Number(projectId)} submittalInfo={submittalInfo} />;

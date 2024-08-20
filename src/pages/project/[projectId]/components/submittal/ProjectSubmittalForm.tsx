@@ -66,6 +66,10 @@ const TableHeaderCellStyled = styled(TableCell)(({ theme }) => ({
   backgroundColor: theme.palette.primary.main,
   color: 'white',
   boxShadow: 'none!important',
+  fontSize:'0.77rem'
+}));
+const TableBodyCellStyled = styled(TableCell)(({ theme }) => ({
+  fontSize:'0.76rem'
 }));
 
 // -------------------------------------------------------------------
@@ -188,11 +192,6 @@ export default function ProjectSubmittalForm({
     watch,
     formState: { isSubmitting },
   } = methods;
-
-
-
-
-
 
 
 
@@ -608,35 +607,37 @@ export default function ProjectSubmittalForm({
                       <Table size="small" sx={{ textsize: 'small', overflow: 'hidden', tableLayout: 'fixed', pt: '5px' }}>
                         <TableHead color="primary.main">
                           <TableRow>
-                            <TableHeaderCellStyled component="th" scope="row" align="center" sx={{ width: '2.5%' }}>
+                            <TableHeaderCellStyled component="th" scope="row" align="center" sx={{ width: '5%' }}>
                               {/* <TableCell component="th" scope="row" align="left" sx={{fontWeight: item?.is_unit_bold ? 700 : 300}}> */}
                               QTY
                             </TableHeaderCellStyled>
-                            <TableHeaderCellStyled component="th" scope="row" align="center" sx={{ width: '7.5%' }}>
+                            <TableHeaderCellStyled component="th" scope="row" align="center" sx={{ width: '10%' }}>
                               TAG
                             </TableHeaderCellStyled>
-                            <TableHeaderCellStyled component="th" scope="row" align="center" sx={{ width: '10%' }}>
+                            <TableHeaderCellStyled component="th" scope="row" align="center" sx={{ width: '15%' }}>
                               ITEM
                             </TableHeaderCellStyled>
-                            <TableHeaderCellStyled component="th" scope="row" align="center" sx={{ width: '10%' }}>
+                            <TableHeaderCellStyled component="th" scope="row" align="center" sx={{ width: '15%' }}>
                               MODEL
                             </TableHeaderCellStyled>
-                            <TableHeaderCellStyled component="th" scope="row" align="center" sx={{ width: '15%' }}>
+                            <TableHeaderCellStyled component="th" scope="row" align="center" sx={{ width: '12.5%' }}>
                               VOLTAGE
                             </TableHeaderCellStyled>
                             <TableHeaderCellStyled component="th" scope="row" align="center" sx={{ width: '10%' }}>
-                              CONTROLS PREFERENCE
+                              CONTROLS
+                              PREFERENCE
                             </TableHeaderCellStyled>
-                            <TableHeaderCellStyled component="th" scope="row" align="center" sx={{ width: '10%' }}>
+                            <TableHeaderCellStyled component="th" scope="row" align="center" sx={{ width: '12.5%' }}>
                               INSTALLATION
                             </TableHeaderCellStyled>
-                            <TableHeaderCellStyled component="th" scope="row" align="center" sx={{ width: '7.5%' }}>
-                              DUCT CONNECTION
+                            <TableHeaderCellStyled component="th" scope="row" align="center" sx={{ width: '10%' }}>
+                              DUCT
+                              CONNECTION
                             </TableHeaderCellStyled>
-                            <TableHeaderCellStyled component="th" scope="row" align="center" sx={{ width: '7.5%' }}>
+                            <TableHeaderCellStyled component="th" scope="row" align="center" sx={{ width: '8%' }}>
                               HANDING
                             </TableHeaderCellStyled>
-                            <TableHeaderCellStyled component="th" scope="row" align="center" sx={{ width: '25%' }} >
+                            <TableHeaderCellStyled component="th" scope="row" align="center" sx={{ width: '22%' }} >
                               PART DESC
                             </TableHeaderCellStyled>
                             <TableHeaderCellStyled component="th" scope="row" align="center" sx={{ width: '12.5%' }} >
@@ -651,43 +652,43 @@ export default function ProjectSubmittalForm({
                           {scheduleInfo?.fdtSchedule?.map((item: any, i: number) => (
                             <TableRow key={i} sx={{ '&:last-child td, &:last-child th': { border: 0, } }}>
                               {/* <TableRow key={i} sx={{border: 0, fontWeight: Number(item?.is_unit_bold) === 1 ? 700 : 300}}> */}
-                              <TableCell component="th" scope="row" align="center">
+                              <TableBodyCellStyled component="th" scope="row" align="center">
                                 {/* <TableCell component="th" scope="row" align="left" sx={{fontWeight: item?.is_unit_bold ? 700 : 300}}> */}
                                 {item.qty}
-                              </TableCell>
-                              <TableCell component="th" scope="row" align="center" sx={{ fontWeight: item?.is_unit_bold ? 700 : 300 }}>
+                              </TableBodyCellStyled>
+                              <TableBodyCellStyled component="th" scope="row" align="center" sx={{ fontWeight: item?.is_unit_bold ? 700 : 300 }}>
                                 {item.tag}
-                              </TableCell>
-                              <TableCell component="th" scope="row" align="center" sx={{ fontWeight: item?.is_unit_bold ? 700 : 300 }}>
+                              </TableBodyCellStyled>
+                              <TableBodyCellStyled component="th" scope="row" align="center" sx={{ fontWeight: item?.is_unit_bold ? 700 : 300 }}>
                                 {item.item}
-                              </TableCell>
-                              <TableCell component="th" scope="row" align="center" sx={{ fontWeight: item?.is_unit_bold ? 700 : 300 }}>
+                              </TableBodyCellStyled>
+                              <TableBodyCellStyled component="th" scope="row" align="center" sx={{ fontWeight: item?.is_unit_bold ? 700 : 300 }}>
                                 {item.model}
-                              </TableCell>
-                              <TableCell component="th" scope="row" align="center" sx={{ fontWeight: item?.is_unit_bold ? 700 : 300 }}>
+                              </TableBodyCellStyled>
+                              <TableBodyCellStyled component="th" scope="row" align="center" sx={{ fontWeight: item?.is_unit_bold ? 700 : 300 }}>
                                 {item.voltage}
-                              </TableCell>
-                              <TableCell component="th" scope="row" align="center" sx={{ fontWeight: item?.is_unit_bold ? 700 : 300 }}>
+                              </TableBodyCellStyled>
+                              <TableBodyCellStyled component="th" scope="row" align="center" sx={{ fontWeight: item?.is_unit_bold ? 700 : 300 }}>
                                 {item.controls_preference}
-                              </TableCell>
-                              <TableCell component="th" scope="row" align="center" sx={{ fontWeight: item?.is_unit_bold ? 700 : 300 }}>
+                              </TableBodyCellStyled>
+                              <TableBodyCellStyled component="th" scope="row" align="center" sx={{ fontWeight: item?.is_unit_bold ? 700 : 300 }}>
                                 {item.installation}
-                              </TableCell>
-                              <TableCell component="th" scope="row" align="center" sx={{ fontWeight: item?.is_unit_bold ? 700 : 300 }}>
+                              </TableBodyCellStyled>
+                              <TableBodyCellStyled component="th" scope="row" align="center" sx={{ fontWeight: item?.is_unit_bold ? 700 : 300 }}>
                                 {item.duct_connection}
-                              </TableCell>
-                              <TableCell component="th" scope="row" align="center" sx={{ fontWeight: item?.is_unit_bold ? 700 : 300 }}>
+                              </TableBodyCellStyled>
+                              <TableBodyCellStyled component="th" scope="row" align="center" sx={{ fontWeight: item?.is_unit_bold ? 700 : 300 }}>
                                 {item.handing}
-                              </TableCell>
-                              <TableCell component="th" scope="row" align="center" sx={{ fontWeight: item?.is_unit_bold ? 700 : 300 }}>
+                              </TableBodyCellStyled>
+                              <TableBodyCellStyled component="th" scope="row" align="center" sx={{ fontWeight: item?.is_unit_bold ? 700 : 300 }}>
                                 {item.part_desc}
-                              </TableCell>
-                              <TableCell component="th" scope="row" align="center" sx={{ fontWeight: item?.is_unit_bold ? 700 : 300 }}>
+                              </TableBodyCellStyled>
+                              <TableBodyCellStyled component="th" scope="row" align="center" sx={{ fontWeight: item?.is_unit_bold ? 700 : 300 }}>
                                 {item.part_number}
-                              </TableCell>
-                              <TableCell component="th" scope="row" align="center" sx={{ fontWeight: item?.is_unit_bold ? 700 : 300 }}>
+                              </TableBodyCellStyled>
+                              <TableBodyCellStyled component="th" scope="row" align="center" sx={{ fontWeight: item?.is_unit_bold ? 700 : 300 }}>
                                 {item.pricing}
-                              </TableCell>
+                              </TableBodyCellStyled>
                             </TableRow>
                           ))}
                         </TableBody>

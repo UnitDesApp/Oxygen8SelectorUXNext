@@ -75,7 +75,7 @@ export default function AuthLoginForm() {
       <Stack spacing={3}>
         {!!errors.afterSubmit && <Alert severity="error">{errors.afterSubmit.message}</Alert>}
 
-        <RHFTextField name="email" label="Email address or username" />
+        <RHFTextField name="email" label="Email Address / Username" />
 
         <RHFTextField
           name="password"
@@ -95,7 +95,7 @@ export default function AuthLoginForm() {
 
       <Stack alignItems="flex-end" sx={{ my: 2 }}>
         <Link href={PATH_AUTH.resetPassowrd} variant="body2" color="inherit" underline="always">
-          Forgot password?
+          Forgot Password?
         </Link>
       </Stack>
 
