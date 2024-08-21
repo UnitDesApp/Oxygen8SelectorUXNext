@@ -1,7 +1,7 @@
 import { useState, useCallback, MouseEventHandler } from 'react';
 // @mui
 // import { useTheme } from '@mui/material/styles';
-import { Checkbox, TableRow, TableCell, MenuItem, Divider } from '@mui/material';
+import { Checkbox, TableRow, TableCell, MenuItem, Divider, Stack, IconButton } from '@mui/material';
 import TableMoreMenu from 'src/components/table/TableMoreMenu';
 import Iconify from 'src/components/iconify';
 // components
@@ -67,7 +67,18 @@ export default function UnitTableRow({
         {cfm}
       </TableCell>
       <TableCell align="right">
-        <TableMoreMenu
+      <TableCell align="left" sx={{ cursor: 'pointer' }}>
+        <Stack direction="row" spacing={1}>
+          <IconButton aria-label="edit" onClick={onDuplicate}>
+            <Iconify icon="ic:outline-file-copy" />
+          </IconButton>
+          <IconButton aria-label="delete" onClick={onDeleteRow}>
+            <Iconify icon="mdi:trash-outline" />
+          </IconButton>
+        </Stack>
+      </TableCell>
+
+         {/* <TableMoreMenu
           open={openMenu}
           onOpen={handleOpenMenu}
           onClose={handleCloseMenu}
@@ -94,7 +105,7 @@ export default function UnitTableRow({
               </MenuItem>
             </>
           }
-        />
+        />  */}
       </TableCell>
     </TableRow>
   );
