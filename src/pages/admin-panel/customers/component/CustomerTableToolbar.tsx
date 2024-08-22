@@ -131,7 +131,7 @@ export default function CustomerTableToolbar({
           size="small"
           // value={filterName}
           onChange={(event) => onFilterName(event.target.value)}
-          placeholder="Search Customer..."
+          placeholder="Search Customer"
           InputProps={{
             startAdornment: (
               <InputAdornment position="start">
