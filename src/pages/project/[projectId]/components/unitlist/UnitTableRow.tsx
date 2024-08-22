@@ -16,6 +16,7 @@ type UnitTableRowProps = {
     unit_type: string;
     unit_model: string;
     cfm: string;
+    actions: string;
   };
   selected: boolean;
   onEditRow: () => void;

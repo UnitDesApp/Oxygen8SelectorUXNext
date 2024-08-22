@@ -23,6 +23,12 @@ type UnitTypeItemProps = {
 };
 
 export default function UnitTypeItem({ label, onSelectItem,SetIsOpenSideDescriptionOfProductType, id, active }: UnitTypeItemProps) {
+  const images: Record<any, string> = {
+    ERV: '/assets/Images/new_unit_crossflow_erv.png',
+    HRV: '/assets/Images/new_unit_counterflow_hrv.png',
+  };
+  const imageUrl = images[label as any] || '/assets/Images/default_image.png';
+ 
   return (
     <Box textAlign="center">
       <BoxStyle
@@ -32,7 +38,7 @@ export default function UnitTypeItem({ label, onSelectItem,SetIsOpenSideDescript
           borderColor: active ? 'primary.main' : '#a3a3a3',
         }}
       >
-        <img src="/assets/Images/img_nova_1.png" width="100%" height="100%" alt={label} />
+        <img src={imageUrl} width="100%" height="100%" alt={label} />
       </BoxStyle>
       <Box sx={{ textAlign: 'center', fontSize: '14px' }} mb={1}>
         <Typography>
