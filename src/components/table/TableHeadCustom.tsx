@@ -77,7 +77,10 @@ export default function TableHeadCustom({
                 active={orderBy === headCell.id}
                 direction={orderBy === headCell.id ? order : 'asc'}
                 onClick={() => onSort(headCell.id)}
-                sx={{ textTransform: 'capitalize' }}
+                sx={{
+                  textTransform: 'capitalize',
+                  marginLeft: headCell.label === 'ACTIONS' ? '20px' : '0px',
+                }}
               >
                 {headCell.label}
 
