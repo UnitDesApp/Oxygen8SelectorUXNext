@@ -45,6 +45,7 @@ export default function UnitTypeItem({ label, onSelectItem,SetIsOpenSideDescript
           {label}
           <span>
             <IconButton aria-label="info" sx={{ padding: '5px', pt: 0 }} onClick={()=>SetIsOpenSideDescriptionOfProductType(true)}>
+              {}
             </IconButton>
           </span>
         </Typography>   
