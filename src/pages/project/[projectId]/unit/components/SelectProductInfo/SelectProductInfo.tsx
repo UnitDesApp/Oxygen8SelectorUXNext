@@ -51,6 +51,7 @@ export default function SelectProductInfo(props: SelectProductInfoProps) {
       onSelectAppliaionItem(1, 'Comercial');
       // setApplicationValue('Comercial');
       setValue(0);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     },[])
 
 
