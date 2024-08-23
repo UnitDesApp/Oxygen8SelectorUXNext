@@ -71,7 +71,7 @@ export default function AdminPanelWrapper({
               {currentTab === 'customers' && (
                 <Button
                   color="primary"
-                  variant="outlined"
+                  variant="contained"
                   startIcon={<Iconify icon="mdi:plus" />}
                   onClick={() => {
                     setAddCustomerDlgOpen(true);

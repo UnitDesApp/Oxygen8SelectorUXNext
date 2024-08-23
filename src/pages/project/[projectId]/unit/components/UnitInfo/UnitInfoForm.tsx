@@ -1062,7 +1062,21 @@ export default function UnitInfoForm({
       const returnCFM = getReturnAirCFM();
       setValue('txbSummerSupplyAirCFM', returnCFM);  
 
-  }, [intProductTypeID, getValues('ckbPHI')]);
+
+      switch (Number(getValues('ckbPHI'))) {
+        case 1:
+          setValue('ckbBypass', 1);
+          setBypassIsEnabled(false);
+          break;
+        case 0:
+          setValue('ckbBypass', 0);
+          setBypassIsEnabled(true);
+          break;
+        default:
+          break;
+      }
+
+  }, [getValues('ckbPHI')]);
 
 
 
@@ -1104,9 +1118,25 @@ export default function UnitInfoForm({
   }, []);
 
 
+// // ckbBypass
+// useEffect(() => {
+//   switch (Number(getValues('ckbPHI'))) {
+//     case 1:
+//       setValue('ckbBypass', 1);
+//       setBypassIsEnabled(false);
+//       break;
+//     case 0:
+//       setValue('ckbBypass', 0);
+//       setBypassIsEnabled(true);
+//       break;
+//     default:
+//       break;
+//   }
+// }, [getValues('ckbPHI')]);
+
 
   const [bypassInfo, setBypassInfo] = useState<any>([]);
-   useMemo(() => {
+  useEffect(() => {
     const info: { isVisible: boolean; isChecked: boolean; isEnabled: boolean; defaultId: number; bypassMsg: string } = {
                   isVisible: false,   isChecked: false,   isEnabled: false,   defaultId: 0,      bypassMsg: '',};
 
@@ -1180,7 +1210,7 @@ export default function UnitInfoForm({
 
 
   const [unitModelInfo, setUnitModelInfo] = useState<any>([]);
-  useMemo(() => {
+  useEffect(() => {
     const info: { fdtUnitModel: any; defaultId: number } = { fdtUnitModel: [], defaultId: 0,};
     // let controlsPrefProdTypeLink: any = [];
 
@@ -1460,7 +1490,7 @@ export default function UnitInfoForm({
     info.defaultId = info.fdtUnitModel?.[0]?.id;
     setValue('ddlUnitModel', info.fdtUnitModel?.[0]?.id);
 
-  }, [formCurrValues.txbSummerSupplyAirCFM, formCurrValues.ddlLocation, formCurrValues.ddlOrientation, formCurrValues.ckbPHI, formCurrValues.ckbBypass]);
+  }, [formCurrValues.txbSummerSupplyAirCFM, formCurrValues.ddlLocation, formCurrValues.ddlOrientation, formCurrValues.ckbBypass]);
 
 
   const [unitTypeInfo, setUnitTypeInfo] = useState<any>([]);
@@ -1560,17 +1590,22 @@ export default function UnitInfoForm({
           info.fdtControlVia = info.fdtControlVia?.filter(
             (item: { id: number }) => item.id === IDs.intContViaIdShipLooseCO2Sensor
           );
+
+          info.isVisible = true;
         } else {
           info.fdtControlVia = info.fdtControlVia?.filter(
             (item: { id: number }) => item.id === IDs.intContViaIdNA
           );
+
+          info.isVisible = false;
         }
         break;
       case IDs.intProdTypeIdTerra:
         info.fdtControlVia = info.fdtControlVia?.filter(
           (item: { id: number }) => item.id !== IDs.intContViaIdNA
         );
-        info.isVisible = true;
+
+        info.isVisible = false;
         break;
       default:
         break;
@@ -1579,7 +1614,7 @@ export default function UnitInfoForm({
     setControlViaInfo(info);
 
     info.defaultId = info.fdtControlVia?.[0]?.id;
-    setValue('ddlControlVia', info.fdtControlVia?.[0]?.id);
+    setValue('ddlControlVia', info.defaultId);
   }, [getValues('ddlControlsPref')]);
 
   
@@ -4035,21 +4070,7 @@ const ddlUnitModelChanged = useCallback((e: any) => {
   if (edit && setFunction) setFunction(handleSubmit(onSubmit));
 
 
-// ckbBypass
-  useEffect(() => {
-    switch (Number(getValues('ckbPHI'))) {
-      case 1:
-        setValue('ckbBypass', 1);
-        setBypassIsEnabled(false);
-        break;
-      case 0:
-        setValue('ckbBypass', 0);
-        setBypassIsEnabled(true);
-        break;
-      default:
-        break;
-    }
-  }, [getValues('ckbPHI')]);
+
 
 
 // ckbVoltageSPP
@@ -4280,45 +4301,6 @@ useEffect(() => {
   };
 
 
-
-
-//   const ckbPHIChange = useCallback((e: any) => {
-//     setValue('ckbPHI', Number(e.target.checked));
-
-//     if (Number(getValues('ckbPHI')) === 1) {
-//       setValue('ckbBypass', 1);
-//     }
-//   },[]
-// )
-
-
-// const ckbPHIChange = useCallback((e: any) => {
-//     setValue('ckbPHI', Number(e.target.value));
-
-//     if (Number(getValues('ckbPHI')) === 1) {
-//       setValue('ckbBypass', 1);
-//     };
-//   },[]
-// );
-
-
-// useEffect(() => {
-//   switch (Number(getValues('ckbPHI'))) {
-//     case 1:
-//       setValue('ckbBypass', 1);
-//       break;
-//     case 0:
-//       setValue('ckbBypass', 0);
-//       break;
-//     default:
-//       break;
-//   };
-
-// }, [getValues('ckbPHI')]);
-
-
-
-
 // ------------------------------------------------------------------------------------------------------------------------------------------------
 
   return (
@@ -4337,7 +4319,7 @@ useEffect(() => {
             </Typography>
           </Stack>
         )}
-        <Accordion
+        <Accordion  // GENERAL
           expanded={expanded.panel1}
           onChange={() => setExpanded({ ...expanded, panel1: !expanded.panel1 })}
         >
@@ -4347,7 +4329,7 @@ useEffect(() => {
             id="panel1a-header"
           >
             <Typography color="primary.main" variant="h6">
-              UNIT DETAILS
+              GENERAL
             </Typography>
           </AccordionSummary>
           <AccordionDetails>
@@ -4358,7 +4340,25 @@ useEffect(() => {
                   {isTagValue &&
                   <Typography sx={{color: '#e6382c'}}>Tag is required.</Typography>
                    }
-                  <RHFTextField
+                  <RHFSelect
+                      native
+                      size="small"
+                      name="ddlLocation"
+                      label="Location"
+                      placeholder=""
+                      onChange={ddlLocationChanged}
+                  >
+                      {locationInfo?.fdtLocation?. map((item: any, index: number) => (
+                        <option key={index} value={item.id}>
+                          {item.items}
+                        </option>
+                      ))}
+                  </RHFSelect>
+                </Box>
+              </Grid>
+              <Grid item xs={4} md={4}>
+                <Box sx={{ display: 'grid', rowGap: 1, columnGap: 1 }}>
+                <RHFTextField
                     size="small"
                     name="txbQty"
                     label="Quantity"
@@ -4366,57 +4366,6 @@ useEffect(() => {
                     //   setValueWithCheck(e, 'txbQty');
                     // }}
                   />
-                  {/* {isAvailable(db?.dbtSelUnitType) && ( */}
-                    <RHFSelect
-                      native
-                      size="small"
-                      name="ddlUnitType"
-                      label="Unit Type"
-                      placeholder=""
-                      disabled
-                    >
-                      {/* {sortedUnits?.map((item: any, index: number) => (
-                        <option key={index} value={item.id}>
-                          {item.unit_type}
-                        </option>
-                      ))} */}
-                      {unitTypeInfo?.fdtUnitType?.map((item: any, index: number) => (
-                        <option key={index} value={item.id}>
-                          {item.items}
-                        </option>
-                      ))}
-                    </RHFSelect>
-                  {/* )} */}
-                  {/* {isAvailable(locationInfo) && ( */}
-                    <RHFSelect
-                      native
-                      size="small"
-                      name="ddlLocation"
-                      label="Location"
-                      placeholder=""
-                      onChange={ddlLocationChanged}
-                    >
-                      {locationInfo?.fdtLocation?. map((item: any, index: number) => (
-                        <option key={index} value={item.id}>
-                          {item.items}
-                        </option>
-                      ))}
-                    </RHFSelect>
-                  {/* )} */}
-                  {/* <FormControlLabel
-                    control={ */}
-                  <RHFCheckbox
-                    sx={{ ...getDisplay(formValues.ddlLocation === IDs.intLocationIdOutdoor) }}
-                    label="Downshot"
-                    name="ckbDownshot"
-                    checked={formValues.ckbDownshot}
-                    // onChange={() => setCkbDownshotVal(!formValues.ckbDownshotVal)}
-                    onChange={(e: any) => setValue('ckbDownshot', Number(e.target.checked))}
-                  />
-                  {/* }
-                     label="Downshot"
-                   /> */}
-                  {/* {isAvailable(orientationInfo) && ( */}
                     <RHFSelect
                       native
                       size="small"
@@ -4431,45 +4380,47 @@ useEffect(() => {
                         </option>
                       ))}
                     </RHFSelect>
-                  {/* )} */}
-                  
-                  <RHFSelect
-                    native
-                    size="small"
-                    name="ddlControlsPref"
-                    label="Controls Preference"
-                    placeholder=""
-                    // sx={getDisplay(controlsPrefInfo?.isVisible)}
-                    onChange={(e: any) => {
-                      setValue('ddlControlsPref', Number(e.target.value));
-                    }}
-                  >
-                    {controlsPrefInfo?.fdtControlsPref?.map((item: any, index: number) => (
-                      <option key={index} value={item.id}>
-                        {item.items}
-                      </option>
-                    ))}
-                  </RHFSelect>
-                  <RHFSelect
-                    native
-                    size="small"
-                    name="ddlControlVia"
-                    label="Control Via"
-                    placeholder=""
-                    sx={getDisplay(controlViaInfo?.isVisible)}
-                    onChange={(e: any) => {setValue('ddlControlVia', Number(e.target.value));}}
-                  >
-                    {controlViaInfo?.fdtControlVia?.map((item: any, index: number) => (
-                      <option key={index} value={item.id}>
-                        {item.items}
-                      </option>
-                    ))}
-                  </RHFSelect>
                 </Box>
               </Grid>
               <Grid item xs={4} md={4}>
+                <Box sx={{ display: 'grid', rowGap: 1, columnGap: 1 }}>   
+                  <RHFSelect
+                    native
+                    size="small"
+                    name="ddlUnitType"
+                    label="Unit Type"
+                    placeholder=""
+                    disabled
+                  >
+                  {unitTypeInfo?.fdtUnitType?.map((item: any, index: number) => (
+                        <option key={index} value={item.id}>
+                          {item.items}
+                        </option>
+                      ))}
+                  </RHFSelect>                
+                </Box>
+              </Grid>
+            </Grid>
+          </AccordionDetails>
+        </Accordion>
+        <Accordion  // UNIT
+          expanded={expanded.panel1}
+          onChange={() => setExpanded({ ...expanded, panel1: !expanded.panel1 })}
+        >
+          <AccordionSummary
+            expandIcon={<Iconify icon="il:arrow-down" />}
+            aria-controls="panel1a-content"
+            id="panel1a-header"
+          >
+            <Typography color="primary.main" variant="h6">
+            UNIT
+            </Typography>
+          </AccordionSummary>
+          <AccordionDetails>
+            <Grid container spacing={5}>
+              <Grid item xs={4} md={4}>
                 <Box sx={{ display: 'grid', rowGap: 1, columnGap: 1 }}>
-                  <RHFTextField
+                <RHFTextField
                     size="small"
                     name="txbSummerSupplyAirCFM"
                     label="Supply Air (CFM)"
@@ -4486,6 +4437,10 @@ useEffect(() => {
                     }}
                     onBlur={handleBlurSummerReturnAirCFM}
                   />
+                </Box>
+              </Grid>
+              <Grid item xs={4} md={4}>
+                <Box sx={{ display: 'grid', rowGap: 1, columnGap: 1 }}>
                   <RHFTextField
                     size="small"
                     name="txbSupplyAirESP"
@@ -4509,36 +4464,6 @@ useEffect(() => {
               </Grid>
               <Grid item xs={4} md={4}>
                 <Box sx={{ display: 'grid', rowGap: 1, columnGap: 1 }}>
-                  {/* <FormControlLabel
-                    sx={getDisplay(intProductTypeID === IDs.intProdTypeVentumLiteID || isUnitTypeAHU())}
-                    control={ */}
-                  <RHFCheckbox
-                    label={`Passive House Certification: `}
-                    name="ckbPHI"
-                    sx={getDisplay(phiIsVisible)}
-                    // sx={{color: ckbBypassInfo.text !== '' ? colors.red[500] : 'text.primary', size: 'small', }}
-                    // checked={phiInfo?.isChecked}
-                    // disabled={!phiInfo?.isEnabled}
-                    onChange={(e: any) => {setValue('ckbPHI', Number(e.target.value));}}
-
-                    // onChange={ckbPHIOnChange}
-                  />
-                  <RHFCheckbox
-                    label={`Bypass for Economizer: ${bypassMsg}`}
-                    name="ckbBypass"
-                    sx={getDisplay(bypassIsVisible)}
-                    // sx={{color: ckbBypassInfo.text !== '' ? colors.red[500] : 'text.primary', size: 'small', }}
-                    checked={bypassIsChecked}
-                    disabled={!bypassIsEnabled}
-                    // onChange={() => setCkbBypassVal(!formValues.ckbBypassVal)}
-                    // onChange={(e: any) => setValue('ckbBypass', Number(e.target.checked))}
-
-                    onChange={ckbBypassOnChange}
-                  />
-                  {/* }
-                    label={`Bypass for Economizer: ${ckbBypassInfo.text}`}
-                  /> */}
-                  {/* {isAvailable(unitModel) && ( */}
                     <RHFSelect
                       native
                       size="small"
@@ -4553,60 +4478,37 @@ useEffect(() => {
                         </option>
                       ))}
                     </RHFSelect>
-                  {/* )} */}
-                  {/* {isAvailable(unitVoltage) && ( */}
-                    <RHFSelect
-                      native
-                      size="small"
-                      name="ddlUnitVoltage"
-                      label="Unit Voltage"
-                      onChange={ddlUnitVoltageChanged}
-                    >
-                      {unitVoltageInfo?.fdtUnitVoltage?.map((item: any, index: number) => (
-                        <option key={index} value={item.id}>
-                          {item.items}
-                        </option>
-                      ))}
-                    </RHFSelect>
-                  {/* )} */}
                   <RHFCheckbox
-                    label="Single Point Power Connection"
-                    name="ckbVoltageSPP"
-                    // checked={}
-                    onChange={(e: any) => setValue('ckbVoltageSPP', Number(e.target.value))}
-                    sx={getDisplay(voltageSPPIsVisible)}
+                    label={`Passive House Certification: `}
+                    name="ckbPHI"
+                    sx={getInlineDisplay(phiIsVisible)}
+                    // sx={{color: ckbBypassInfo.text !== '' ? colors.red[500] : 'text.primary', size: 'small', }}
+                    // checked={phiInfo?.isChecked}
+                    // disabled={!phiInfo?.isEnabled}
+                    onChange={(e: any) => {setValue('ckbPHI', Number(e.target.value));}}
+
+                    // onChange={ckbPHIOnChange}
                   />
-                  {isAvailable(outdoorAirFilterInfo?.fdtOutdoorAirFilter) && (
-                    <RHFSelect
-                      native
-                      size="small"
-                      name="ddlOA_FilterModel"
-                      label="OA Filter"
-                      onChange={(e: any) => setValue('ddlOA_FilterModel', Number(e.target.value))}
-                    >
-                      {outdoorAirFilterInfo?.fdtOutdoorAirFilter?.map(
-                        (item: any, index: number) => (
-                          <option key={index} value={item.id}>
-                            {item.items}
-                          </option>
-                        )
-                      )}
-                    </RHFSelect>
-                  )}
-                  <RHFSelect
-                    native
-                    size="small"
-                    name="ddlRA_FilterModel"
-                    label="RA Filter"
-                    sx={getDisplay(returnAirFilterInfo?.isVisible)}
-                    onChange={(e: any) => setValue('ddlRA_FilterModel', Number(e.target.value))}
-                  >
-                    {returnAirFilterInfo?.fdtReturnAirFilter?.map((item: any, index: number) => (
-                      <option key={index} value={item.id}>
-                        {item.items}
-                      </option>
-                    ))}
-                  </RHFSelect>
+                  <RHFCheckbox
+                    label={`Bypass for Economizer: ${bypassMsg}`}
+                    name="ckbBypass"
+                    sx={getInlineDisplay(bypassIsVisible)}
+                    // sx={{color: ckbBypassInfo.text !== '' ? colors.red[500] : 'text.primary', size: 'small', }}
+                    checked={bypassIsChecked}
+                    disabled={!bypassIsEnabled}
+                    // onChange={() => setCkbBypassVal(!formValues.ckbBypassVal)}
+                    // onChange={(e: any) => setValue('ckbBypass', Number(e.target.checked))}
+
+                    onChange={ckbBypassOnChange}
+                  />
+                    <RHFCheckbox
+                    sx={{ ...getInlineDisplay(formValues.ddlLocation === IDs.intLocationIdOutdoor) }}
+                    label="Downshot"
+                    name="ckbDownshot"
+                    checked={formValues.ckbDownshot}
+                    // onChange={() => setCkbDownshotVal(!formValues.ckbDownshotVal)}
+                    onChange={(e: any) => setValue('ckbDownshot', Number(e.target.checked))}
+                  />
                   <RHFCheckbox
                     label="Mixing Section"
                     name="ckbMixingBox"
@@ -4619,7 +4521,82 @@ useEffect(() => {
             </Grid>
           </AccordionDetails>
         </Accordion>
-        <Accordion
+        <Accordion  // FILTRATION
+          expanded={expanded.panel1}
+          onChange={() => setExpanded({ ...expanded, panel1: !expanded.panel1 })}
+        >
+          <AccordionSummary
+            expandIcon={<Iconify icon="il:arrow-down" />}
+            aria-controls="panel1a-content"
+            id="panel1a-header"
+          >
+            <Typography color="primary.main" variant="h6">
+              FILTRATION
+            </Typography>
+          </AccordionSummary>
+          <AccordionDetails>
+            <Grid container spacing={5}>
+              <Grid item xs={4} md={4}>
+                <Box sx={{ display: 'grid', rowGap: 1, columnGap: 1 }}>
+                <RHFSelect
+                      native
+                      size="small"
+                      name="ddlOA_FilterModel"
+                      label="Outdoor Air Filter"
+                      onChange={(e: any) => setValue('ddlOA_FilterModel', Number(e.target.value))}
+                    >
+                      {outdoorAirFilterInfo?.fdtOutdoorAirFilter?.map(
+                        (item: any, index: number) => (
+                          <option key={index} value={item.id}>
+                            {item.items}
+                          </option>
+                        )
+                      )}
+                    </RHFSelect>
+                  <RHFSelect
+                    native
+                    size="small"
+                    name="ddlRA_FilterModel"
+                    label="Return Air Filter"
+                    sx={getDisplay(returnAirFilterInfo?.isVisible)}
+                    onChange={(e: any) => setValue('ddlRA_FilterModel', Number(e.target.value))}
+                  >
+                    {returnAirFilterInfo?.fdtReturnAirFilter?.map((item: any, index: number) => (
+                      <option key={index} value={item.id}>
+                        {item.items}
+                      </option>
+                    ))}
+                  </RHFSelect>
+                </Box>
+              </Grid>
+              <Grid item xs={4} md={4}>
+                <Box sx={{ display: 'grid', rowGap: 1, columnGap: 1 }}>
+                  {}
+                </Box>
+              </Grid>
+              <Grid item xs={4} md={4}>
+                <Box sx={{ display: 'grid', rowGap: 1, columnGap: 1 }}>
+                <RHFTextField
+                    size="small"
+                    name="txbOAFilterPD"
+                    label="Outdoor Air Filter PD (inH2O)"
+                    onChange={(e: any) => { setValueWithCheck1(e, 'txbOAFilterPD');}}
+                    onBlur={handleBlurSupplyAirESP}
+                  />
+                  <RHFTextField
+                    size="small"
+                    name="txbRAFilterPD"
+                    label="Return Air Filter PD (inH2O)"
+                    sx={getDisplay(!isUnitTypeAHU())}
+                    onChange={(e: any) => {setValueWithCheck1(e, 'txbRAFilterPD');}}
+                    onBlur={handleBlurExhaustAirESP}
+                  />
+                </Box>
+              </Grid>
+            </Grid>
+          </AccordionDetails>
+        </Accordion>
+        <Accordion  // MIXING SECTION
           expanded={expanded.panel2}
           sx={getDisplay(getValues('ckbMixingBox'))}
           onChange={() => setExpanded({ ...expanded, panel2: !expanded.panel2 })}
@@ -4928,7 +4905,7 @@ useEffect(() => {
             </Box>
           </AccordionDetails>
         </Accordion>        
-        <Accordion
+        <Accordion  // PRE-HEAT
           expanded={expanded.panel2}
           sx={getDisplay(preheatCompInfo?.isVisible)}
           onChange={() => setExpanded({ ...expanded, panel2: !expanded.panel2 })}
@@ -4952,7 +4929,6 @@ useEffect(() => {
               }}
             >
               <Stack spacing={1}>
-                {/* {isAvailable(dtPreheatComp) && ( */}
                   <RHFSelect
                     native
                     size="small"
@@ -4967,7 +4943,6 @@ useEffect(() => {
                       </option>
                     ))}
                   </RHFSelect>
-                {/* )} */}
                 <RHFTextField
                   size="small"
                   name="txbWinterPreheatSetpointDB"
@@ -4982,22 +4957,6 @@ useEffect(() => {
                     setValueWithCheck1(e, 'txbWinterPreheatSetpointDB');
                   }}
                 />
-                {/* {isAvailable(db?.dbtSelHanding) && ( */}
-                  <RHFSelect
-                    native
-                    size="small"
-                    name="ddlPreheatCoilHanding"
-                    label="Preheat Coil Handing"
-                    sx={getDisplay(preheatCoilHandingInfo?.isVisible)}
-                    onChange={(e: any) => setValue('ddlPreheatCoilHanding', Number(e.target.value))}
-                  >
-                    {preheatCoilHandingInfo?.fdtHanding?.map((item: any, index: number) => (
-                      <option key={index} value={item.id}>
-                        {item.items}
-                      </option>
-                    ))}
-                  </RHFSelect>
-                {/* )} */}
                 <RHFCheckbox
                   label="Backup Heating"
                   name="ckbBackupHeating"
@@ -5149,7 +5108,7 @@ useEffect(() => {
             </Box>
           </AccordionDetails>
         </Accordion>
-        <Accordion
+        <Accordion  // COOLING
           expanded={expanded.panel3}
           sx={getDisplay(coolingCompInfo?.isVisible)}
           onChange={() => setExpanded({ ...expanded, panel3: !expanded.panel3 })}
@@ -5237,23 +5196,6 @@ useEffect(() => {
                   // onChange={(e: any) => setCkbDehumidificationVal(e.target.checked)}
                   onChange={(e: any) => setValue('ckbDehumidification', Number(e.target.checked))}
                 />
-
-                {/* {isAvailable(db?.dbtSelHanding) && ( */}
-                  <RHFSelect
-                    native
-                    size="small"
-                    name="ddlCoolingCoilHanding"
-                    label="Cooling Coil Handing"
-                    sx={getDisplay(coolingCoilHandingInfo?.isVisible)}
-                    onChange={(e: any) => setValue('ddlCoolingCoilHanding', Number(e.target.value))}
-                  >
-                    {coolingCoilHandingInfo?.fdtHanding?.map((item: any, index: number) => (
-                      <option key={index} value={item.id}>
-                        {item.items}
-                      </option>
-                    ))}
-                  </RHFSelect>
-                {/* )} */}
               </Stack>
               <Stack
                 spacing={1}
@@ -5390,7 +5332,7 @@ useEffect(() => {
             </Box>
           </AccordionDetails>
         </Accordion>
-        <Accordion
+        <Accordion  // HEATING
           expanded={expanded.panel4}
           sx={getDisplay(heatingCompInfo?.isVisible)}
           onChange={() => setExpanded({ ...expanded, panel4: !expanded.panel4 })}
@@ -5414,7 +5356,6 @@ useEffect(() => {
               }}
             >
               <Stack spacing={1}>
-                {/* {isAvailable(dtHeatingComp) && ( */}
                   <RHFSelect
                     native
                     size="small"
@@ -5429,7 +5370,6 @@ useEffect(() => {
                       </option>
                     ))}
                   </RHFSelect>
-                {/* )} */}
                 <RHFTextField
                   size="small"
                   name="txbWinterHeatingSetpointDB"
@@ -5444,22 +5384,6 @@ useEffect(() => {
                     setValueWithCheck1(e, 'txbWinterHeatingSetpointDB');
                   }}
                 />
-                {/* {isAvailable(db?.dbtSelHanding) && ( */}
-                  <RHFSelect
-                    native
-                    size="small"
-                    name="ddlHeatingCoilHanding"
-                    label="Heating Coil Handing"
-                    sx={getDisplay(heatingCoilHandingInfo?.isVisible)}
-                    onChange={ddlHeatingCoilHandingChanged}
-                  >
-                    {heatingCoilHandingInfo?.fdtHanding?.map((item: any, index: number) => (
-                      <option key={index} value={item.id}>
-                        {item.items}
-                      </option>
-                    ))}
-                  </RHFSelect>
-                {/* )} */}
               </Stack>
               <Stack
                 spacing={1}
@@ -5587,7 +5511,7 @@ useEffect(() => {
             </Box>
           </AccordionDetails>
         </Accordion>
-        <Accordion
+        <Accordion  // REHEAT
           sx={getDisplay(reheatCompInfo?.isVisible)}
           expanded={expanded.panel5}
           onChange={() => setExpanded({ ...expanded, panel5: !expanded.panel5 })}
@@ -5824,7 +5748,140 @@ useEffect(() => {
             </Box>
           </AccordionDetails>
         </Accordion>
-        <Accordion
+        <Accordion  // POWER
+          expanded={expanded.panel1}
+          onChange={() => setExpanded({ ...expanded, panel1: !expanded.panel1 })}
+        >
+          <AccordionSummary
+            expandIcon={<Iconify icon="il:arrow-down" />}
+            aria-controls="panel1a-content"
+            id="panel1a-header"
+          >
+            <Typography color="primary.main" variant="h6">
+            POWER
+            </Typography>
+          </AccordionSummary>
+          <AccordionDetails>
+            <Grid container spacing={5}>
+              <Grid item xs={4} md={4}>
+              <Box sx={{ display: 'grid', rowGap: 1, columnGap: 1 }}>
+                <RHFSelect
+                  native
+                  size="small"
+                  name="ddlUnitVoltage"
+                  label="Unit Voltage"
+                  onChange={ddlUnitVoltageChanged}
+                >
+                      {unitVoltageInfo?.fdtUnitVoltage?.map((item: any, index: number) => (
+                        <option key={index} value={item.id}>
+                          {item.items}
+                        </option>
+                      ))}
+                  </RHFSelect>    
+                  <RHFSelect
+                    native
+                    size="small"
+                    name="ddlElecHeaterVoltage"
+                    label="Electric Heater Voltage"
+                    placeholder=""
+                    sx={getDisplay(elecHeaterVoltageIsVisible)}
+                    disabled={!elecHeaterVoltageIsEnabled}
+                    onChange={ddlElecHeaterVoltageChanged}
+                  >
+                    {elecHeaterVoltageTable?.map(
+                      (item: any, index: number) => (
+                        <option key={index} value={item.id}>
+                          {item.items}
+                        </option>
+                      )
+                    )}
+                  </RHFSelect>
+            
+                </Box>              
+                </Grid>
+              <Grid item xs={4} md={4}>
+                <Box sx={{ display: 'grid', rowGap: 1, columnGap: 1 }}>
+                <RHFCheckbox
+                    label="Single Point Power Connection"
+                    name="ckbVoltageSPP"
+                    // checked={}
+                    onChange={(e: any) => setValue('ckbVoltageSPP', Number(e.target.value))}
+                    sx={getDisplay(voltageSPPIsVisible)}
+                  />
+               
+                </Box>
+              </Grid>
+              <Grid item xs={4} md={4}>
+                <Box sx={{ display: 'grid', rowGap: 1, columnGap: 1 }}>
+                  {}
+                </Box>
+              </Grid>
+            </Grid>
+          </AccordionDetails>
+        </Accordion>
+        <Accordion  // CONTROLS
+          expanded={expanded.panel1}
+          onChange={() => setExpanded({ ...expanded, panel1: !expanded.panel1 })}
+        >
+          <AccordionSummary
+            expandIcon={<Iconify icon="il:arrow-down" />}
+            aria-controls="panel1a-content"
+            id="panel1a-header"
+          >
+            <Typography color="primary.main" variant="h6">
+              CONTROLS
+            </Typography>
+          </AccordionSummary>
+          <AccordionDetails>
+            <Grid container spacing={5}>
+            <Grid item xs={4} md={4}>
+                <Box sx={{ display: 'grid', rowGap: 1, columnGap: 1 }}>
+                <RHFSelect
+                    native
+                    size="small"
+                    name="ddlControlsPref"
+                    label="Controls Preference"
+                    placeholder=""
+                    // sx={getDisplay(controlsPrefInfo?.isVisible)}
+                    onChange={(e: any) => {setValue('ddlControlsPref', Number(e.target.value));}}
+                  >
+                    {controlsPrefInfo?.fdtControlsPref?.map((item: any, index: number) => (
+                      <option key={index} value={item.id}>
+                        {item.items}
+                      </option>
+                    ))}
+                  </RHFSelect>
+                </Box>
+              </Grid>
+              <Grid item xs={4} md={4}>
+                <Box sx={{ display: 'grid', rowGap: 1, columnGap: 1 }}>
+                  <RHFSelect
+                    native
+                    size="small"
+                    name="ddlControlVia"
+                    label="Control Via"
+                    placeholder=""
+                    sx={getDisplay(controlViaInfo?.isVisible)}
+                    onChange={(e: any) => {setValue('ddlControlVia', Number(e.target.value));}}
+                  >
+                    {controlViaInfo?.fdtControlVia?.map((item: any, index: number) => (
+                      <option key={index} value={item.id}>
+                        {item.items}
+                      </option>
+                    ))}
+                  </RHFSelect>
+                </Box>
+              </Grid>
+              <Grid item xs={4} md={4}>
+                <Box sx={{ display: 'grid', rowGap: 1, columnGap: 1 }}>
+                  {}              
+                </Box>
+              </Grid>
+            </Grid>
+          </AccordionDetails>
+        </Accordion>
+
+        <Accordion  // ACCESSORIES
           expanded={expanded.panel6}
           onChange={() => setExpanded({ ...expanded, panel6: !expanded.panel6 })}
         >
@@ -5863,24 +5920,6 @@ useEffect(() => {
                   ))}
                 </RHFSelect>
                 {/* {isAvailable(elecHeaterVoltageInfo.ddlElecHeaterVoltageDataTbl) && ( */}
-                  <RHFSelect
-                    native
-                    size="small"
-                    name="ddlElecHeaterVoltage"
-                    label="Elec. Heater Voltage"
-                    placeholder=""
-                    sx={getDisplay(elecHeaterVoltageIsVisible)}
-                    disabled={!elecHeaterVoltageIsEnabled}
-                    onChange={ddlElecHeaterVoltageChanged}
-                  >
-                    {elecHeaterVoltageTable?.map(
-                      (item: any, index: number) => (
-                        <option key={index} value={item.id}>
-                          {item.items}
-                        </option>
-                      )
-                    )}
-                  </RHFSelect>
                 {/* )} */}
                 {/* <FormControlLabel
                   sx={getDisplay(valveAndActuatorInfo.divValveAndActuatorVisible)}
@@ -5946,7 +5985,7 @@ useEffect(() => {
             </Box>
           </AccordionDetails>
         </Accordion>
-        <Accordion
+        <Accordion  // LAYOUT
           expanded={expanded.panel7}
           onChange={() => setExpanded({ ...expanded, panel7: !expanded.panel7 })}
         >
@@ -5978,7 +6017,52 @@ useEffect(() => {
                         </option>
                       ))}
                     </RHFSelect>
-                  {/* {isAvailable(supplyAirOpeningInfo.ddlSupplyAirOpeningDataTbl) && ( */}
+                    <RHFSelect
+                    native
+                    size="small"
+                    name="ddlPreheatCoilHanding"
+                    label="Preheat Coil Handing"
+                    sx={getDisplay(preheatCoilHandingInfo?.isVisible)}
+                    onChange={(e: any) => setValue('ddlPreheatCoilHanding', Number(e.target.value))}
+                  >
+                    {preheatCoilHandingInfo?.fdtHanding?.map((item: any, index: number) => (
+                      <option key={index} value={item.id}>
+                        {item.items}
+                      </option>
+                    ))}
+                  </RHFSelect>
+                  <RHFSelect
+                    native
+                    size="small"
+                    name="ddlCoolingCoilHanding"
+                    label="Cooling Coil Handing"
+                    sx={getDisplay(coolingCoilHandingInfo?.isVisible)}
+                    onChange={(e: any) => setValue('ddlCoolingCoilHanding', Number(e.target.value))}
+                  >
+                    {coolingCoilHandingInfo?.fdtHanding?.map((item: any, index: number) => (
+                      <option key={index} value={item.id}>
+                        {item.items}
+                      </option>
+                    ))}
+                  </RHFSelect>
+                  <RHFSelect
+                    native
+                    size="small"
+                    name="ddlHeatingCoilHanding"
+                    label="Heating Coil Handing"
+                    sx={getDisplay(heatingCoilHandingInfo?.isVisible)}
+                    onChange={ddlHeatingCoilHandingChanged}
+                  >
+                    {heatingCoilHandingInfo?.fdtHanding?.map((item: any, index: number) => (
+                      <option key={index} value={item.id}>
+                        {item.items}
+                      </option>
+                    ))}
+                  </RHFSelect>                
+                  </Stack>{' '}
+              </Grid>
+              <Grid item xs={4} md={4}>
+                <Stack spacing={3}>
                     <RHFSelect
                       native
                       size="small"
@@ -5996,8 +6080,6 @@ useEffect(() => {
                         )
                       )}
                     </RHFSelect>
-                  {/* )} */}
-                  {/* {isAvailable(remainingOpeningsInfo.ddlExhaustAirOpeningDataTbl) && ( */}
                     <RHFSelect
                       native
                       size="small"
@@ -6015,8 +6097,6 @@ useEffect(() => {
                         )
                       )}
                     </RHFSelect>
-                  {/* )} */}
-                  {/* {isAvailable(remainingOpeningsInfo.ddlOutdoorAirOpeningDataTbl) && ( */}
                     <RHFSelect
                       native
                       size="small"
@@ -6034,8 +6114,6 @@ useEffect(() => {
                         )
                       )}
                     </RHFSelect>
-                  {/* )} */}
-                  {/* {isAvailable(remainingOpeningsInfo?.ddlReturnAirOpeningDataTbl) && ( */}
                     <RHFSelect
                       native
                       size="small"
@@ -6053,7 +6131,6 @@ useEffect(() => {
                         )
                       )}
                     </RHFSelect>
-                  {/* )} */}
                     <RHFSelect
                       native
                       size="small"
@@ -6090,6 +6167,7 @@ useEffect(() => {
                     </RHFSelect>
                 </Stack>{' '}
               </Grid>
+
               {/* <Grid item xs={8} md={8}>
                   <RHFUpload
                     name="layoutImage"
@@ -6101,7 +6179,7 @@ useEffect(() => {
             </Grid>
           </AccordionDetails>
         </Accordion>
-        <Accordion
+        <Accordion  // CONFIGURATION NOTES
           expanded={expanded.panel8}
           onChange={() => setExpanded({ ...expanded, panel8: !expanded.panel8 })}
         >
