@@ -1,10 +1,9 @@
 // @mui
-import { Container, Box } from '@mui/material';
+import { Container, Box, Typography as Text } from '@mui/material';
+import { styled } from '@mui/material/styles';
 
 // components
 import ProductTypeItem from './ProductTypeItem';
-import {Typography as Text} from '@mui/material';
-import { styled } from '@mui/material/styles';
 
 // ----------------------------------------------------------------------
 type ProductTypeProps = {
