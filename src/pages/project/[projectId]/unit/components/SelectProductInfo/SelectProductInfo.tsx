@@ -1,5 +1,5 @@
 // react
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 // prop-types
 // @mui
 import { Container, CardContent, Card, Box, Tabs, Tab } from '@mui/material';
@@ -38,21 +38,29 @@ export default function SelectProductInfo(props: SelectProductInfoProps) {
     setValue(newValue);
   }, []);
 
-  const onSelectApplicationValue = useCallback(
-    (label: string, id: number) => {
-      onSelectAppliaionItem(id, label);
-      setApplicationValue(label);
-      setValue(1);
-    },
-    [onSelectAppliaionItem]
-  );
+  // const onSelectApplicationValue = useCallback(
+  //   (label: string, id: number) => {
+  //     onSelectAppliaionItem(id, label);
+  //     setApplicationValue(label);
+  //     setValue(1);
+  //   },
+  //   [onSelectAppliaionItem]
+  // );
+
+    useEffect(()=>{
+      onSelectAppliaionItem(1, 'Comercial');
+      // setApplicationValue('Comercial');
+      setValue(0);
+    },[])
+
 
   const onSelectProductTypeValue = useCallback(
     (label: string, id: number) => {
       onSelectProductTypeItem(id, label);
       setProductTypeValue(label);
       setProductTypeID(id);
-      setValue(2);
+      setValue(1);
+      // setValue(1);
     },
     [onSelectProductTypeItem]
   );
@@ -75,25 +83,25 @@ export default function SelectProductInfo(props: SelectProductInfoProps) {
           centered
           variant="fullWidth"
         >
-          <Tab label={applicationValue} />
+          {/* <Tab label={applicationValue} /> */}
           <Tab label={productTypeValue} disabled={applicationValue === 'Application'} />
           <Tab label={unitTypeValue} disabled={productTypeValue === 'Product type'} />
         </Tabs>
         <CardContent>
-          <TabPanel value={value} index={0}>
+          {/* <TabPanel value={value} index={0}>
             <Applications
               // productTypes={productTypeDataTbl}
               onSelectItem={onSelectApplicationValue}
             />
-          </TabPanel>
-          <TabPanel value={value} index={1}>
+          </TabPanel> */}
+          <TabPanel value={value} index={0}>
             {/* <ProductTypes productTypes={data?.prodType} onSelectItem={onSelectProductTypeValue} /> */}
             <ProductTypes
               productTypes={data?.dbtSelProdType}
               onSelectItem={onSelectProductTypeValue}
             />
           </TabPanel>
-          <TabPanel value={value} index={2}>
+          <TabPanel value={value} index={1}>
             <UnitTypes
               productTypeID={productTypeID}
               SetIsOpenSideDescriptionOfProductType={SetIsOpenSideDescriptionOfProductType}

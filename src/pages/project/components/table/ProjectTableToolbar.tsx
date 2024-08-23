@@ -112,7 +112,7 @@ export default function ProjectTableToolbar({
           size="small"
           value={filterName}
           onChange={(event) => onFilterName(event.target.value)}
-          placeholder="Search Project..."
+          placeholder="Search Project"
           InputProps={{
             startAdornment: (
               <InputAdornment position="start">

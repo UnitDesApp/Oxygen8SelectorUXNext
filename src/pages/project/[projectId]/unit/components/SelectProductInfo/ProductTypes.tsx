@@ -3,18 +3,35 @@ import { Container, Box } from '@mui/material';
 
 // components
 import ProductTypeItem from './ProductTypeItem';
+import {Typography as Text} from '@mui/material';
+import { styled } from '@mui/material/styles';
 
 // ----------------------------------------------------------------------
 type ProductTypeProps = {
   productTypes: any[];
   onSelectItem: Function;
 };
+const TextItem = styled(Text)(({ theme }) => ({
+  fontSize: '0.9rem !important', 
+   whiteSpace: 'nowrap',  
+   color:'black',
+  overflow: 'hidden',
+  marginTop:'22px'
+}));
 
 export default function ProductType(props: ProductTypeProps) {
   const { productTypes, onSelectItem } = props;
 
   return (
-    <Container maxWidth="xl">
+    <Container sx={{display:'flex'}} maxWidth="xl">
+      <Box sx={{marginTop:"21%",marginBottom:"50px"}}>
+             <TextItem >Airflow</TextItem>
+             <TextItem >Type of Recovery Options*</TextItem>
+             <TextItem >Core Type(Efficiency)</TextItem>
+             <TextItem sx={{marginTop:'32px'}} >Location Options</TextItem>
+             <TextItem sx={{marginTop:'19px'}} >Orientation Options</TextItem>
+             <TextItem sx={{marginTop:'18px'}}>Accessories Options</TextItem>
+      </Box>
       <Box
         sx={{
           display: 'grid',

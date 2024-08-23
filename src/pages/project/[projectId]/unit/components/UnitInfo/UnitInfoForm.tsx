@@ -266,10 +266,7 @@ export default function UnitInfoForm({
    * Style functions that check if the compoment should be displayed or not
    */
   const getDisplay = useCallback((key: boolean) => ({ display: key ? 'block' : 'none' }), []);
-  const getInlineDisplay = useCallback(
-    (key: boolean) => ({ display: key ? 'inline-flex' : 'none' }),
-    []
-  );
+  const getInlineDisplay = useCallback((key: boolean) => ({ display: key ? 'inline-flex' : 'none' }), []);
 
   // -------------------- Get All Unit Information --------------------------
   const getAllFormData = useCallback(
@@ -390,9 +387,11 @@ export default function UnitInfoForm({
         intOAFilterModelId: Number(formCurrValues.ddlOA_FilterModel),
         intSAFinalFilterModelId: 0,
         intRAFilterModelId: Number(formCurrValues.ddlRA_FilterModel),
+        dblOAFilterPD: Number(formCurrValues.txbOA_FilterPD),
+        dblRAFilterPD: Number(formCurrValues.txbRA_FilterPD),
         intIsMixingBox: Number(formCurrValues.ckbMixingBox) === 1 ? 1 : 0,
         intPreheatCompId: Number(formCurrValues.ddlPreheatComp),
-        intIsPreheatElecHeatBackupOnly: 0,
+        intIsPreheatElecHeatBackupOnly: Number(formCurrValues.ckbMixUseProjectDefault) === 1 ? 1 : 0,
         intIsBackupHeating: Number(formCurrValues.ckbBackupHeating) === 1 ? 1 : 0,
         intHeatExchCompId: Number(formCurrValues.ddlHeatExchComp),
         intCoolingCompId: Number(formCurrValues.ddlCoolingComp),
@@ -422,8 +421,6 @@ export default function UnitInfoForm({
         intIsDrainPan: Number(formCurrValues.ckbDrainPan) === 1 ? 1 : 0,
         intValveTypeId: Number(formCurrValues.ddlValveType),
         intEKEXVKitInstallId: 0,
-        dblOAFilterPD: formCurrValues.txbOA_FilterPD,
-        dblRAFilterPD: formCurrValues.txbRA_FilterPD,
         dblPreheatSetpointDB: formCurrValues.txbWinterPreheatSetpointDB,
         dblCoolingSetpointDB: formCurrValues.txbSummerCoolingSetpointDB,
         dblCoolingSetpointWB: formCurrValues.txbSummerCoolingSetpointWB,
@@ -966,7 +963,6 @@ export default function UnitInfoForm({
 
   // -----------------------  ---------------------------
   const [internCompInfo, setInternCompInfo] = useState<any>([]);
-
   useMemo(() => {
     const info: { isOADesignCondVisible: boolean; isRADesignCondVisible: boolean; isCustomCompVisible: boolean; isHandingValveVisible: boolean; } = 
                 { isOADesignCondVisible: false, isRADesignCondVisible: false, isCustomCompVisible: false, isHandingValveVisible: false,};
@@ -1062,7 +1058,21 @@ export default function UnitInfoForm({
       const returnCFM = getReturnAirCFM();
       setValue('txbSummerSupplyAirCFM', returnCFM);  
 
-  }, [intProductTypeID, getValues('ckbPHI')]);
+
+      switch (Number(getValues('ckbPHI'))) {
+        case 1:
+          setValue('ckbBypass', 1);
+          setBypassIsEnabled(false);
+          break;
+        case 0:
+          setValue('ckbBypass', 0);
+          setBypassIsEnabled(true);
+          break;
+        default:
+          break;
+      }
+
+  }, [getValues('ckbPHI')]);
 
 
 
@@ -1104,9 +1114,25 @@ export default function UnitInfoForm({
   }, []);
 
 
+// // ckbBypass
+// useEffect(() => {
+//   switch (Number(getValues('ckbPHI'))) {
+//     case 1:
+//       setValue('ckbBypass', 1);
+//       setBypassIsEnabled(false);
+//       break;
+//     case 0:
+//       setValue('ckbBypass', 0);
+//       setBypassIsEnabled(true);
+//       break;
+//     default:
+//       break;
+//   }
+// }, [getValues('ckbPHI')]);
+
 
   const [bypassInfo, setBypassInfo] = useState<any>([]);
-   useMemo(() => {
+  useEffect(() => {
     const info: { isVisible: boolean; isChecked: boolean; isEnabled: boolean; defaultId: number; bypassMsg: string } = {
                   isVisible: false,   isChecked: false,   isEnabled: false,   defaultId: 0,      bypassMsg: '',};
 
@@ -1180,7 +1206,7 @@ export default function UnitInfoForm({
 
 
   const [unitModelInfo, setUnitModelInfo] = useState<any>([]);
-  useMemo(() => {
+  useEffect(() => {
     const info: { fdtUnitModel: any; defaultId: number } = { fdtUnitModel: [], defaultId: 0,};
     // let controlsPrefProdTypeLink: any = [];
 
@@ -1460,7 +1486,7 @@ export default function UnitInfoForm({
     info.defaultId = info.fdtUnitModel?.[0]?.id;
     setValue('ddlUnitModel', info.fdtUnitModel?.[0]?.id);
 
-  }, [formCurrValues.txbSummerSupplyAirCFM, formCurrValues.ddlLocation, formCurrValues.ddlOrientation, formCurrValues.ckbPHI, formCurrValues.ckbBypass]);
+  }, [formCurrValues.txbSummerSupplyAirCFM, formCurrValues.ddlLocation, formCurrValues.ddlOrientation, formCurrValues.ckbBypass]);
 
 
   const [unitTypeInfo, setUnitTypeInfo] = useState<any>([]);
@@ -1560,17 +1586,22 @@ export default function UnitInfoForm({
           info.fdtControlVia = info.fdtControlVia?.filter(
             (item: { id: number }) => item.id === IDs.intContViaIdShipLooseCO2Sensor
           );
+
+          info.isVisible = true;
         } else {
           info.fdtControlVia = info.fdtControlVia?.filter(
             (item: { id: number }) => item.id === IDs.intContViaIdNA
           );
+
+          info.isVisible = false;
         }
         break;
       case IDs.intProdTypeIdTerra:
         info.fdtControlVia = info.fdtControlVia?.filter(
           (item: { id: number }) => item.id !== IDs.intContViaIdNA
         );
-        info.isVisible = true;
+
+        info.isVisible = false;
         break;
       default:
         break;
@@ -1579,7 +1610,7 @@ export default function UnitInfoForm({
     setControlViaInfo(info);
 
     info.defaultId = info.fdtControlVia?.[0]?.id;
-    setValue('ddlControlVia', info.fdtControlVia?.[0]?.id);
+    setValue('ddlControlVia', info.defaultId);
   }, [getValues('ddlControlsPref')]);
 
   
@@ -3072,6 +3103,7 @@ export default function UnitInfoForm({
     setValue('ddlPreheatCoilHanding', info.defaultId);
     setValue('ddlCoolingCoilHanding', info.defaultId);
     setValue('ddlHeatingCoilHanding', info.defaultId);
+    setValue('ddlReheatCoilHanding', info.defaultId);
 
   }, [db]);
 
@@ -3657,6 +3689,7 @@ const ddlUnitModelChanged = useCallback((e: any) => {
       setValue('ddlPreheatCoilHanding', Number(e.target.value));
       setValue('ddlCoolingCoilHanding', Number(e.target.value));
       setValue('ddlHeatingCoilHanding', Number(e.target.value));
+      setValue('ddlReheatCoilHanding', Number(e.target.value));
     },
     [setValue]
   );
@@ -4028,28 +4061,8 @@ const ddlUnitModelChanged = useCallback((e: any) => {
   }, [db, intProductTypeID, formValues.ddlHeatingComp, formValues.ddlReheatComp]);
 
 
- 
-
-
   const isAvailable = useCallback((value: any[]) => !!value && value.length > 0, []);
   if (edit && setFunction) setFunction(handleSubmit(onSubmit));
-
-
-// ckbBypass
-  useEffect(() => {
-    switch (Number(getValues('ckbPHI'))) {
-      case 1:
-        setValue('ckbBypass', 1);
-        setBypassIsEnabled(false);
-        break;
-      case 0:
-        setValue('ckbBypass', 0);
-        setBypassIsEnabled(true);
-        break;
-      default:
-        break;
-    }
-  }, [getValues('ckbPHI')]);
 
 
 // ckbVoltageSPP
@@ -4131,9 +4144,13 @@ useEffect(() => {
 
       setValue('ckbVoltageSPP', unitInfo?.oUnit?.intIsVoltageSPP > 0 ?  unitInfo?.oUnit?.intIsVoltageSPP : 0);
       
-      setValue('ddlOA_FilterModel', unitInfo?.oCompOpt?.intOAFilterModelId > 0 ?  unitInfo?.oCompOpt?.intOAFilterModelId : getValues('ddlOA_FilterModel'));
+      setValue('ddlOA_FilterModel', unitInfo?.oUnitCompOpt?.intOAFilterModelId > 0 ?  unitInfo?.oUnitCompOpt?.intOAFilterModelId : getValues('ddlOA_FilterModel'));
 
-      setValue('ddlRA_FilterModel', unitInfo?.oCompOpt?.intRAFilterModelId > 0 ?  unitInfo?.oCompOpt?.intRAFilterModelId : getValues('ddlRA_FilterModel'));
+      setValue('ddlRA_FilterModel', unitInfo?.oUnitCompOpt?.intRAFilterModelId > 0 ?  unitInfo?.oUnitCompOpt?.intRAFilterModelId : getValues('ddlRA_FilterModel'));
+
+      setValue('txbOA_FilterPD', unitInfo?.oUnitCompOpt?.dblOAFilterPD > 0 ?  unitInfo?.oUnitCompOpt?.dblOAFilterPD : '0.5');
+
+      setValue('txbRA_FilterPD', unitInfo?.oUnitCompOpt?.dblRAFilterPD > 0 ?  unitInfo?.oUnitCompOpt?.dblRAFilterPD : '0.5');
 
       setValue('ddlPreheatComp', unitInfo?.oUnitCompOpt?.intPreheatCompId > 0 ?  unitInfo?.oUnitCompOpt?.intPreheatCompId : getValues('ddlPreheatComp'));
 
@@ -4280,45 +4297,6 @@ useEffect(() => {
   };
 
 
-
-
-//   const ckbPHIChange = useCallback((e: any) => {
-//     setValue('ckbPHI', Number(e.target.checked));
-
-//     if (Number(getValues('ckbPHI')) === 1) {
-//       setValue('ckbBypass', 1);
-//     }
-//   },[]
-// )
-
-
-// const ckbPHIChange = useCallback((e: any) => {
-//     setValue('ckbPHI', Number(e.target.value));
-
-//     if (Number(getValues('ckbPHI')) === 1) {
-//       setValue('ckbBypass', 1);
-//     };
-//   },[]
-// );
-
-
-// useEffect(() => {
-//   switch (Number(getValues('ckbPHI'))) {
-//     case 1:
-//       setValue('ckbBypass', 1);
-//       break;
-//     case 0:
-//       setValue('ckbBypass', 0);
-//       break;
-//     default:
-//       break;
-//   };
-
-// }, [getValues('ckbPHI')]);
-
-
-
-
 // ------------------------------------------------------------------------------------------------------------------------------------------------
 
   return (
@@ -4337,7 +4315,7 @@ useEffect(() => {
             </Typography>
           </Stack>
         )}
-        <Accordion
+        <Accordion  // GENERAL
           expanded={expanded.panel1}
           onChange={() => setExpanded({ ...expanded, panel1: !expanded.panel1 })}
         >
@@ -4347,47 +4325,37 @@ useEffect(() => {
             id="panel1a-header"
           >
             <Typography color="primary.main" variant="h6">
-              UNIT DETAILS
+              GENERAL
             </Typography>
           </AccordionSummary>
           <AccordionDetails>
-            <Grid container spacing={5}>
-              <Grid item xs={4} md={4}>
-                <Box sx={{ display: 'grid', rowGap: 1, columnGap: 1 }}>
-                  <RHFTextField size="small" name="txtTag" label="Tag" />
-                  {isTagValue &&
-                  <Typography sx={{color: '#e6382c'}}>Tag is required.</Typography>
-                   }
-                  <RHFTextField
-                    size="small"
-                    name="txbQty"
-                    label="Quantity"
+            <Grid container spacing={3}>
+              <Grid item xs={12} md={12}>
+                <Box sx={{ display: 'grid', rowGap: 3, columnGap: 3, gridTemplateColumns: { xs: 'repeat(3, 1fr)' }, }}>
+                  <Stack>
+                    <RHFTextField size="small" name="txtTag" label="Tag" />
+                    {isTagValue &&
+                      <Typography sx={{ color: '#e6382c' }}>Tag is required.</Typography>
+                    }
+                  </Stack>
+                  <Stack>
+                    <RHFTextField
+                      size="small"
+                      name="txbQty"
+                      label="Quantity"
                     // onChange={(e: any) => {
                     //   setValueWithCheck(e, 'txbQty');
                     // }}
-                  />
-                  {/* {isAvailable(db?.dbtSelUnitType) && ( */}
-                    <RHFSelect
-                      native
-                      size="small"
-                      name="ddlUnitType"
-                      label="Unit Type"
-                      placeholder=""
-                      disabled
-                    >
-                      {/* {sortedUnits?.map((item: any, index: number) => (
-                        <option key={index} value={item.id}>
-                          {item.unit_type}
-                        </option>
-                      ))} */}
-                      {unitTypeInfo?.fdtUnitType?.map((item: any, index: number) => (
-                        <option key={index} value={item.id}>
-                          {item.items}
-                        </option>
-                      ))}
-                    </RHFSelect>
-                  {/* )} */}
-                  {/* {isAvailable(locationInfo) && ( */}
+                    />
+                  </Stack>
+                  <Stack>
+                    { }
+                  </Stack>
+                </Box>
+              </Grid>
+              <Grid item xs={12} md={12}>
+                <Box sx={{ display: 'grid', rowGap: 3, columnGap: 3, gridTemplateColumns: { xs: 'repeat(3, 1fr)' }, }}>
+                  <Stack>
                     <RHFSelect
                       native
                       size="small"
@@ -4396,27 +4364,14 @@ useEffect(() => {
                       placeholder=""
                       onChange={ddlLocationChanged}
                     >
-                      {locationInfo?.fdtLocation?. map((item: any, index: number) => (
+                      {locationInfo?.fdtLocation?.map((item: any, index: number) => (
                         <option key={index} value={item.id}>
                           {item.items}
                         </option>
                       ))}
                     </RHFSelect>
-                  {/* )} */}
-                  {/* <FormControlLabel
-                    control={ */}
-                  <RHFCheckbox
-                    sx={{ ...getDisplay(formValues.ddlLocation === IDs.intLocationIdOutdoor) }}
-                    label="Downshot"
-                    name="ckbDownshot"
-                    checked={formValues.ckbDownshot}
-                    // onChange={() => setCkbDownshotVal(!formValues.ckbDownshotVal)}
-                    onChange={(e: any) => setValue('ckbDownshot', Number(e.target.checked))}
-                  />
-                  {/* }
-                     label="Downshot"
-                   /> */}
-                  {/* {isAvailable(orientationInfo) && ( */}
+                  </Stack>
+                  <Stack>
                     <RHFSelect
                       native
                       size="small"
@@ -4431,114 +4386,66 @@ useEffect(() => {
                         </option>
                       ))}
                     </RHFSelect>
-                  {/* )} */}
-                  
-                  <RHFSelect
-                    native
-                    size="small"
-                    name="ddlControlsPref"
-                    label="Controls Preference"
-                    placeholder=""
-                    // sx={getDisplay(controlsPrefInfo?.isVisible)}
-                    onChange={(e: any) => {
-                      setValue('ddlControlsPref', Number(e.target.value));
-                    }}
-                  >
-                    {controlsPrefInfo?.fdtControlsPref?.map((item: any, index: number) => (
-                      <option key={index} value={item.id}>
-                        {item.items}
-                      </option>
-                    ))}
-                  </RHFSelect>
-                  <RHFSelect
-                    native
-                    size="small"
-                    name="ddlControlVia"
-                    label="Control Via"
-                    placeholder=""
-                    sx={getDisplay(controlViaInfo?.isVisible)}
-                    onChange={(e: any) => {setValue('ddlControlVia', Number(e.target.value));}}
-                  >
-                    {controlViaInfo?.fdtControlVia?.map((item: any, index: number) => (
-                      <option key={index} value={item.id}>
-                        {item.items}
-                      </option>
-                    ))}
-                  </RHFSelect>
+                  </Stack>
+                  <Stack>
+                    <RHFSelect
+                      native
+                      size="small"
+                      name="ddlUnitType"
+                      label="Unit Type"
+                      placeholder=""
+                      disabled
+                    >
+                      {unitTypeInfo?.fdtUnitType?.map((item: any, index: number) => (
+                        <option key={index} value={item.id}>
+                          {item.items}
+                        </option>
+                      ))}
+                    </RHFSelect>
+                  </Stack>
                 </Box>
               </Grid>
-              <Grid item xs={4} md={4}>
-                <Box sx={{ display: 'grid', rowGap: 1, columnGap: 1 }}>
-                  <RHFTextField
-                    size="small"
-                    name="txbSummerSupplyAirCFM"
-                    label="Supply Air (CFM)"
-                    // onChange={(e: any) => {setValueWithCheck(e, 'txbSummerSupplyAirCFM');}}
-                    onBlur={handleBlurSummerSupplyAirCFM}
-                  />
-                  <RHFTextField
-                    size="small"
-                    name="txbSummerReturnAirCFM"
-                    label="Exhaust Air (CFM)"
-                    sx={getDisplay(!isUnitTypeAHU())}
-                    onChange={(e: any) => {
-                      setValueWithCheck(e, 'txbSummerReturnAirCFM');
-                    }}
-                    onBlur={handleBlurSummerReturnAirCFM}
-                  />
-                  <RHFTextField
-                    size="small"
-                    name="txbSupplyAirESP"
-                    label="Supply Air ESP (inH2O)"
-                    onChange={(e: any) => {
-                      setValueWithCheck1(e, 'txbSupplyAirESP');
-                    }}
-                    onBlur={handleBlurSupplyAirESP}
-                  />
-                  <RHFTextField
-                    size="small"
-                    name="txbExhaustAirESP"
-                    label="Exhaust Air ESP (inH2O)"
-                    sx={getDisplay(!isUnitTypeAHU())}
-                    onChange={(e: any) => {
-                      setValueWithCheck1(e, 'txbExhaustAirESP');
-                    }}
-                    onBlur={handleBlurExhaustAirESP}
-                  />
-                </Box>
-              </Grid>
-              <Grid item xs={4} md={4}>
-                <Box sx={{ display: 'grid', rowGap: 1, columnGap: 1 }}>
-                  {/* <FormControlLabel
-                    sx={getDisplay(intProductTypeID === IDs.intProdTypeVentumLiteID || isUnitTypeAHU())}
-                    control={ */}
-                  <RHFCheckbox
-                    label={`Passive House Certification: `}
-                    name="ckbPHI"
-                    sx={getDisplay(phiIsVisible)}
-                    // sx={{color: ckbBypassInfo.text !== '' ? colors.red[500] : 'text.primary', size: 'small', }}
-                    // checked={phiInfo?.isChecked}
-                    // disabled={!phiInfo?.isEnabled}
-                    onChange={(e: any) => {setValue('ckbPHI', Number(e.target.value));}}
-
-                    // onChange={ckbPHIOnChange}
-                  />
-                  <RHFCheckbox
-                    label={`Bypass for Economizer: ${bypassMsg}`}
-                    name="ckbBypass"
-                    sx={getDisplay(bypassIsVisible)}
-                    // sx={{color: ckbBypassInfo.text !== '' ? colors.red[500] : 'text.primary', size: 'small', }}
-                    checked={bypassIsChecked}
-                    disabled={!bypassIsEnabled}
-                    // onChange={() => setCkbBypassVal(!formValues.ckbBypassVal)}
-                    // onChange={(e: any) => setValue('ckbBypass', Number(e.target.checked))}
-
-                    onChange={ckbBypassOnChange}
-                  />
-                  {/* }
-                    label={`Bypass for Economizer: ${ckbBypassInfo.text}`}
-                  /> */}
-                  {/* {isAvailable(unitModel) && ( */}
+            </Grid>
+          </AccordionDetails>
+        </Accordion>
+        <Accordion  // UNIT
+          expanded={expanded.panel1}
+          onChange={() => setExpanded({ ...expanded, panel1: !expanded.panel1 })}
+        >
+          <AccordionSummary
+            expandIcon={<Iconify icon="il:arrow-down" />}
+            aria-controls="panel1a-content"
+            id="panel1a-header"
+          >
+            <Typography color="primary.main" variant="h6">
+              UNIT
+            </Typography>
+          </AccordionSummary>
+          <AccordionDetails>
+            <Grid container spacing={3}>
+              <Grid item xs={12} md={12}>
+                <Box sx={{ display: 'grid', rowGap: 3, columnGap: 3, gridTemplateColumns: { xs: 'repeat(3, 1fr)' }, }}>
+                  <Stack>
+                    <RHFTextField
+                      size="small"
+                      name="txbSummerSupplyAirCFM"
+                      label="Supply Air (CFM)"
+                      // onChange={(e: any) => {setValueWithCheck(e, 'txbSummerSupplyAirCFM');}}
+                      onBlur={handleBlurSummerSupplyAirCFM}
+                    />
+                  </Stack>
+                  <Stack>
+                    <RHFTextField
+                      size="small"
+                      name="txbSupplyAirESP"
+                      label="Supply Air ESP (inH2O)"
+                      onChange={(e: any) => {
+                        setValueWithCheck1(e, 'txbSupplyAirESP');
+                      }}
+                      onBlur={handleBlurSupplyAirESP}
+                    />
+                  </Stack>
+                  <Stack>
                     <RHFSelect
                       native
                       size="small"
@@ -4553,52 +4460,134 @@ useEffect(() => {
                         </option>
                       ))}
                     </RHFSelect>
-                  {/* )} */}
-                  {/* {isAvailable(unitVoltage) && ( */}
-                    <RHFSelect
-                      native
+                  </Stack>
+                </Box>
+              </Grid>
+              <Grid item xs={12} md={12}>
+                <Box sx={{ display: 'grid', rowGap: 3, columnGap: 3, gridTemplateColumns: { xs: 'repeat(3, 1fr)' }, }}>
+                  <Stack>
+                    <RHFTextField
                       size="small"
-                      name="ddlUnitVoltage"
-                      label="Unit Voltage"
-                      onChange={ddlUnitVoltageChanged}
-                    >
-                      {unitVoltageInfo?.fdtUnitVoltage?.map((item: any, index: number) => (
+                      name="txbSummerReturnAirCFM"
+                      label="Exhaust Air (CFM)"
+                      sx={getDisplay(!isUnitTypeAHU())}
+                      onChange={(e: any) => {
+                        setValueWithCheck(e, 'txbSummerReturnAirCFM');
+                      }}
+                      onBlur={handleBlurSummerReturnAirCFM}
+                    />
+                  </Stack>
+                  <Stack>
+                    <RHFTextField
+                      size="small"
+                      name="txbExhaustAirESP"
+                      label="Exhaust Air ESP (inH2O)"
+                      sx={getDisplay(!isUnitTypeAHU())}
+                      onChange={(e: any) => {
+                        setValueWithCheck1(e, 'txbExhaustAirESP');
+                      }}
+                      onBlur={handleBlurExhaustAirESP}
+                    />
+                  </Stack>
+                  <Stack>
+                    <RHFCheckbox
+                      label={`Passive House Certification: `}
+                      name="ckbPHI"
+                      sx={getInlineDisplay(phiIsVisible)}
+                      // sx={{color: ckbBypassInfo.text !== '' ? colors.red[500] : 'text.primary', size: 'small', }}
+                      // checked={phiInfo?.isChecked}
+                      // disabled={!phiInfo?.isEnabled}
+                      onChange={(e: any) => { setValue('ckbPHI', Number(e.target.value)); }}
+
+                    // onChange={ckbPHIOnChange}
+                    />
+                    <RHFCheckbox
+                      label={`Bypass for Economizer: ${bypassMsg}`}
+                      name="ckbBypass"
+                      sx={getInlineDisplay(bypassIsVisible)}
+                      // sx={{color: ckbBypassInfo.text !== '' ? colors.red[500] : 'text.primary', size: 'small', }}
+                      checked={bypassIsChecked}
+                      disabled={!bypassIsEnabled}
+                      // onChange={() => setCkbBypassVal(!formValues.ckbBypassVal)}
+                      // onChange={(e: any) => setValue('ckbBypass', Number(e.target.checked))}
+
+                      onChange={ckbBypassOnChange}
+                    />
+                    <RHFCheckbox
+                      sx={{ ...getInlineDisplay(formValues.ddlLocation === IDs.intLocationIdOutdoor) }}
+                      label="Downshot"
+                      name="ckbDownshot"
+                      checked={formValues.ckbDownshot}
+                      // onChange={() => setCkbDownshotVal(!formValues.ckbDownshotVal)}
+                      onChange={(e: any) => setValue('ckbDownshot', Number(e.target.checked))}
+                    />
+                    <RHFCheckbox
+                      label="Mixing Section"
+                      name="ckbMixingBox"
+                      // checked={formValues.ckbVoltageSPP}
+                      onChange={(e: any) => setValue('ckbMixingBox', Number(e.target.checked))}
+                      sx={getDisplay(intProductTypeID === IDs.intProdTypeIdTerra)}
+                    />
+                  </Stack>
+
+                </Box>
+              </Grid>
+            </Grid>
+          </AccordionDetails>
+        </Accordion>
+        <Accordion  // FILTRATION
+          expanded={expanded.panel1}
+          onChange={() => setExpanded({ ...expanded, panel1: !expanded.panel1 })}
+        >
+          <AccordionSummary
+            expandIcon={<Iconify icon="il:arrow-down" />}
+            aria-controls="panel1a-content"
+            id="panel1a-header"
+          >
+            <Typography color="primary.main" variant="h6">
+              FILTRATION
+            </Typography>
+          </AccordionSummary>
+          <AccordionDetails>
+            <Grid container spacing={3}>
+              <Grid item xs={12} md={12}>
+                <Box sx={{ display: 'grid', rowGap: 3, columnGap: 3, gridTemplateColumns: { xs: 'repeat(3, 1fr)' }, }}>
+                  <Stack>
+                  <RHFSelect
+                    native
+                    size="small"
+                    name="ddlOA_FilterModel"
+                    label="Outdoor Air Filter"
+                    onChange={(e: any) => setValue('ddlOA_FilterModel', Number(e.target.value))}
+                  >
+                    {outdoorAirFilterInfo?.fdtOutdoorAirFilter?.map(
+                      (item: any, index: number) => (
                         <option key={index} value={item.id}>
                           {item.items}
                         </option>
-                      ))}
-                    </RHFSelect>
-                  {/* )} */}
-                  <RHFCheckbox
-                    label="Single Point Power Connection"
-                    name="ckbVoltageSPP"
-                    // checked={}
-                    onChange={(e: any) => setValue('ckbVoltageSPP', Number(e.target.value))}
-                    sx={getDisplay(voltageSPPIsVisible)}
+                      )
+                    )}
+                  </RHFSelect>
+                  </Stack>
+                  <Stack>
+                  <RHFTextField
+                    size="small"
+                    name="txbOA_FilterPD"
+                    label="Outdoor Air Filter PD (inH2O)"
+                    onChange={(e: any) => { setValueWithCheck1(e, 'txbOA_FilterPD'); }}
+                    onBlur={handleBlurSupplyAirESP}
                   />
-                  {isAvailable(outdoorAirFilterInfo?.fdtOutdoorAirFilter) && (
-                    <RHFSelect
-                      native
-                      size="small"
-                      name="ddlOA_FilterModel"
-                      label="OA Filter"
-                      onChange={(e: any) => setValue('ddlOA_FilterModel', Number(e.target.value))}
-                    >
-                      {outdoorAirFilterInfo?.fdtOutdoorAirFilter?.map(
-                        (item: any, index: number) => (
-                          <option key={index} value={item.id}>
-                            {item.items}
-                          </option>
-                        )
-                      )}
-                    </RHFSelect>
-                  )}
+                  </Stack>
+                </Box>
+              </Grid>
+              <Grid item xs={12} md={12} sx={getDisplay(returnAirFilterInfo?.isVisible)}>
+                <Box sx={{ display: 'grid', rowGap: 3, columnGap: 3, gridTemplateColumns: { xs: 'repeat(3, 1fr)' },  }}>
+                <Stack>
                   <RHFSelect
                     native
                     size="small"
                     name="ddlRA_FilterModel"
-                    label="RA Filter"
-                    sx={getDisplay(returnAirFilterInfo?.isVisible)}
+                    label="Return Air Filter"
                     onChange={(e: any) => setValue('ddlRA_FilterModel', Number(e.target.value))}
                   >
                     {returnAirFilterInfo?.fdtReturnAirFilter?.map((item: any, index: number) => (
@@ -4607,328 +4596,331 @@ useEffect(() => {
                       </option>
                     ))}
                   </RHFSelect>
-                  <RHFCheckbox
-                    label="Mixing Section"
-                    name="ckbMixingBox"
-                    // checked={formValues.ckbVoltageSPP}
-                    onChange={(e: any) => setValue('ckbMixingBox', Number(e.target.checked))}
-                    sx={getDisplay(intProductTypeID === IDs.intProdTypeIdTerra)}
-                  />                
+                  </Stack>
+                  <Stack>
+                  <RHFTextField
+                    size="small"
+                    name="txbRA_FilterPD"
+                    label="Return Air Filter PD (inH2O)"
+                    onChange={(e: any) => { setValueWithCheck1(e, 'txbRA_FilterPD'); }}
+                    onBlur={handleBlurExhaustAirESP}
+                  />
+                  </Stack>
+                  <Stack>
+                    {}
+                  </Stack>
                 </Box>
               </Grid>
             </Grid>
           </AccordionDetails>
         </Accordion>
-        <Accordion
-          expanded={expanded.panel2}
-          sx={getDisplay(getValues('ckbMixingBox'))}
-          onChange={() => setExpanded({ ...expanded, panel2: !expanded.panel2 })}
-        >
-          <AccordionSummary
-            expandIcon={<Iconify icon="il:arrow-down" />}
-            aria-controls="panel1a-content"
-            id="panel1a-header"
-          >
-            <Typography color="primary.main" variant="h6">
-              MIXING SECTION
-            </Typography>
-          </AccordionSummary>
-          <AccordionDetails>
-            <Box
-              sx={{
-                display: 'grid',
-                rowGap: 1,
-                columnGap: 1,
-                gridTemplateColumns: { xs: 'repeat(6, 1fr)' },
-              }}
-            >
-          <Stack spacing={1}><Typography color="primary.main" variant="subtitle2"/></Stack>
-          <Stack spacing={1}><Typography color="primary.main" variant="subtitle2">SUMMER</Typography></Stack>
-          <Stack spacing={1}><Typography color="primary.main" variant="subtitle2"/></Stack>
-          <Stack spacing={1}><Typography color="primary.main" variant="subtitle2">WINTER</Typography></Stack>
-          <Stack spacing={1}><Typography color="primary.main" variant="subtitle2"/></Stack>
-          <Stack spacing={1}><Typography color="primary.main" variant="subtitle2"/></Stack>
-          
-          <Stack spacing={1}><Typography color="primary.main" variant="subtitle2">Outdoor Air (% / CFM)</Typography></Stack>
-          <Stack spacing={1}>
-            <RHFTextField
-              size="small"
-                name="txbMixSummerOA_CFMPct"
-                label="%"
-                autoComplete="off"
-                onChange={(e: any) => {
-                  setValueWithCheck1(e, 'txbMixSummerOA_CFMPct');
-                }}
-                />
-          </Stack> 
-          <Stack spacing={1}>
-            <RHFTextField
-              size="small"
-              name="txbMixSummerOA_CFM"
-              label="CFM"
-              disabled
-            />
-          </Stack>  
-          {/* <TextField
-            name="txbMixSummerOA_CFM"
-
-      /> */}
-          <Stack spacing={1}>
-              <RHFTextField
-                  size="small"
-                  name="txbMixWinterOA_CFMPct"
-                  label="%"
-                  autoComplete="off"
-                  onChange={(e: any) => {
-                    setValueWithCheck1(e, 'txbMixWinterOA_CFMPct');
-                  }}
-                />
-          </Stack> 
-          <Stack spacing={1}>
-            <RHFTextField
-              size="small"
-              name="txbMixWinterOA_CFM"
-              label="CFM"
-              disabled
-            />
-          </Stack> 
-          <Stack spacing={1}><Typography color="primary.main" variant="subtitle2"/></Stack>
-
-          <Stack spacing={1}><Typography color="primary.main" variant="subtitle2">Return Air (% / CFM)</Typography></Stack>
-          <Stack spacing={1}>
-            <RHFTextField
-              size="small"
-              name="txbMixSummerRA_CFMPct"
-              label="%"
-              autoComplete="off"
-              disabled
-              onChange={(e: any) => {setValueWithCheck1(e, 'txbMixSummerRA_CFMPct');}}
-            />
-          </Stack>  
-          <Stack spacing={1}>
-            <RHFTextField
-              size="small"
-              name="txbMixSummerRA_CFM"
-              label="CFM"
-              disabled
-            />
-          </Stack> 
-                <Stack spacing={1}>
-                <RHFTextField
-                  size="small"
-                  name="txbMixWinterRA_CFMPct"
-                  label="%"
-                  autoComplete="off"
-                  disabled
-                  onChange={(e: any) => {
-                    setValueWithCheck1(e, 'txbMixWinterRA_CFMPct');
-                  }}
-                />
-                </Stack>
-                <Stack spacing={1}>
-            <RHFTextField
-              size="small"
-              name="txbMixWinterRA_CFM"
-              label="CFM"
-              disabled
-            />
-          </Stack>           
-          <Stack spacing={1}><Typography color="primary.main" variant="subtitle2"/></Stack>
-
-          <Stack spacing={1}> 
-              <RHFCheckbox
-                  label="Use Project Default"
-                  name="ckbMixUseProjectDefault"
-                  onChange={(e: any) => setValue('ckbMixUseProjectDefault', Number(e.target.checked))}
-                /> 
+          <Stack sx={getInlineDisplay(getValues('ckbMixingBox'))}>
+            <Accordion  // MIXING SECTION
+              expanded={expanded.panel2}
+              onChange={() => setExpanded({ ...expanded, panel2: !expanded.panel2 })}
+              sx={getDisplay(getValues('ckbMixingBox'))}
+              >
+              <AccordionSummary
+                expandIcon={<Iconify icon="il:arrow-down" />}
+                aria-controls="panel1a-content"
+                id="panel1a-header"
+              >
+              <Typography color="primary.main" variant="h6">
+                MIXING SECTION
+              </Typography>
+              </AccordionSummary>
+                <AccordionDetails>
+                  <Grid container spacing={1}>
+                    <Grid item xs={12} md={12}>
+                      <Box sx={{ display: 'grid', rowGap: 1, columnGap: 1, gridTemplateColumns: { xs: 'repeat(6, 1fr)' }, }}>
+                        <Stack><Typography color="primary.main" variant="subtitle2" /></Stack>
+                        <Stack><Typography color="primary.main" variant="subtitle2">SUMMER</Typography></Stack>
+                        <Stack><Typography color="primary.main" variant="subtitle2" /></Stack>
+                        <Stack><Typography color="primary.main" variant="subtitle2">WINTER</Typography></Stack>
+                      </Box>
+                    </Grid>
+                      <Grid item xs={12} md={12}>
+                      <Box sx={{ display: 'grid', rowGap: 1, columnGap: 1, gridTemplateColumns: { xs: 'repeat(6, 1fr)' }, }}>
+                        <Stack><Typography color="primary.main" variant="subtitle2">Outdoor Air (% / CFM)</Typography></Stack>
+                        <Stack>
+                          <RHFTextField
+                            size="small"
+                            name="txbMixSummerOA_CFMPct"
+                            label="%"
+                            autoComplete="off"
+                            onChange={(e: any) => {
+                              setValueWithCheck1(e, 'txbMixSummerOA_CFMPct');
+                            }}
+                          />
+                        </Stack>
+                        <Stack>
+                          <RHFTextField
+                            size="small"
+                            name="txbMixSummerOA_CFM"
+                            label="CFM"
+                            disabled
+                          />
+                        </Stack>
+                        <Stack>
+                          <RHFTextField
+                            size="small"
+                            name="txbMixWinterOA_CFMPct"
+                            label="%"
+                            autoComplete="off"
+                            onChange={(e: any) => {
+                              setValueWithCheck1(e, 'txbMixWinterOA_CFMPct');
+                            }}
+                          />
+                        </Stack>
+                        <Stack>
+                          <RHFTextField
+                            size="small"
+                            name="txbMixWinterOA_CFM"
+                            label="CFM"
+                            disabled
+                          />
+                        </Stack>
+                        </Box>
+                      </Grid>
+                      <Grid item xs={12} md={12}>
+                      <Box sx={{ display: 'grid', rowGap: 1, columnGap: 1, gridTemplateColumns: { xs: 'repeat(6, 1fr)' }, }}>
+                        <Stack><Typography color="primary.main" variant="subtitle2">Return Air (% / CFM)</Typography></Stack>
+                        <Stack>
+                          <RHFTextField
+                            size="small"
+                            name="txbMixSummerRA_CFMPct"
+                            label="%"
+                            autoComplete="off"
+                            disabled
+                            onChange={(e: any) => { setValueWithCheck1(e, 'txbMixSummerRA_CFMPct'); }}
+                          />
+                        </Stack>
+                        <Stack>
+                          <RHFTextField
+                            size="small"
+                            name="txbMixSummerRA_CFM"
+                            label="CFM"
+                            disabled
+                          />
+                        </Stack>
+                        <Stack>
+                          <RHFTextField
+                            size="small"
+                            name="txbMixWinterRA_CFMPct"
+                            label="%"
+                            autoComplete="off"
+                            disabled
+                            onChange={(e: any) => {
+                              setValueWithCheck1(e, 'txbMixWinterRA_CFMPct');
+                            }}
+                          />
+                        </Stack>
+                        <Stack>
+                          <RHFTextField
+                            size="small"
+                            name="txbMixWinterRA_CFM"
+                            label="CFM"
+                            disabled
+                          />
+                        </Stack>
+                        </Box>
+                      </Grid>
+                      <Grid item xs={12} md={12}>
+                      <Box sx={{ display: 'grid', rowGap: 1, columnGap: 1, gridTemplateColumns: { xs: 'repeat(6, 1fr)' }, }}>
+                        <Stack>
+                          <RHFCheckbox
+                            label="Use Project Default"
+                            name="ckbMixUseProjectDefault"
+                            onChange={(e: any) => setValue('ckbMixUseProjectDefault', Number(e.target.checked))}
+                          />
+                        </Stack>
+                        </Box>
+                      </Grid>
+                      <Grid item xs={12} md={12}>
+                        <Box sx={{ display: 'grid', rowGap: 1, columnGap: 1, gridTemplateColumns: { xs: 'repeat(6, 1fr)' }, }}>
+                          <Stack><Typography color="primary.main" variant="subtitle2">OUTDOOR AIR</Typography></Stack>
+                        </Box>
+                      </Grid>
+                      <Grid item xs={12} md={12}>
+                      <Box sx={{ display: 'grid', rowGap: 1, columnGap: 1, gridTemplateColumns: { xs: 'repeat(6, 1fr)' }, }}>
+                        <Typography color="primary.main" variant="subtitle2">Dry Bulb Temperature (F)</Typography>
+                        <Stack>
+                          <RHFTextField
+                            size="small"
+                            name="txbMixSummerOA_DB"
+                            label=""
+                            disabled={getValues('ckbMixUseProjectDefault')}
+                            onChange={(e: any) => { setValueWithCheck1(e, 'txbMixSummerOA_DB'); }}
+                            onBlur={handleMixSummerOA_DBChanged}
+                          />
+                        </Stack>
+                        <Stack><Typography color="primary.main" variant="subtitle2" /></Stack>
+                        <Stack>
+                          <RHFTextField
+                            disabled={getValues('ckbMixUseProjectDefault')}
+                            size="small"
+                            name="txbMixWinterOA_DB"
+                            label=""
+                            onChange={(e: any) => { setValueWithCheck1(e, 'txbMixWinterOA_DB'); }}
+                            onBlur={handleMixWinterOA_DBChanged}
+                          />
+                        </Stack>
+                        </Box>
+                      </Grid>
+                      <Grid item xs={12} md={12}>
+                      <Box sx={{ display: 'grid', rowGap: 1, columnGap: 1, gridTemplateColumns: { xs: 'repeat(6, 1fr)' }, }}>
+                        <Typography color="primary.main" variant="subtitle2">Wet Bulb Temperature (F)</Typography>
+                        <Stack>
+                          <RHFTextField
+                            disabled={getValues('ckbMixUseProjectDefault')}
+                            size="small"
+                            name="txbMixSummerOA_WB"
+                            label=""
+                            onChange={(e: any) => { setValueWithCheck1(e, 'txbMixSummerOA_WB'); }}
+                            onBlur={handleMixSummerOA_WBChanged}
+                          />
+                        </Stack>
+                        <Stack><Typography color="primary.main" variant="subtitle2" /></Stack>
+                        <Stack>
+                          <RHFTextField
+                            disabled={getValues('ckbMixUseProjectDefault')}
+                            size="small"
+                            name="txbMixWinterOA_WB"
+                            label=""
+                            onChange={(e: any) => { setValueWithCheck1(e, 'txbMixWinterOA_WB'); }}
+                            onBlur={handleMixWinterOA_WBChanged}
+                          />
+                        </Stack>
+                        </Box>
+                      </Grid>
+                      <Grid item xs={12} md={12}>
+                      <Box sx={{ display: 'grid', rowGap: 1, columnGap: 1, gridTemplateColumns: { xs: 'repeat(6, 1fr)' }, }}>
+                        <Typography color="primary.main" variant="subtitle2">Relative Humidity (%)</Typography>
+                        <Stack>
+                          <RHFTextField
+                            disabled={getValues('ckbMixUseProjectDefault')}
+                            size="small"
+                            name="txbMixSummerOA_RH"
+                            label=""
+                            onChange={(e: any) => {
+                              setValueWithCheck1(e, 'txbMixSummerOA_RH');
+                            }}
+                            onBlur={handleMixSummerOA_RHChanged}
+                          />
+                        </Stack>
+                        <Stack><Typography color="primary.main" variant="subtitle2" /></Stack>
+                        <Stack>
+                          <RHFTextField
+                            disabled={getValues('ckbMixUseProjectDefault')}
+                            size="small"
+                            name="txbMixWinterOA_RH"
+                            label=""
+                            onChange={(e: any) => {
+                              setValueWithCheck1(e, 'txbMixWinterOA_RH');
+                            }}
+                            onBlur={handleMixWinterOA_RHChanged}
+                          />
+                        </Stack>
+                        </Box>
+                      </Grid>
+                      <Grid item xs={12} md={12}>
+                      <Box sx={{ display: 'grid', rowGap: 1, columnGap: 1, gridTemplateColumns: { xs: 'repeat(6, 1fr)' }, }}>
+                        <Stack><Typography color="primary.main" variant="subtitle2">RETURN AIR</Typography></Stack>
+                        </Box>
+                      </Grid>
+                      <Grid item xs={12} md={12}>
+                      <Box sx={{ display: 'grid', rowGap: 1, columnGap: 1, gridTemplateColumns: { xs: 'repeat(6, 1fr)' }, }}>
+                        <Typography color="primary.main" variant="subtitle2">Dry Bulb Temperature (F)</Typography>
+                        <Stack>
+                          <RHFTextField
+                            disabled={getValues('ckbMixUseProjectDefault')}
+                            size="small"
+                            name="txbMixSummerRA_DB"
+                            label=""
+                            onChange={(e: any) => {
+                              setValueWithCheck1(e, 'txbMixSummerRA_DB');
+                            }}
+                            onBlur={handleMixSummerRA_DBChanged}
+                          />
+                        </Stack>
+                        <Stack><Typography color="primary.main" variant="subtitle2" /></Stack>
+                        <Stack>
+                          <RHFTextField
+                            disabled={getValues('ckbMixUseProjectDefault')}
+                            size="small"
+                            name="txbMixWinterRA_DB"
+                            label=""
+                            onChange={(e: any) => {
+                              setValueWithCheck1(e, 'txbMixWinterRA_DB');
+                            }}
+                            onBlur={handleMixWinterRA_DBChanged}
+                          />
+                        </Stack>
+                        </Box>
+                      </Grid>
+                      <Grid item xs={12} md={12}>
+                      <Box sx={{ display: 'grid', rowGap: 1, columnGap: 1, gridTemplateColumns: { xs: 'repeat(6, 1fr)' }, }}>
+                        <Typography color="primary.main" variant="subtitle2">Wet Bulb Temperature (F)</Typography>
+                        <Stack>
+                          <RHFTextField
+                            disabled={getValues('ckbMixUseProjectDefault')}
+                            size="small"
+                            name="txbMixSummerRA_WB"
+                            label=""
+                            onChange={(e: any) => {
+                              setValueWithCheck1(e, 'txbMixSummerRA_WB');
+                            }}
+                            onBlur={handleMixSummerRA_WBChanged}
+                          />
+                        </Stack>
+                        <Stack><Typography color="primary.main" variant="subtitle2" /></Stack>
+                        <Stack>
+                          <RHFTextField
+                            disabled={getValues('ckbMixUseProjectDefault')}
+                            size="small"
+                            name="txbMixWinterRA_WB"
+                            label=""
+                            onChange={(e: any) => {
+                              setValueWithCheck1(e, 'txbMixWinterRA_WB');
+                            }}
+                            onBlur={handleMixWinterRA_WBChanged}
+                          />
+                        </Stack>
+                        </Box>
+                      </Grid>
+                      <Grid item xs={12} md={12}>
+                      <Box sx={{ display: 'grid', rowGap: 1, columnGap: 1, gridTemplateColumns: { xs: 'repeat(6, 1fr)' }, }}>
+                        <Typography color="primary.main" variant="subtitle2">Relative Humidity (%)</Typography>
+                        <Stack>
+                          <RHFTextField
+                            disabled={getValues('ckbMixUseProjectDefault')}
+                            size="small"
+                            name="txbMixSummerRA_RH"
+                            label=""
+                            onChange={(e: any) => {
+                              setValueWithCheck1(e, 'txbMixSummerRA_RH');
+                            }}
+                            onBlur={handleMixSummerRA_RHChanged}
+                          />
+                        </Stack>
+                        <Stack><Typography color="primary.main" variant="subtitle2" /></Stack>
+                        <Stack>
+                          <RHFTextField
+                            disabled={getValues('ckbMixUseProjectDefault')}
+                            size="small"
+                            name="txbMixWinterRA_RH"
+                            label=""
+                            onChange={(e: any) => { setValueWithCheck1(e, 'txbMixWinterRA_RH'); }}
+                            onBlur={handleMixWinterRA_RHChanged}
+                          />
+                        </Stack>
+                      </Box>
+                    </Grid>
+                  </Grid>
+                </AccordionDetails>
+            </Accordion>
           </Stack>
-          <Stack spacing={1}><Typography color="primary.main" variant="subtitle2"/></Stack>
-          <Stack spacing={1}><Typography color="primary.main" variant="subtitle2"/></Stack>
-          <Stack spacing={1}><Typography color="primary.main" variant="subtitle2"/></Stack>
-          <Stack spacing={1}><Typography color="primary.main" variant="subtitle2"/></Stack>
-          <Stack spacing={1}><Typography color="primary.main" variant="subtitle2"/></Stack>
-
-          <Stack spacing={1}><Typography color="primary.main" variant="subtitle2">OUTDOOR AIR</Typography></Stack>
-          <Stack spacing={1}><Typography color="primary.main" variant="subtitle2"/></Stack>
-          <Stack spacing={1}><Typography color="primary.main" variant="subtitle2"/></Stack>
-          <Stack spacing={1}><Typography color="primary.main" variant="subtitle2"/></Stack>
-          <Stack spacing={1}><Typography color="primary.main" variant="subtitle2"/></Stack>
-          <Stack spacing={1}><Typography color="primary.main" variant="subtitle2"/></Stack>
-
-          <Typography color="primary.main" variant="subtitle2">Dry Bulb Temperature (F)</Typography>
-          <Stack spacing={1}>
-                <RHFTextField
-                  size="small"
-                  name="txbMixSummerOA_DB"
-                  label=""
-                  disabled= {getValues('ckbMixUseProjectDefault')}
-                  onChange={(e: any) => { setValueWithCheck1(e, 'txbMixSummerOA_DB'); }}
-                  onBlur={handleMixSummerOA_DBChanged}
-                />
-          </Stack>
-          <Stack spacing={1}><Typography color="primary.main" variant="subtitle2"/></Stack>
-          <Stack spacing={1}>
-                <RHFTextField
-                  disabled= {getValues('ckbMixUseProjectDefault')}
-                  size="small"
-                  name="txbMixWinterOA_DB"
-                  label=""
-                  onChange={(e: any) => { setValueWithCheck1(e, 'txbMixWinterOA_DB');}}
-                  onBlur={handleMixWinterOA_DBChanged}
-                />
-          </Stack>
-          <Stack spacing={1}><Typography color="primary.main" variant="subtitle2"/></Stack>
-          <Stack spacing={1}><Typography color="primary.main" variant="subtitle2"/></Stack>
-
-          <Typography color="primary.main" variant="subtitle2">Wet Bulb Temperature (F)</Typography>
-          <Stack spacing={1}>
-              <RHFTextField
-                  disabled= {getValues('ckbMixUseProjectDefault')}
-                  size="small"
-                  name="txbMixSummerOA_WB"
-                  label=""
-                  onChange={(e: any) => { setValueWithCheck1(e, 'txbMixSummerOA_WB'); }}
-                  onBlur={handleMixSummerOA_WBChanged}
-                />
-          </Stack>
-          <Stack spacing={1}><Typography color="primary.main" variant="subtitle2"/></Stack>
-          <Stack spacing={1}>
-                <RHFTextField
-                  disabled= {getValues('ckbMixUseProjectDefault')}
-                  size="small"
-                  name="txbMixWinterOA_WB"
-                  label=""
-                  onChange={(e: any) => { setValueWithCheck1(e, 'txbMixWinterOA_WB'); }}
-                  onBlur={handleMixWinterOA_WBChanged}
-                />  
-          </Stack>
-          <Stack spacing={1}><Typography color="primary.main" variant="subtitle2"/></Stack>
-          <Stack spacing={1}><Typography color="primary.main" variant="subtitle2"/></Stack>
-
-          <Typography color="primary.main" variant="subtitle2">Relative Humidity (%)</Typography>
-          <Stack spacing={1}>
-              <RHFTextField
-                  disabled= {getValues('ckbMixUseProjectDefault')}
-                  size="small"
-                  name="txbMixSummerOA_RH"
-                  label=""
-                  onChange={(e: any) => {
-                    setValueWithCheck1(e, 'txbMixSummerOA_RH');
-                  }}
-                  onBlur={handleMixSummerOA_RHChanged}
-                />
-          </Stack> 
-          <Stack spacing={1}><Typography color="primary.main" variant="subtitle2"/></Stack>
-          <Stack spacing={1}>
-                <RHFTextField
-                  disabled= {getValues('ckbMixUseProjectDefault')}
-                  size="small"
-                  name="txbMixWinterOA_RH"
-                  label=""
-                  onChange={(e: any) => {
-                    setValueWithCheck1(e, 'txbMixWinterOA_RH');
-                  }}
-                  onBlur={handleMixWinterOA_RHChanged}
-                />  
-          </Stack>    
-          <Stack spacing={1}><Typography color="primary.main" variant="subtitle2"/></Stack>
-          <Stack spacing={1}><Typography color="primary.main" variant="subtitle2"/></Stack>
-
-          <Stack spacing={1}><Typography color="primary.main" variant="subtitle2">RETURN AIR</Typography></Stack>
-          <Stack spacing={1}><Typography color="primary.main" variant="subtitle2"/></Stack>
-          <Stack spacing={1}><Typography color="primary.main" variant="subtitle2"/></Stack>
-          <Stack spacing={1}><Typography color="primary.main" variant="subtitle2"/></Stack>
-          <Stack spacing={1}><Typography color="primary.main" variant="subtitle2"/></Stack>
-          <Stack spacing={1}><Typography color="primary.main" variant="subtitle2"/></Stack>
-
-          <Typography color="primary.main" variant="subtitle2">Dry Bulb Temperature (F)</Typography>
-          <Stack spacing={1}>
-                <RHFTextField
-                  disabled= {getValues('ckbMixUseProjectDefault')}
-                  size="small"
-                  name="txbMixSummerRA_DB"
-                  label=""
-                  onChange={(e: any) => {
-                    setValueWithCheck1(e, 'txbMixSummerRA_DB');
-                  }}
-                  onBlur={handleMixSummerRA_DBChanged}
-                />
-          </Stack>  
-          <Stack spacing={1}><Typography color="primary.main" variant="subtitle2"/></Stack>
-          <Stack spacing={1}>
-                  <RHFTextField
-                  disabled= {getValues('ckbMixUseProjectDefault')}
-                  size="small"
-                  name="txbMixWinterRA_DB"
-                  label=""
-                  onChange={(e: any) => {
-                    setValueWithCheck1(e, 'txbMixWinterRA_DB');
-                  }}
-                  onBlur={handleMixWinterRA_DBChanged}
-                />
-          </Stack>
-          <Stack spacing={1}><Typography color="primary.main" variant="subtitle2"/></Stack>
-          <Stack spacing={1}><Typography color="primary.main" variant="subtitle2"/></Stack>
-
-          <Typography color="primary.main" variant="subtitle2">Wet Bulb Temperature (F)</Typography>
-          <Stack spacing={1}>
-              <RHFTextField
-                  disabled= {getValues('ckbMixUseProjectDefault')}
-                  size="small"
-                  name="txbMixSummerRA_WB"
-                  label=""
-                  onChange={(e: any) => {
-                    setValueWithCheck1(e, 'txbMixSummerRA_WB');
-                  }}
-                  onBlur={handleMixSummerRA_WBChanged}
-                />
-          </Stack>  
-          <Stack spacing={1}><Typography color="primary.main" variant="subtitle2"/></Stack>
-          <Stack spacing={1}>
-                <RHFTextField
-                  disabled= {getValues('ckbMixUseProjectDefault')}
-                  size="small"
-                  name="txbMixWinterRA_WB"
-                  label=""
-                  onChange={(e: any) => {
-                    setValueWithCheck1(e, 'txbMixWinterRA_WB');
-                  }}
-                  onBlur={handleMixWinterRA_WBChanged}
-                />  
-          </Stack>
-          <Stack spacing={1}><Typography color="primary.main" variant="subtitle2"/></Stack>
-          <Stack spacing={1}><Typography color="primary.main" variant="subtitle2"/></Stack>
-
-          <Typography color="primary.main" variant="subtitle2">Relative Humidity (%)</Typography>
-          <Stack spacing={1}>
-              <RHFTextField
-                  disabled= {getValues('ckbMixUseProjectDefault')}
-                  size="small"
-                  name="txbMixSummerRA_RH"
-                  label=""
-                  onChange={(e: any) => {
-                    setValueWithCheck1(e, 'txbMixSummerRA_RH');
-                  }}
-                  onBlur={handleMixSummerRA_RHChanged}
-                />
-          </Stack>  
-          <Stack spacing={1}><Typography color="primary.main" variant="subtitle2"/></Stack>
-          <Stack spacing={1}>
-            <RHFTextField
-              disabled= {getValues('ckbMixUseProjectDefault')}
-              size="small"
-              name="txbMixWinterRA_RH"
-              label=""
-              onChange={(e: any) => { setValueWithCheck1(e, 'txbMixWinterRA_RH'); }}
-              onBlur={handleMixWinterRA_RHChanged}
-            />  
-              </Stack>  
-          <Stack spacing={1}><Typography color="primary.main" variant="subtitle2"/></Stack>
-          <Stack spacing={1}><Typography color="primary.main" variant="subtitle2"/></Stack>
-            </Box>
-          </AccordionDetails>
-        </Accordion>        
-        <Accordion
+        <Accordion  // PRE-HEAT
           expanded={expanded.panel2}
           sx={getDisplay(preheatCompInfo?.isVisible)}
           onChange={() => setExpanded({ ...expanded, panel2: !expanded.panel2 })}
@@ -4943,94 +4935,39 @@ useEffect(() => {
             </Typography>
           </AccordionSummary>
           <AccordionDetails>
-            <Box
-              sx={{
-                display: 'grid',
-                rowGap: 3,
-                columnGap: 3,
-                gridTemplateColumns: { xs: 'repeat(3, 1fr)' },
-              }}
-            >
-              <Stack spacing={1}>
-                {/* {isAvailable(dtPreheatComp) && ( */}
-                  <RHFSelect
-                    native
-                    size="small"
-                    name="ddlPreheatComp"
-                    label="Preheat"
-                    sx={getDisplay(preheatCompInfo?.isVisible)}
-                    onChange={ddlPreheatCompChanged}
-                  >
-                    {preheatCompInfo?.fdtPreheatComp?.map((item: any, index: number) => (
-                      <option key={index} value={item.id}>
-                        {item.items}
-                      </option>
-                    ))}
-                  </RHFSelect>
-                {/* )} */}
-                <RHFTextField
-                  size="small"
-                  name="txbWinterPreheatSetpointDB"
-                  label="Preheat LAT Setpoint DB (F):"
-                  autoComplete="off"
-                  sx={getDisplay(
-                    formValues.ddlPreheatComp === IDs.intCompIdAuto ||
-                      formValues.ddlPreheatComp === IDs.intCompIdElecHeater ||
-                      formValues.ddlPreheatComp === IDs.intCompIdHWC
-                  )}
-                  onChange={(e: any) => {
-                    setValueWithCheck1(e, 'txbWinterPreheatSetpointDB');
-                  }}
-                />
-                {/* {isAvailable(db?.dbtSelHanding) && ( */}
-                  <RHFSelect
-                    native
-                    size="small"
-                    name="ddlPreheatCoilHanding"
-                    label="Preheat Coil Handing"
-                    sx={getDisplay(preheatCoilHandingInfo?.isVisible)}
-                    onChange={(e: any) => setValue('ddlPreheatCoilHanding', Number(e.target.value))}
-                  >
-                    {preheatCoilHandingInfo?.fdtHanding?.map((item: any, index: number) => (
-                      <option key={index} value={item.id}>
-                        {item.items}
-                      </option>
-                    ))}
-                  </RHFSelect>
-                {/* )} */}
-                <RHFCheckbox
-                  label="Backup Heating"
-                  name="ckbBackupHeating"
-                  sx={getInlineDisplay(
-                    intProductTypeID === IDs.intProdTypeIdTerra &&
-                      (formValues.ddlPreheatComp === IDs.intCompIdAuto ||
-                        formValues.ddlPreheatComp === IDs.intCompIdElecHeater)
-                  )}
-                  // checked={formValues.ckbHeatPump}
-                  // onChange={ckbHeatPumpChanged}
-                  onChange={(e: any) => setValue('ckbBackupHeating', Number(e.target.checked))}
-                />
-                <RHFTextField
-                  size="small"
-                  name="txbBackupHeatingSetpointDB"
-                  label="Backup Heating Setpoint DB (F):"
-                  autoComplete="off"
-                  sx={getDisplay(formCurrValues.ckbBackupHeating)}
-                  onChange={(e: any) => {setValueWithCheck1(e, 'txbBackupHeatingSetpointDB');}}
-                />
-              </Stack>
-              <Stack
-                spacing={1}
-                sx={{ ...getDisplay(Number(formValues.ddlPreheatComp) === IDs.intCompIdElecHeater) }}
-              >
-                {/* {isAvailable(preheatElecHeaterInstallationInfo) && ( */}
+            <Grid container spacing={2}>
+              <Grid item xs={12} md={12}>
+                <Box sx={{ display: 'grid', rowGap: 3, columnGap: 3, gridTemplateColumns: { xs: 'repeat(4, 1fr)' }, }}>
+                  <Stack>
+                    <RHFSelect
+                      native
+                      size="small"
+                      name="ddlPreheatComp"
+                      label="Preheat"
+                      sx={getDisplay(preheatCompInfo?.isVisible)}
+                      onChange={ddlPreheatCompChanged}
+                    >
+                      {preheatCompInfo?.fdtPreheatComp?.map((item: any, index: number) => (
+                        <option key={index} value={item.id}>
+                          {item.items}
+                        </option>
+                      ))}
+                    </RHFSelect>
+
+                  </Stack>
+                  <Stack>
+                    { }
+                  </Stack>
+                </Box>
+              </Grid>
+              <Grid item xs={12} md={12} sx={{ ...getDisplay(Number(formValues.ddlPreheatComp) === IDs.intCompIdElecHeater) }}>
+                <Box sx={{ display: 'grid', rowGap: 3, columnGap: 3, gridTemplateColumns: { xs: 'repeat(4, 1fr)' }, }}>
                   <RHFSelect
                     native
                     size="small"
                     name="ddlPreheatElecHeaterInstall"
                     label="Preheat Elec. Heater Installation"
                     placeholder=""
-                    // sx={getDisplay()}
                     onChange={(e: any) => setValue('ddlPreheatElecHeaterInstall', Number(e.target.value))}
                   >
                     {preheatElecHeaterInstallInfo?.fdtElecHeaterInstall?.map(
@@ -5041,115 +4978,162 @@ useEffect(() => {
                       )
                     )}
                   </RHFSelect>
-                {/* )} */}
-              </Stack>
-              <Stack
-                spacing={1}
-                sx={{ ...getDisplay(formValues.ddlPreheatComp === IDs.intCompIdHWC) }}
-              >
-                {isAvailable(db?.dbtSelFluidType) && (
-                  <RHFSelect
-                    native
-                    size="small"
-                    name="ddlPreheatFluidType"
-                    label="Heating Fluid Type"
+                </Box>
+              </Grid>
+              <Grid item xs={12} md={12} sx={{ ...getDisplay(formValues.ddlPreheatComp === IDs.intCompIdHWC) }}>
+                <Box sx={{ display: 'grid', rowGap: 3, columnGap: 3, gridTemplateColumns: { xs: 'repeat(4, 1fr)' }, }}>
+                  <Stack
+                    spacing={1}
                   >
-                    {preheatFluidTypeInfo?.fdtFluidType?.map((item: any, index: number) => (
-                      <option key={index} value={item.id}>
-                        {item.items}
-                      </option>
-                    ))}
-                  </RHFSelect>
-                )}
-                {isAvailable(db?.dbtSelFluidConcentration) && (
-                  <RHFSelect
-                    native
-                    size="small"
-                    name="ddlPreheatFluidConcentration"
-                    label="Heating Fluid %"
-                  >
-                    {preheatFluidConcenInfo?.fdtFluidConcen?.map((item: any, index: number) => (
-                      <option key={index} value={item.id}>
-                        {item.items}
-                      </option>
-                    ))}
-                  </RHFSelect>
-                )}
-                <RHFTextField
-                  size="small"
-                  name="txbHeatingFluidEntTemp"
-                  label="Heating Fluid Ent Temp (F)"
-                  onChange={(e: any) => {setValueWithCheck1(e, 'txbHeatingFluidEntTemp');}}
-                />
-                <RHFTextField
-                  size="small"
-                  name="txbHeatingFluidLvgTemp"
-                  label="Heating Fluid Lvg Temp (F)"
-                  onChange={(e: any) => {
-                    setValueWithCheck1(e, 'txbHeatingFluidLvgTemp');
-                  }}
-                />
-              </Stack>
-              <Stack
-                spacing={1}
-                // sx={{mb: 3, display: getInlineDisplay(internCompInfo?.isCustomCompVisible),}}
-                sx={getDisplay(Number(formCurrValues.ddlPreheatComp) === IDs.intCompIdHWC &&  internCompInfo?.isCustomCompVisible)}
+                    <RHFSelect
+                      native
+                      size="small"
+                      name="ddlPreheatFluidType"
+                      label="Heating Fluid Type"
+                    >
+                      {preheatFluidTypeInfo?.fdtFluidType?.map((item: any, index: number) => (
+                        <option key={index} value={item.id}>
+                          {item.items}
+                        </option>
+                      ))}
+                    </RHFSelect>
+                  </Stack>
+                  <Stack>
+                    <RHFSelect
+                      native
+                      size="small"
+                      name="ddlPreheatFluidConcentration"
+                      label="Heating Fluid %"
+                    >
+                      {preheatFluidConcenInfo?.fdtFluidConcen?.map((item: any, index: number) => (
+                        <option key={index} value={item.id}>
+                          {item.items}
+                        </option>
+                      ))}
+                    </RHFSelect>
+                  </Stack>
 
-              >
-                {/* <FormControlLabel
-                  sx={getInlineDisplay(customInputs.divPreheatHWC_UseCapVisible)}
-                  control={ */}
-                <RHFCheckbox
-                  label="Preheat HWC Use Capacity"
-                  name="ckbPreheatHWCUseCap"
-                  // sx={getInlineDisplay(internCompInfo?.isCutomVisible)}
-                  checked={formValues.ckbPreheatHWCUseCap}
-                  onChange={(e: any) => setValue('ckbPreheatHWCUseCap', Number(e.target.checked))}
-                />
-                {/* }
-                  label="Preheat HWC Use Capacity"
-                /> */}
-                <RHFTextField
-                  size="small"
-                  name="txbPreheatHWCCap"
-                  label="Preheat HWC Capacity (MBH)"
-                  // sx={getDisplay(formValues.ddlPreheatCompId === IDs.intCompHWC_ID)}
-                  disabled={preheatHWCCapInfo.isDisabled}
-                  // value={preheatHWCUseCapInfo.resetCapacity}
-                  onChange={(e: any) => {
-                    setValueWithCheck1(e, 'txbPreheatHWCCap');
+                  <Stack>
+                    <RHFTextField
+                      size="small"
+                      name="txbHeatingFluidEntTemp"
+                      label="Heating Fluid Ent Temp (F)"
+                      onChange={(e: any) => { setValueWithCheck1(e, 'txbHeatingFluidEntTemp'); }}
+                    />
+                  </Stack>
+                  <Stack>
+                    <RHFTextField
+                      size="small"
+                      name="txbHeatingFluidLvgTemp"
+                      label="Heating Fluid Lvg Temp (F)"
+                      onChange={(e: any) => { setValueWithCheck1(e, 'txbHeatingFluidLvgTemp'); }}
+                    />
+                  </Stack>
+                </Box>
+              </Grid>
+              <Grid item xs={12} md={12}
+                sx={getDisplay(Number(formCurrValues.ddlPreheatComp) === IDs.intCompIdHWC && internCompInfo?.isCustomCompVisible)}>
+                <Box sx={{ display: 'grid', rowGap: 3, columnGap: 3, gridTemplateColumns: { xs: 'repeat(4, 1fr)' }, }}>
+                  <Stack
+                    spacing={1}
+                  >
+                    <RHFCheckbox
+                      label="Preheat HWC Use Capacity"
+                      name="ckbPreheatHWCUseCap"
+                      // sx={getInlineDisplay(internCompInfo?.isCutomVisible)}
+                      checked={formValues.ckbPreheatHWCUseCap}
+                      onChange={(e: any) => setValue('ckbPreheatHWCUseCap', Number(e.target.checked))}
+                    />
+                  </Stack>
+                  <Stack>
+                    <RHFTextField
+                      size="small"
+                      name="txbPreheatHWCCap"
+                      label="Preheat HWC Capacity (MBH)"
+                      // sx={getDisplay(formValues.ddlPreheatCompId === IDs.intCompHWC_ID)}
+                      disabled={preheatHWCCapInfo.isDisabled}
+                      // value={preheatHWCUseCapInfo.resetCapacity}
+                      onChange={(e: any) => {
+                        setValueWithCheck1(e, 'txbPreheatHWCCap');
+                      }}
+                    />
+                  </Stack>
+                  <Stack>
+                    <RHFCheckbox
+                      label="Preheat HWC Use Flow Rate"
+                      name="ckbPreheatHWCUseFlowRate"
+                      // sx={getInlineDisplay(customInputs.divPreheatHWC_UseFlowRateVisible)}
+                      checked={formValues.ckbPreheatHWCUseFlowRate}
+                      onChange={(e: any) =>
+                        setValue('ckbPreheatHWCUseFlowRate', Number(e.target.checked))
+                      }
+                    />
+                  </Stack>
+                  <Stack>
+                    <RHFTextField
+                      size="small"
+                      name="txbPreheatHWCFlowRate"
+                      label="Preheat HWC Flow Rate (GPM)"
+                      // sx={getDisplay(customInputs.divPreheatHWC_UseFlowRateVisible)}
+                      disabled={preheatHWCFlowRateInfo.isDisabled}
+                      onChange={(e: any) => {
+                        setValueWithCheck1(e, 'txbPreheatHWCFlowRate');
+                      }}
+                    />
+                  </Stack>
+                </Box>
+              </Grid>
+              <Grid item xs={12} md={12}>
+                <Box
+                  sx={{
+                    display: 'grid',
+                    rowGap: 3,
+                    columnGap: 3,
+                    gridTemplateColumns: { xs: 'repeat(4, 1fr)' },
                   }}
-                />
-                {/* <FormControlLabel
-                  sx={getInlineDisplay(customInputs.divPreheatHWC_UseFlowRateVisible)}
-                  control={ */}
-                <RHFCheckbox
-                  label="Preheat HWC Use Flow Rate"
-                  name="ckbPreheatHWCUseFlowRate"
-                  // sx={getInlineDisplay(customInputs.divPreheatHWC_UseFlowRateVisible)}
-                  checked={formValues.ckbPreheatHWCUseFlowRate}
-                  onChange={(e: any) =>
-                    setValue('ckbPreheatHWCUseFlowRate', Number(e.target.checked))
-                  }
-                />
-                {/* }
-                  label="Preheat HWC Use Flow Rate"
-                /> */}
-                <RHFTextField
-                  size="small"
-                  name="txbPreheatHWCFlowRate"
-                  label="Preheat HWC Flow Rate (GPM)"
-                  // sx={getDisplay(customInputs.divPreheatHWC_UseFlowRateVisible)}
-                  disabled={preheatHWCFlowRateInfo.isDisabled}
-                  onChange={(e: any) => {
-                    setValueWithCheck1(e, 'txbPreheatHWCFlowRate');
-                  }}
-                />
-              </Stack>
-            </Box>
+                >
+                  <Stack spacing={1}>
+                    <RHFTextField
+                      size="small"
+                      name="txbWinterPreheatSetpointDB"
+                      label="Preheat LAT Setpoint DB (F):"
+                      autoComplete="off"
+                      sx={getDisplay(
+                        formValues.ddlPreheatComp === IDs.intCompIdAuto ||
+                        formValues.ddlPreheatComp === IDs.intCompIdElecHeater ||
+                        formValues.ddlPreheatComp === IDs.intCompIdHWC
+                      )}
+                      onChange={(e: any) => {
+                        setValueWithCheck1(e, 'txbWinterPreheatSetpointDB');
+                      }}
+                    />
+                    <RHFCheckbox
+                      label="Backup Heating"
+                      name="ckbBackupHeating"
+                      sx={getInlineDisplay(
+                        intProductTypeID === IDs.intProdTypeIdTerra &&
+                        (formValues.ddlPreheatComp === IDs.intCompIdAuto ||
+                          formValues.ddlPreheatComp === IDs.intCompIdElecHeater)
+                      )}
+                      // checked={formValues.ckbHeatPump}
+                      // onChange={ckbHeatPumpChanged}
+                      onChange={(e: any) => setValue('ckbBackupHeating', Number(e.target.checked))}
+                    />
+                    <RHFTextField
+                      size="small"
+                      name="txbBackupHeatingSetpointDB"
+                      label="Backup Heating Setpoint DB (F):"
+                      autoComplete="off"
+                      sx={getDisplay(formCurrValues.ckbBackupHeating)}
+                      onChange={(e: any) => { setValueWithCheck1(e, 'txbBackupHeatingSetpointDB'); }}
+                    />
+                  </Stack>
+                </Box>
+              </Grid>
+            </Grid>
           </AccordionDetails>
         </Accordion>
-        <Accordion
+        <Accordion  // COOLING
           expanded={expanded.panel3}
           sx={getDisplay(coolingCompInfo?.isVisible)}
           onChange={() => setExpanded({ ...expanded, panel3: !expanded.panel3 })}
@@ -5164,233 +5148,222 @@ useEffect(() => {
             </Typography>
           </AccordionSummary>
           <AccordionDetails>
-            <Box
-              sx={{
-                display: 'grid',
-                rowGap: 3,
-                columnGap: 3,
-                gridTemplateColumns: { xs: 'repeat(3, 1fr)' },
-              }}
-            >
-              <Stack spacing={1}>
-                {/* {isAvailable(dtCoolingComp) && ( */}
-                  <RHFSelect
-                    native
-                    size="small"
-                    name="ddlCoolingComp"
-                    label="Cooling"
-                    // sx={getDisplay(coolingCompInfo?.isVisible)}
-                    onChange={ddlCoolingCompChanged}
-                  >
-                    {coolingCompInfo?.fdtCoolingComp?.map((item: any, index: number) => (
-                      <option key={index} value={item.id}>
-                        {item.items}
-                      </option>
-                    ))}
-                  </RHFSelect>
-                {/* )} */}
-                <RHFTextField
-                  size="small"
-                  name="txbSummerCoolingSetpointDB"
-                  label="Cooling LAT Setpoint DB (F):"
-                  autoComplete="off"
-                  sx={getDisplay(
-                    formValues.ddlCoolingComp === IDs.intCompIdCWC ||
-                      formValues.ddlCoolingComp === IDs.intCompIdDX
-                  )}
-                  onChange={(e: any) => {
-                    setValueWithCheck1(e, 'txbSummerCoolingSetpointDB');
-                  }}
-                />
-                <RHFTextField
-                  size="small"
-                  name="txbSummerCoolingSetpointWB"
-                  label="Cooling LAT Setpoint WB (F):"
-                  autoComplete="off"
-                  sx={getDisplay(
-                    Number(formValues.ddlCoolingComp) === IDs.intCompIdCWC ||
-                      Number(formValues.ddlCoolingComp) === IDs.intCompIdDX
-                  )}
-                  onChange={(e: any) => {
-                    setValueWithCheck1(e, 'txbSummerCoolingSetpointWB');
-                  }}
-                />
+            <Grid container spacing={2}>
+              <Grid item xs={12} md={12}>
+                <Box sx={{ display: 'grid', rowGap: 3, columnGap: 3, gridTemplateColumns: { xs: 'repeat(4, 1fr)' }, }}>
+                  <Stack>
+                    <RHFSelect
+                      native
+                      size="small"
+                      name="ddlCoolingComp"
+                      label="Cooling"
+                      // sx={getDisplay(coolingCompInfo?.isVisible)}
+                      onChange={ddlCoolingCompChanged}
+                    >
+                      {coolingCompInfo?.fdtCoolingComp?.map((item: any, index: number) => (
+                        <option key={index} value={item.id}>
+                          {item.items}
+                        </option>
+                      ))}
+                    </RHFSelect>
+                  </Stack>
+                  <Stack>
+                    <RHFCheckbox
+                      label="Dehumidification"
+                      name="ckbDehumidification"
+                      sx={getDisplay(dehumInfo?.isVisible)}
+                      checked={dehumInfo?.isChecked}
+                      // onChange={(e: any) => setCkbDehumidificationVal(e.target.checked)}
+                      onChange={(e: any) => setValue('ckbDehumidification', Number(e.target.checked))}
+                    />
+                  </Stack>
+                  <Stack>
+                    <RHFCheckbox
+                      label="Heat Pump"
+                      name="ckbHeatPump"
+                      sx={{ display: heatPumpInfo?.isVisible ? 'block' : 'none' }}
+                      // checked={formValues.ckbHeatPump}
+                      checked={heatPumpInfo?.isChecked}
+                      // onChange={ckbHeatPumpChanged}
+                      onChange={(e: any) => setValue('ckbHeatPump', Number(e.target.checked))}
+                    />
+                  </Stack>
+                  <Stack>
+                    { }
+                  </Stack>
+                </Box>
+              </Grid>
+              <Grid item xs={12} md={12}
+                sx={{ ...getDisplay(Number(formValues.ddlCoolingComp) === IDs.intCompIdCWC) }}>
+                <Box sx={{ display: 'grid', rowGap: 3, columnGap: 3, gridTemplateColumns: { xs: 'repeat(4, 1fr)' }, }}>
+                  <Stack spacing={1}>
+                    {isAvailable(db?.dbtSelFluidType) && (
+                      <RHFSelect
+                        native
+                        size="small"
+                        name="ddlCoolingFluidType"
+                        label="Cooling Fluid Type"
+                      >
+                        {coolingFluidTypeInfo?.fdtFluidType?.map((item: any, index: number) => (
+                          <option key={index} value={item.id}>
+                            {item.items}
+                          </option>
+                        ))}
+                      </RHFSelect>
+                    )}
+                  </Stack>
+                  <Stack>
+                    {isAvailable(db?.dbtSelFluidConcentration) && (
+                      <RHFSelect
+                        native
+                        size="small"
+                        name="ddlCoolingFluidConcentration"
+                        label="Cooling Fluid %"
+                      >
+                        {coolingFluidConcenInfo?.fdtFluidConcen?.map((item: any, index: number) => (
+                          <option key={index} value={item.id}>
+                            {item.items}
+                          </option>
+                        ))}
+                      </RHFSelect>
+                    )}
+                  </Stack>
+                  <Stack>
+                    <RHFTextField
+                      size="small"
+                      name="txbCoolingFluidEntTemp"
+                      label="Cooling Fluid Ent Temp (F)"
+                      onChange={(e: any) => {
+                        setValueWithCheck1(e, 'txbCoolingFluidEntTemp');
+                      }}
+                    />
+                  </Stack>
+                  <Stack>
+                    <RHFTextField
+                      size="small"
+                      name="txbCoolingFluidLvgTemp"
+                      label="Cooling Fluid Lvg Temp (F)"
+                      onChange={(e: any) => {
+                        setValueWithCheck1(e, 'txbCoolingFluidLvgTemp');
+                      }}
+                    />
+                  </Stack>
+                </Box>
+              </Grid>
+              <Grid item xs={12} md={12}
+                sx={getDisplay(Number(formCurrValues.ddlCoolingComp) === IDs.intCompIdCWC && internCompInfo?.isCustomCompVisible)}>
+                <Box sx={{ display: 'grid', rowGap: 3, columnGap: 3, gridTemplateColumns: { xs: 'repeat(4, 1fr)' }, }}>
+                  <Stack>
+                    <RHFCheckbox
+                      label="Cooling CWC Use Capacity"
+                      name="ckbCoolingCWCUseCap"
+                      // sx={{...getInlineDisplay(customInputs.divCoolingCWC_UseCapVisible),margin: 0,}}
+                      checked={formValues.ckbCoolingCWCUseCap}
+                      onChange={(e: any) => setValue('ckbCoolingCWCUseCap', Number(e.target.checked))}
+                    />
 
-                {/* <FormControlLabel
-                  sx={getInlineDisplay(formValues.ddlCoolingCompId === IDs.intCompDX_ID)}
-                  control={ */}
-                <RHFCheckbox
-                  label="Heat Pump"
-                  name="ckbHeatPump"
-                  sx={{ display: heatPumpInfo?.isVisible ? 'block' : 'none' }}
-                  // checked={formValues.ckbHeatPump}
-                  checked={heatPumpInfo?.isChecked}
-                  // onChange={ckbHeatPumpChanged}
-                  onChange={(e: any) => setValue('ckbHeatPump', Number(e.target.checked))}
-                />
+                  </Stack>
+                  <Stack>
+                    <RHFTextField
+                      size="small"
+                      name="txbCoolingCWCCap"
+                      label="Cooling CWC Capacity (MBH)"
+                      disabled={coolingCWCCapInfo.isDisabled}
+                      // sx={getDisplay(customInputs.divCoolingCWC_UseCapVisible)}
+                      onChange={(e: any) => {
+                        setValueWithCheck1(e, 'txbCoolingCWCCap');
+                      }}
+                    />
+                  </Stack>
+                  <Stack>
+                    <RHFCheckbox
+                      label="Cooling CWC Use Flow Rate"
+                      name="ckbCoolingCWCUseFlowRate"
+                      // sx={getInlineDisplay(customInputs.divCoolingCWC_UseFlowRateVisible)}
+                      checked={formValues.ckbCoolingCWCUseFlowRate}
+                      onChange={(e: any) =>
+                        setValue('ckbCoolingCWCUseFlowRate', Number(e.target.checked))
+                      }
+                    />
+                  </Stack>
+                  <Stack>
+                    <RHFTextField
+                      size="small"
+                      name="txbCoolingCWCFlowRate"
+                      label="Cooling CWC Flow Rate (GPM)"
+                      // sx={getDisplay(customInputs.divCoolingCWC_UseFlowRateVisible)}
+                      disabled={coolingCWCFlowRateInfo.isDisabled}
+                      onChange={(e: any) => {
+                        setValueWithCheck1(e, 'txbCoolingCWCFlowRate');
+                      }}
+                    />
+                  </Stack>
+                </Box>
+              </Grid>
+              <Grid item xs={12} md={12}
+                sx={getDisplay(Number(formCurrValues.ddlCoolingComp) === IDs.intCompIdDX)}>
+                <Box sx={{ display: 'grid', rowGap: 3, columnGap: 3, gridTemplateColumns: { xs: 'repeat(4, 1fr)' }, }}>
+                  <Stack>
+                    <RHFTextField
+                      size="small"
+                      name="txbRefrigSuctionTemp"
+                      label="Suction Temp (F)"
+                      onChange={(e: any) => {
+                        setValueWithCheck1(e, 'txbRefrigSuctionTemp');
+                      }}
+                    />
+                  </Stack>
+                  <Stack>
+                    <RHFTextField
+                      size="small"
+                      name="txbRefrigLiquidTemp"
+                      label="Liquid Temp (F)"
+                      onChange={(e: any) => {
+                        setValueWithCheck1(e, 'txbRefrigLiquidTemp');
+                      }}
+                    />
 
-                <RHFCheckbox
-                  label="Dehumidification"
-                  name="ckbDehumidification"
-                  sx={getInlineDisplay(dehumInfo?.isVisible)}
-                  checked={dehumInfo?.isChecked}
-                  // onChange={(e: any) => setCkbDehumidificationVal(e.target.checked)}
-                  onChange={(e: any) => setValue('ckbDehumidification', Number(e.target.checked))}
-                />
-
-                {/* {isAvailable(db?.dbtSelHanding) && ( */}
-                  <RHFSelect
-                    native
-                    size="small"
-                    name="ddlCoolingCoilHanding"
-                    label="Cooling Coil Handing"
-                    sx={getDisplay(coolingCoilHandingInfo?.isVisible)}
-                    onChange={(e: any) => setValue('ddlCoolingCoilHanding', Number(e.target.value))}
-                  >
-                    {coolingCoilHandingInfo?.fdtHanding?.map((item: any, index: number) => (
-                      <option key={index} value={item.id}>
-                        {item.items}
-                      </option>
-                    ))}
-                  </RHFSelect>
-                {/* )} */}
-              </Stack>
-              <Stack
-                spacing={1}
-                sx={{
-                  mb: 3,
-                  display: getInlineDisplay(formValues.ddlCoolingComp === IDs.intCompIdDX),
-                }}
-              >
-                <RHFTextField
-                  size="small"
-                  name="txbRefrigSuctionTemp"
-                  label="Suction Temp (F)"
-                  onChange={(e: any) => {
-                    setValueWithCheck1(e, 'txbRefrigSuctionTemp');
-                  }}
-                />
-
-                <RHFTextField
-                  size="small"
-                  name="txbRefrigLiquidTemp"
-                  label="Liquid Temp (F)"
-                  onChange={(e: any) => {
-                    setValueWithCheck1(e, 'txbRefrigLiquidTemp');
-                  }}
-                />
-
-                <RHFTextField
-                  size="small"
-                  name="txbRefrigSuperheatTemp"
-                  label="Superheat Temp (F)"
-                  onChange={(e: any) => {
-                    setValueWithCheck1(e, 'txbRefrigSuperheatTemp');
-                  }}
-                />
-              </Stack>
-              <Stack
-                spacing={1}
-                sx={{ ...getDisplay(Number(formValues.ddlCoolingComp) === IDs.intCompIdCWC) }}
-              >
-                {isAvailable(db?.dbtSelFluidType) && (
-                  <RHFSelect
-                    native
-                    size="small"
-                    name="ddlCoolingFluidType"
-                    label="Cooling Fluid Type"
-                  >
-                    {coolingFluidTypeInfo?.fdtFluidType?.map((item: any, index: number) => (
-                      <option key={index} value={item.id}>
-                        {item.items}
-                      </option>
-                    ))}
-                  </RHFSelect>
-                )}
-                {isAvailable(db?.dbtSelFluidConcentration) && (
-                  <RHFSelect
-                    native
-                    size="small"
-                    name="ddlCoolingFluidConcentration"
-                    label="Cooling Fluid %"
-                  >
-                    {coolingFluidConcenInfo?.fdtFluidConcen?.map((item: any, index: number) => (
-                      <option key={index} value={item.id}>
-                        {item.items}
-                      </option>
-                    ))}
-                  </RHFSelect>
-                )}
-                <RHFTextField
-                  size="small"
-                  name="txbCoolingFluidEntTemp"
-                  label="Cooling Fluid Ent Temp (F)"
-                  onChange={(e: any) => {
-                    setValueWithCheck1(e, 'txbCoolingFluidEntTemp');
-                  }}
-                />
-
-                <RHFTextField
-                  size="small"
-                  name="txbCoolingFluidLvgTemp"
-                  label="Cooling Fluid Lvg Temp (F)"
-                  onChange={(e: any) => {
-                    setValueWithCheck1(e, 'txbCoolingFluidLvgTemp');
-                  }}
-                />
-              </Stack>
-
-              <Stack
-                spacing={1}
-                sx={{mb: 3, display: getInlineDisplay(Number(formValues.ddlCoolingComp) === IDs.intCompIdCWC &&  internCompInfo?.isCustomCompVisible),}}
-             >
-                <RHFCheckbox
-                  label="Cooling CWC Use Capacity"
-                  name="ckbCoolingCWCUseCap"
-                  // sx={{...getInlineDisplay(customInputs.divCoolingCWC_UseCapVisible),margin: 0,}}
-                  checked={formValues.ckbCoolingCWCUseCap}
-                  onChange={(e: any) => setValue('ckbCoolingCWCUseCap', Number(e.target.checked))}
-                />
-                <RHFTextField
-                  size="small"
-                  name="txbCoolingCWCCap"
-                  label="Cooling CWC Capacity (MBH)"
-                  disabled={coolingCWCCapInfo.isDisabled}
-                  // sx={getDisplay(customInputs.divCoolingCWC_UseCapVisible)}
-                  onChange={(e: any) => {
-                    setValueWithCheck1(e, 'txbCoolingCWCCap');
-                  }}
-                />
-                {/* <FormControlLabel
-                  sx={getInlineDisplay(customInputs.divCoolingCWC_UseFlowRateVisible)}
-                  control={ */}
-                <RHFCheckbox
-                  label="Cooling CWC Use Flow Rate"
-                  name="ckbCoolingCWCUseFlowRate"
-                  // sx={getInlineDisplay(customInputs.divCoolingCWC_UseFlowRateVisible)}
-                  checked={formValues.ckbCoolingCWCUseFlowRate}
-                  onChange={(e: any) =>
-                    setValue('ckbCoolingCWCUseFlowRate', Number(e.target.checked))
-                  }
-                />
-                {/* }
-                  label="Cooling CWC Use Flow Rate"
-                /> */}
-                <RHFTextField
-                  size="small"
-                  name="txbCoolingCWCFlowRate"
-                  label="Cooling CWC Flow Rate (GPM)"
-                  // sx={getDisplay(customInputs.divCoolingCWC_UseFlowRateVisible)}
-                  disabled={coolingCWCFlowRateInfo.isDisabled}
-                  onChange={(e: any) => {
-                    setValueWithCheck1(e, 'txbCoolingCWCFlowRate');
-                  }}
-                />
-              </Stack>
-            </Box>
+                  </Stack>
+                  <Stack>
+                    <RHFTextField
+                      size="small"
+                      name="txbRefrigSuperheatTemp"
+                      label="Superheat Temp (F)"
+                      onChange={(e: any) => {
+                        setValueWithCheck1(e, 'txbRefrigSuperheatTemp');
+                      }}
+                    />
+                  </Stack>
+                </Box>
+              </Grid>
+              <Grid item xs={12} md={12} sx={getDisplay(Number(formValues.ddlCoolingComp) === IDs.intCompIdCWC || Number(formValues.ddlCoolingComp) === IDs.intCompIdDX)}>
+                <Box sx={{ display: 'grid', rowGap: 3, columnGap: 3, gridTemplateColumns: { xs: 'repeat(4, 1fr)' }, }}>
+                  <Stack>
+                    <RHFTextField
+                      size="small"
+                      name="txbSummerCoolingSetpointDB"
+                      label="Cooling LAT Setpoint DB (F):"
+                      autoComplete="off"
+                      onChange={(e: any) => { setValueWithCheck1(e, 'txbSummerCoolingSetpointDB'); }}
+                    />
+                  </Stack>
+                  <Stack>
+                    <RHFTextField
+                      size="small"
+                      name="txbSummerCoolingSetpointWB"
+                      label="Cooling LAT Setpoint WB (F):"
+                      autoComplete="off"
+                      onChange={(e: any) => {
+                        setValueWithCheck1(e, 'txbSummerCoolingSetpointWB');
+                      }}
+                    />
+                  </Stack>
+                </Box>
+              </Grid>
+            </Grid>
           </AccordionDetails>
         </Accordion>
-        <Accordion
+        <Accordion  // HEATING
           expanded={expanded.panel4}
           sx={getDisplay(heatingCompInfo?.isVisible)}
           onChange={() => setExpanded({ ...expanded, panel4: !expanded.panel4 })}
@@ -5405,76 +5378,41 @@ useEffect(() => {
             </Typography>
           </AccordionSummary>
           <AccordionDetails>
-            <Box
-              sx={{
-                display: 'grid',
-                rowGap: 3,
-                columnGap: 3,
-                gridTemplateColumns: { xs: 'repeat(3, 1fr)' },
-              }}
-            >
-              <Stack spacing={1}>
-                {/* {isAvailable(dtHeatingComp) && ( */}
-                  <RHFSelect
-                    native
-                    size="small"
-                    name="ddlHeatingComp"
-                    label="Heating"
+            <Grid container spacing={2}>
+              <Grid item xs={12} md={12}>
+                <Box sx={{ display: 'grid', rowGap: 3, columnGap: 3, gridTemplateColumns: { xs: 'repeat(4, 1fr)' }, }}>
+                  <Stack>
+                    <RHFSelect
+                      native
+                      size="small"
+                      name="ddlHeatingComp"
+                      label="Heating"
                     // sx={getDisplay(heatingCompInfo?.isVisible)}
                     // onChange={ddlHeatingCompChanged}
-                  >
-                    {heatingCompInfo?.fdtHeatingComp?.map((item: any, index: number) => (
-                      <option key={index} value={item.id}>
-                        {item.items}
-                      </option>
-                    ))}
-                  </RHFSelect>
-                {/* )} */}
-                <RHFTextField
-                  size="small"
-                  name="txbWinterHeatingSetpointDB"
-                  label="Heating LAT Setpoint DB (F):"
-                  autoComplete="off"
-                  sx={getDisplay(
-                    Number(formValues.ddlHeatingComp) === IDs.intCompIdElecHeater ||
-                      Number(formValues.ddlHeatingComp) === IDs.intCompIdHWC ||
-                      formValues.ckbHeatPump
-                  )}
-                  onChange={(e: any) => {
-                    setValueWithCheck1(e, 'txbWinterHeatingSetpointDB');
-                  }}
-                />
-                {/* {isAvailable(db?.dbtSelHanding) && ( */}
-                  <RHFSelect
-                    native
-                    size="small"
-                    name="ddlHeatingCoilHanding"
-                    label="Heating Coil Handing"
-                    sx={getDisplay(heatingCoilHandingInfo?.isVisible)}
-                    onChange={ddlHeatingCoilHandingChanged}
-                  >
-                    {heatingCoilHandingInfo?.fdtHanding?.map((item: any, index: number) => (
-                      <option key={index} value={item.id}>
-                        {item.items}
-                      </option>
-                    ))}
-                  </RHFSelect>
-                {/* )} */}
-              </Stack>
-              <Stack
-                spacing={1}
-                sx={{
-                  ...getDisplay(Number(formValues.ddlHeatingComp) === IDs.intCompIdElecHeater),
-                }}
-              >
-                {isAvailable(heatingElecHeaterInstallInfo?.fdtElecHeaterInstall) && (
+                    >
+                      {heatingCompInfo?.fdtHeatingComp?.map((item: any, index: number) => (
+                        <option key={index} value={item.id}>
+                          {item.items}
+                        </option>
+                      ))}
+                    </RHFSelect>
+                  </Stack>
+                  <Stack>
+                    { }
+                  </Stack>
+                </Box>
+              </Grid>
+              <Grid item xs={12} md={12} sx={{ ...getDisplay(Number(formValues.ddlHeatingComp) === IDs.intCompIdElecHeater), }}>
+                <Box sx={{ display: 'grid', rowGap: 3, columnGap: 3, gridTemplateColumns: { xs: 'repeat(4, 1fr)' }, }}>
                   <RHFSelect
                     native
                     label="Heating Elec. Heater Installation"
                     name="ddlHeatingElecHeaterInstall"
                     size="small"
                     placeholder=""
-                    // onChange={(e: any) => setValue('ddlHeatingElecHeaterInstall', Number(e.target.value)) }
+
+
+                  // onChange={(e: any) => setValue('ddlHeatingElecHeaterInstall', Number(e.target.value)) }
                   >
                     {heatingElecHeaterInstallInfo?.fdtElecHeaterInstall?.map(
                       (item: any, index: number) => (
@@ -5484,110 +5422,156 @@ useEffect(() => {
                       )
                     )}
                   </RHFSelect>
-                )}
-              </Stack>
-              <Stack
-                spacing={1}
-                sx={{ ...getDisplay(Number(formValues.ddlHeatingComp) === IDs.intCompIdHWC) }}
-              >
-                {isAvailable(db?.dbtSelFluidType) && (
-                  <RHFSelect
-                    native
-                    size="small"
-                    name="ddlHeatingFluidType"
-                    label="Heating Fluid Type"
-                  >
-                    {heatingFluidTypeInfo?.fdtFluidType?.map((item: any, index: number) => (
-                      <option key={index} value={item.id}>
-                        {item.items}
-                      </option>
-                    ))}
-                  </RHFSelect>
-                )}
-                {isAvailable(db?.dbtSelFluidType && db?.dbtSelFluidConcentration) && (
-                  <RHFSelect
-                    native
-                    size="small"
-                    name="ddlHeatingFluidConcentration"
-                    label="Heating Fluid %"
-                  >
-                    {heatingFluidConcenInfo?.fdtFluidConcen?.map((item: any, index: number) => (
-                      <option key={index} value={item.id}>
-                        {item.items}
-                      </option>
-                    ))}
-                  </RHFSelect>
-                )}
-                <RHFTextField
-                  size="small"
-                  name="txbHeatingFluidEntTemp"
-                  label="Heating Fluid Ent Temp (F)"
-                  onChange={(e: any) => {
-                    setValueWithCheck1(e, 'txbHeatingFluidEntTemp');
+                </Box>
+              </Grid>
+              <Grid item xs={12} md={12} sx={{ ...getDisplay(Number(formValues.ddlHeatingComp) === IDs.intCompIdHWC) }}>
+                <Box sx={{ display: 'grid', rowGap: 3, columnGap: 3, gridTemplateColumns: { xs: 'repeat(4, 1fr)' }, }}>
+                  <Stack spacing={1}>
+                    <RHFSelect
+                      native
+                      size="small"
+                      name="ddlHeatingFluidType"
+                      label="Heating Fluid Type"
+                    >
+                      {heatingFluidTypeInfo?.fdtFluidType?.map((item: any, index: number) => (
+                        <option key={index} value={item.id}>
+                          {item.items}
+                        </option>
+                      ))}
+                    </RHFSelect>
+                  </Stack>
+                  <Stack>
+                    <RHFSelect
+                      native
+                      size="small"
+                      name="ddlHeatingFluidConcentration"
+                      label="Heating Fluid %"
+                    >
+                      {heatingFluidConcenInfo?.fdtFluidConcen?.map((item: any, index: number) => (
+                        <option key={index} value={item.id}>
+                          {item.items}
+                        </option>
+                      ))}
+                    </RHFSelect>
+                  </Stack>
+                  <Stack>
+                    <RHFTextField
+                      size="small"
+                      name="txbHeatingFluidEntTemp"
+                      label="Heating Fluid Ent Temp (F)"
+                      onChange={(e: any) => {
+                        setValueWithCheck1(e, 'txbHeatingFluidEntTemp');
+                      }}
+                    />
+                  </Stack>
+
+                  <Stack>
+                    <RHFTextField
+                      size="small"
+                      name="txbHeatingFluidLvgTemp"
+                      label="Heating Fluid Lvg Temp (F)"
+                      onChange={(e: any) => {
+                        setValueWithCheck1(e, 'txbHeatingFluidLvgTemp');
+                      }}
+                    />
+                  </Stack>
+                </Box>
+              </Grid>
+              <Grid item xs={12} md={12}
+                sx={getDisplay(Number(formCurrValues.ddlHeatingComp) === IDs.intCompIdHWC && internCompInfo?.isCustomCompVisible)}>
+                <Box sx={{ display: 'grid', rowGap: 3, columnGap: 3, gridTemplateColumns: { xs: 'repeat(4, 1fr)' }, }}>
+                  <Stack spacing={1}>
+                    <RHFCheckbox
+                      // sx={getInlineDisplay(customInputs.divCoolingCWC_UseFlowRateVisible)}
+                      label="Heating HWC Use Capacity"
+                      name="ckbHeatingHWCUseCap"
+                      checked={formValues.ckbHeatingHWCUseCap}
+                      onChange={(e: any) => setValue('ckbHeatingHWCUseCap', Number(e.target.checked))}
+                    />
+                  </Stack>
+                  <Stack>
+                    <RHFTextField
+                      size="small"
+                      name="txbHeatingHWCCap"
+                      label="Heating HWC Capacity (MBH)"
+                      // sx={getDisplay(customInputs.divHeatingHWC_UseCapVisible)}
+                      disabled={heatingHWCCapInfo.isDisabled}
+                      onChange={(e: any) => { setValueWithCheck1(e, 'txbHeatingHWCCap'); }}
+                    />
+                  </Stack>
+                  <Stack>
+                    <RHFCheckbox
+                      // sx={getInlineDisplay(customInputs.divCoolingCWC_UseFlowRateVisible)}
+                      label="Heating HWC Use Flow Rate"
+                      name="ckbHeatingHWCUseFlowRate"
+                      checked={formValues.ckbHeatingHWCUseFlowRate}
+                      onChange={(e: any) => setValue('ckbHeatingHWCUseFlowRate', Number(e.target.checked))}
+                    />
+                  </Stack>
+                  <Stack>
+                    <RHFTextField
+                      size="small"
+                      name="txbHeatingHWCFlowRate"
+                      label="Heating HWC Flow Rate (GPM)"
+                      disabled={heatingHWCFlowRateInfo.isDisabled}
+                      // sx={getDisplay(customInputs.divHeatingHWC_UseFlowRateVisible)}
+                      onChange={(e: any) => {
+                        setValueWithCheck1(e, 'txbHeatingHWCFlowRate');
+                      }}
+                    />
+                  </Stack>
+                </Box>
+              </Grid>
+              <Grid item xs={12} md={12}>
+                <Box
+                  sx={{
+                    display: 'grid',
+                    rowGap: 3,
+                    columnGap: 3,
+                    gridTemplateColumns: { xs: 'repeat(4, 1fr)' },
                   }}
-                />
-                <RHFTextField
-                  size="small"
-                  name="txbHeatingFluidLvgTemp"
-                  label="Heating Fluid Lvg Temp (F)"
-                  onChange={(e: any) => {
-                    setValueWithCheck1(e, 'txbHeatingFluidLvgTemp');
-                  }}
-                />
-              </Stack>
-              <Stack
-                spacing={1}
-                sx={getDisplay(Number(formCurrValues.ddlHeatingComp) === IDs.intCompIdHWC &&  internCompInfo?.isCustomCompVisible)}
-              >
-                {/* <FormControlLabel
-                  sx={getInlineDisplay(customInputs.divCoolingCWC_UseFlowRateVisible)}
-                  control={ */}
-                <RHFCheckbox
-                  // sx={getInlineDisplay(customInputs.divCoolingCWC_UseFlowRateVisible)}
-                  label="Heating HWC Use Capacity"
-                  name="ckbHeatingHWCUseCap"
-                  checked={formValues.ckbHeatingHWCUseCap}
-                  onChange={(e: any) => setValue('ckbHeatingHWCUseCap', Number(e.target.checked))}
-                />
-                {/* }
-                  label="Heating HWC Use Capacity"
-                /> */}
-                <RHFTextField
-                  size="small"
-                  name="txbHeatingHWCCap"
-                  label="Heating HWC Capacity (MBH)"
-                  // sx={getDisplay(customInputs.divHeatingHWC_UseCapVisible)}
-                  disabled={heatingHWCCapInfo.isDisabled}
-                  onChange={(e: any) => {setValueWithCheck1(e, 'txbHeatingHWCCap');}}
-                />
-                {/* <FormControlLabel
-                  sx={getInlineDisplay(customInputs.divCoolingCWC_UseFlowRateVisible)}
-                  control={ */}
-                <RHFCheckbox
-                  // sx={getInlineDisplay(customInputs.divCoolingCWC_UseFlowRateVisible)}
-                  label="Heating HWC Use Flow Rate"
-                  name="ckbHeatingHWCUseFlowRate"
-                  checked={formValues.ckbHeatingHWCUseFlowRate}
-                  onChange={(e: any) => setValue('ckbHeatingHWCUseFlowRate', Number(e.target.checked))}
-                />
-                {/* }
-                  label="Heating HWC Use Flow Rate"
-                /> */}
-                <RHFTextField
-                  size="small"
-                  name="txbHeatingHWCFlowRate"
-                  label="Heating HWC Flow Rate (GPM)"
-                  disabled={heatingHWCFlowRateInfo.isDisabled}
-                  // sx={getDisplay(customInputs.divHeatingHWC_UseFlowRateVisible)}
-                  onChange={(e: any) => {
-                    setValueWithCheck1(e, 'txbHeatingHWCFlowRate');
-                  }}
-                />
-              </Stack>
-            </Box>
+                >
+                  <Stack spacing={1}>
+                    <RHFTextField
+                      size="small"
+                      name="txbWinterHeatingSetpointDB"
+                      label="Heating LAT Setpoint DB (F):"
+                      autoComplete="off"
+                      sx={getDisplay(
+                        Number(formValues.ddlHeatingComp) === IDs.intCompIdElecHeater ||
+                        Number(formValues.ddlHeatingComp) === IDs.intCompIdHWC ||
+                        formValues.ckbHeatPump
+                      )}
+                      onChange={(e: any) => { setValueWithCheck1(e, 'txbWinterHeatingSetpointDB'); }}
+                    />
+
+                    <RHFCheckbox
+                      label="Backup Heating"
+                      name="ckbBackupHeating"
+                      sx={getInlineDisplay(
+                        intProductTypeID === IDs.intProdTypeIdTerra &&
+                        (formValues.ddlPreheatComp === IDs.intCompIdAuto ||
+                          formValues.ddlPreheatComp === IDs.intCompIdElecHeater)
+                      )}
+                      // checked={formValues.ckbHeatPump}
+                      // onChange={ckbHeatPumpChanged}
+                      onChange={(e: any) => setValue('ckbBackupHeating', Number(e.target.checked))}
+                    />
+                    <RHFTextField
+                      size="small"
+                      name="txbBackupHeatingSetpointDB"
+                      label="Backup Heating Setpoint DB (F):"
+                      autoComplete="off"
+                      sx={getDisplay(formCurrValues.ckbBackupHeating)}
+                      onChange={(e: any) => { setValueWithCheck1(e, 'txbBackupHeatingSetpointDB'); }}
+                    />
+                  </Stack>
+                </Box>
+              </Grid>
+            </Grid>
           </AccordionDetails>
         </Accordion>
-        <Accordion
+        <Accordion  // REHEAT
           sx={getDisplay(reheatCompInfo?.isVisible)}
           expanded={expanded.panel5}
           onChange={() => setExpanded({ ...expanded, panel5: !expanded.panel5 })}
@@ -5602,77 +5586,271 @@ useEffect(() => {
             </Typography>
           </AccordionSummary>
           <AccordionDetails>
-            <Box
-              sx={{
-                display: 'grid',
-                rowGap: 3,
-                columnGap: 3,
-                gridTemplateColumns: { xs: 'repeat(3, 1fr)' },
-              }}
-            >
-              <Stack spacing={1}>
-                {/* {isAvailable(dtReheatComp) && ( */}
-                  <RHFSelect
-                    native
-                    size="small"
-                    name="ddlReheatComp"
-                    label="Reheat"
-                    placeholder=""
+            <Grid container spacing={2}>
+              <Grid item xs={12} md={12}>
+                <Box sx={{ display: 'grid', rowGap: 3, columnGap: 3, gridTemplateColumns: { xs: 'repeat(4, 1fr)' }, }}>
+                  <Stack>
+                    <RHFSelect
+                      native
+                      size="small"
+                      name="ddlReheatComp"
+                      label="Reheat"
+                      placeholder=""
                     // sx={getDisplay(reheatCompInfo?.isVisible)}
                     // onChange={ddlReheatCompChanged}
-                  >
-                    {reheatCompInfo?.fdtReheatComp?.map((item: any, index: number) => (
-                      <option key={index} value={item.id}>
-                        {item.items}
-                      </option>
-                    ))}
-                  </RHFSelect>
-                {/* )} */}
-                <RHFTextField
-                  size="small"
-                  name="txbSummerReheatSetpointDB"
-                  label="Dehum. Reheat Setpoint DB (F):"
-                  autoComplete="off"
-                  sx={getDisplay(
-                    Number(formValues.ddlReheatComp) === IDs.intCompIdElecHeater ||
-                      Number(formValues.ddlReheatComp) === IDs.intCompIdHWC ||
-                      Number(formValues.ddlReheatComp) === IDs.intCompIdHGRH
-                  )}
-                  onChange={(e: any) => {
-                    setValueWithCheck1(e, 'txbSummerReheatSetpointDB');
+                    >
+                      {reheatCompInfo?.fdtReheatComp?.map((item: any, index: number) => (
+                        <option key={index} value={item.id}>
+                          {item.items}
+                        </option>
+                      ))}
+                    </RHFSelect>
+                  </Stack>
+                  <Stack>
+                    { }
+                  </Stack>
+                </Box>
+              </Grid>
+              <Grid item xs={12} md={12} sx={{ ...getDisplay(Number(formValues.ddlReheatComp) === IDs.intCompIdElecHeater) }}>
+                <Box sx={{ display: 'grid', rowGap: 3, columnGap: 3, gridTemplateColumns: { xs: 'repeat(4, 1fr)' }, }}>
+                  <Stack spacing={1}>
+                    <RHFSelect
+                      native
+                      size="small"
+                      name="ddlReheatElecHeaterInstall"
+                      label="Reheat Elec. Heater Installation"
+                      // onChange={(e: any) => setValue('ddlReheatElecHeaterInstall', Number(e.target.value))}
+
+                      placeholder=""
+                    >
+                      {heatingElecHeaterInstallInfo?.fdtElecHeaterInstall?.map(
+                        (item: any, index: number) => (
+                          <option key={index} value={item.id}>
+                            {item.items}
+                          </option>
+                        )
+                      )}
+                    </RHFSelect>
+                  </Stack>
+                </Box>
+              </Grid>
+              <Grid item xs={12} md={12} sx={{ ...getDisplay(Number(formValues.ddlReheatComp) === IDs.intCompIdHWC) }}>
+                <Box sx={{ display: 'grid', rowGap: 3, columnGap: 3, gridTemplateColumns: { xs: 'repeat(4, 1fr)' }, }}>
+                  <Stack spacing={1}>
+                    <RHFSelect
+                      native
+                      size="small"
+                      name="ddlReheatFluidType"
+                      label="Reheat Fluid Type"
+                    >
+                      {reheatFluidTypeInfo?.fdtFluidType?.map((item: any, index: number) => (
+                        <option key={index} value={item.id}>
+                          {item.items}
+                        </option>
+                      ))}
+                    </RHFSelect>
+                  </Stack>
+                  <Stack>
+                    <RHFSelect
+                      native
+                      size="small"
+                      name="ddlReheatFluidConcentration"
+                      label="Reheat Fluid %"
+                    >
+                      {reheatFluidConcenInfo?.fdtFluidConcen?.map((item: any, index: number) => (
+                        <option key={index} value={item.id}>
+                          {item.items}
+                        </option>
+                      ))}
+                    </RHFSelect>
+                  </Stack>
+                  <Stack>
+                    <RHFTextField
+                      size="small"
+                      name="txbReheatFluidEntTemp"
+                      label="Reheat Fluid Ent Temp (F)"
+                      onChange={(e: any) => { setValueWithCheck1(e, 'txbReheatFluidEntTemp'); }}
+                    >
+                      { }
+                    </RHFTextField>
+                  </Stack>
+                  <Stack>
+                    <RHFTextField
+                      size="small"
+                      name="txbReheatFluidLvgTemp"
+                      label="Reheat Fluid Lvg Temp (F)"
+                      onChange={(e: any) => {
+                        setValueWithCheck1(e, 'txbReheatFluidLvgTemp');
+                      }}
+                    />
+
+                  </Stack>
+                </Box>
+              </Grid>
+              <Grid item xs={12} md={12}
+                sx={getDisplay(Number(formCurrValues.ddlReheatComp) === IDs.intCompIdHWC && internCompInfo?.isCustomCompVisible)}>
+                <Box sx={{ display: 'grid', rowGap: 3, columnGap: 3, gridTemplateColumns: { xs: 'repeat(4, 1fr)' }, }}>
+                  <Stack spacing={1}>
+                    <RHFCheckbox
+                      label="Reheat HWC Use Capacity"
+                      name="ckbReheatHWCUseCap"
+                      // sx={getInlineDisplay(customInputs.divReheatHWC_UseCapVisible)}
+                      checked={formValues.ckbReheatHWCUseCap}
+                      onChange={(e: any) => setValue('ckbReheatHWCUseCap', Number(e.target.checked))}
+                    />
+                  </Stack>
+                  <Stack>
+                    <RHFTextField
+                      size="small"
+                      name="txbReheatHWCCap"
+                      label="Reheat HWC Capacity (MBH)"
+                      // sx={getDisplay(customInputs.divReheatHWC_UseCapVisible)}
+                      disabled={reheatHWCCapInfo.isDisabled}
+                      onChange={(e: any) => {
+                        setValueWithCheck1(e, 'txbReheatHWCCap');
+                      }}
+                    />
+                  </Stack>
+                  <Stack>
+                    <RHFCheckbox
+                      label="Reheat HWC Use Flow Rate"
+                      name="ckbReheatHWCUseFlowRate"
+                      // sx={getInlineDisplay(customInputs.divReheatHWC_UseFlowRateVisible)}
+                      checked={formValues.ckbReheatHWCUseFlowRate}
+                      onChange={(e: any) =>
+                        setValue('ckbReheatHWCUseFlowRate', Number(e.target.checked))
+                      }
+                    />
+                  </Stack>
+                  <Stack>
+                    <RHFTextField
+                      size="small"
+                      name="txbReheatHWCFlowRate"
+                      label="Reheat HWC Flow Rate (GPM)"
+                      // sx={getDisplay(customInputs.divReheatHWC_UseFlowRateVisible)}
+                      disabled={reheatHWCFlowRateInfo.isDisabled}
+                      onChange={(e: any) => {
+                        setValueWithCheck1(e, 'txbReheatHWCFlowRate');
+                      }}
+                    />
+                  </Stack>
+                </Box>
+              </Grid>
+              <Grid item xs={12} md={12} sx={{ ...getDisplay(Number(formValues.ddlReheatComp) === IDs.intCompIdHGRH) }}>
+                <Box sx={{ display: 'grid', rowGap: 3, columnGap: 3, gridTemplateColumns: { xs: 'repeat(4, 1fr)' }, }}>
+                  <Stack spacing={1}>
+                    <RHFTextField
+                      size="small"
+                      name="txbRefrigCondensingTemp"
+                      label="Condensing Temp (F)"
+                      onChange={(e: any) => {
+                        setValueWithCheck1(e, 'txbRefrigCondensingTemp');
+                      }}
+                    />
+                  </Stack>
+                  <Stack>
+                    <RHFTextField
+                      size="small"
+                      name="txbRefrigVaporTemp"
+                      label="Condensing Temp (F)"
+                      onChange={(e: any) => {
+                        setValueWithCheck1(e, 'txbRefrigVaporTemp');
+                      }}
+                    />
+                  </Stack>
+                  <Stack>
+                    <RHFTextField
+                      size="small"
+                      name="txbRefrigSubcoolingTemp"
+                      label="Subcooling Temp (F)"
+                      onChange={(e: any) => {
+                        setValueWithCheck1(e, 'txbRefrigSubcoolingTemp');
+                      }}
+                    />
+                  </Stack>
+                  <Stack>
+                    <RHFTextField
+                      size="small"
+                      name="txbPercentCondensingLoad"
+                      label="% Condensing Load"
+                      onChange={(e: any) => {
+                        setValueWithCheck1(e, 'txbPercentCondensingLoad');
+                      }}
+                    />
+                  </Stack>
+                </Box>
+              </Grid>
+              <Grid item xs={12} md={12}>
+                <Box
+                  sx={{
+                    display: 'grid',
+                    rowGap: 3,
+                    columnGap: 3,
+                    gridTemplateColumns: { xs: 'repeat(4, 1fr)' },
                   }}
-                />
-                {/* {isAvailable(db?.dbtSelHanding) && ( */}
+                >
+                  <Stack spacing={1}>
+                    <RHFTextField
+                      size="small"
+                      name="txbSummerReheatSetpointDB"
+                      label="Dehum. Reheat Setpoint DB (F):"
+                      autoComplete="off"
+                      sx={getDisplay(
+                        Number(formValues.ddlReheatComp) === IDs.intCompIdElecHeater ||
+                        Number(formValues.ddlReheatComp) === IDs.intCompIdHWC ||
+                        Number(formValues.ddlReheatComp) === IDs.intCompIdHGRH
+                      )}
+                      onChange={(e: any) => {
+                        setValueWithCheck1(e, 'txbSummerReheatSetpointDB');
+                      }}
+                    />
+                  </Stack>
+                </Box>
+              </Grid>
+            </Grid>
+          </AccordionDetails>
+        </Accordion>
+        <Accordion  // POWER
+          expanded={expanded.panel1}
+          onChange={() => setExpanded({ ...expanded, panel1: !expanded.panel1 })}
+        >
+          <AccordionSummary
+            expandIcon={<Iconify icon="il:arrow-down" />}
+            aria-controls="panel1a-content"
+            id="panel1a-header"
+          >
+            <Typography color="primary.main" variant="h6">
+              POWER
+            </Typography>
+          </AccordionSummary>
+          <AccordionDetails>
+            <Grid container spacing={5}>
+              <Grid item xs={4} md={4}>
+                <Box sx={{ display: 'grid', rowGap: 3, columnGap: 3 }}>
                   <RHFSelect
                     native
                     size="small"
-                    name="ddlReheatCoilHanding"
-                    label="Reheat Coil Handing"
-                    sx={getDisplay(reheatCoilHandingInfo?.isVisible)}
-                    onChange={ddlReheatCoilHandingChanged}
+                    name="ddlUnitVoltage"
+                    label="Unit Voltage"
+                    onChange={ddlUnitVoltageChanged}
                   >
-                    {reheatCoilHandingInfo?.fdtHanding?.map((item: any, index: number) => (
+                    {unitVoltageInfo?.fdtUnitVoltage?.map((item: any, index: number) => (
                       <option key={index} value={item.id}>
                         {item.items}
                       </option>
                     ))}
                   </RHFSelect>
-                {/* )} */}
-              </Stack>
-              <Stack
-                spacing={1}
-                sx={{ ...getDisplay(Number(formValues.ddlReheatComp) === IDs.intCompIdElecHeater) }}
-              >
-                {isAvailable(heatingElecHeaterInstallInfo?.fdtElecHeaterInstall) && (
                   <RHFSelect
                     native
                     size="small"
-                    name="ddlReheatElecHeaterInstall"
-                    label="Reheat Elec. Heater Installation"
-                    // onChange={(e: any) => setValue('ddlReheatElecHeaterInstall', Number(e.target.value))}
+                    name="ddlElecHeaterVoltage"
+                    label="Electric Heater Voltage"
                     placeholder=""
+                    sx={getInlineDisplay(elecHeaterVoltageIsVisible)}
+                    disabled={!elecHeaterVoltageIsEnabled}
+                    onChange={ddlElecHeaterVoltageChanged}
                   >
-                    {heatingElecHeaterInstallInfo?.fdtElecHeaterInstall?.map(
+                    {elecHeaterVoltageTable?.map(
                       (item: any, index: number) => (
                         <option key={index} value={item.id}>
                           {item.items}
@@ -5680,151 +5858,89 @@ useEffect(() => {
                       )
                     )}
                   </RHFSelect>
-                )}
-              </Stack>
-              <Stack
-                spacing={1}
-                sx={{ ...getDisplay(Number(formValues.ddlReheatComp) === IDs.intCompIdHWC) }}
-              >
-                {isAvailable(db?.dbtSelFluidType) && (
-                  <RHFSelect
-                    native
-                    size="small"
-                    name="ddlReheatFluidType"
-                    label="Reheat Fluid Type"
-                  >
-                    {reheatFluidTypeInfo?.fdtFluidType?.map((item: any, index: number) => (
-                      <option key={index} value={item.id}>
-                        {item.items}
-                      </option>
-                    ))}
-                  </RHFSelect>
-                )}
-                {isAvailable(db?.dbtSelFluidType && db?.dbtSelFluidConcentration) && (
-                  <RHFSelect
-                    native
-                    size="small"
-                    name="ddlReheatFluidConcentration"
-                    label="Reheat Fluid %"
-                  >
-                    {reheatFluidConcenInfo?.fdtFluidConcen?.map((item: any, index: number) => (
-                      <option key={index} value={item.id}>
-                        {item.items}
-                      </option>
-                    ))}
-                  </RHFSelect>
-                )}
-                <RHFTextField
-                  size="small"
-                  name="txbReheatFluidEntTemp"
-                  label="Reheat Fluid Ent Temp (F)"
-                  onChange={(e: any) => {
-                    setValueWithCheck1(e, 'txbReheatFluidEntTemp');
-                  }}
-                />
-                <RHFTextField
-                  size="small"
-                  name="txbReheatFluidLvgTemp"
-                  label="Reheat Fluid Lvg Temp (F)"
-                  onChange={(e: any) => {
-                    setValueWithCheck1(e, 'txbReheatFluidLvgTemp');
-                  }}
-                />
-              </Stack>
-              <Stack
-                spacing={1}
-                sx={getDisplay(Number(formCurrValues.ddlReheatComp) === IDs.intCompIdHWC &&  internCompInfo?.isCustomCompVisible)}
-                >
-                {/* <FormControlLabel
-                  sx={getInlineDisplay(customInputs.divReheatHWC_UseCapVisible)}
-                  control={ */}
-                <RHFCheckbox
-                  label="Reheat HWC Use Capacity"
-                  name="ckbReheatHWCUseCap"
-                  // sx={getInlineDisplay(customInputs.divReheatHWC_UseCapVisible)}
-                  checked={formValues.ckbReheatHWCUseCap}
-                  onChange={(e: any) => setValue('ckbReheatHWCUseCap', Number(e.target.checked))}
-                />
-                {/* }
-                  label="Reheat HWC Use Capacity"
-                /> */}
-                <RHFTextField
-                  size="small"
-                  name="txbReheatHWCCap"
-                  label="Reheat HWC Capacity (MBH)"
-                  // sx={getDisplay(customInputs.divReheatHWC_UseCapVisible)}
-                  disabled={reheatHWCCapInfo.isDisabled}
-                  onChange={(e: any) => {
-                    setValueWithCheck1(e, 'txbReheatHWCCap');
-                  }}
-                />
-                {/* <FormControlLabel
-                  sx={getInlineDisplay(customInputs.divReheatHWC_UseFlowRateVisible)}
-                  control={ */}
-                <RHFCheckbox
-                  label="Reheat HWC Use Flow Rate"
-                  name="ckbReheatHWCUseFlowRate"
-                  // sx={getInlineDisplay(customInputs.divReheatHWC_UseFlowRateVisible)}
-                  checked={formValues.ckbReheatHWCUseFlowRate}
-                  onChange={(e: any) =>
-                    setValue('ckbReheatHWCUseFlowRate', Number(e.target.checked))
-                  }
-                />
-                {/* }
-                  label="Reheat HWC Use Flow Rate"
-                /> */}
-                <RHFTextField
-                  size="small"
-                  name="txbReheatHWCFlowRate"
-                  label="Reheat HWC Flow Rate (GPM)"
-                  // sx={getDisplay(customInputs.divReheatHWC_UseFlowRateVisible)}
-                  disabled={reheatHWCFlowRateInfo.isDisabled}
-                  onChange={(e: any) => {
-                    setValueWithCheck1(e, 'txbReheatHWCFlowRate');
-                  }}
-                />
-              </Stack>
-              <Stack
-                spacing={1}
-                sx={{ ...getDisplay(Number(formValues.ddlReheatComp) === IDs.intCompIdHGRH) }}
-              >
-                <RHFTextField
-                  size="small"
-                  name="txbRefrigCondensingTemp"
-                  label="Condensing Temp (F)"
-                  onChange={(e: any) => {
-                    setValueWithCheck1(e, 'txbRefrigCondensingTemp');
-                  }}
-                />
-                <RHFTextField
-                  size="small"
-                  name="txbRefrigVaporTemp"
-                  label="Condensing Temp (F)"
-                  onChange={(e: any) => {
-                    setValueWithCheck1(e, 'txbRefrigVaporTemp');
-                  }}
-                />
-                <RHFTextField
-                  size="small"
-                  name="txbRefrigSubcoolingTemp"
-                  label="Subcooling Temp (F)"
-                  onChange={(e: any) => {
-                    setValueWithCheck1(e, 'txbRefrigSubcoolingTemp');
-                  }}
-                />
-                <RHFTextField
-                  size="small"
-                  name="txbPercentCondensingLoad"
-                  label="% Condensing Load"
-                  onChange={(e: any) => {
-                    setValueWithCheck1(e, 'txbPercentCondensingLoad');
-                  }}
-                />
-              </Stack>
-            </Box>
+                </Box>
+              </Grid>
+              <Grid item xs={4} md={4}>
+                <Box sx={{ display: 'grid', rowGap: 3, columnGap: 3 }}>
+                  <RHFCheckbox
+                    label="Single Point Power Connection"
+                    name="ckbVoltageSPP"
+                    // checked={}
+                    onChange={(e: any) => setValue('ckbVoltageSPP', Number(e.target.value))}
+                    sx={getDisplay(voltageSPPIsVisible)}
+                  />
+                </Box>
+              </Grid>
+              <Grid item xs={4} md={4}>
+                <Box sx={{ display: 'grid', rowGap: 3, columnGap: 3 }}>
+                  { }
+                </Box>
+              </Grid>
+            </Grid>
           </AccordionDetails>
         </Accordion>
-        <Accordion
+        <Accordion  // CONTROLS
+          expanded={expanded.panel1}
+          onChange={() => setExpanded({ ...expanded, panel1: !expanded.panel1 })}
+        >
+          <AccordionSummary
+            expandIcon={<Iconify icon="il:arrow-down" />}
+            aria-controls="panel1a-content"
+            id="panel1a-header"
+          >
+            <Typography color="primary.main" variant="h6">
+              CONTROLS
+            </Typography>
+          </AccordionSummary>
+          <AccordionDetails>
+            <Grid container spacing={5}>
+              <Grid item xs={4} md={4}>
+                <Box sx={{ display: 'grid', rowGap: 3, columnGap: 3 }}>
+                  <RHFSelect
+                    native
+                    size="small"
+                    name="ddlControlsPref"
+                    label="Controls Preference"
+                    placeholder=""
+                    // sx={getDisplay(controlsPrefInfo?.isVisible)}
+                    onChange={(e: any) => { setValue('ddlControlsPref', Number(e.target.value)); }}
+                  >
+                    {controlsPrefInfo?.fdtControlsPref?.map((item: any, index: number) => (
+                      <option key={index} value={item.id}>
+                        {item.items}
+                      </option>
+                    ))}
+                  </RHFSelect>
+                </Box>
+              </Grid>
+              <Grid item xs={4} md={4}>
+                <Box sx={{ display: 'grid', rowGap: 3, columnGap: 3 }}>
+                  <RHFSelect
+                    native
+                    size="small"
+                    name="ddlControlVia"
+                    label="Control Via"
+                    placeholder=""
+                    sx={getDisplay(controlViaInfo?.isVisible)}
+                    onChange={(e: any) => { setValue('ddlControlVia', Number(e.target.value)); }}
+                  >
+                    {controlViaInfo?.fdtControlVia?.map((item: any, index: number) => (
+                      <option key={index} value={item.id}>
+                        {item.items}
+                      </option>
+                    ))}
+                  </RHFSelect>
+                </Box>
+              </Grid>
+              <Grid item xs={4} md={4}>
+                <Box sx={{ display: 'grid', rowGap: 3, columnGap: 3 }}>
+                  { }
+                </Box>
+              </Grid>
+            </Grid>
+          </AccordionDetails>
+        </Accordion>
+        <Accordion  // ACCESSORIES
           expanded={expanded.panel6}
           onChange={() => setExpanded({ ...expanded, panel6: !expanded.panel6 })}
         >
@@ -5863,24 +5979,6 @@ useEffect(() => {
                   ))}
                 </RHFSelect>
                 {/* {isAvailable(elecHeaterVoltageInfo.ddlElecHeaterVoltageDataTbl) && ( */}
-                  <RHFSelect
-                    native
-                    size="small"
-                    name="ddlElecHeaterVoltage"
-                    label="Elec. Heater Voltage"
-                    placeholder=""
-                    sx={getDisplay(elecHeaterVoltageIsVisible)}
-                    disabled={!elecHeaterVoltageIsEnabled}
-                    onChange={ddlElecHeaterVoltageChanged}
-                  >
-                    {elecHeaterVoltageTable?.map(
-                      (item: any, index: number) => (
-                        <option key={index} value={item.id}>
-                          {item.items}
-                        </option>
-                      )
-                    )}
-                  </RHFSelect>
                 {/* )} */}
                 {/* <FormControlLabel
                   sx={getDisplay(valveAndActuatorInfo.divValveAndActuatorVisible)}
@@ -5933,7 +6031,7 @@ useEffect(() => {
                   name="ddlEKEXVKitInstallation"
                   label="EKEXV Valves and Controllers"
                   sx={getDisplay(ekexvKitInstallIsVisible)}
-                  onChange={(e: any) => {setValue('ddlEKEXVKitInstallation', Number(e.target.value));}}
+                  onChange={(e: any) => { setValue('ddlEKEXVKitInstallation', Number(e.target.value)); }}
                   placeholder=""
                 >
                   {db?.dbtSelEKEXVKitInstallation?.map((item: any, index: number) => (
@@ -5946,7 +6044,7 @@ useEffect(() => {
             </Box>
           </AccordionDetails>
         </Accordion>
-        <Accordion
+        <Accordion  // LAYOUT
           expanded={expanded.panel7}
           onChange={() => setExpanded({ ...expanded, panel7: !expanded.panel7 })}
         >
@@ -5963,133 +6061,186 @@ useEffect(() => {
             <Grid container spacing={5}>
               <Grid item xs={4} md={4}>
                 <Stack spacing={3}>
-                    <RHFSelect
-                      native
-                      size="small"
-                      name="ddlHanding"
-                      label="Handing"
-                      placeholder=""
-                      value={getValues('ddlHanding')}
-                      onChange={ddlHandingChanged}
-                    >
-                      {handingInfo?.fdtHanding?.map((item: any, index: number) => (
+                  <RHFSelect
+                    native
+                    size="small"
+                    name="ddlHanding"
+                    label="Handing"
+                    placeholder=""
+                    value={getValues('ddlHanding')}
+                    onChange={ddlHandingChanged}
+                  >
+                    {handingInfo?.fdtHanding?.map((item: any, index: number) => (
+                      <option key={index} value={item.id}>
+                        {item.items}
+                      </option>
+                    ))}
+                  </RHFSelect>
+                  <RHFSelect
+                    native
+                    size="small"
+                    name="ddlPreheatCoilHanding"
+                    label="Preheat Coil Handing"
+                    sx={getDisplay(preheatCoilHandingInfo?.isVisible)}
+                    onChange={(e: any) => setValue('ddlPreheatCoilHanding', Number(e.target.value))}
+                  >
+                    {preheatCoilHandingInfo?.fdtHanding?.map((item: any, index: number) => (
+                      <option key={index} value={item.id}>
+                        {item.items}
+                      </option>
+                    ))}
+                  </RHFSelect>
+                  <RHFSelect
+                    native
+                    size="small"
+                    name="ddlCoolingCoilHanding"
+                    label="Cooling Coil Handing"
+                    sx={getDisplay(coolingCoilHandingInfo?.isVisible)}
+                    onChange={(e: any) => setValue('ddlCoolingCoilHanding', Number(e.target.value))}
+                  >
+                    {coolingCoilHandingInfo?.fdtHanding?.map((item: any, index: number) => (
+                      <option key={index} value={item.id}>
+                        {item.items}
+                      </option>
+                    ))}
+                  </RHFSelect>
+                  <RHFSelect
+                    native
+                    size="small"
+                    name="ddlHeatingCoilHanding"
+                    label="Heating Coil Handing"
+                    sx={getDisplay(heatingCoilHandingInfo?.isVisible)}
+                    onChange={ddlHeatingCoilHandingChanged}
+                  >
+                    {heatingCoilHandingInfo?.fdtHanding?.map((item: any, index: number) => (
+                      <option key={index} value={item.id}>
+                        {item.items}
+                      </option>
+                    ))}
+                  </RHFSelect>
+                  <RHFSelect
+                    native
+                    size="small"
+                    name="ddlReheatCoilHanding"
+                    label="Reheat Coil Handing"
+                    sx={getDisplay(reheatCoilHandingInfo?.isVisible)}
+                    onChange={ddlReheatCoilHandingChanged}
+                  >
+                    {reheatCoilHandingInfo?.fdtHanding?.map((item: any, index: number) => (
+                      <option key={index} value={item.id}>
+                        {item.items}
+                      </option>
+                    ))}
+                  </RHFSelect>
+                </Stack>{' '}
+              </Grid>
+              <Grid item xs={4} md={4}>
+                <Stack spacing={3}>
+                  <RHFSelect
+                    native
+                    size="small"
+                    name="ddlSupplyAirOpening"
+                    label="Supply Air Opening"
+                    placeholder=""
+                    // sx={getDisplay(supplyAirOpeningInfo?.isVisible)}
+                    onChange={ddlSupplyAirOpeningChanged}
+                  >
+                    {supplyAirOpeningInfo?.fdtSupplyAirOpening?.map(
+                      (item: any, index: number) => (
                         <option key={index} value={item.id}>
                           {item.items}
                         </option>
-                      ))}
-                    </RHFSelect>
-                  {/* {isAvailable(supplyAirOpeningInfo.ddlSupplyAirOpeningDataTbl) && ( */}
-                    <RHFSelect
-                      native
-                      size="small"
-                      name="ddlSupplyAirOpening"
-                      label="Supply Air Opening"
-                      placeholder=""
-                      // sx={getDisplay(supplyAirOpeningInfo?.isVisible)}
-                      onChange={ddlSupplyAirOpeningChanged}
-                    >
-                      {supplyAirOpeningInfo?.fdtSupplyAirOpening?.map(
-                        (item: any, index: number) => (
-                          <option key={index} value={item.id}>
-                            {item.items}
-                          </option>
-                        )
-                      )}
-                    </RHFSelect>
-                  {/* )} */}
-                  {/* {isAvailable(remainingOpeningsInfo.ddlExhaustAirOpeningDataTbl) && ( */}
-                    <RHFSelect
-                      native
-                      size="small"
-                      name="ddlExhaustAirOpening"
-                      label="Exhaust Air Opening"
-                      sx={getDisplay(remainingOpeningsInfo?.isExhaustAirOpeningVisible)}
-                      placeholder=""
-                      onChange={ddlExhaustAirOpeningChanged}
-                    >
-                      {remainingOpeningsInfo?.fdtExhaustAirOpening?.map(
-                        (item: any, index: number) => (
-                          <option key={index} value={item.id}>
-                            {item.items}
-                          </option>
-                        )
-                      )}
-                    </RHFSelect>
-                  {/* )} */}
-                  {/* {isAvailable(remainingOpeningsInfo.ddlOutdoorAirOpeningDataTbl) && ( */}
-                    <RHFSelect
-                      native
-                      size="small"
-                      name="ddlOutdoorAirOpening"
-                      label="Outdoor Air Opening"
-                      placeholder=""
-                      sx={getDisplay(remainingOpeningsInfo?.isOutdoorAirOpeningVisible)}           
-                      onChange={ddlOutdoorAirOpeningChanged}
-                    >
-                      {remainingOpeningsInfo?.fdtOutdoorAirOpening?.map(
-                        (item: any, index: number) => (
-                          <option key={index} value={item.id}>
-                            {item.items}
-                          </option>
-                        )
-                      )}
-                    </RHFSelect>
-                  {/* )} */}
-                  {/* {isAvailable(remainingOpeningsInfo?.ddlReturnAirOpeningDataTbl) && ( */}
-                    <RHFSelect
-                      native
-                      size="small"
-                      name="ddlReturnAirOpening"
-                      label="Return Air Opening"
-                      sx={getDisplay(remainingOpeningsInfo?.isReturnAirOpeningVisible)}
-                      placeholder=""
-                      onChange={ddlReturnAirOpeningChanged}
-                    >
-                      {remainingOpeningsInfo?.fdtReturnAirOpening?.map(
-                        (item: any, index: number) => (
-                          <option key={index} value={item.id}>
-                            {item.items}
-                          </option>
-                        )
-                      )}
-                    </RHFSelect>
-                  {/* )} */}
-                    <RHFSelect
-                      native
-                      size="small"
-                      name="ddlMixOADamperPos"
-                      label="Mixing Outdoor Air Damper"
-                      sx={getDisplay(getValues('ckbMixingBox'))}
-                      placeholder=""
-                      // onChange={ddlReturnAirOpeningChanged}
-                    >
-                      {mixOADamperPosInfo?.ftdMixOADamperPos?.map(
-                        (item: any, index: number) => (
-                          <option key={index} value={item.id}>
-                            {item.items}
-                          </option>
-                        )
-                      )}
-                    </RHFSelect>
-                    <RHFSelect
-                      native
-                      size="small"
-                      name="ddlMixRADamperPos"
-                      label="Mixing Return Air Damper"
-                      sx={getDisplay(getValues('ckbMixingBox'))}
-                      placeholder=""
-                      // onChange={ddlReturnAirOpeningChanged}
-                    >
-                      {mixRADamperPosInfo?.ftdMixRADamperPos?.map(
-                        (item: any, index: number) => (
-                          <option key={index} value={item.id}>
-                            {item.items}
-                          </option>
-                        )
-                      )}
-                    </RHFSelect>
+                      )
+                    )}
+                  </RHFSelect>
+                  <RHFSelect
+                    native
+                    size="small"
+                    name="ddlExhaustAirOpening"
+                    label="Exhaust Air Opening"
+                    sx={getDisplay(remainingOpeningsInfo?.isExhaustAirOpeningVisible)}
+                    placeholder=""
+                    onChange={ddlExhaustAirOpeningChanged}
+                  >
+                    {remainingOpeningsInfo?.fdtExhaustAirOpening?.map(
+                      (item: any, index: number) => (
+                        <option key={index} value={item.id}>
+                          {item.items}
+                        </option>
+                      )
+                    )}
+                  </RHFSelect>
+                  <RHFSelect
+                    native
+                    size="small"
+                    name="ddlOutdoorAirOpening"
+                    label="Outdoor Air Opening"
+                    placeholder=""
+                    sx={getDisplay(remainingOpeningsInfo?.isOutdoorAirOpeningVisible)}
+                    onChange={ddlOutdoorAirOpeningChanged}
+                  >
+                    {remainingOpeningsInfo?.fdtOutdoorAirOpening?.map(
+                      (item: any, index: number) => (
+                        <option key={index} value={item.id}>
+                          {item.items}
+                        </option>
+                      )
+                    )}
+                  </RHFSelect>
+                  <RHFSelect
+                    native
+                    size="small"
+                    name="ddlReturnAirOpening"
+                    label="Return Air Opening"
+                    sx={getDisplay(remainingOpeningsInfo?.isReturnAirOpeningVisible)}
+                    placeholder=""
+                    onChange={ddlReturnAirOpeningChanged}
+                  >
+                    {remainingOpeningsInfo?.fdtReturnAirOpening?.map(
+                      (item: any, index: number) => (
+                        <option key={index} value={item.id}>
+                          {item.items}
+                        </option>
+                      )
+                    )}
+                  </RHFSelect>
+                  <RHFSelect
+                    native
+                    size="small"
+                    name="ddlMixOADamperPos"
+                    label="Mixing Outdoor Air Damper"
+                    sx={getDisplay(getValues('ckbMixingBox'))}
+                    placeholder=""
+                  // onChange={ddlReturnAirOpeningChanged}
+                  >
+                    {mixOADamperPosInfo?.ftdMixOADamperPos?.map(
+                      (item: any, index: number) => (
+                        <option key={index} value={item.id}>
+                          {item.items}
+                        </option>
+                      )
+                    )}
+                  </RHFSelect>
+                  <RHFSelect
+                    native
+                    size="small"
+                    name="ddlMixRADamperPos"
+                    label="Mixing Return Air Damper"
+                    sx={getDisplay(getValues('ckbMixingBox'))}
+                    placeholder=""
+                  // onChange={ddlReturnAirOpeningChanged}
+                  >
+                    {mixRADamperPosInfo?.ftdMixRADamperPos?.map(
+                      (item: any, index: number) => (
+                        <option key={index} value={item.id}>
+                          {item.items}
+                        </option>
+                      )
+                    )}
+                  </RHFSelect>
                 </Stack>{' '}
               </Grid>
+
               {/* <Grid item xs={8} md={8}>
                   <RHFUpload
                     name="layoutImage"
@@ -6101,7 +6252,7 @@ useEffect(() => {
             </Grid>
           </AccordionDetails>
         </Accordion>
-        <Accordion
+        <Accordion  // CONFIGURATION NOTES
           expanded={expanded.panel8}
           onChange={() => setExpanded({ ...expanded, panel8: !expanded.panel8 })}
         >
@@ -6122,7 +6273,7 @@ useEffect(() => {
         </Accordion>
         <Stack direction="row" justifyContent="flex-end" textAlign="right">
           {/* <Box sx={{ width: '150px' }}> */}
-            {/* <LoadingButton
+          {/* <LoadingButton
               ref={submitButtonRef}
               type="submit"
               variant="contained"
@@ -6136,50 +6287,50 @@ useEffect(() => {
 
 
 
-                {/* {(Number(isNewUnitSelected) === 1 && Number(unitId) === 0) ? ( */}
-                {(Number(unitId) === 0) ? (
+          {/* {(Number(isNewUnitSelected) === 1 && Number(unitId) === 0) ? ( */}
+          {(Number(unitId) === 0) ? (
+            <LoadingButton
+              variant="contained"
+              color="primary"
+              onClick={onSubmit}
+              fullWidth
+            // disabled={validateContinue()}
+            // loading={isSaving}
+            >
+              Add Unit
+            </LoadingButton>
+          ) : (
+            <>
+              {(Number(unitId) > 0) ? (
                 <LoadingButton
                   variant="contained"
                   color="primary"
                   onClick={onSubmit}
                   fullWidth
-                  // disabled={validateContinue()}
-                  // loading={isSaving}
+                // disabled={validateContinue()}
+                // loading={isSaving}
                 >
-                  Add Unit
+                  Update Unit
                 </LoadingButton>
               ) : (
                 <>
-                {(Number(unitId) > 0) ? (
-                  <LoadingButton
-                    variant="contained"
-                    color="primary"
-                    onClick={onSubmit}
-                    fullWidth
-                    // disabled={validateContinue()}
-                    // loading={isSaving}
-                  >
-                    Update Unit
-                  </LoadingButton>
-                ) : (
-                  <>
                   {(Number(unitId) > 0 && !isLoading) ? (
                     <Button
-                    variant="contained"
-                    color="primary"
-                    onClick={onClickUnitInfo}
-                    // sx={{ display: currentStep === 2 && !isProcessingData ? 'inline-flex' : 'none' }}
-                    startIcon={<Iconify icon="akar-icons:arrow-left" />}
-                  >
-                    Unit info
-                  </Button>
+                      variant="contained"
+                      color="primary"
+                      onClick={onClickUnitInfo}
+                      // sx={{ display: currentStep === 2 && !isProcessingData ? 'inline-flex' : 'none' }}
+                      startIcon={<Iconify icon="akar-icons:arrow-left" />}
+                    >
+                      Unit info
+                    </Button>
                   ) : (
                     null
                   )}
-                  </>
-                )}
                 </>
               )}
+            </>
+          )}
           {/* </Box> */}
         </Stack>
       </Stack>

@@ -40,6 +40,7 @@ const TABLE_HEAD = [
   { id: 'type', label: 'Type', align: 'left' },
   { id: 'modal', label: 'Modal', align: 'left' },
   { id: 'cfm', label: 'CFM', align: 'left' },
+  { id: 'actions', label: 'ACTIONS', align: 'left' },
   { id: '' },
 ];
 
