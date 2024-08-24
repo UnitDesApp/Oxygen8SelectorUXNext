@@ -358,7 +358,7 @@ export default function ProjectInfoDialog({
       submitBtnLabel: '',
     };
     if (step === 'SHOW_FIRST_DIALOG') {
-      returnInfo.dialogWidth = "sm";
+      returnInfo.dialogWidth = "md";
       returnInfo.firstGridxs = 12;
       returnInfo.firstBoxDisplay = 'grid';
       returnInfo.secondGridxs = 0;
@@ -367,7 +367,7 @@ export default function ProjectInfoDialog({
       returnInfo.continuBtnDisplay = 'block';
       returnInfo.submitBtnDisplay = 'none';
     } else if (step === 'SHOW_SECOND_DIALOG') {
-      returnInfo.dialogWidth = "sm";
+      returnInfo.dialogWidth = "md";
       returnInfo.firstGridxs = 0;
       returnInfo.firstBoxDisplay = 'none';
       returnInfo.secondGridxs = 12;
@@ -1120,14 +1120,14 @@ export default function ProjectInfoDialog({
               item
               xs={projectDialogArrangement?.firstGridxs}
               sx={{ p: 1, display: projectDialogArrangement?.firstBoxDisplay }}
-              minWidth="md"
+              // minWidth="sm"
             >
               <Card sx={{ p: 3 }}>
                 {/* <Box sx={{ minWidth: '500px', display: 'grid', rowGap: 3, columnGap: 2 }}> */}
                 <Box sx={{ display: 'grid', rowGap: 3, columnGap: 2 }}>
-                  <Grid container spacing={1}>
+                  <Grid container spacing={2}>
                     <Grid item xs={12} md={12}>
-                      <Box sx={{ display: 'grid', rowGap: 1, columnGap: 1, gridTemplateColumns: { xs: 'repeat(1, 1fr)' }, }}>
+                      <Box sx={{ display: 'grid', rowGap: 2, columnGap: 1, gridTemplateColumns: { xs: 'repeat(1, 1fr)' }, }}>
                         <Stack>
                           <RHFTextField size="small" name="txbJobName" label="Project Name" />
                         </Stack>
@@ -1266,12 +1266,12 @@ export default function ProjectInfoDialog({
               item
               xs={projectDialogArrangement?.secondGridxs}
               sx={{ p: 1, display: projectDialogArrangement?.secondBoxDisplay }}
-              minWidth="md"
+              // minWidth="md"
             >
               <Card sx={{ p: 3 }}>
                 {/* <Box sx={{ minWidth: '500px', display: 'grid', rowGap: 3, columnGap: 2 }}> */}
                 <Box sx={{ display: 'grid', rowGap: 3, columnGap: 2 }}>
-                  <Grid container spacing={1}>
+                  <Grid container spacing={2}>
                     <Grid item xs={12} md={12}>
                       <Box sx={{ display: 'grid', rowGap: 1, columnGap: 1, gridTemplateColumns: { xs: 'repeat(1, 1fr)' }, }}>
                         <Stack>
@@ -1363,14 +1363,14 @@ export default function ProjectInfoDialog({
                       </Box>
                     </Grid>
                     <Grid item xs={12} md={12}>
-                      <Box sx={{ display: 'grid', rowGap: 1, columnGap: 1, gridTemplateColumns: { xs: 'repeat(1, 1fr)' }, }}>
-                        <Stack>
+                      <Box sx={{ display: 'grid', rowGap: 3, columnGap: 1, gridTemplateColumns: { xs: 'repeat(1, 1fr)' }, }}>
+                        <Stack spacing={11}>
                           <Typography variant="subtitle1">OUTDOOR AIR DESIGN CONDITIONS</Typography>
                         </Stack>
                       </Box>
                     </Grid>
                     <Grid item xs={12} md={12}>
-                      <Box sx={{ display: 'grid', rowGap: 1, columnGap: 1, gridTemplateColumns: { xs: 'repeat(3, 1fr)' }, }}>
+                      <Box sx={{ display: 'grid', rowGap: 3, columnGap: 1, gridTemplateColumns: { xs: 'repeat(3, 40% [col-start] 30% [col-middle] 30% [col-end])' }, }}>
                         <Stack>
                           { }
                         </Stack>
@@ -1383,7 +1383,7 @@ export default function ProjectInfoDialog({
                       </Box>
                     </Grid>
                     <Grid item xs={12} md={12}>
-                      <Box sx={{ display: 'grid', rowGap: 1, columnGap: 1, gridTemplateColumns: { xs: 'repeat(3, 1fr)' }, }}>
+                      <Box sx={{ display: 'grid', rowGap: 1, columnGap: 1, gridTemplateColumns: { xs: 'repeat(3, 40% [col-start] 30% [col-middle] 30% [col-end])' }, }}>
                         <Stack>
                           <Typography color="primary.main" variant="subtitle2">Dry Bulb Temperature (F)</Typography>
                         </Stack>
@@ -1414,7 +1414,7 @@ export default function ProjectInfoDialog({
                       </Box>
                     </Grid>
                     <Grid item xs={12} md={12}>
-                      <Box sx={{ display: 'grid', rowGap: 1, columnGap: 1, gridTemplateColumns: { xs: 'repeat(3, 1fr)' }, }}>
+                      <Box sx={{ display: 'grid', rowGap: 1, columnGap: 1, gridTemplateColumns: { xs: 'repeat(3, 40% [col-start] 30% [col-middle] 30% [col-end])' }, }}>
                         <Stack>
                           <Typography color="primary.main" variant="subtitle2">Wet Bulb Temperature (F)</Typography>
                         </Stack>
@@ -1445,7 +1445,7 @@ export default function ProjectInfoDialog({
                       </Box>
                     </Grid>
                     <Grid item xs={12} md={12}>
-                      <Box sx={{ display: 'grid', rowGap: 1, columnGap: 1, gridTemplateColumns: { xs: 'repeat(3, 1fr)' }, }}>
+                      <Box sx={{ display: 'grid', rowGap: 1, columnGap: 1, gridTemplateColumns: { xs: 'repeat(3, 40% [col-start] 30% [col-middle] 30% [col-end])' }, }}>
                         <Stack>
                           <Typography color="primary.main" variant="subtitle2">Relative Humidity (%)</Typography>
                         </Stack>
@@ -1483,7 +1483,7 @@ export default function ProjectInfoDialog({
                       </Box>
                     </Grid>
                     <Grid item xs={12} md={12}>
-                      <Box sx={{ display: 'grid', rowGap: 1, columnGap: 1, gridTemplateColumns: { xs: 'repeat(3, 1fr)' }, }}>
+                      <Box sx={{ display: 'grid', rowGap: 1, columnGap: 1, gridTemplateColumns: { xs: 'repeat(3, 40% [col-start] 30% [col-middle] 30% [col-end])' }, }}>
                         <Stack>
                           { }
                         </Stack>
@@ -1496,7 +1496,7 @@ export default function ProjectInfoDialog({
                       </Box>
                     </Grid>
                     <Grid item xs={12} md={12}>
-                      <Box sx={{ display: 'grid', rowGap: 1, columnGap: 1, gridTemplateColumns: { xs: 'repeat(3, 1fr)' }, }}>
+                      <Box sx={{ display: 'grid', rowGap: 1, columnGap: 1, gridTemplateColumns: { xs: 'repeat(3, 40% [col-start] 30% [col-middle] 30% [col-end])' }, }}>
                         <Stack>
                           <Typography color="primary.main" variant="subtitle2">Dry Bulb Temperature (F)</Typography>
                         </Stack>
@@ -1527,7 +1527,7 @@ export default function ProjectInfoDialog({
                       </Box>
                     </Grid>
                     <Grid item xs={12} md={12}>
-                      <Box sx={{ display: 'grid', rowGap: 1, columnGap: 1, gridTemplateColumns: { xs: 'repeat(3, 1fr)' }, }}>
+                      <Box sx={{ display: 'grid', rowGap: 1, columnGap: 1, gridTemplateColumns: { xs: 'repeat(3, 40% [col-start] 30% [col-middle] 30% [col-end])' }, }}>
                         <Stack>
                           <Typography color="primary.main" variant="subtitle2">Wet Bulb Temperature (F)</Typography>
                         </Stack>
@@ -1558,7 +1558,7 @@ export default function ProjectInfoDialog({
                       </Box>
                     </Grid>
                     <Grid item xs={12} md={12}>
-                      <Box sx={{ display: 'grid', rowGap: 1, columnGap: 1, gridTemplateColumns: { xs: 'repeat(3, 1fr)' }, }}>
+                      <Box sx={{ display: 'grid', rowGap: 1, columnGap: 1, gridTemplateColumns: { xs: 'repeat(3, 40% [col-start] 30% [col-middle] 30% [col-end])' }, }}>
                         <Stack>
                           <Typography color="primary.main" variant="subtitle2">Relative Humidity (%)</Typography>
                         </Stack>
