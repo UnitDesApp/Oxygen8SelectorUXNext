@@ -36,7 +36,7 @@ export default function NewCustomerDialog({
 }: NewCustomerDialogProps) {
   const api = useApiContext();
   const { data: accountInfo } = useGetAccountInfo();
-  const { customerType, fobPoint, country } = accountInfo || {};
+  const { dbtSelCustomerType, dbtSelFOBPoint, dbtSelCountry, } = accountInfo || {};
 
   const NewCustomerSchema = Yup.object().shape({
     username: Yup.string().required('This field is required!'),
@@ -107,31 +107,31 @@ export default function NewCustomerDialog({
                 label="Customer type"
                 placeholder=""
               >
-                {customerType?.map((item: any) => (
+                {dbtSelCustomerType?.map((item: any) => (
                   <option key={item.id} value={item.id}>
                     {item.items}
                   </option>
                 ))}
-                {!customerType && <option value="" />}
+                {!dbtSelCustomerType && <option value="" />}
               </RHFSelect>
             </Stack>
             <RHFTextField size="small" name="address" label="Address" />
             <RHFSelect native size="small" name="countryId" label="Country" placeholder="">
-              {country?.map((item: any) => (
+              {dbtSelCountry?.map((item: any) => (
                 <option key={item.id} value={item.id}>
                   {item.items}
                 </option>
               ))}
-              {!country && <option value="" />}
+              {!dbtSelCountry && <option value="" />}
             </RHFSelect>
             <RHFTextField size="small" name="contactName" label="Contact name" />
             <RHFSelect native size="small" name="fobPoint" label="FOB point" placeholder="">
-              {fobPoint?.map((item: any) => (
+              {dbtSelFOBPoint?.map((item: any) => (
                 <option key={item.id} value={item.id}>
                   {item.items}
                 </option>
               ))}
-              {!fobPoint && <option value="" />}
+              {!dbtSelFOBPoint && <option value="" />}
             </RHFSelect>
             <RHFTextField size="small" name="shippingFactor" label="Shipping factor(%)" />
           </Box>

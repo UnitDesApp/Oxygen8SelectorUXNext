@@ -500,7 +500,7 @@ export default function ProjectDetailsForm({
                         native
                         size="small"
                         name="basisOfDesign"
-                        label="Basis of Design"
+                        label="Project Stage"
                         placeholder=""
                       >
                         {baseOfDesign?.map((info: any, index: number) => (
@@ -509,6 +509,7 @@ export default function ProjectDetailsForm({
                           </option>
                         ))}
                       </RHFSelect>
+                      <RHFTextField size="small" name="projectId" label="Project ID" />
                       <RHFSelect
                         native
                         size="small"

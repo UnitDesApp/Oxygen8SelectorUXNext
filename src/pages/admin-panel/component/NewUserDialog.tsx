@@ -36,7 +36,7 @@ export default function NewUserDialog({
   const api = useApiContext();
   const { data: accountInfo, isLoading } = useGetAccountInfo();
 
-  const { customerType, fobPoint, customers } = accountInfo || {};
+  const { dbtSelCustomerType, dbtSelFOBPoint, dbtSavCustomer } = accountInfo || {};
 
   const NewUserSchema = Yup.object().shape({
     firstname: Yup.string().required('This field is required!'),
@@ -128,20 +128,20 @@ export default function NewUserDialog({
                 label="Customer type"
                 placeholder=""
               >
-                {customerType?.map((item: any) => (
+                {dbtSelCustomerType?.map((item: any) => (
                   <option key={item.id} value={item.id}>
                     {item.items}
                   </option>
                 ))}
-                {!customerType && <option value="" />}
+                {!dbtSelCustomerType && <option value="" />}
               </RHFSelect>
               <RHFSelect native size="small" name="customerId" label="Customer name" placeholder="">
-                {customers?.map((item: any) => (
+                {dbtSavCustomer?.map((item: any) => (
                   <option key={item.id} value={item.id}>
                     {item.name}
                   </option>
                 ))}
-                {!customers && <option value="" />}
+                {!dbtSavCustomer && <option value="" />}
               </RHFSelect>
             </Stack>
             <Stack direction="row" justifyContent="space-around" spacing={1}>
@@ -169,12 +169,12 @@ export default function NewUserDialog({
               </RHFSelect>
             </Stack>
             <RHFSelect native size="small" name="fobPoint" label="FOB point" placeholder="">
-              {fobPoint?.map((item: any) => (
+              {dbtSelFOBPoint?.map((item: any) => (
                 <option key={item.id} value={item.id}>
                   {item.items}
                 </option>
               ))}
-              {!fobPoint && <option value="" />}
+              {!dbtSelFOBPoint && <option value="" />}
             </RHFSelect>
           </Box>
         </DialogContent>
