@@ -16,20 +16,20 @@ import { RHFSelect, RHFTextField } from 'src/components/hook-form';
 // ------------------------------------------------------------------------
 
 interface UserEditFormProps {
-  users: any[];
-  customerType: any[];
-  fobPoint: any[];
-  customers: any[];
+  dbtSavUser: any[];
+  dbtSelCustomerType: any[];
+  dbtSelFOBPoint: any[];
+  dbtSavCustomer: any[];
   setSuccessText?: Function;
   setFailDlgOpen?: Function;
   setSuccessDlgOpen?: Function;
 }
 
 export default function UserEditForm({
-  users,
-  customerType,
-  fobPoint,
-  customers,
+  dbtSavUser,
+  dbtSelCustomerType,
+  dbtSelFOBPoint,
+  dbtSavCustomer,
   setSuccessText,
   setFailDlgOpen,
   setSuccessDlgOpen,
@@ -37,7 +37,7 @@ export default function UserEditForm({
   const { userId } = useRouter().query;
   const api = useApiContext();
 
-  const selectedUser = users?.filter((user: any) => user.id === Number(userId))?.[0] || {};
+  const selectedUser = dbtSavUser?.filter((user: any) => user.id === Number(userId))?.[0] || {};
 
   const UserSchema = Yup.object().shape({
     firstname: Yup.string().required('This field is required!'),
@@ -67,7 +67,7 @@ export default function UserEditForm({
     access: selectedUser?.access,
     accessLevel: selectedUser?.access_level,
     accessPricing: selectedUser?.access_pricing,
-    fobPoint: fobPoint?.[0]?.id,
+    fobPoint: dbtSelFOBPoint?.[0]?.id,
     createdDate: selectedUser?.created_date,
   };
 
@@ -125,12 +125,12 @@ export default function UserEditForm({
                   label="Customer type"
                   placeholder=""
                 >
-                  {customerType?.map((item: any) => (
+                  {dbtSelCustomerType?.map((item: any) => (
                     <option key={item.id} value={item.id}>
                       {item.items}
                     </option>
                   ))}
-                  {!customerType && <option value="" />}
+                  {!dbtSelCustomerType && <option value="" />}
                 </RHFSelect>
                 <RHFSelect
                   native
@@ -139,12 +139,12 @@ export default function UserEditForm({
                   label="Customer name"
                   placeholder=""
                 >
-                  {customers?.map((item: any) => (
+                  {dbtSavCustomer ?.map((item: any) => (
                     <option key={item.id} value={item.id}>
                       {item.name}
                     </option>
                   ))}
-                  {!customers && <option value="" />}
+                  {!dbtSavCustomer  && <option value="" />}
                 </RHFSelect>
               </Stack>
               <Stack direction="row" justifyContent="space-around" spacing={1}>
@@ -178,12 +178,12 @@ export default function UserEditForm({
                 </RHFSelect>
               </Stack>
               <RHFSelect native size="small" name="fobPoint" label="FOB point" placeholder="">
-                {fobPoint?.map((item: any) => (
+                {dbtSelFOBPoint?.map((item: any) => (
                   <option key={item.id} value={item.id}>
                     {item.items}
                   </option>
                 ))}
-                {!fobPoint && <option value="" />}
+                {!dbtSelFOBPoint && <option value="" />}
               </RHFSelect>
               <RHFTextField size="small" name="createdDate" label="Created Date" />
             </Stack>

@@ -337,6 +337,7 @@ export default function ProjectInfoDialog({
   const [projectDialogArrangement, setProjectDialogArrangement] = useState<any>();
   useMemo(() => {
     const returnInfo: {
+      dialogWidth: string;
       firstGridxs: number;
       firstBoxDisplay: string;
       secondGridxs: number;
@@ -346,6 +347,7 @@ export default function ProjectInfoDialog({
       submitBtnDisplay: string;
       submitBtnLabel: string;
     } = {
+      dialogWidth: '',
       firstGridxs: 0,
       firstBoxDisplay: '',
       secondGridxs: 0,
@@ -356,6 +358,7 @@ export default function ProjectInfoDialog({
       submitBtnLabel: '',
     };
     if (step === 'SHOW_FIRST_DIALOG') {
+      returnInfo.dialogWidth = "sm";
       returnInfo.firstGridxs = 12;
       returnInfo.firstBoxDisplay = 'grid';
       returnInfo.secondGridxs = 0;
@@ -364,6 +367,7 @@ export default function ProjectInfoDialog({
       returnInfo.continuBtnDisplay = 'block';
       returnInfo.submitBtnDisplay = 'none';
     } else if (step === 'SHOW_SECOND_DIALOG') {
+      returnInfo.dialogWidth = "sm";
       returnInfo.firstGridxs = 0;
       returnInfo.firstBoxDisplay = 'none';
       returnInfo.secondGridxs = 12;
@@ -373,6 +377,7 @@ export default function ProjectInfoDialog({
       returnInfo.submitBtnDisplay = 'block';
       returnInfo.submitBtnLabel = 'Create Project';
     } else if (step === 'SHOW_ALL_DIALOG') {
+      returnInfo.dialogWidth = "lg";
       returnInfo.firstGridxs = 6;
       returnInfo.firstBoxDisplay = 'grid';
       returnInfo.secondGridxs = 6;
@@ -1098,7 +1103,7 @@ export default function ProjectInfoDialog({
   // },[savedJob]);
 
   return (
-    <Dialog open={open} onClose={handleClose} maxWidth="lg">
+    <Dialog open={open} onClose={handleClose} maxWidth={projectDialogArrangement?.dialogWidth}>
       <DialogTitle>
         {/* {step === 'SHOW_FIRST_DIALOG' || step === ''
            ? 'PROJECT INFORMATION'
@@ -1109,129 +1114,150 @@ export default function ProjectInfoDialog({
       </DialogTitle>
       <FormProvider methods={methods} onSubmit={handleSubmit(onSubmit)}>
         <DialogContent>
-          <Grid container>
+          <Grid container spacing={1}>
             {/* <Grid item xs={6} sx={{ p: 1}}> */}
             <Grid
               item
               xs={projectDialogArrangement?.firstGridxs}
               sx={{ p: 1, display: projectDialogArrangement?.firstBoxDisplay }}
+              minWidth="md"
             >
               <Card sx={{ p: 3 }}>
                 {/* <Box sx={{ minWidth: '500px', display: 'grid', rowGap: 3, columnGap: 2 }}> */}
-                <Box
-                  sx={{
-                    minWidth: '500px',
-                    display: projectDialogArrangement?.firstBoxDisplay,
-                    rowGap: 3,
-                    columnGap: 2,
-                  }}
-                >
-                  <RHFTextField size="small" name="txbJobName" label="Project Name" />
-                  <RHFSelect
-                    native
-                    size="small"
-                    name="ddlBasisOfDesign"
-                    label="Basis of Design"
-                    placeholder="Basis of Design"
-                    // onChange={ddlBasisOfDesignChanged}
-                  >
-                    {/* <option value="" /> */}
-                    {/* {['Budget', 'Basic of Design', 'Non-Basic of Design']?.map(
+                <Box sx={{ display: 'grid', rowGap: 3, columnGap: 2 }}>
+                  <Grid container spacing={1}>
+                    <Grid item xs={12} md={12}>
+                      <Box sx={{ display: 'grid', rowGap: 1, columnGap: 1, gridTemplateColumns: { xs: 'repeat(1, 1fr)' }, }}>
+                        <Stack>
+                          <RHFTextField size="small" name="txbJobName" label="Project Name" />
+                        </Stack>
+                        <Stack>
+                          <RHFSelect
+                            native
+                            size="small"
+                            name="ddlBasisOfDesign"
+                            label="Project Stage"
+                            placeholder="Project Stage"
+                          // onChange={ddlBasisOfDesignChanged}
+                          >
+                            {/* <option value="" /> */}
+                            {/* {['Budget', 'Basic of Design', 'Non-Basic of Design']?.map(
                       (option: string, index: number) => (
                         <option key={`${index}basisOfDesign`} value={index + 2}>
                           {option}
                         </option>
                       )
                     )} */}
-                    {basisOfDesignInfo?.map((option: any, index: number) => (
-                      <option key={index} value={option.id}>
-                        {option.items}
-                      </option>
-                    ))}
-                  </RHFSelect>
-                  <RHFTextField size="small" name="txbReferenceNo" label="Reference #" />
-                  <RHFTextField
-                    size="small"
-                    // type="number"
-                    name="txbRevisionNo"
-                    label="Revision #"
-                    onChange={(e: any) => {
-                      setValueWithCheck(e, 'txbRevisionNo');
-                    }}
-                  />
-                  <RHFSelect
-                    native
-                    size="small"
-                    name="ddlCompanyName"
-                    label="Company Name"
-                    placeholder=""
-                    // onChange={handleChangeCompanyName}
-                  >
-                    {/* <option value="" /> */}
-                    {companyInfo?.map((option: any, index: number) => (
-                      <option key={index} value={option.id}>
-                        {option.name}
-                      </option>
-                    ))}
-                  </RHFSelect>
-                  <RHFSelect
-                    native
-                    size="small"
-                    name="ddlCompanyContactName"
-                    label="Contact Name"
-                    placeholder=""
-                    disabled={UalInfo.isDisabled}
-                    onChange={handleChangeContactName}
-                  >
-                    {/* <option value="" /> */}
-                    {companyContactInfo && companyContactInfo?.length > 0 ? (
-                      companyContactInfo?.map((option: any, index: number) => (
-                        <option key={index} value={option.id}>
-                          {`${option.first_name} ${option.last_name}`}
-                        </option>
-                      ))
-                    ) : (
-                      <option value={0}>No contact available</option>
-                    )}
-                  </RHFSelect>
-                  <RHFTextField
-                      // type="number"
-                      size="small"
-                      name="txbSpecifyingFirm"
-                      label="Specifying Firm"
-                      // value={stationInfo?.altitude}
-                    />
-                  <RHFSelect
-                    native
-                    size="small"
-                    name="ddlApplication"
-                    label="Application"
-                    placeholder="Application"
-                    onChange={(e: any) => setValue('ddlApplication', Number(e.target.value))}
-                  >
-                    {/* <option value="" /> */}
-                    {applicationInfo?.map((option: any, index: number) => (
-                      <option key={index} value={option.id}>
-                        {option.items}
-                      </option>
-                    ))}
-                  </RHFSelect>
-                  <RHFSelect
-                    native
-                    size="small"
-                    name="ddlUoM"
-                    label="UoM"
-                    placeholder=""
-                    disabled
-                    // onChange={(e: any) => setValue('ddlUoM', Number(e.target.value))}
-                  >
-                    {/* <option value="" /> */}
-                    {uomInfo?.map((option: any, index: number) => (
-                      <option key={index} value={option.id}>
-                        {option.items}
-                      </option>
-                    ))}
-                  </RHFSelect>
+                            {basisOfDesignInfo?.map((option: any, index: number) => (
+                              <option key={index} value={option.id}>
+                                {option.items}
+                              </option>
+                            ))}
+                          </RHFSelect>
+                        </Stack>
+                        <Stack>
+                          <RHFTextField size="small" name="projectId" label="Project ID" disabled />
+                        </Stack>
+                        <Stack>
+                          <RHFTextField size="small" name="txbReferenceNo" label="Reference #" />
+                        </Stack>
+                        <Stack>
+                          <RHFTextField
+                            size="small"
+                            // type="number"
+                            name="txbRevisionNo"
+                            label="Revision #"
+                            onChange={(e: any) => {
+                              setValueWithCheck(e, 'txbRevisionNo');
+                            }}
+                          />
+                        </Stack>
+                        <Stack>
+                          <RHFSelect
+                            native
+                            size="small"
+                            name="ddlCompanyName"
+                            label="Company Name"
+                            placeholder=""
+                          // onChange={handleChangeCompanyName}
+                          >
+                            {/* <option value="" /> */}
+                            {companyInfo?.map((option: any, index: number) => (
+                              <option key={index} value={option.id}>
+                                {option.name}
+                              </option>
+                            ))}
+                          </RHFSelect>
+                        </Stack>
+                        <Stack>
+                          <RHFSelect
+                            native
+                            size="small"
+                            name="ddlCompanyContactName"
+                            label="Contact Name"
+                            placeholder=""
+                            disabled={UalInfo.isDisabled}
+                            onChange={handleChangeContactName}
+                          >
+                            {/* <option value="" /> */}
+                            {companyContactInfo && companyContactInfo?.length > 0 ? (
+                              companyContactInfo?.map((option: any, index: number) => (
+                                <option key={index} value={option.id}>
+                                  {`${option.first_name} ${option.last_name}`}
+                                </option>
+                              ))
+                            ) : (
+                              <option value={0}>No contact available</option>
+                            )}
+                          </RHFSelect>
+                        </Stack>
+                        <Stack>
+                          <RHFTextField
+                            // type="number"
+                            size="small"
+                            name="txbSpecifyingFirm"
+                            label="Specifying Firm"
+                          // value={stationInfo?.altitude}
+                          />
+                        </Stack>
+                        <Stack>
+                          <RHFSelect
+                            native
+                            size="small"
+                            name="ddlApplication"
+                            label="Application"
+                            placeholder="Application"
+                            onChange={(e: any) => setValue('ddlApplication', Number(e.target.value))}
+                          >
+                            {/* <option value="" /> */}
+                            {applicationInfo?.map((option: any, index: number) => (
+                              <option key={index} value={option.id}>
+                                {option.items}
+                              </option>
+                            ))}
+                          </RHFSelect>
+                        </Stack>
+                        <Stack>
+                          <RHFSelect
+                            native
+                            size="small"
+                            name="ddlUoM"
+                            label="UoM"
+                            placeholder=""
+                            disabled
+                          // onChange={(e: any) => setValue('ddlUoM', Number(e.target.value))}
+                          >
+                            {/* <option value="" /> */}
+                            {uomInfo?.map((option: any, index: number) => (
+                              <option key={index} value={option.id}>
+                                {option.items}
+                              </option>
+                            ))}
+                          </RHFSelect>
+                        </Stack>
+                      </Box>
+                    </Grid>
+                  </Grid>
                 </Box>
               </Card>
             </Grid>
@@ -1240,237 +1266,329 @@ export default function ProjectInfoDialog({
               item
               xs={projectDialogArrangement?.secondGridxs}
               sx={{ p: 1, display: projectDialogArrangement?.secondBoxDisplay }}
+              minWidth="md"
             >
               <Card sx={{ p: 3 }}>
                 {/* <Box sx={{ minWidth: '500px', display: 'grid', rowGap: 3, columnGap: 2 }}> */}
-                <Box
-                  sx={{
-                    minWidth: '500px',
-                    display: projectDialogArrangement?.secondBoxDisplay,
-                    rowGap: 3,
-                    columnGap: 2,
-                  }}
-                >
-                  <Stack direction="row" spacing={2}>
-                    <Typography variant="subtitle1">LOCATION</Typography>
-                  </Stack>
-                  <Stack direction="row" spacing={2}>
-                    <RHFSelect
-                      native
-                      size="small"
-                      name="ddlCountry"
-                      label="Country"
-                      placeholder="Please select country"
-                      // onChange={(e: any) => {setValue('ddlCountry', e.target.value);}}
-                    >
-                      {/* <option value="0" id='Select' /> */}
-                      {/* {weatherData?.map((option: any) => ( */}
-                      {weatherDataCountryInfo?.map((option: any, idx: any) => (
-                        <option key={`${idx}`} value={option}>
-                          {option}
-                        </option>
-                      ))}
-                    </RHFSelect>
-                    <RHFSelect
-                      native
-                      size="small"
-                      name="ddlProvState"
-                      label="Province/state"
-                      placeholder="Please select province/state"
-                      // onChange={(e: any) => {setValue('ddlProvState', e.target.value);}}
-                    >
-                      {/* <option value="" /> */}
-                      {/* {weatherDataProvStateInfo?.map((option: any) => (
-                        <option key={`${option}`} value={option}>
-                          {option}
-                        </option>
-                      ))} */}
-                      {weatherDataProvStateInfo?.map((option: any, idx: any) => (
-                        <option key={`${idx}`} value={option}>
-                          {option}
-                        </option>
-                      ))}
-                    </RHFSelect>
-                    <RHFSelect
-                      native
-                      size="small"
-                      name="ddlCity"
-                      label="City"
-                      placeholder="Please select city"
-                      // onChange={(e: any) => {setValue('ddlCity', Number(e.target.value));}}
-                    >
-                      {/* <option value="" /> */}
-                      {weatherDataCityInfo?.map((option: any, index: number) => (
-                        <option key={`${index}`} value={option.id}>
-                          {option.station}
-                        </option>
-                      ))}
-                    </RHFSelect>
-                  </Stack>
-                  <Stack direction="row" spacing={2}>
-                    <RHFSelect
-                      native
-                      size="small"
-                      name="ddlAshareDesignConditions"
-                      label="ASHRAE Design Conditions"
-                      placeholder="Please select an share design conditions"
-                    >
-                      {/* <option value="" /> */}
-                      {designCondInfo?.map((option: any, index: number) => (
-                        <option key={`${index}`} value={option.id}>
-                          {option.items}
-                        </option>
-                      ))}
-                    </RHFSelect>
-                    <RHFTextField
-                      // type="number"
-                      size="small"
-                      name="txbAltitude"
-                      label="Altitude(ft)"
-                      // value={stationInfo?.altitude}
-                      onChange={(e: any) => {
-                        setValueWithCheck(e, 'txbAltitude');
-                      }}
-                    />
-                  </Stack>
-                  <Stack direction="row" spacing={2}>
-                    <Typography variant="subtitle1">OUTDOOR AIR DESIGN CONDITIONS</Typography>
-                  </Stack>
-                  <Stack direction="row" spacing={2}>
-                    <RHFTextField
-                      type="number"
-                      size="small"
-                      name="txbSummerOA_DB"
-                      label="Summer Outdoor Air DB (F)"
-                      onChange={(e: any) => {
-                        setValueWithCheck1(e, 'txbSummerOA_DB');
-                      }}
-                      onBlur={handleChangeSummerOutdoorAirDBChanged}
-                    />
-                    <RHFTextField
-                      type="number"
-                      size="small"
-                      name="txbWinterOA_DB"
-                      label="Winter Outdoor Air DB (F)"
-                      onChange={(e: any) => {
-                        setValueWithCheck1(e, 'txbWinterOA_DB');
-                      }}
-                      onBlur={handleChangeWinterOutdoorAirDBChanged}
-                    />
-                  </Stack>
-                  <Stack direction="row" spacing={2}>
-                    <RHFTextField
-                      type="number"
-                      size="small"
-                      name="txbSummerOA_WB"
-                      label="Summer Outdoor Air WB (F)"
-                      onChange={(e: any) => {
-                        setValueWithCheck1(e, 'txbSummerOA_WB');
-                      }}
-                      onBlur={handleChangeSummerOutdoorAirWBChanged}
-                    />
-                    <RHFTextField
-                      type="number"
-                      size="small"
-                      name="txbWinterOA_WB"
-                      label="Winter Outdoor Air WB (F)"
-                      onChange={(e: any) => {
-                        setValueWithCheck1(e, 'txbWinterOA_WB');
-                      }}
-                      onBlur={handleChangeWinterOutdoorAirWBChanged}
-                    />
-                  </Stack>
-                  <Stack direction="row" spacing={2}>
-                    <RHFTextField
-                      type="number"
-                      size="small"
-                      name="txbSummerOA_RH"
-                      label="Summer Outdoor Air RH (%)"
-                      onChange={(e: any) => {
-                        setValueWithCheck1(e, 'txbSummerOA_RH');
-                      }}
-                      onBlur={handleChangeSummerOutdoorAirRHChanged}
-                    />
-                    <RHFTextField
-                      type="number"
-                      size="small"
-                      name="txbWinterOA_RH"
-                      label="Winter Outdoor Air RH (%)"
-                      onChange={(e: any) => {
-                        setValueWithCheck1(e, 'txbWinterOA_RH');
-                      }}
-                      onBlur={handleChangeWinterOutdoorAirRHChanged}
-                    />
-                  </Stack>
-                  <Stack direction="row" spacing={2}>
-                    <Typography variant="subtitle1">RETURN AIR DESIGN CONDITIONS</Typography>
-                  </Stack>
-                  <Stack direction="row" spacing={2}>
-                    <RHFTextField
-                      type="number"
-                      size="small"
-                      name="txbSummerRA_DB"
-                      label="Summer Return Air DB (F)"
-                      onChange={(e: any) => {
-                        setValueWithCheck1(e, 'txbSummerRA_DB');
-                      }}
-                      onBlur={handleChangeSummerReturnAirDBChanged}
-                    />
-                    <RHFTextField
-                      type="number"
-                      size="small"
-                      name="txbWinterRA_DB"
-                      label="Winter Return Air DB (F)"
-                      onChange={(e: any) => {
-                        setValueWithCheck1(e, 'txbWinterRA_DB');
-                      }}
-                      onBlur={handleChangeWinterReturnAirDBChanged}
-                    />
-                  </Stack>
-                  <Stack direction="row" spacing={2}>
-                    <RHFTextField
-                      type="number"
-                      size="small"
-                      name="txbSummerRA_WB"
-                      label="Summer Return Air WB (F)"
-                      onChange={(e: any) => {
-                        setValueWithCheck1(e, 'txbSummerRA_WB');
-                      }}
-                      onBlur={handleChangeSummerReturnAirWBChanged}
-                    />
-                    <RHFTextField
-                      type="number"
-                      size="small"
-                      name="txbWinterRA_WB"
-                      label="Winter Return Air WB (F)"
-                      onChange={(e: any) => {
-                        setValueWithCheck1(e, 'txbWinterRA_WB');
-                      }}
-                      onBlur={handleChangeWinterReturnAirWBChanged}
-                    />
-                  </Stack>
-                  <Stack direction="row" spacing={2}>
-                    <RHFTextField
-                      type="number"
-                      size="small"
-                      name="txbSummerRA_RH"
-                      label="Summer Return Air RH (%)"
-                      onChange={(e: any) => {
-                        setValueWithCheck1(e, 'txbSummerRA_RH');
-                      }}
-                      onBlur={handleChangeSummerReturnAirRHChanged}
-                    />
-                    <RHFTextField
-                      type="number"
-                      size="small"
-                      name="txbWinterRA_RH"
-                      label="Winter Return Air RH (%)"
-                      onChange={(e: any) => {
-                        setValueWithCheck1(e, 'txbWinterRA_RH');
-                      }}
-                      onBlur={handleChangeWinterReturnAirRHChanged}
-                    />
-                  </Stack>
+                <Box sx={{ display: 'grid', rowGap: 3, columnGap: 2 }}>
+                  <Grid container spacing={1}>
+                    <Grid item xs={12} md={12}>
+                      <Box sx={{ display: 'grid', rowGap: 1, columnGap: 1, gridTemplateColumns: { xs: 'repeat(1, 1fr)' }, }}>
+                        <Stack>
+                          <Typography variant="subtitle1">LOCATION</Typography>
+                        </Stack>
+                      </Box>
+                    </Grid>
+                    <Grid item xs={12} md={12}>
+                      <Box sx={{ display: 'grid', rowGap: 1, columnGap: 1, gridTemplateColumns: { xs: 'repeat(3, 1fr)' }, }}>
+                        <Stack>
+                          <RHFSelect
+                            native
+                            size="small"
+                            name="ddlCountry"
+                            label="Country"
+                            placeholder="Please select country"
+                          // onChange={(e: any) => {setValue('ddlCountry', e.target.value);}}
+                          >
+                            {weatherDataCountryInfo?.map((option: any, idx: any) => (
+                              <option key={`${idx}`} value={option}>
+                                {option}
+                              </option>
+                            ))}
+                          </RHFSelect>
+                        </Stack>
+                        <Stack>
+                          <RHFSelect
+                            native
+                            size="small"
+                            name="ddlProvState"
+                            label="Province/state"
+                            placeholder="Please select province/state"
+                          // onChange={(e: any) => {setValue('ddlProvState', e.target.value);}}
+                          >
+                            {weatherDataProvStateInfo?.map((option: any, idx: any) => (
+                              <option key={`${idx}`} value={option}>
+                                {option}
+                              </option>
+                            ))}
+                          </RHFSelect>
+                        </Stack>
+                        <Stack>
+                          <RHFSelect
+                            native
+                            size="small"
+                            name="ddlCity"
+                            label="City"
+                            placeholder="Please select city"
+                          // onChange={(e: any) => {setValue('ddlCity', Number(e.target.value));}}
+                          >
+                            {weatherDataCityInfo?.map((option: any, index: number) => (
+                              <option key={`${index}`} value={option.id}>
+                                {option.station}
+                              </option>
+                            ))}
+                          </RHFSelect>
+                        </Stack>
+                      </Box>
+                    </Grid>
+                    <Grid item xs={12} md={12}>
+                      <Box sx={{ display: 'grid', rowGap: 1, columnGap: 1, gridTemplateColumns: { xs: 'repeat(2, 1fr)' }, }}>
+                        <Stack>
+                          <RHFSelect
+                            native
+                            size="small"
+                            name="ddlAshareDesignConditions"
+                            label="ASHRAE Design Conditions"
+                            placeholder="Please select an share design conditions"
+                          >
+                            {designCondInfo?.map((option: any, index: number) => (
+                              <option key={`${index}`} value={option.id}>
+                                {option.items}
+                              </option>
+                            ))}
+                          </RHFSelect>
+                        </Stack>
+                        <Stack>
+                          <RHFTextField
+                            // type="number"
+                            size="small"
+                            name="txbAltitude"
+                            label="Altitude(ft)"
+                            // value={stationInfo?.altitude}
+                            onChange={(e: any) => {
+                              setValueWithCheck(e, 'txbAltitude');
+                            }}
+                          />
+                        </Stack>
+                      </Box>
+                    </Grid>
+                    <Grid item xs={12} md={12}>
+                      <Box sx={{ display: 'grid', rowGap: 1, columnGap: 1, gridTemplateColumns: { xs: 'repeat(1, 1fr)' }, }}>
+                        <Stack>
+                          <Typography variant="subtitle1">OUTDOOR AIR DESIGN CONDITIONS</Typography>
+                        </Stack>
+                      </Box>
+                    </Grid>
+                    <Grid item xs={12} md={12}>
+                      <Box sx={{ display: 'grid', rowGap: 1, columnGap: 1, gridTemplateColumns: { xs: 'repeat(3, 1fr)' }, }}>
+                        <Stack>
+                          { }
+                        </Stack>
+                        <Stack>
+                          <Typography color="primary.main" variant="subtitle2">SUMMER</Typography>
+                        </Stack>
+                        <Stack>
+                          <Typography color="primary.main" variant="subtitle2">WINTER</Typography>
+                        </Stack>
+                      </Box>
+                    </Grid>
+                    <Grid item xs={12} md={12}>
+                      <Box sx={{ display: 'grid', rowGap: 1, columnGap: 1, gridTemplateColumns: { xs: 'repeat(3, 1fr)' }, }}>
+                        <Stack>
+                          <Typography color="primary.main" variant="subtitle2">Dry Bulb Temperature (F)</Typography>
+                        </Stack>
+                        <Stack>
+                          <RHFTextField
+                            type="number"
+                            size="small"
+                            name="txbSummerOA_DB"
+                            // label="Summer Outdoor Air DB (F)"
+                            onChange={(e: any) => {
+                              setValueWithCheck1(e, 'txbSummerOA_DB');
+                            }}
+                            onBlur={handleChangeSummerOutdoorAirDBChanged}
+                          />
+                        </Stack>
+                        <Stack>
+                          <RHFTextField
+                            type="number"
+                            size="small"
+                            name="txbWinterOA_DB"
+                            // label="Winter Outdoor Air DB (F)"
+                            onChange={(e: any) => {
+                              setValueWithCheck1(e, 'txbWinterOA_DB');
+                            }}
+                            onBlur={handleChangeWinterOutdoorAirDBChanged}
+                          />
+                        </Stack>
+                      </Box>
+                    </Grid>
+                    <Grid item xs={12} md={12}>
+                      <Box sx={{ display: 'grid', rowGap: 1, columnGap: 1, gridTemplateColumns: { xs: 'repeat(3, 1fr)' }, }}>
+                        <Stack>
+                          <Typography color="primary.main" variant="subtitle2">Wet Bulb Temperature (F)</Typography>
+                        </Stack>
+                        <Stack>
+                          <RHFTextField
+                            type="number"
+                            size="small"
+                            name="txbSummerOA_WB"
+                            // label="Summer Outdoor Air WB (F)"
+                            onChange={(e: any) => {
+                              setValueWithCheck1(e, 'txbSummerOA_WB');
+                            }}
+                            onBlur={handleChangeSummerOutdoorAirWBChanged}
+                          />
+                        </Stack>
+                        <Stack>
+                          <RHFTextField
+                            type="number"
+                            size="small"
+                            name="txbWinterOA_WB"
+                            // label="Winter Outdoor Air WB (F)"
+                            onChange={(e: any) => {
+                              setValueWithCheck1(e, 'txbWinterOA_WB');
+                            }}
+                            onBlur={handleChangeWinterOutdoorAirWBChanged}
+                          />
+                        </Stack>
+                      </Box>
+                    </Grid>
+                    <Grid item xs={12} md={12}>
+                      <Box sx={{ display: 'grid', rowGap: 1, columnGap: 1, gridTemplateColumns: { xs: 'repeat(3, 1fr)' }, }}>
+                        <Stack>
+                          <Typography color="primary.main" variant="subtitle2">Relative Humidity (%)</Typography>
+                        </Stack>
+                        <Stack>
+                          <RHFTextField
+                            type="number"
+                            size="small"
+                            name="txbSummerOA_RH"
+                            // label="Summer Outdoor Air RH (%)"
+                            onChange={(e: any) => {
+                              setValueWithCheck1(e, 'txbSummerOA_RH');
+                            }}
+                            onBlur={handleChangeSummerOutdoorAirRHChanged}
+                          />
+                        </Stack>
+                        <Stack>
+                          <RHFTextField
+                            type="number"
+                            size="small"
+                            name="txbWinterOA_RH"
+                            // label="Winter Outdoor Air RH (%)"
+                            onChange={(e: any) => {
+                              setValueWithCheck1(e, 'txbWinterOA_RH');
+                            }}
+                            onBlur={handleChangeWinterOutdoorAirRHChanged}
+                          />
+                        </Stack>
+                      </Box>
+                    </Grid>
+                    <Grid item xs={12} md={12}>
+                      <Box sx={{ display: 'grid', rowGap: 1, columnGap: 1, gridTemplateColumns: { xs: 'repeat(1, 1fr)' }, }}>
+                        <Stack>
+                          <Typography variant="subtitle1">RETURN AIR DESIGN CONDITIONS</Typography>
+                        </Stack>
+                      </Box>
+                    </Grid>
+                    <Grid item xs={12} md={12}>
+                      <Box sx={{ display: 'grid', rowGap: 1, columnGap: 1, gridTemplateColumns: { xs: 'repeat(3, 1fr)' }, }}>
+                        <Stack>
+                          { }
+                        </Stack>
+                        <Stack>
+                          <Typography color="primary.main" variant="subtitle2">SUMMER</Typography>
+                        </Stack>
+                        <Stack>
+                          <Typography color="primary.main" variant="subtitle2">WINTER</Typography>
+                        </Stack>
+                      </Box>
+                    </Grid>
+                    <Grid item xs={12} md={12}>
+                      <Box sx={{ display: 'grid', rowGap: 1, columnGap: 1, gridTemplateColumns: { xs: 'repeat(3, 1fr)' }, }}>
+                        <Stack>
+                          <Typography color="primary.main" variant="subtitle2">Dry Bulb Temperature (F)</Typography>
+                        </Stack>
+                        <Stack>
+                          <RHFTextField
+                            type="number"
+                            size="small"
+                            name="txbSummerRA_DB"
+                            // label="Summer Return Air DB (F)"
+                            onChange={(e: any) => {
+                              setValueWithCheck1(e, 'txbSummerRA_DB');
+                            }}
+                            onBlur={handleChangeSummerReturnAirDBChanged}
+                          />
+                        </Stack>
+                        <Stack>
+                          <RHFTextField
+                            type="number"
+                            size="small"
+                            name="txbWinterRA_DB"
+                            // label="Winter Return Air DB (F)"
+                            onChange={(e: any) => {
+                              setValueWithCheck1(e, 'txbWinterRA_DB');
+                            }}
+                            onBlur={handleChangeWinterReturnAirDBChanged}
+                          />
+                        </Stack>
+                      </Box>
+                    </Grid>
+                    <Grid item xs={12} md={12}>
+                      <Box sx={{ display: 'grid', rowGap: 1, columnGap: 1, gridTemplateColumns: { xs: 'repeat(3, 1fr)' }, }}>
+                        <Stack>
+                          <Typography color="primary.main" variant="subtitle2">Wet Bulb Temperature (F)</Typography>
+                        </Stack>
+                        <Stack>
+                          <RHFTextField
+                            type="number"
+                            size="small"
+                            name="txbSummerRA_WB"
+                            // label="Summer Return Air WB (F)"
+                            onChange={(e: any) => {
+                              setValueWithCheck1(e, 'txbSummerRA_WB');
+                            }}
+                            onBlur={handleChangeSummerReturnAirWBChanged}
+                          />
+                        </Stack>
+                        <Stack>
+                          <RHFTextField
+                            type="number"
+                            size="small"
+                            name="txbWinterRA_WB"
+                            // label="Winter Return Air WB (F)"
+                            onChange={(e: any) => {
+                              setValueWithCheck1(e, 'txbWinterRA_WB');
+                            }}
+                            onBlur={handleChangeWinterReturnAirWBChanged}
+                          />
+                        </Stack>
+                      </Box>
+                    </Grid>
+                    <Grid item xs={12} md={12}>
+                      <Box sx={{ display: 'grid', rowGap: 1, columnGap: 1, gridTemplateColumns: { xs: 'repeat(3, 1fr)' }, }}>
+                        <Stack>
+                          <Typography color="primary.main" variant="subtitle2">Relative Humidity (%)</Typography>
+                        </Stack>
+                        <Stack>
+                          <RHFTextField
+                            type="number"
+                            size="small"
+                            name="txbSummerRA_RH"
+                            // label="Summer Return Air RH (%)"
+                            onChange={(e: any) => {
+                              setValueWithCheck1(e, 'txbSummerRA_RH');
+                            }}
+                            onBlur={handleChangeSummerReturnAirRHChanged}
+                          />
+                        </Stack>
+                        <Stack>
+                          <RHFTextField
+                            type="number"
+                            size="small"
+                            name="txbWinterRA_RH"
+                            // label="Winter Return Air RH (%)"
+                            onChange={(e: any) => {
+                              setValueWithCheck1(e, 'txbWinterRA_RH');
+                            }}
+                            onBlur={handleChangeWinterReturnAirRHChanged}
+                          />
+                        </Stack>
+                      </Box>
+                    </Grid>
+                  </Grid>
                 </Box>
               </Card>
             </Grid>

@@ -48,7 +48,7 @@ export default function Users({ toolbar = true, checkbox = true }: UsersProps) {
   const api = useApiContext();
   const { push } = useRouter();
   const { data: accountInfo, refetch } = useGetAccountInfo();
-  const { users } = accountInfo || { user: [] };
+  const { dbtSavUser } = accountInfo || { user: [] };
   const dense = true;
 
   const {
@@ -76,8 +76,8 @@ export default function Users({ toolbar = true, checkbox = true }: UsersProps) {
   const [deleteRowID, setDeleteRowID] = useState(-1);
 
   useEffect(() => {
-    setTableData(users);
-  }, [users]);
+    setTableData(dbtSavUser);
+  }, [dbtSavUser]);
 
   const handleOneConfirmDialogOpen = useCallback((id: number) => {
     setDeleteRowID(id);

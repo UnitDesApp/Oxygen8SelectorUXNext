@@ -1,5 +1,5 @@
 import * as Yup from 'yup';
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useMemo, useEffect, useState } from 'react';
 // form
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
@@ -10,7 +10,7 @@ import { useApiContext } from 'src/contexts/ApiContext';
 import { useAuthContext } from 'src/auth/useAuthContext';
 import GroupBox from 'src/components/GroupBox';
 import FormProvider from 'src/components/hook-form/FormProvider';
-import { RHFTextField } from 'src/components/hook-form';
+import { RHFTextField, RHFSelect } from 'src/components/hook-form';
 import ChangePasswordForm from './ChangePasswordForm';
 // ----------------------------------------------------------------------
 
@@ -20,7 +20,7 @@ interface AccountFormProps {
 
 export default function AccountForm({ accountInfo }: AccountFormProps) {
   const { user, updateUser } = useAuthContext();
-  const { customerType, fobPoint, customers } = accountInfo || {};
+  const { dbtSelCustomerType, dbtSelFOBPoint, dbtSelCountry, dbtSelProvState, dbtSavCustomer } = accountInfo || {};
   const api = useApiContext();
   const [success, setSuccess] = useState<boolean>(false);
   const [fail, setFail] = useState<boolean>(false);
@@ -32,6 +32,8 @@ export default function AccountForm({ accountInfo }: AccountFormProps) {
     username: Yup.string().required('This field is required!'),
     customerType: Yup.string().required('This field is required!'),
     customerId: Yup.string().required('This field is required!'),
+    ddlCountry: Yup.string(),
+    ddlProvState: Yup.string(),
     access: Yup.string().required('This field is required!'),
     accessLevel: Yup.string().required('This field is required!'),
     accessPricing: Yup.string().required('This field is required!'),
@@ -45,18 +47,20 @@ export default function AccountForm({ accountInfo }: AccountFormProps) {
       firstname: user?.firstname,
       lastname: user?.lastname,
       email: user?.email,
-      customerType: customerType?.[0]?.id,
-      customerId: customers?.[0]?.id,
+      customerType: dbtSelCustomerType?.[0]?.id,
+      customerId: dbtSavCustomer?.[0]?.id,
       access: user?.access,
       accessLevel: 10,
       accessPricing: user?.accessPricing,
-      fobPoint: fobPoint?.[0]?.id,
+      fobPoint: dbtSelFOBPoint?.[0]?.id,
       createdDate: user?.createdDate,
+      ddlCountry: 'CAN',
+      ddlProvState: 'AB',
     }),
     [
-      customers,
-      customerType,
-      fobPoint,
+      dbtSavCustomer,
+      dbtSelCustomerType,
+      dbtSelFOBPoint,
       user?.access,
       user?.accessPricing,
       user?.createdDate,
@@ -73,6 +77,8 @@ export default function AccountForm({ accountInfo }: AccountFormProps) {
   });
 
   const {
+    setValue,
+    getValues,
     handleSubmit,
     formState: { isSubmitting },
   } = methods;
@@ -90,6 +96,60 @@ export default function AccountForm({ accountInfo }: AccountFormProps) {
     },
     [user?.userId, api.account, updateUser]
   );
+
+
+  const [countryInfo, setCountryInfo] = useState<any>([]);
+  useMemo(() => {
+    const info: { fdtCountry: any; isVisible: boolean; defaultId: string } = {
+      fdtCountry: [],
+      isVisible: false,
+      defaultId: '',
+    };
+
+    info.fdtCountry = accountInfo?.dbtSelCountry;
+
+    setCountryInfo(info);
+    info.defaultId = info.fdtCountry?.[0]?.value;
+
+    setValue('ddlCountry', info.defaultId);
+
+  }, [accountInfo, setValue]);
+
+
+  const [provStateInfo, setProvStateInfo] = useState<any>([]);
+  useEffect(() => {
+    const info: { fdtProvState: any; isVisible: boolean; defaultId: string } = {
+      fdtProvState: [],
+      isVisible: false,
+      defaultId: '',
+    };
+    // let controlsPrefProdTypeLink: any = [];
+    info.fdtProvState = accountInfo?.dbtSelProvState
+    info.fdtProvState = info.fdtProvState?.filter((item: { country_value: string }) => item.country_value === getValues('ddlCountry'));
+
+
+    setProvStateInfo(info);
+
+    info.defaultId = info.fdtProvState?.[0]?.value;
+    setValue('ddlProvState', info.defaultId);
+
+  }, [accountInfo, setValue, getValues]);
+
+
+  const ddlCountryChanged = useCallback((e: any) => 
+    setValue('ddlCountry', e.target.value),
+  [setValue]
+  );
+
+
+
+
+
+
+  // const ddlProvStateChanged = useCallback((e: any) => 
+  //   setValue('ddlProvState', e.target.value),
+  // [setValue]
+  // );
 
   return (
     <Grid container spacing={3} sx={{ mb: 3 }}>
@@ -111,8 +171,37 @@ export default function AccountForm({ accountInfo }: AccountFormProps) {
               </Stack>
               <Stack direction="row" justifyContent="space_around" spacing={1}>
                 <RHFTextField size="small" name="city" label="City" />
-                <RHFTextField size="small" name="state/Province" label="Status" />
-                <RHFTextField size="small" name="country" label="Country" />
+                {/* <RHFTextField size="small" name="state/Province" label="Status" /> */}
+                <RHFSelect
+                      native
+                      size="small"
+                      name="ddlCountry"
+                      label="Country"
+                      // sx={getDisplay(coolingCompInfo?.isVisible)}
+                      // onChange={ddlCountryChanged}
+                      onChange={(e: any) => setValue('ddlCountry', e.target.value)}
+                      >
+                      {countryInfo?.fdtCountry?.map((item: any, index: number) => (
+                        <option key={index} value={item.value}>
+                          {item.items}
+                        </option>
+                      ))}
+                    </RHFSelect>
+                {/* <RHFTextField size="small" name="country" label="Country" /> */}
+                <RHFSelect
+                      native
+                      size="small"
+                      name="ddlProvState"
+                      label="Cooling"
+                      // sx={getDisplay(coolingCompInfo?.isVisible)}
+                      // onChange={ddlProvStateChanged}
+                    >
+                      {provStateInfo?.fdtProvState?.map((item: any, index: number) => (
+                        <option key={index} value={item.value}>
+                          {item.items}
+                        </option>
+                      ))}
+                </RHFSelect>
               </Stack>
               <Stack spacing={3} alignItems="flex-end" sx={{ mt: 3 }}>
                 <LoadingButton type="submit" variant="contained" loading={isSubmitting}>

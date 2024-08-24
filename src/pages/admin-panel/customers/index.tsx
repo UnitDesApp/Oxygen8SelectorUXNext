@@ -42,7 +42,7 @@ Customers.getLayout = (page: React.ReactElement) => <DashboardLayout>{page}</Das
 export default function Customers() {
   const api = useApiContext();
   const { data: accountInfo, isLoading, refetch } = useGetAccountInfo();
-  const { customers } = accountInfo || { customers: [] };
+  const { dbtSavCustomer  } = accountInfo || { customers: [] };
   const { push } = useRouter();
   const dense = true;
 
@@ -62,13 +62,13 @@ export default function Customers() {
   } = useTable();
 
   const [filterName, setFilterName] = useState('');
-  const [tableData, setTableData] = useState(customers);
+  const [tableData, setTableData] = useState(dbtSavCustomer);
   const [customerType, setCustomerType] = useState();
   const filterRole = useState('All');
 
   useEffect(() => {
-    setTableData(customers);
-  }, [customers]);
+    setTableData(dbtSavCustomer);
+  }, [dbtSavCustomer]);
 
   // Delete one row
   const [isOneConfirmDialog, setOneConfirmDialogState] = useState(false);
