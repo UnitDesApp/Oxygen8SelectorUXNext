@@ -495,6 +495,8 @@ export default function ProjectInfoDialog({
   const [applicationInfo, setApplicationInfo] = useState([]);
   useMemo(() => {
     const dtSelApplication = dbtApplication;
+    // dtSelApplication.unshift("Select Application");
+
     setApplicationInfo(dtSelApplication);
 
     if (dtSelApplication?.length > 0) {
@@ -503,6 +505,7 @@ export default function ProjectInfoDialog({
       setValue('ddlApplication', 0);
     }
   }, [dbtApplication, setValue]);
+
 
   const [uomInfo, setUoM] = useState([]);
   useMemo(() => {
@@ -516,11 +519,11 @@ export default function ProjectInfoDialog({
     }
   }, [dbtUoM, setValue]);
 
+
   const [companyInfo, setCompanyInfo] = useState([]);
   useMemo(() => {
     const dtSelUser = dbtUsers?.filter(
-      (e: any) =>
-        e.id === Number(typeof window !== 'undefined' ? localStorage.getItem('userId') : 0)
+      (e: any) => e.id === Number(typeof window !== 'undefined' ? localStorage.getItem('userId') : 0)
     );
     let dtSelCompany;
 
@@ -530,12 +533,11 @@ export default function ProjectInfoDialog({
       case Ids.intUAL_IntLvl_2:
       case Ids.intUAL_IntLvl_1:
         dtSelCompany = dbtCustomer;
+        // dtSelCompany.unshift("Select Company Name");
         break;
       case Ids.intUAL_External:
       case Ids.intUAL_ExternalSpecial:
-        dtSelCompany = dbtCustomer?.filter(
-          (e: any) => e.id === Number(dtSelUser?.[0]?.customer_id)
-        );
+        dtSelCompany = dbtCustomer?.filter((e: any) => e.id === Number(dtSelUser?.[0]?.customer_id));
         break;
       default:
         break;
@@ -551,11 +553,28 @@ export default function ProjectInfoDialog({
     }
   }, [dbtCustomer, dbtUsers, setValue]);
 
+
   const [companyContactInfo, setCompanyContactInfo] = useState([]);
   useMemo(() => {
     const dtSelCompanyContacts = dbtUsers?.filter(
       (item: any) => Number(item.customer_id) === Number(formValues.ddlCompanyName)
     );
+
+    switch (typeof window !== 'undefined' ? Number(localStorage.getItem('UAL')) : 0) {
+      case Ids?.intUAL_Admin:
+      case Ids.intUAL_IntAdmin:
+      case Ids.intUAL_IntLvl_2:
+      case Ids.intUAL_IntLvl_1:
+        // dtSelCompanyContacts.unshift("Select Contact Name");
+        break;
+      case Ids.intUAL_External:
+      case Ids.intUAL_ExternalSpecial:
+        break;
+      default:
+        break;
+    }
+
+
     setCompanyContactInfo(dtSelCompanyContacts);
 
     if (dtSelCompanyContacts?.length > 0) {
@@ -565,6 +584,7 @@ export default function ProjectInfoDialog({
       setValue('ddlCompanyContactName', 0);
     }
   }, [dbtUsers, formValues.ddlCompanyName, setValue]);
+
 
   const [designCondInfo, setDesignCondInfo] = useState([]);
   useMemo(() => {
@@ -1364,7 +1384,7 @@ export default function ProjectInfoDialog({
                     </Grid>
                     <Grid item xs={12} md={12}>
                       <Box sx={{ display: 'grid', rowGap: 3, columnGap: 1, gridTemplateColumns: { xs: 'repeat(1, 1fr)' }, }}>
-                        <Stack spacing={11}>
+                        <Stack spacing={1}>
                           <Typography variant="subtitle1">OUTDOOR AIR DESIGN CONDITIONS</Typography>
                         </Stack>
                       </Box>

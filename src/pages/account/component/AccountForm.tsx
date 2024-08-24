@@ -162,7 +162,7 @@ export default function AccountForm({ accountInfo }: AccountFormProps) {
                 <RHFTextField size="small" name="lastname" label="Last Name" />
               </Stack>
               <RHFTextField size="small" name="email" label="Email" />
-              <RHFTextField size="small" name="company_name" label="Company Name" />
+              <RHFTextField size="small" name="company_name" label="Company Name" disabled/>
               <RHFTextField size="small" name="job_name" label="Job Title" />
               <RHFTextField size="small" name="phone_number" label="Phone Number" />
               <Stack direction="row" justifyContent="space_around" spacing={1}>
@@ -192,7 +192,7 @@ export default function AccountForm({ accountInfo }: AccountFormProps) {
                       native
                       size="small"
                       name="ddlProvState"
-                      label="Cooling"
+                      label="Province/State"
                       // sx={getDisplay(coolingCompInfo?.isVisible)}
                       // onChange={ddlProvStateChanged}
                     >

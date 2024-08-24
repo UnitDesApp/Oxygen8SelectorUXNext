@@ -159,10 +159,10 @@ export default function Customers() {
 
   const isNotFound = useMemo(
     () =>
-      (!filteredData.length && !!filterName) ||
-      (!filteredData.length && !!filterRole) ||
-      (!filteredData.length && !!filterStatus),
-    [filterName, filterRole, filterStatus, filteredData.length]
+      (!filteredData?.length && !!filterName) ||
+      (!filteredData?.length && !!filterRole) ||
+      (!filteredData?.length && !!filterStatus),
+    [filterName, filterRole, filterStatus, filteredData?.length]
   );
 
   if (isLoading) return <Loading />;
@@ -172,7 +172,7 @@ export default function Customers() {
       <CustomerTableToolbar
         filterName={filterName}
         onFilterName={handleFilterName}
-        userNum={filteredData.length}
+        userNum={filteredData?.length}
         onDeleteSelectedData={handleMultiConfirmDialogOpen}
         onFilterByCustomerName={handleFilterByCustomerName}
       />
@@ -191,7 +191,7 @@ export default function Customers() {
               order={order}
               orderBy={orderBy}
               headLabel={TABLE_HEAD}
-              rowCount={tableData.length}
+              rowCount={tableData?.length}
               numSelected={selected.length}
               onSort={onSort}
               onSelectAllRows={(checked) =>
@@ -203,8 +203,7 @@ export default function Customers() {
             />
 
             <TableBody>
-              {filteredData
-                .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+              {filteredData?.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                 .map((row: any, index: number) => (
                   <CustomerTableRow
                     key={index}
@@ -218,7 +217,7 @@ export default function Customers() {
 
               <TableEmptyRows
                 height={denseHeight}
-                emptyRows={emptyRows(page, rowsPerPage, tableData.length)}
+                emptyRows={emptyRows(page, rowsPerPage, tableData?.length)}
               />
 
               <TableNoData isNotFound={isNotFound} />
@@ -230,7 +229,7 @@ export default function Customers() {
         <TablePagination
           rowsPerPageOptions={[5, 10, 25]}
           component="div"
-          count={filteredData.length}
+          count={filteredData?.length}
           rowsPerPage={rowsPerPage}
           page={page}
           onPageChange={onChangePage}
@@ -264,17 +263,17 @@ function applySortFilter({
   filterRole,
   customerType,
 }: any) {
-  const stabilizedThis = tableData.map((el: any, index: number) => [el, index]);
+  const stabilizedThis = tableData?.map((el: any, index: number) => [el, index]);
 
-  stabilizedThis.sort((a: any, b: any) => {
+  stabilizedThis?.sort((a: any, b: any) => {
     const order = comparator(a[0], b[0]);
     if (order !== 0) return order;
     return a[1] - b[1];
   });
 
-  tableData = stabilizedThis.map((el: any) => el[0]);
+  tableData = stabilizedThis?.map((el: any) => el[0]);
   if (filterName) {
-    tableData = tableData.filter(
+    tableData = tableData?.filter(
       (item: any) =>
         Object.values(item).filter((value) =>
           value?.toString().toLowerCase().includes(filterName.toLowerCase())
@@ -283,11 +282,11 @@ function applySortFilter({
   }
 
   if (filterStatus !== 'All') {
-    tableData = tableData.filter((item: any) => item.status === filterStatus);
+    tableData = tableData?.filter((item: any) => item.status === filterStatus);
   }
 
   if (customerType && customerType !== '1') {
-    tableData = tableData.filter(
+    tableData = tableData?.filter(
       (item: any) => item.customer_type_id.toString() === customerType.toString()
     );
   }
