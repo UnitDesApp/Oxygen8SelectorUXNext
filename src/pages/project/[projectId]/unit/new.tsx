@@ -80,6 +80,9 @@ export default function AddNewUnit() {
 
   const onSelectProductTypeItem = (value: number, txb: string) => {
     setUnitTypeData({ ...unitTypeData, intProductTypeID: value, txbProductType: txb });
+  if (txb === 'Terra'){
+    onSelectUnitTypeItem(3, 'AHU')
+  }
   };
 
   const onSelectUnitTypeItem = (value: number, txb: string) => {

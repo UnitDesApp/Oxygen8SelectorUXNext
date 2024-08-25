@@ -19,16 +19,32 @@ type UnitTypeItemProps = {
   onSelectItem: Function;
   id?: number | string;
   active?: boolean;
+  productTypeValue?: string;
   SetIsOpenSideDescriptionOfProductType: (value: boolean) => void;
 };
 
-export default function UnitTypeItem({ label, onSelectItem,SetIsOpenSideDescriptionOfProductType, id, active }: UnitTypeItemProps) {
-  const images: Record<any, string> = {
+export default function UnitTypeItem({
+  label,
+  productTypeValue,
+  onSelectItem,
+  SetIsOpenSideDescriptionOfProductType,
+  id,
+  active,
+}: UnitTypeItemProps) {
+  const images: Record<string, string> = {
     ERV: '/assets/Images/new_unit_crossflow_erv.png',
     HRV: '/assets/Images/new_unit_counterflow_hrv.png',
   };
-  const imageUrl = images[label as any] || '/assets/Images/default_image.png';
- 
+
+  let imageUrl = images[label as keyof typeof images] || '/assets/Images/default_image.png';
+
+  if (label === 'ERV') {
+    if (['Ventum', 'Ventum Lite', 'Ventum Plus'].includes(productTypeValue || '')) {
+      imageUrl = '/assets/Images/new_unit_counterflow_erv.png';
+    } else {
+      imageUrl = '/assets/Images/new_unit_crossflow_erv.png';
+    }
+  }  
   return (
     <Box textAlign="center">
       <BoxStyle
