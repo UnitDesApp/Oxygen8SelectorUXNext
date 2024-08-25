@@ -7,11 +7,12 @@ type UnitTypesProps = {
   productTypeID: number;
   productTypeUnitTypeLinkDataTbl: any[];
   onSelectItem: Function;
+  productTypeValue?: string;
   SetIsOpenSideDescriptionOfProductType: (value: boolean) => void;
 };
 
 export default function UnitTypes(props: UnitTypesProps) {
-  const { productTypeID, productTypeUnitTypeLinkDataTbl,SetIsOpenSideDescriptionOfProductType, onSelectItem } = props;
+  const { productTypeID, productTypeUnitTypeLinkDataTbl,SetIsOpenSideDescriptionOfProductType,productTypeValue, onSelectItem } = props;
 
   const units =
     productTypeUnitTypeLinkDataTbl?.filter(
@@ -34,6 +35,7 @@ export default function UnitTypes(props: UnitTypesProps) {
       >
         {units.map((ele) => (
           <UnitTypeItem
+          productTypeValue={productTypeValue}
           SetIsOpenSideDescriptionOfProductType = {SetIsOpenSideDescriptionOfProductType}
             key={ele.unit_type_id}
             label={ele.unit_type}

@@ -59,7 +59,9 @@ export default function SelectProductInfo(props: SelectProductInfoProps) {
       onSelectProductTypeItem(id, label);
       setProductTypeValue(label);
       setProductTypeID(id);
-      setValue(1);
+      if (label != 'Terra'){
+        setValue(1);
+      }
       // setValue(1);
     },
     [onSelectProductTypeItem]
@@ -103,6 +105,7 @@ export default function SelectProductInfo(props: SelectProductInfoProps) {
           </TabPanel>
           <TabPanel value={value} index={1}>
             <UnitTypes
+            productTypeValue = {productTypeValue}
               productTypeID={productTypeID}
               SetIsOpenSideDescriptionOfProductType={SetIsOpenSideDescriptionOfProductType}
               // productTypeUnitTypeLinkDataTbl={data?.prodTypeUnitTypeLink}
