@@ -60,7 +60,7 @@ export default function SelectProductInfo(props: SelectProductInfoProps) {
       onSelectProductTypeItem(id, label);
       setProductTypeValue(label);
       setProductTypeID(id);
-      if (label != 'Terra'){
+      if (label !== 'Terra'){
         setValue(1);
       }
       // setValue(1);

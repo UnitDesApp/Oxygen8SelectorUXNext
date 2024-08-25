@@ -19,6 +19,7 @@ import { PATH_APP } from 'src/routes/paths';
 import Iconify from 'src/components/iconify';
 import Head from 'next/head';
 import DashboardLayout from 'src/layouts/dashboard/DashboardLayout';
+import * as IDs from 'src/utils/ids';
 import SelectProductInfo from './components/SelectProductInfo/SelectProductInfo';
 import UnitInfo from './components/UnitInfo/UnitInfo';
 import Selection from './components/Selection/Selection';
@@ -81,7 +82,7 @@ export default function AddNewUnit() {
   const onSelectProductTypeItem = (value: number, txb: string) => {
     setUnitTypeData({ ...unitTypeData, intProductTypeID: value, txbProductType: txb });
   if (txb === 'Terra'){
-    onSelectUnitTypeItem(3, 'AHU')
+    onSelectUnitTypeItem(IDs.intProdTypeIdTerra, 'AHU')
   }
   };
 
