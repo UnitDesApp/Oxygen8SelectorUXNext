@@ -186,9 +186,7 @@ export default function UnitList() {
               rowCount={units?.unitList?.length || 0}
               onSelectAllRows={(checked) =>
                 onSelectAllRows(
-                  checked,
-                  units?.unitList.map((row: any) => row.unit_no)
-                )
+                checked, units?.unitList.map((row: any) => row.unit_no))
               }
               action={
                 <Tooltip title="Delete">

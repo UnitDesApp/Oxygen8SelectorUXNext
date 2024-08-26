@@ -23,6 +23,9 @@ export default class AccountApi extends AbstractApi {
   updatePassword = async (data: any): Promise<any> =>
     this.client.post(`/api/user/updatePassword`, data).then((res) => res.data);
 
+  getUsersByCusomer = async (data: any): Promise<any> =>
+    this.client.post(`/api/account/GetUsersByCustomer`, data).then((res) => res.data);
+
 
   addNewCustomer = async (data: any): Promise<any> =>
     this.client.post(`/api/account/addNewCustomer`, data).then((res) => res.data);
