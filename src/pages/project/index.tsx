@@ -10,6 +10,7 @@ import {
   Snackbar,
   Stack,
   Table,
+  Button,
   TableBody,
   TableContainer,
   TablePagination,
@@ -78,6 +79,12 @@ export default function Project() {
       enabled: typeof window !== 'undefined',
     }  
   );
+  const [visibleRows, setVisibleRows] = useState<number>(10);
+  const [hasMore, setHasMore] = useState<boolean>(true);
+
+  const handleLoadMore = () => {
+    setVisibleRows(prev => prev + 10);
+  };
 
   const { data: jobSelTables } = useGetJobSelTables();
 
@@ -195,7 +202,11 @@ export default function Project() {
       (!dataFiltered?.length && !!filterStatus),
     [dataFiltered?.length, filterName, filterRole, filterStatus]
   );
-
+  useEffect(() => {
+    if (dataFiltered && visibleRows >= dataFiltered.length) {
+      setHasMore(false);
+    }
+  }, [dataFiltered, visibleRows]);
   return (
     <>
       <Head>
@@ -243,8 +254,8 @@ export default function Project() {
                     }
                   />
                   <TableBody>
-                    {dataFiltered
-                      ?.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                  {dataFiltered
+                     ?.slice(0, visibleRows) 
                       ?.map((row: any) => (
                         <ProjectTableRow
                           key={row.id}
@@ -266,17 +277,13 @@ export default function Project() {
                 </Table>
               </TableContainer>
             </Scrollbar>
-            <Box sx={{ position: 'relative' }}>
-              <TablePagination
-                rowsPerPageOptions={[5, 10, 25]}
-                component="div"
-                count={dataFiltered?.length}
-                rowsPerPage={rowsPerPage}
-                page={page}
-                onPageChange={onChangePage}
-                onRowsPerPageChange={onChangeRowsPerPage}
-              />
-            </Box>
+            {hasMore && dataFiltered?.length > 0 && (
+              <Box sx={{ display: 'flex', justifyContent: 'center', mt: 2 }}>
+                <Button variant="outlined" color="primary" onClick={handleLoadMore}>
+                  Load More
+                </Button>
+              </Box>
+            )}
           </Box>
         )}
 

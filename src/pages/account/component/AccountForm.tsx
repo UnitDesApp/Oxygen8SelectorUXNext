@@ -23,6 +23,7 @@ export default function AccountForm({ accountInfo }: AccountFormProps) {
   const { dbtSelCustomerType, dbtSelFOBPoint, dbtSelCountry, dbtSelProvState, dbtSavCustomer } = accountInfo || {};
   const api = useApiContext();
   const [success, setSuccess] = useState<boolean>(false);
+  const [selectedCountry, setSelectedCountry] = useState('CAN')
   const [fail, setFail] = useState<boolean>(false);
 
   const UpdateUserSchema = Yup.object().shape({
@@ -134,12 +135,12 @@ export default function AccountForm({ accountInfo }: AccountFormProps) {
     setValue('ddlProvState', info.defaultId);
 
   }, [accountInfo, setValue, getValues]);
-
+  
 
   const ddlCountryChanged = useCallback((e: any) => 
     setValue('ddlCountry', e.target.value),
   [setValue]
-  );
+);
 
 
 
@@ -179,7 +180,10 @@ export default function AccountForm({ accountInfo }: AccountFormProps) {
                       label="Country"
                       // sx={getDisplay(coolingCompInfo?.isVisible)}
                       // onChange={ddlCountryChanged}
-                      onChange={(e: any) => setValue('ddlCountry', e.target.value)}
+                      onChange={(e: any) =>{
+                        setValue('ddlCountry', e.target.value)
+                        setSelectedCountry(e.target.value)
+                      } }
                       >
                       {countryInfo?.fdtCountry?.map((item: any, index: number) => (
                         <option key={index} value={item.value}>
@@ -197,6 +201,7 @@ export default function AccountForm({ accountInfo }: AccountFormProps) {
                       // onChange={ddlProvStateChanged}
                     >
                       {provStateInfo?.fdtProvState?.map((item: any, index: number) => (
+                               item.country_value === selectedCountry && 
                         <option key={index} value={item.value}>
                           {item.items}
                         </option>

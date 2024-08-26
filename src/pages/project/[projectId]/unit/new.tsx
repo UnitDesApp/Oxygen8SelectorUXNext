@@ -73,21 +73,25 @@ export default function AddNewUnit() {
 
   const onSelectAppliaionItem = (value: number, txb: string) => {
     setUnitTypeData({ ...unitTypeData, intApplicationTypeID: value, txbApplicationType: txb });
-  };
-
+  }; 
   const openDialog = useCallback(() => {
     setOpenRPDialog(true);
   }, []);
-
+  let ProductTxb:any = undefined;
+  let Productvalue:any = undefined;
   const onSelectProductTypeItem = (value: number, txb: string) => {
+    ProductTxb = txb;
+    Productvalue = value;
     setUnitTypeData({ ...unitTypeData, intProductTypeID: value, txbProductType: txb });
-  if (txb === 'Terra'){
-    onSelectUnitTypeItem(IDs.intProdTypeIdTerra, 'AHU')
-  }
   };
 
   const onSelectUnitTypeItem = (value: number, txb: string) => {
-    setUnitTypeData({ ...unitTypeData, intUnitTypeID: value, txbUnitType: txb });
+    if(ProductTxb ==='Terra'){
+      setUnitTypeData({ ...unitTypeData,txbProductType:ProductTxb, intProductTypeID: Productvalue, intUnitTypeID: value, txbUnitType: txb });
+    }
+    else{
+      setUnitTypeData({ ...unitTypeData, intUnitTypeID: value, txbUnitType: txb });
+    }
     localStorage.setItem('isNewUnitSelected', '1');
     push(PATH_APP.editUnit(projectId?.toString() || '0', '0'));
 
