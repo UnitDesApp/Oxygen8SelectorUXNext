@@ -4152,6 +4152,26 @@ useEffect(() => {
 
       setValue('txbRA_FilterPD', unitInfo?.oUnitCompOpt?.dblRAFilterPD > 0 ?  unitInfo?.oUnitCompOpt?.dblRAFilterPD : '0.5');
 
+
+      setValue('txbMixSummerOA_CFMPct', Number(unitInfo?.oUnitAirflow?.dblMixSummerOA_CFMPct) > 0 ?  unitInfo?.oUnitAirflow?.dblMixSummerOA_CFMPct : '30');
+      setValue('txbMixWinterOA_CFMPct', Number(unitInfo?.oUnitAirflow?.dblMixWinterOA_CFMPct) > 0 ?  unitInfo?.oUnitAirflow?.dblMixWinterOA_CFMPct : '30');
+      setValue('ckbMixUseProjectDefault', Number(unitInfo?.oUnitAirflow?.intIsMixUseProjectDefault));
+      setValue('txbMixSummerOA_DB', Number(unitInfo?.oUnitAirflow?.dblMixSummerOutdoorAirDB) > 0 ?  unitInfo?.oUnitAirflow?.dblMixSummerOutdoorAirDB : getValues('txbMixSummerOA_DB'));
+      setValue('txbMixSummerOA_WB', Number(unitInfo?.oUnitAirflow?.dblMixSummerOutdoorAirWB) > 0 ?  unitInfo?.oUnitAirflow?.dblMixSummerOutdoorAirWB : getValues('txbMixSummerOA_WB'));
+      setValue('txbMixSummerOA_RH', Number(unitInfo?.oUnitAirflow?.dblMixSummerOutdoorAirRH) > 0 ?  unitInfo?.oUnitAirflow?.dblMixSummerOutdoorAirRH : getValues('txbMixSummerOA_RH'));
+      setValue('txbMixWinterOA_DB', Number(unitInfo?.oUnitAirflow?.dblMixWinterOutdoorAirDB) > 0 ?  unitInfo?.oUnitAirflow?.dblMixWinterOutdoorAirDB : getValues('txbMixWinterOA_DB'));
+      setValue('txbMixWinterOA_WB', Number(unitInfo?.oUnitAirflow?.dblMixWinterOutdoorAirWB) > 0 ?  unitInfo?.oUnitAirflow?.dblMixWinterOutdoorAirWB : getValues('txbMixWinterOA_WB'));
+      setValue('txbMixWinterOA_RH', Number(unitInfo?.oUnitAirflow?.dblMixWinterOutdoorAirRH) > 0 ?  unitInfo?.oUnitAirflow?.dblMixWinterOutdoorAirRH : getValues('txbMixWinterOA_RH'));
+      setValue('txbMixSummerRA_DB', Number(unitInfo?.oUnitAirflow?.dblMixSummerReturnAirDB) > 0 ?  unitInfo?.oUnitAirflow?.dblMixSummerReturnAirDB : getValues('txbMixSummerRA_DB'));
+      setValue('txbMixSummerRA_WB', Number(unitInfo?.oUnitAirflow?.dblMixSummerReturnAirWB) > 0 ?  unitInfo?.oUnitAirflow?.dblMixSummerReturnAirWB : getValues('txbMixSummerRA_WB'));
+      setValue('txbMixSummerRA_RH', Number(unitInfo?.oUnitAirflow?.dblMixSummerReturnAirRH) > 0 ?  unitInfo?.oUnitAirflow?.dblMixSummerReturnAirRH : getValues('txbMixSummerRA_RH'));
+      setValue('txbMixWinterRA_DB', Number(unitInfo?.oUnitAirflow?.dblMixWinterReturnAirDB) > 0 ?  unitInfo?.oUnitAirflow?.dblMixWinterReturnAirDB : getValues('txbMixWinterRA_DB'));
+      setValue('txbMixWinterRA_WB', Number(unitInfo?.oUnitAirflow?.dblMixWinterReturnAirWB) > 0 ?  unitInfo?.oUnitAirflow?.dblMixWinterReturnAirWB : getValues('txbMixWinterRA_WB'));
+      setValue('txbMixWinterRA_RH', Number(unitInfo?.oUnitAirflow?.dblMixWinterReturnAirRH) > 0 ?  unitInfo?.oUnitAirflow?.dblMixWinterReturnAirRH : getValues('txbMixWinterRA_RH'));
+
+     
+      setValue('ckbMixingBox', Number(unitInfo?.oUnitCompOpt?.intIsMixingBox) > 0 ?  unitInfo?.oUnitCompOpt?.intIsMixingBox : 0);
+
       setValue('ddlPreheatComp', unitInfo?.oUnitCompOpt?.intPreheatCompId > 0 ?  unitInfo?.oUnitCompOpt?.intPreheatCompId : getValues('ddlPreheatComp'));
 
       setValue('txbWinterPreheatSetpointDB', Number.parseFloat(unitInfo?.oUnitCompOpt?.dblPreheatSetpointDB) > 0.0 ?  unitInfo?.oUnitCompOpt?.dblPreheatSetpointDB : '40');
@@ -4285,6 +4305,10 @@ useEffect(() => {
       setValue('ddlOutdoorAirOpening', unitInfo?.oUnitLayout?.intOAOpeningId > 0 ?  unitInfo?.oUnitLayout?.intOAOpeningId : getValues('ddlOutdoorAirOpening'));
 
       setValue('ddlReturnAirOpening', unitInfo?.oUnitLayout?.intRAOpeningId > 0 ?  unitInfo?.oUnitLayout?.intRAOpeningId : getValues('ddlReturnAirOpening'));
+   
+      setValue('ddlMixOADamperPos', unitInfo?.oUnitLayout?.intMixOADamperPosId > 0 ?  unitInfo?.oUnitLayout?.intMixOADamperPosId : getValues('ddlMixOADamperPos'));
+      setValue('ddlMixRADamperPos', unitInfo?.oUnitLayout?.intMixRADamperPosId > 0 ?  unitInfo?.oUnitLayout?.intMixRADamperPosId : getValues('ddlMixRADamperPos'));
+
     }
   }, []); // <-- empty dependency array - This will only trigger when the component mounts and no-render
 

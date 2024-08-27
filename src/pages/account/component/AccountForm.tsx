@@ -124,21 +124,25 @@ export default function AccountForm({ accountInfo }: AccountFormProps) {
       isVisible: false,
       defaultId: '',
     };
+
     // let controlsPrefProdTypeLink: any = [];
     info.fdtProvState = accountInfo?.dbtSelProvState
-    info.fdtProvState = info.fdtProvState?.filter((item: { country_value: string }) => item.country_value === getValues('ddlCountry'));
+    info.fdtProvState = info.fdtProvState?.filter((item: { country_value: string }) => item.country_value === selectedCountry);
 
 
     setProvStateInfo(info);
 
-    info.defaultId = info.fdtProvState?.[0]?.value;
+    info.defaultId = info?.fdtProvState?.[0]?.value;
     setValue('ddlProvState', info.defaultId);
 
-  }, [accountInfo, setValue, getValues]);
+  }, [accountInfo, setValue, getValues, selectedCountry]);
   
 
-  const ddlCountryChanged = useCallback((e: any) => 
-    setValue('ddlCountry', e.target.value),
+  const ddlCountryChanged = useCallback((e: any) => {
+    setValue('ddlCountry', e.target.value);
+    setSelectedCountry(e.target.value);
+  },
+
   [setValue]
 );
 
@@ -179,11 +183,11 @@ export default function AccountForm({ accountInfo }: AccountFormProps) {
                       name="ddlCountry"
                       label="Country"
                       // sx={getDisplay(coolingCompInfo?.isVisible)}
-                      // onChange={ddlCountryChanged}
-                      onChange={(e: any) =>{
-                        setValue('ddlCountry', e.target.value)
-                        setSelectedCountry(e.target.value)
-                      } }
+                      onChange={ddlCountryChanged}
+                      // onChange={(e: any) =>{
+                      //   setValue('ddlCountry', e.target.value)
+                      //   // setSelectedCountry(e.target.value)
+                      // } }
                       >
                       {countryInfo?.fdtCountry?.map((item: any, index: number) => (
                         <option key={index} value={item.value}>
@@ -201,7 +205,6 @@ export default function AccountForm({ accountInfo }: AccountFormProps) {
                       // onChange={ddlProvStateChanged}
                     >
                       {provStateInfo?.fdtProvState?.map((item: any, index: number) => (
-                               item.country_value === selectedCountry && 
                         <option key={index} value={item.value}>
                           {item.items}
                         </option>
