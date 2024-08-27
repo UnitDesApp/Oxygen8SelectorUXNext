@@ -55,7 +55,7 @@ export default function ProductType(props: ProductTypeProps) {
         ))}
       </Box>
     </Container>
-         <Button sx={{width:'fit-content'}} variant="outlined" color="primary"
+         <Button sx={{width:'fit-content',mt:'35px'}} variant="outlined" color="primary"
       onClick={() => window.open('/CommercialProductLineComparison.pdf', '_blank')}
       >
        Comparison guide
