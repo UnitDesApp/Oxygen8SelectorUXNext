@@ -122,6 +122,7 @@ export default function ProjectInfoDialog({
     () => ({
       txbJobName: savedJob ? savedJob?.strJobName : '',
       ddlBasisOfDesign: savedJob ? savedJob?.intBasisOfDesignId : 0,
+      txbProjectInternalId: savedJob ? savedJob?.strProjectInternalId : '',
       txbReferenceNo: savedJob ? savedJob?.strReferenceNo : '0',
       txbRevisionNo: savedJob ? String(savedJob?.intRevisionNo) : '0',
       ddlCompanyName: savedJob ? savedJob?.intCompanyNameId : 0,
@@ -195,6 +196,7 @@ export default function ProjectInfoDialog({
         intRevisedUserId: typeof window !== 'undefined' ? localStorage.getItem('userId') : 0,
         strJobName: formCurrValues.txbJobName,
         intBasisOfDesignId: Number(formCurrValues.ddlBasisOfDesign),
+        strProjectInternalId: formCurrValues.txbProjectInternalId,
         strReferenceNo: formCurrValues.txbReferenceNo,
         intRevisionNo: formCurrValues.txbRevisionNo,
         intCompanyNameId: Number(formCurrValues.ddlCompanyName),
@@ -1002,6 +1004,7 @@ export default function ProjectInfoDialog({
       }
 
       setValue('txbJobName', savedJob?.strJobName);
+      setValue('txbProjectInternalId', savedJob?.strProjectInternalId);
       setValue('txbReferenceNo', savedJob?.strReferenceNo);
       setValue('txbRevisionNo', String(savedJob?.intRevisionNo));
       setValue('txbCompanyName', savedJob?.strCompanyName);
@@ -1176,7 +1179,7 @@ export default function ProjectInfoDialog({
                           </RHFSelect>
                         </Stack>
                         <Stack>
-                          <RHFTextField size="small" name="projectId" label="Project ID" disabled />
+                          <RHFTextField size="small" name="txbProjectInternalId" label="Project ID" disabled />
                         </Stack>
                         <Stack>
                           <RHFTextField size="small" name="txbReferenceNo" label="Reference #" />
