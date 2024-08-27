@@ -1,5 +1,5 @@
 // @mui
-import { Container, Box, Typography as Text } from '@mui/material';
+import { Container, Box, Typography as Text, Button } from '@mui/material';
 import { styled } from '@mui/material/styles';
 
 // components
@@ -22,6 +22,7 @@ export default function ProductType(props: ProductTypeProps) {
   const { productTypes, onSelectItem } = props;
 
   return (
+    <Box sx={{display:'flex',flexDirection:'column',alignItems:'center'}}>
     <Container sx={{display:'flex'}} maxWidth="xl">
       <Box sx={{marginTop:"21%",marginBottom:"50px"}}>
              <TextItem >Airflow</TextItem>
@@ -42,17 +43,23 @@ export default function ProductType(props: ProductTypeProps) {
             sm: `repeat(${productTypes?.length || 0}, 1fr)`,
           },
         }}
-      >
+        >
         {productTypes?.map((ele: any) => (
           <ProductTypeItem
-            key={ele.id}
-            label={ele.items}
-            onSelectItem={() => {
-              onSelectItem(ele.items, ele.id);
-            }}
+          key={ele.id}
+          label={ele.items}
+          onSelectItem={() => {
+            onSelectItem(ele.items, ele.id);
+          }}
           />
         ))}
       </Box>
     </Container>
+         <Button sx={{width:'fit-content'}} variant="outlined" color="primary"
+      onClick={() => window.open('/CommercialProductLineComparison.pdf', '_blank')}
+      >
+       Comparison guide
+    </Button>
+      </Box>
   );
 }

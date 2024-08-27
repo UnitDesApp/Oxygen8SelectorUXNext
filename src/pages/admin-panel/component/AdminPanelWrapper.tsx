@@ -62,7 +62,7 @@ export default function AdminPanelWrapper({
 
   return (
     <RootStyle>
-      <Container maxWidth={themeStretch ? false : 'xl'} sx={{ mt: '20px' }}>
+      <Container maxWidth={false} sx={{ mt: '20px' }}>
         <CustomBreadcrumbs
           heading="Admin Panel"
           links={[{ name: currentTab === 'users' ? 'Users' : 'Customers' }]}
