@@ -48,11 +48,11 @@ export default function UserEdit() {
   const { customerId } = useRouter().query;
   const api = useApiContext();
   const { data: accountInfo, isLoading, refetch } = useGetAccountInfo();
-  const { dbtSelCustomerType, dbtSelFOBPoint, dbtSelCountry, dbtSelProvState, dbtSavCustomer } = accountInfo || {
+  const { dbtSelCustomerType, dbtSelFOB_Point, dbtSelCountry, dbtSelProvState, dbtSavCustomer } = accountInfo || {
     customers: [],
     fobPoint: [],
   };
-
+  dbtSelFOB_Point
   const selectedCustomer = dbtSavCustomer.filter(
     (cusstomer: any) => cusstomer.id === Number(customerId?.toString() || '0')
   )[0];
@@ -182,12 +182,12 @@ export default function UserEdit() {
                   </RHFSelect>
                   <RHFTextField size="small" name="contactName" label="Contact name" />
                   <RHFSelect native size="small" name="fobPoint" label="FOB point" placeholder="">
-                    {dbtSelFOBPoint?.map((item: any) => (
+                    {dbtSelFOB_Point?.map((item: any) => (
                       <option key={item.id} value={item.id}>
                         {item.items}
                       </option>
                     ))}
-                    {!dbtSelFOBPoint && <option value="" />}
+                    {!dbtSelFOB_Point && <option value="" />}
                   </RHFSelect>
                   <RHFTextField size="small" name="createdDate" label="Create date" />
                   <RHFTextField size="small" name="shippingFactor" label="Shipping factor(%)" />

@@ -63,11 +63,13 @@ export default function SelectProductInfo(props: SelectProductInfoProps) {
       if (label !== 'Terra'){
         setValue(1);
       }
+      else{
+         onSelectUnitTypeValue('AHU',3)
+      }
       // setValue(1);
     },
     [onSelectProductTypeItem]
   );
-
   const onSelectUnitTypeValue = useCallback(
     (label: string, id: number) => {
       onSelectUnitTypeItem(id, label);

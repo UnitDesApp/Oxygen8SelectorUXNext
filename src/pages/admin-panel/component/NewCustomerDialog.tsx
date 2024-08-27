@@ -36,7 +36,7 @@ export default function NewCustomerDialog({
 }: NewCustomerDialogProps) {
   const api = useApiContext();
   const { data: accountInfo } = useGetAccountInfo();
-  const { dbtSelCustomerType, dbtSelFOBPoint, dbtSelCountry, } = accountInfo || {};
+  const { dbtSelCustomerType, dbtSelFOB_Point, dbtSelCountry, } = accountInfo || {};
 
   const NewCustomerSchema = Yup.object().shape({
     username: Yup.string().required('This field is required!'),
@@ -126,12 +126,12 @@ export default function NewCustomerDialog({
             </RHFSelect>
             <RHFTextField size="small" name="contactName" label="Contact name" />
             <RHFSelect native size="small" name="fobPoint" label="FOB point" placeholder="">
-              {dbtSelFOBPoint?.map((item: any) => (
+              {dbtSelFOB_Point?.map((item: any) => (
                 <option key={item.id} value={item.id}>
                   {item.items}
                 </option>
               ))}
-              {!dbtSelFOBPoint && <option value="" />}
+              {!dbtSelFOB_Point && <option value="" />}
             </RHFSelect>
             <RHFTextField size="small" name="shippingFactor" label="Shipping factor(%)" />
           </Box>
