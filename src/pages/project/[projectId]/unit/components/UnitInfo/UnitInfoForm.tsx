@@ -61,6 +61,9 @@ import {
 } from './handleUnitModel';
 import { getUnitModelCodes } from './getUnitNoteCodes';
 import { UnitTypeContext } from './unitTypeDataContext';
+import ProjectInfoDialog from 'src/pages/project/components/newProjectDialog/ProjectInfoDialog';
+import { useGetJobSelTables, useGetSavedJob } from 'src/hooks/useApi';
+import CircularProgressLoading from 'src/components/loading';
 
 //------------------------------------------------
 type UnitInfoFormProps = {
@@ -4341,19 +4344,65 @@ useEffect(() => {
     // setCurrentStep(1);
     push(PATH_APP.selectionUnit(projectId?.toString() || '0', unitId?.toString() || '0'));
   };
-
-
+  const { data: jobSelTables, isLoading: isLoadingProjectInitInfo, refetch } = useGetJobSelTables();
+  const [openSuccess, setOpenSuccess] = useState<boolean>(false);
+  const [openFail, setOpenFail] = useState<boolean>(false);
+  const [newProjectDialogOpen, setNewProjectDialog] = useState<boolean>(false);
+  const {
+    data: savedJob,
+    isLoading: isLoadingProject,
+    refetch: refetchProject,
+    isRefetching: isRefetchingProject,
+  } = useGetSavedJob(
+    { intJobId: projectId },
+    {
+      enabled: !!projectId,
+    }
+  );
 // ------------------------------------------------------------------------------------------------------------------------------------------------
 
   return (
+    <>
+
+  {isLoadingProjectInitInfo ||
+      isLoadingProject ||
+      !projectId ||
+      !savedJob ||
+      isRefetchingProject ? (
+        <></>
+      ):
+      ( <ProjectInfoDialog
+          loadProjectStep="SHOW_ALL_DIALOG"
+          open={newProjectDialogOpen}
+          onClose={() => {
+            // onClose();
+            setNewProjectDialog(false);
+          }}
+          setOpenSuccess={() => setOpenSuccess(true)}
+          savedJob = {savedJob}
+          setOpenFail={() => setOpenFail(true)}
+          // initialInfo={projects?.jobInitInfo}
+          initialInfo={jobSelTables}
+          // projectList={[]}
+          refetch={() => {
+            refetch();
+            refetchProject();
+          }}
+          // savedJob={savedJob}
+        />
+  )}
     <FormProvider methods={methods} onSubmit={handleSubmit(onSubmit)}>
       <Stack spacing={2} sx={{ marginBottom: '150px' }}>
         {Number(unitId) > 0 ? (
-          <Stack direction="row" alignContent="center" justifyContent="center">
-            <Typography variant="h3" color="primary.main">
+         <Box display="flex" justifyContent="center" alignItems="center" width="100%">
+            <Typography variant="h3" color="primary.main" sx={{ flexGrow: 1, textAlign: 'center' }}>
               {getValues('txtTag')}
             </Typography>
-          </Stack>
+
+            <Button variant="outlined" color="primary" onClick={() => setNewProjectDialog(!newProjectDialogOpen)}>
+              Edit Project Info
+            </Button>
+          </Box>
         ) : (
           <Stack direction="row" alignContent="center" justifyContent="center">
             <Typography variant="h3" color="primary.main">
@@ -6381,5 +6430,6 @@ useEffect(() => {
         </Stack>
       </Stack>
     </FormProvider>
+    </>
   );
 }
