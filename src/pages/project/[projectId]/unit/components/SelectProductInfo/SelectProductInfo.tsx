@@ -68,6 +68,7 @@ export default function SelectProductInfo(props: SelectProductInfoProps) {
       }
       // setValue(1);
     },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [onSelectProductTypeItem]
   );
   const onSelectUnitTypeValue = useCallback(

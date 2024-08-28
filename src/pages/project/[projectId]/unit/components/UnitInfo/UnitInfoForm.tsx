@@ -21,7 +21,7 @@ import {
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useRouter } from 'next/router';
 
-import { useForm } from 'react-hook-form';
+import { useForm, useFormState } from 'react-hook-form';
 import { unitEditFormSchema, useGetDefaultValue } from 'src/hooks/useUnit';
 import { PATH_APP } from 'src/routes/paths';
 import * as IDs from 'src/utils/ids';
@@ -1741,6 +1741,9 @@ export default function UnitInfoForm({
 
 
   const [mixOADamperPosInfo, setMixOADamperPosInfo] = useState<any>([]);
+  const [mixOADamperPos, setMixOADamperPos] = useState<any>([]);
+  const [mixRADamperPosInfo, setMixRADamperPosInfo] = useState<any>([]);
+  const [mixRADamperPos, setMixRADamperPos] = useState<any>([]);
   useMemo(() => {
     const info: { ftdMixOADamperPos: any; isVisible: boolean; defaultId: number } = {
 
@@ -1750,33 +1753,37 @@ export default function UnitInfoForm({
     };
 
     info.ftdMixOADamperPos = db?.dbtSelDamperPosition;
+    let SelId = 0;
 
     if (formCurrValues.ckbMixingBox) {
-      info.ftdMixOADamperPos = info.ftdMixOADamperPos?.filter((e: { id: any }) => e.id !== IDs.intDamperActuatorIdNA) || [];
+      info.ftdMixOADamperPos = info.ftdMixOADamperPos?.filter((e: { id: any }) => e.id !== IDs.intDamperPosIdNA) || [];
     }
     else {
-      info.ftdMixOADamperPos = info.ftdMixOADamperPos?.filter((e: { id: any }) => e.id === IDs.intDamperActuatorIdNA) || [];
+      info.ftdMixOADamperPos = info.ftdMixOADamperPos?.filter((e: { id: any }) => e.id === IDs.intDamperPosIdNA) || [];
     }
 
     setMixOADamperPosInfo(info);
 
+
     if (Number(formCurrValues.ddlMixOADamperPos) !==  IDs.intDamperPosIdNA &&
-      Number(formCurrValues.ddlMixOADamperPos) === Number(formCurrValues.ddlMixRADamperPos)) {
+        Number(formCurrValues.ddlMixOADamperPos) === Number(formCurrValues.ddlMixRADamperPos)) {
+    // if (Number(mixOADamperPos) !==  IDs.intDamperPosIdNA &&
+    //   Number(mixOADamperPos) === Number(mixRADamperPos)) {
 
       const index = info.ftdMixOADamperPos.findIndex((x: { id: Number }) => x.id === Number(formCurrValues.ddlMixOADamperPos));
-      let SelId = 0;
 
      if (index < info.ftdMixOADamperPos.length - 1) {
       SelId = info.ftdMixOADamperPos?.[index + 1]?.id;
      } else {
       SelId = info.ftdMixOADamperPos?.[0]?.id;
      }
-      setValue('ddlMixOADamperPos', SelId);
+
+     setValue('ddlMixOADamperPos', SelId);
     }
+
   }, [formCurrValues.ckbMixingBox, formCurrValues.ddlMixRADamperPos]);
 
 
-  const [mixRADamperPosInfo, setMixRADamperPosInfo] = useState<any>([]);
   useMemo(() => {
     const info: { ftdMixRADamperPos: any; isVisible: boolean; defaultId: number } = {
 
@@ -1786,21 +1793,22 @@ export default function UnitInfoForm({
     };
 
     info.ftdMixRADamperPos = db?.dbtSelDamperPosition;
+    let SelId = 0;
 
     if (formCurrValues.ckbMixingBox) {
-      info.ftdMixRADamperPos = info.ftdMixRADamperPos?.filter((e: { id: any }) => e.id !== IDs.intDamperActuatorIdNA) || [];
-    }
-    else {
-      info.ftdMixRADamperPos = info.ftdMixRADamperPos?.filter((e: { id: any }) => e.id === IDs.intDamperActuatorIdNA) || [];
+      info.ftdMixRADamperPos = info.ftdMixRADamperPos?.filter((e: { id: any }) => e.id !== IDs.intDamperPosIdNA) || [];
+    } else {
+      info.ftdMixRADamperPos = info.ftdMixRADamperPos?.filter((e: { id: any }) => e.id === IDs.intDamperPosIdNA) || [];
     }
 
     setMixRADamperPosInfo(info);
+    // setValue('ddlMixRADamperPos', info.ftdMixRADamperPos?.[0]?.id);
+
 
     if (Number(formCurrValues.ddlMixRADamperPos) !==  IDs.intDamperPosIdNA &&
       Number(formCurrValues.ddlMixRADamperPos) === Number(formCurrValues.ddlMixOADamperPos)) {
-
+  
       const index = info.ftdMixRADamperPos.findIndex((x: { id: Number }) => x.id === Number(formCurrValues.ddlMixRADamperPos));
-      let SelId = 0;
     
       if (index < info.ftdMixRADamperPos.length - 1) {
         SelId = info.ftdMixRADamperPos?.[index + 1]?.id;
@@ -1809,10 +1817,24 @@ export default function UnitInfoForm({
         SelId = info.ftdMixRADamperPos?.[0]?.id;
         // setValue('ddlMixRADamperPos', SelId);
       }
-      
+
       setValue('ddlMixRADamperPos', SelId);
     }
+
   }, [formCurrValues.ckbMixingBox, formCurrValues.ddlMixOADamperPos]);
+
+
+
+  useMemo(() => {
+    if (formCurrValues.ckbMixingBox) {
+      setValue('ddlMixRADamperPos', IDs.intDamperPosIdSide);
+      setValue('ddlMixRADamperPos', IDs.intDamperPosIdTop);
+    } else {
+      setValue('ddlMixRADamperPos', IDs.intDamperPosIdNA);
+      setValue('ddlMixRADamperPos', IDs.intDamperPosIdNA);
+    }
+  
+  }, [formCurrValues.ckbMixingBox]);
 
 
   useEffect(() => {
