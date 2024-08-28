@@ -52,7 +52,7 @@ export default function UserEdit() {
     customers: [],
     fobPoint: [],
   };
-  dbtSelFOB_Point
+  // dbtSelFOB_Point
   const selectedCustomer = dbtSavCustomer.filter(
     (cusstomer: any) => cusstomer.id === Number(customerId?.toString() || '0')
   )[0];

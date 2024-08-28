@@ -77,8 +77,11 @@ export default function AddNewUnit() {
   const openDialog = useCallback(() => {
     setOpenRPDialog(true);
   }, []);
-  let ProductTxb:any = undefined;
-  let Productvalue:any = undefined;
+  // let ProductTxb:any = undefined;
+  // let Productvalue:any = undefined;
+  let ProductTxb:any;
+  let Productvalue:any;
+
   const onSelectProductTypeItem = (value: number, txb: string) => {
     ProductTxb = txb;
     Productvalue = value;
