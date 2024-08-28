@@ -19,6 +19,7 @@ import { PATH_APP } from 'src/routes/paths';
 import Iconify from 'src/components/iconify';
 import Head from 'next/head';
 import DashboardLayout from 'src/layouts/dashboard/DashboardLayout';
+import * as IDs from 'src/utils/ids';
 import SelectProductInfo from './components/SelectProductInfo/SelectProductInfo';
 import UnitInfo from './components/UnitInfo/UnitInfo';
 import Selection from './components/Selection/Selection';
@@ -72,18 +73,28 @@ export default function AddNewUnit() {
 
   const onSelectAppliaionItem = (value: number, txb: string) => {
     setUnitTypeData({ ...unitTypeData, intApplicationTypeID: value, txbApplicationType: txb });
-  };
-
+  }; 
   const openDialog = useCallback(() => {
     setOpenRPDialog(true);
   }, []);
+  // let ProductTxb:any = undefined;
+  // let Productvalue:any = undefined;
+  let ProductTxb:any;
+  let Productvalue:any;
 
   const onSelectProductTypeItem = (value: number, txb: string) => {
+    ProductTxb = txb;
+    Productvalue = value;
     setUnitTypeData({ ...unitTypeData, intProductTypeID: value, txbProductType: txb });
   };
 
   const onSelectUnitTypeItem = (value: number, txb: string) => {
-    setUnitTypeData({ ...unitTypeData, intUnitTypeID: value, txbUnitType: txb });
+    if(ProductTxb ==='Terra'){
+      setUnitTypeData({ ...unitTypeData,txbProductType:ProductTxb, intProductTypeID: Productvalue, intUnitTypeID: value, txbUnitType: txb });
+    }
+    else{
+      setUnitTypeData({ ...unitTypeData, intUnitTypeID: value, txbUnitType: txb });
+    }
     localStorage.setItem('isNewUnitSelected', '1');
     push(PATH_APP.editUnit(projectId?.toString() || '0', '0'));
 

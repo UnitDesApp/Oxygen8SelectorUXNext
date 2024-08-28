@@ -60,12 +60,17 @@ export default function SelectProductInfo(props: SelectProductInfoProps) {
       onSelectProductTypeItem(id, label);
       setProductTypeValue(label);
       setProductTypeID(id);
-      setValue(1);
+      if (label !== 'Terra'){
+        setValue(1);
+      }
+      else{
+         onSelectUnitTypeValue('AHU',3)
+      }
       // setValue(1);
     },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [onSelectProductTypeItem]
   );
-
   const onSelectUnitTypeValue = useCallback(
     (label: string, id: number) => {
       onSelectUnitTypeItem(id, label);
@@ -104,6 +109,7 @@ export default function SelectProductInfo(props: SelectProductInfoProps) {
           </TabPanel>
           <TabPanel value={value} index={1}>
             <UnitTypes
+            productTypeValue = {productTypeValue}
               productTypeID={productTypeID}
               SetIsOpenSideDescriptionOfProductType={SetIsOpenSideDescriptionOfProductType}
               // productTypeUnitTypeLinkDataTbl={data?.prodTypeUnitTypeLink}

@@ -168,14 +168,15 @@ export default function NewUserDialog({
                 <option value="1">Yes</option>
               </RHFSelect>
             </Stack>
-            <RHFSelect native size="small" name="fobPoint" label="FOB point" placeholder="">
+            {/* <RHFSelect native size="small" name="fobPoint" label="FOB point" placeholder="">
               {dbtSelFOBPoint?.map((item: any) => (
                 <option key={item.id} value={item.id}>
                   {item.items}
                 </option>
               ))}
               {!dbtSelFOBPoint && <option value="" />}
-            </RHFSelect>
+            </RHFSelect> */}
+            <RHFTextField size="small" name="fobPoint" label="FOB point" disabled />
           </Box>
         </DialogContent>
         <DialogActions>

@@ -23,6 +23,7 @@ export default function AccountForm({ accountInfo }: AccountFormProps) {
   const { dbtSelCustomerType, dbtSelFOBPoint, dbtSelCountry, dbtSelProvState, dbtSavCustomer } = accountInfo || {};
   const api = useApiContext();
   const [success, setSuccess] = useState<boolean>(false);
+  const [selectedCountry, setSelectedCountry] = useState('CAN')
   const [fail, setFail] = useState<boolean>(false);
 
   const UpdateUserSchema = Yup.object().shape({
@@ -123,23 +124,27 @@ export default function AccountForm({ accountInfo }: AccountFormProps) {
       isVisible: false,
       defaultId: '',
     };
+
     // let controlsPrefProdTypeLink: any = [];
     info.fdtProvState = accountInfo?.dbtSelProvState
-    info.fdtProvState = info.fdtProvState?.filter((item: { country_value: string }) => item.country_value === getValues('ddlCountry'));
+    info.fdtProvState = info.fdtProvState?.filter((item: { country_value: string }) => item.country_value === selectedCountry);
 
 
     setProvStateInfo(info);
 
-    info.defaultId = info.fdtProvState?.[0]?.value;
+    info.defaultId = info?.fdtProvState?.[0]?.value;
     setValue('ddlProvState', info.defaultId);
 
-  }, [accountInfo, setValue, getValues]);
+  }, [accountInfo, setValue, getValues, selectedCountry]);
+  
 
+  const ddlCountryChanged = useCallback((e: any) => {
+    setValue('ddlCountry', e.target.value);
+    setSelectedCountry(e.target.value);
+  },
 
-  const ddlCountryChanged = useCallback((e: any) => 
-    setValue('ddlCountry', e.target.value),
   [setValue]
-  );
+);
 
 
 
@@ -162,7 +167,7 @@ export default function AccountForm({ accountInfo }: AccountFormProps) {
                 <RHFTextField size="small" name="lastname" label="Last Name" />
               </Stack>
               <RHFTextField size="small" name="email" label="Email" />
-              <RHFTextField size="small" name="company_name" label="Company Name" />
+              <RHFTextField size="small" name="company_name" label="Company Name" disabled/>
               <RHFTextField size="small" name="job_name" label="Job Title" />
               <RHFTextField size="small" name="phone_number" label="Phone Number" />
               <Stack direction="row" justifyContent="space_around" spacing={1}>
@@ -178,8 +183,11 @@ export default function AccountForm({ accountInfo }: AccountFormProps) {
                       name="ddlCountry"
                       label="Country"
                       // sx={getDisplay(coolingCompInfo?.isVisible)}
-                      // onChange={ddlCountryChanged}
-                      onChange={(e: any) => setValue('ddlCountry', e.target.value)}
+                      onChange={ddlCountryChanged}
+                      // onChange={(e: any) =>{
+                      //   setValue('ddlCountry', e.target.value)
+                      //   // setSelectedCountry(e.target.value)
+                      // } }
                       >
                       {countryInfo?.fdtCountry?.map((item: any, index: number) => (
                         <option key={index} value={item.value}>
@@ -192,7 +200,7 @@ export default function AccountForm({ accountInfo }: AccountFormProps) {
                       native
                       size="small"
                       name="ddlProvState"
-                      label="Cooling"
+                      label="Province/State"
                       // sx={getDisplay(coolingCompInfo?.isVisible)}
                       // onChange={ddlProvStateChanged}
                     >
