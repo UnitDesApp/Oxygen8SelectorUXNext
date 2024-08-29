@@ -20,7 +20,7 @@ interface AccountFormProps {
 
 export default function AccountForm({ accountInfo }: AccountFormProps) {
   const { user, updateUser } = useAuthContext();
-  const { dbtSelCustomerType, dbtSelFOBPoint, dbtSelCountry, dbtSelProvState, dbtSavCustomer } = accountInfo || {};
+  const { dbtSelCustomerType, dbtSelFOB_Point, dbtSelCountry, dbtSelProvState, dbtSavCustomer } = accountInfo || {};
   const api = useApiContext();
   const [success, setSuccess] = useState<boolean>(false);
   const [selectedCountry, setSelectedCountry] = useState('CAN')
@@ -40,7 +40,7 @@ export default function AccountForm({ accountInfo }: AccountFormProps) {
     accessPricing: Yup.string().required('This field is required!'),
     fobPoint: Yup.string().required('This field is required!'),
     createdDate: Yup.string().required('This field is required!'),
-  });
+  }); 
 
   const defaultValues = useMemo(
     () => ({
@@ -53,7 +53,7 @@ export default function AccountForm({ accountInfo }: AccountFormProps) {
       access: user?.access,
       accessLevel: 10,
       accessPricing: user?.accessPricing,
-      fobPoint: dbtSelFOBPoint?.[0]?.id,
+      fobPoint: dbtSelFOB_Point?.[0]?.id,
       createdDate: user?.createdDate,
       ddlCountry: 'CAN',
       ddlProvState: 'AB',
@@ -61,7 +61,7 @@ export default function AccountForm({ accountInfo }: AccountFormProps) {
     [
       dbtSavCustomer,
       dbtSelCustomerType,
-      dbtSelFOBPoint,
+      dbtSelFOB_Point,
       user?.access,
       user?.accessPricing,
       user?.createdDate,
@@ -70,8 +70,7 @@ export default function AccountForm({ accountInfo }: AccountFormProps) {
       user?.lastname,
       user?.username,
     ]
-  );
-
+  );  
   const methods = useForm({
     resolver: yupResolver(UpdateUserSchema),
     defaultValues,
@@ -84,7 +83,8 @@ export default function AccountForm({ accountInfo }: AccountFormProps) {
     formState: { isSubmitting },
   } = methods;
 
-  const onSubmit = useCallback(
+  const onSubmit = 
+  useCallback(
     async (data: any) => {
       try {
         await api.account.updateProfile({ ...data, userId: user?.userId });
