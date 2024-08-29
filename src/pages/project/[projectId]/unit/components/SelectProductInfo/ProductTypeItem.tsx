@@ -31,9 +31,14 @@ export default function ProductTypeItem({ label, onSelectItem, id, active }: Pro
     'Ventum Plus': '/assets/Images/new_unit_ventum_plus.png',
   };
 
-  const values: Record<ImageLabels, string[]> = {
+  const values: Record<ImageLabels, (string | JSX.Element)[]> = {
     Nova: [
       '325 - 8,100 cfm',
+    //   <Button variant="outlined" color="primary"
+    //   onClick={() => window.open('/CommercialProductLineComparison.pdf', '_blank')}
+    // >
+    //    Comparison guide
+    // </Button>,
       'ERV',
       'Crossflow Core (Standard Efficiency)',
       'Indoor / Outdoor',
@@ -42,6 +47,11 @@ export default function ProductTypeItem({ label, onSelectItem, id, active }: Pro
     ],
     Ventum: [
       '350 - 3,000 cfm',
+    //   <Button variant="outlined" color="primary"
+    //   onClick={() => window.open('/CommercialProductLineComparison.pdf', '_blank')}
+    // >
+    //    Comparison guide
+    // </Button>,
       'ERV / HRV',
       'Counterflow Core (High Efficiency)',
       'Indoor',
@@ -50,6 +60,11 @@ export default function ProductTypeItem({ label, onSelectItem, id, active }: Pro
     ],
     'Ventum Lite': [
       '200 - 450 cfm',
+    //   <Button variant="outlined" color="primary"
+    //   onClick={() => window.open('/CommercialProductLineComparison.pdf', '_blank')}
+    // >
+    //    Comparison guide
+    // </Button>,
       'ERV / HRV',
       'Counterflow Core (High Efficiency)',
       'Indoor',
@@ -58,6 +73,11 @@ export default function ProductTypeItem({ label, onSelectItem, id, active }: Pro
     ],
     Terra: [
       '425 - 4,800 cfm',
+    //   <Button variant="outlined" color="primary"
+    //   onClick={() => window.open('/CommercialProductLineComparison.pdf', '_blank')}
+    // >
+    //    Comparison guide
+    // </Button>,
       '-',
       '-',
       'Indoor',
@@ -66,6 +86,11 @@ export default function ProductTypeItem({ label, onSelectItem, id, active }: Pro
     ],
     'Ventum Plus': [
       '1,200 - 10,000 cfm',
+    //   <Button variant="outlined" color="primary"
+    //   onClick={() => window.open('/CommercialProductLineComparison.pdf', '_blank')}
+    // >
+    //    Comparison guide
+    // </Button>,
       'ERV / HRV',
       'Counterflow Core (High Efficiency)',
       'Indoor / Outdoor',

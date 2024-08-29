@@ -59,6 +59,9 @@ import {
   // getUnitVoltage,
   // getValveAndActuatorInfo,
 } from './handleUnitModel';
+import ProjectInfoDialog from 'src/pages/project/components/newProjectDialog/ProjectInfoDialog';
+import { useGetJobSelTables, useGetSavedJob } from 'src/hooks/useApi';
+import CircularProgressLoading from 'src/components/loading';
 import { getUnitModelCodes } from './getUnitNoteCodes';
 import { UnitTypeContext } from './unitTypeDataContext';
 
@@ -995,6 +998,15 @@ export default function UnitInfoForm({
     setInternCompInfo(info);
 
   }, []);
+
+
+  useEffect(() => {
+    if (Number(formCurrValues.txbQty) < 1 ) {
+      setValue('txbQty', 1);
+    }
+
+}, [getValues('txbQty')]);
+
 
 
   const [locationInfo, setLocationInfo] = useState<any>([]);
@@ -4142,6 +4154,8 @@ useEffect(() => {
   // Load saved Values
   useEffect(() => {
     if (unitInfo !== null) {
+      setValue('txbQty', unitInfo?.oUnit?.intQty > 0 ?  unitInfo?.oUnit?.intQty : 1);
+
       setValue('ddlLocation', unitInfo?.oUnitCompOpt?.intHeatingFluidTypeId > 0 ?  unitInfo?.oUnit?.intLocationId : getValues('ddlLocation'));
 
       setValue('ddlOrientation', unitInfo?.oUnit?.intOrientationId > 0 ?  unitInfo?.oUnit?.intOrientationId : getValues('ddlOrientation'));
@@ -4341,19 +4355,65 @@ useEffect(() => {
     // setCurrentStep(1);
     push(PATH_APP.selectionUnit(projectId?.toString() || '0', unitId?.toString() || '0'));
   };
-
-
+  const { data: jobSelTables, isLoading: isLoadingProjectInitInfo, refetch } = useGetJobSelTables();
+  const [openSuccess, setOpenSuccess] = useState<boolean>(false);
+  const [openFail, setOpenFail] = useState<boolean>(false);
+  const [newProjectDialogOpen, setNewProjectDialog] = useState<boolean>(false);
+  const {
+    data: savedJob,
+    isLoading: isLoadingProject,
+    refetch: refetchProject,
+    isRefetching: isRefetchingProject,
+  } = useGetSavedJob(
+    { intJobId: projectId },
+    {
+      enabled: !!projectId,
+    }
+  );
 // ------------------------------------------------------------------------------------------------------------------------------------------------
 
   return (
+    <>
+
+  {isLoadingProjectInitInfo ||
+      isLoadingProject ||
+      !projectId ||
+      !savedJob ||
+      isRefetchingProject ? (
+        <></>
+      ):
+      ( <ProjectInfoDialog
+          loadProjectStep="SHOW_ALL_DIALOG"
+          open={newProjectDialogOpen}
+          onClose={() => {
+            // onClose();
+            setNewProjectDialog(false);
+          }}
+          setOpenSuccess={() => setOpenSuccess(true)}
+          savedJob = {savedJob}
+          setOpenFail={() => setOpenFail(true)}
+          // initialInfo={projects?.jobInitInfo}
+          initialInfo={jobSelTables}
+          // projectList={[]}
+          refetch={() => {
+            refetch();
+            refetchProject();
+          }}
+          // savedJob={savedJob}
+        />
+  )}
     <FormProvider methods={methods} onSubmit={handleSubmit(onSubmit)}>
       <Stack spacing={2} sx={{ marginBottom: '150px' }}>
         {Number(unitId) > 0 ? (
-          <Stack direction="row" alignContent="center" justifyContent="center">
-            <Typography variant="h3" color="primary.main">
+         <Box display="flex" justifyContent="center" alignItems="center" width="100%">
+            <Typography variant="h3" color="primary.main" sx={{ flexGrow: 1, textAlign: 'center' }}>
               {getValues('txtTag')}
             </Typography>
-          </Stack>
+
+            <Button variant="outlined" color="primary" onClick={() => setNewProjectDialog(!newProjectDialogOpen)}>
+              Edit Project Info
+            </Button>
+          </Box>
         ) : (
           <Stack direction="row" alignContent="center" justifyContent="center">
             <Typography variant="h3" color="primary.main">
@@ -4389,6 +4449,8 @@ useEffect(() => {
                       size="small"
                       name="txbQty"
                       label="Quantity"
+                      onChange={(e: any) => { setValueWithCheck1(e, 'txbQty'); }}
+
                     // onChange={(e: any) => {
                     //   setValueWithCheck(e, 'txbQty');
                     // }}
@@ -4694,9 +4756,7 @@ useEffect(() => {
                             name="txbMixSummerOA_CFMPct"
                             label="%"
                             autoComplete="off"
-                            onChange={(e: any) => {
-                              setValueWithCheck1(e, 'txbMixSummerOA_CFMPct');
-                            }}
+                            onChange={(e: any) => { setValueWithCheck1(e, 'txbMixSummerOA_CFMPct'); }}
                           />
                         </Stack>
                         <Stack>
@@ -6381,5 +6441,6 @@ useEffect(() => {
         </Stack>
       </Stack>
     </FormProvider>
+    </>
   );
 }

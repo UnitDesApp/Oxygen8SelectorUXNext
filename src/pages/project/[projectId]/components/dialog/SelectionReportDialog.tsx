@@ -16,6 +16,7 @@ import {
   Box,
   Snackbar,
   Alert,
+  Radio,
 } from '@mui/material';
 import { LoadingButton } from '@mui/lab';
 import { useExport } from 'src/hooks/useExport';
@@ -50,7 +51,7 @@ export default function SelectionReportDialog({
   const [successNotifyText, setSuccessNotifyText] = useState(false);
   const [openFailNotify, setOpenFailNotify] = useState(false);
   const [failNotifyText, setFailNotifyText] = useState(false);
-  const { ExportSelectionPDF, ExportSelectionExcel, ExportRevit } = useExport();
+  const { ExportUnitSelectionPdf, ExportUnitSelectionExcel, ExportUnitSelectionRevit } = useExport();
 
   const onChangeMethods = useCallback(
     (label: string, value: any) => {
@@ -62,22 +63,22 @@ export default function SelectionReportDialog({
   const onClickExports = useCallback(async () => {
     setIsLoading(true);
     if (methods.pdfSelection) {
-      const isSubmittalSuccess = await ExportSelectionPDF(intProjectID, intUnitNo);
+      const isSubmittalSuccess = await ExportUnitSelectionPdf(intProjectID, intUnitNo);
     }
 
     if (methods.excelSelection) {
-      const isSubmittalSuccess = await ExportSelectionExcel(Number(intProjectID), intUnitNo);
+      const isSubmittalSuccess = await ExportUnitSelectionExcel(Number(intProjectID), intUnitNo);
     }
 
     if (methods.revit_files) {
-      await ExportRevit(intProjectID);
+      const isSubmittalSuccess = await ExportUnitSelectionRevit(Number(intProjectID), intUnitNo);
     }
 
     setIsLoading(false);
   }, [
-    ExportRevit,
-    ExportSelectionExcel,
-    ExportSelectionPDF,
+    ExportUnitSelectionPdf,
+    ExportUnitSelectionExcel,
+    ExportUnitSelectionRevit,
     intProjectID,
     intUnitNo,
     methods.excelSelection,
@@ -129,6 +130,7 @@ export default function SelectionReportDialog({
                   <ListItemText id="checkbox-list-label-selection" primary={label} />
                 </ListItemButton>
               </ListItem>
+              
             ))}
           </List>
         </DialogContent>
