@@ -59,11 +59,11 @@ import {
   // getUnitVoltage,
   // getValveAndActuatorInfo,
 } from './handleUnitModel';
-import { getUnitModelCodes } from './getUnitNoteCodes';
-import { UnitTypeContext } from './unitTypeDataContext';
 import ProjectInfoDialog from 'src/pages/project/components/newProjectDialog/ProjectInfoDialog';
 import { useGetJobSelTables, useGetSavedJob } from 'src/hooks/useApi';
 import CircularProgressLoading from 'src/components/loading';
+import { getUnitModelCodes } from './getUnitNoteCodes';
+import { UnitTypeContext } from './unitTypeDataContext';
 
 //------------------------------------------------
 type UnitInfoFormProps = {
@@ -998,6 +998,15 @@ export default function UnitInfoForm({
     setInternCompInfo(info);
 
   }, []);
+
+
+  useEffect(() => {
+    if (Number(formCurrValues.txbQty) < 1 ) {
+      setValue('txbQty', 1);
+    }
+
+}, [getValues('txbQty')]);
+
 
 
   const [locationInfo, setLocationInfo] = useState<any>([]);
@@ -4145,6 +4154,8 @@ useEffect(() => {
   // Load saved Values
   useEffect(() => {
     if (unitInfo !== null) {
+      setValue('txbQty', unitInfo?.oUnit?.intQty > 0 ?  unitInfo?.oUnit?.intQty : 1);
+
       setValue('ddlLocation', unitInfo?.oUnitCompOpt?.intHeatingFluidTypeId > 0 ?  unitInfo?.oUnit?.intLocationId : getValues('ddlLocation'));
 
       setValue('ddlOrientation', unitInfo?.oUnit?.intOrientationId > 0 ?  unitInfo?.oUnit?.intOrientationId : getValues('ddlOrientation'));
@@ -4438,6 +4449,8 @@ useEffect(() => {
                       size="small"
                       name="txbQty"
                       label="Quantity"
+                      onChange={(e: any) => { setValueWithCheck1(e, 'txbQty'); }}
+
                     // onChange={(e: any) => {
                     //   setValueWithCheck(e, 'txbQty');
                     // }}
@@ -4743,9 +4756,7 @@ useEffect(() => {
                             name="txbMixSummerOA_CFMPct"
                             label="%"
                             autoComplete="off"
-                            onChange={(e: any) => {
-                              setValueWithCheck1(e, 'txbMixSummerOA_CFMPct');
-                            }}
+                            onChange={(e: any) => { setValueWithCheck1(e, 'txbMixSummerOA_CFMPct'); }}
                           />
                         </Stack>
                         <Stack>

@@ -36,10 +36,11 @@ interface ReportDialogProps {
 
 export default function ReportDialog({ isOpen, onClose, intProjectID }: ReportDialogProps) {
   const [methods, setMethods] = useState<{ [name: string]: any }>({
-    submittal: false,
-    selection: false,
-    revit_files: false,
     quote: false,
+    selection: false,
+    mech_schedule: false,
+    revit_files: false,
+    submittal: false,
   });
 
   const [isLoading, setIsLoading] = useState(false);
@@ -48,11 +49,12 @@ export default function ReportDialog({ isOpen, onClose, intProjectID }: ReportDi
   const [openFailNotify, setOpenFailNotify] = useState<boolean>(false);
   const [failNotifyText, setFailNotifyText] = useState<string>('');
   const {
-    ExportSubmittal,
-    ExportSubmittalEpicor,
-    ExportQuote,
-    ExportRevit,
-    ExportAllSelectionPDF,
+    ExportQuotePdf,
+    ExportAllUnitsSelectionPdf,
+    ExportMechanicalScheduleExcel,
+    ExportAllUnitsSelectionRevit,
+    ExportSubmittalPdf,
+    ExportSubmittalEpicorExcel,
   } = useExport();
 
   const onChangeMethods = useCallback(
@@ -64,8 +66,36 @@ export default function ReportDialog({ isOpen, onClose, intProjectID }: ReportDi
 
   const onClickExports = useCallback(async () => {
     setIsLoading(true);
+
+    if (methods.quote) {
+      const result = await ExportQuotePdf(Number(intProjectID));
+      if (result === 'server_error') {
+        setFailNotifyText('Server Error!');
+        setOpenFailNotify(true);
+      } else if (result === 'fail') {
+        setFailNotifyText('Quote muste be saved. Please check Quote info!');
+        setOpenFailNotify(true);
+      }
+    }
+
+
+    if (methods.selection) {
+      await ExportAllUnitsSelectionPdf(Number(intProjectID));
+    }
+
+
+    if (methods.mech_schedule) {
+      await ExportMechanicalScheduleExcel(Number(intProjectID));
+    }
+
+
+    if (methods.revit_files) {
+      await ExportAllUnitsSelectionRevit(Number(intProjectID));
+    }
+
+
     if (methods.submittal) {
-      const isSubmittalSuccess = await ExportSubmittal(Number(intProjectID));
+      const isSubmittalSuccess = await ExportSubmittalPdf(Number(intProjectID));
       // const isSubmitallEpicorSuccess = await ExportSubmittalEpicor(Number(intProjectID));
 
       // if (isSubmittalSuccess && isSubmitallEpicorSuccess) {
@@ -86,42 +116,29 @@ export default function ReportDialog({ isOpen, onClose, intProjectID }: ReportDi
       }
     }
 
-    if (methods.selection) {
-      await ExportAllSelectionPDF(Number(intProjectID));
-    }
 
-    if (methods.revit_files) {
-      await ExportRevit(intProjectID);
-    }
-
-    if (methods.quote) {
-      const result = await ExportQuote(Number(intProjectID));
-      if (result === 'server_error') {
-        setFailNotifyText('Server Error!');
-        setOpenFailNotify(true);
-      } else if (result === 'fail') {
-        setFailNotifyText('Please check your the project Quote info!');
-        setOpenFailNotify(true);
-      }
-    }
     setIsLoading(false);
   }, [
-    methods.submittal,
-    methods.selection,
-    methods.revit_files,
-    methods.quote,
-    ExportSubmittal,
     intProjectID,
-    // ExportSubmittalEpicor,
-    ExportAllSelectionPDF,
-    ExportRevit,
-    ExportQuote,
+    methods.quote,
+    methods.selection,
+    methods.mech_schedule,
+    methods.revit_files,
+    methods.submittal,
+    ExportQuotePdf,
+    ExportAllUnitsSelectionPdf,
+    ExportMechanicalScheduleExcel,
+    ExportAllUnitsSelectionRevit,
+    ExportSubmittalPdf,
+    // ExportSubmittalEpicorExcel,
   ]);
+
 
   const onCloseDialog = useCallback(() => {
     setIsLoading(false);
     onClose();
   }, [onClose]);
+
 
   const handleCloseNotify = useCallback((key: string) => {
     if (key === 'success') {

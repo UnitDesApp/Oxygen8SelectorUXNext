@@ -80,26 +80,7 @@ export default class ProjectApi extends AbstractApi {
   //   this.client.get(`/api/Selection/GetAll`).then((res: any) => JSON.parse(res.data));
 
 
-  downloadUnitSelectionPdf = (params: any, config?: any): Promise<AxiosResponse<any, any>> =>
-    this.client.post('/api/unit/DownloadUnitSelectionPdf', params, {
-      responseType: 'blob',
-      ...(config || []),
-    });
 
-
-  downloadAllUnitsSelectionPdf = (params: any, config?: any): Promise<AxiosResponse<any, any>> =>
-    this.client.post('/api/unit/DownloadAllUnitsSelectionPdf', params, {
-      responseType: 'blob',
-      ...(config || []),
-    });
-
-
-
-  downloadUnitSelectionExcel = (params: any, config?: any): Promise<AxiosResponse<any, any>> =>
-    this.client.post('/api/unit/DownloadUnitSelectionExcel', params, {
-      responseType: 'blob',
-      ...(config || []),
-    });
 
   // Submittal =============================================================================
   // saveSubmittalInfo = (params: any): Promise<any> =>
@@ -126,17 +107,6 @@ export default class ProjectApi extends AbstractApi {
     this.client.post(`/api/Submittal/GetSavedSubmittal`, params).then((res: any) => JSON.parse(res.data));
   // this.client.post(`/api/Submittals/getAllData`, params).then((res: any) => res.data);
 
-  downloadSubmittalPdf = (params: any, config?: any): Promise<AxiosResponse<any, any>> =>
-    this.client.post('/api/Submittal/DownloadSubmittalPdf', params, {
-      responseType: 'blob',
-      ...(config || []),
-    });
-
-  downloadSubmittalEpicorExcel = (params: any, config?: any): Promise<AxiosResponse<any, any>> =>
-    this.client.post('/api/Submittal/DownloadSubmittalEpicorExcel', params, {
-      responseType: 'blob',
-      ...(config || []),
-    });
 
   // Quote =================================================================================
   getQuoteSelTables = (): Promise<any> =>
@@ -172,11 +142,6 @@ export default class ProjectApi extends AbstractApi {
     this.client.post(`/api/Quote/GetSavedQuoteNotes`, params).then((res: any) => JSON.parse(res.data));
 
   
-  downloadQuotePdf = (params: any, config?: any): Promise<AxiosResponse<any, any>> =>
-    this.client.post('/api/Quote/DownloadQuotePdf', params, {
-      responseType: 'blob',
-      ...(config || []),
-    });
 
 
       // getProjectQuoteInfo = async (params: {
@@ -186,6 +151,76 @@ export default class ProjectApi extends AbstractApi {
   //   intUnitNo: number;
   // }): Promise<any> => this.client.post(`/api/quote/get`, params).then((res: any) => JSON.parse(res.data));
   // // Promise<any> => this.client.post(`/api/quote/get`, params).then((res: any) => res.data);
+
+
+
+  // Output ==================================================================================
+  downloadUnitSelectionPdf = (params: any, config?: any): Promise<AxiosResponse<any, any>> =>
+    this.client.post('/api/Output/DownloadUnitSelectionPdf', params, {
+      responseType: 'blob',
+      ...(config || []),
+    });
+
+
+  downloadUnitSelectionExcel = (params: any, config?: any): Promise<AxiosResponse<any, any>> =>
+    this.client.post('/api/Output/DownloadUnitSelectionExcel', params, {
+      responseType: 'blob',
+      ...(config || []),
+    });
+
+
+    downloadUnitSelectionRevit = (params: any, config?: any): Promise<AxiosResponse<any, any>> =>
+      this.client.post('/api/Output/DownloadUnitSelectionRevit', params, {
+        responseType: 'blob',
+        ...(config || []),
+      });
+
+
+
+    downloadMechanicalScheduleExcel = (params: any, config?: any): Promise<AxiosResponse<any, any>> =>
+      this.client.post('/api/Output/DownloadMechanicalScheduleExcel', params, {
+        responseType: 'blob',
+        ...(config || []),
+      });
+
+
+
+
+  downloadAllUnitsSelectionPdf = (params: any, config?: any): Promise<AxiosResponse<any, any>> =>
+    this.client.post('/api/Output/DownloadAllUnitsSelectionPdf', params, {
+      responseType: 'blob',
+      ...(config || []),
+    });
+  
+
+  downloadAllUnitsSelectionRevit = (params: any, config?: any): Promise<AxiosResponse<any, any>> =>
+      this.client.post('/api/Output/DownloadAllUnitsSelectionRevit', params, {
+        responseType: 'blob',
+        ...(config || []),
+      });
+  
+
+  downloadSubmittalPdf = (params: any, config?: any): Promise<AxiosResponse<any, any>> =>
+    this.client.post('/api/Output/DownloadSubmittalPdf', params, {
+      responseType: 'blob',
+      ...(config || []),
+    });
+
+  downloadSubmittalEpicorExcel = (params: any, config?: any): Promise<AxiosResponse<any, any>> =>
+    this.client.post('/api/Output/DownloadSubmittalEpicorExcel', params, {
+      responseType: 'blob',
+      ...(config || []),
+    });
+
+
+
+  downloadQuotePdf = (params: any, config?: any): Promise<AxiosResponse<any, any>> =>
+    this.client.post('/api/Output/DownloadQuotePdf', params, {
+      responseType: 'blob',
+      ...(config || []),
+    });
+
+
 
   // Resources =================================================================================
   getResourceFiles = (): Promise<any> =>

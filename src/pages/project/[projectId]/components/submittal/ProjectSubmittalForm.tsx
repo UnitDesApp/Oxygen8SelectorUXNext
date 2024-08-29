@@ -154,7 +154,7 @@ export default function ProjectSubmittalForm({
       txbRevisionNo: submittalInfo?.intRevisionNo ? submittalInfo?.intRevisionNo : '0',
       txbPONumber: submittalInfo?.strPO_Number ? submittalInfo?.strPO_Number : '',
       txbShippingName: submittalInfo?.strShippingName ? submittalInfo?.strShippingName : '',
-      txbShippingStreetAddress: submittalInfo ? submittalInfo?.strShippingStreetAddress : '',
+      txbShippingStreetAddress: submittalInfo.strShippingStreetAddress ? submittalInfo?.strShippingStreetAddress : '',
       txbShippingCity: submittalInfo?.strShippingCity ? submittalInfo?.strShippingCity : '',
       txbShippingProvince: submittalInfo?.strShippingProvince ? submittalInfo?.strShippingProvince : '',
       txbShippingPostalCode: submittalInfo?.strShippingPostalCode ? submittalInfo?.strShippingPostalCode : '',
