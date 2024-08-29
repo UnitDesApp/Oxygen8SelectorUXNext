@@ -422,9 +422,35 @@ export default function ProjectInfoDialog({
       returnInfo.submitBtnDisplay = 'block';
       returnInfo.submitBtnLabel = 'Save Project';
     }
-
     setProjectDialogArrangement(returnInfo);
   }, [step]);
+
+  const getDialogStyles = (step:any) => {
+    switch (step) {
+      case 'SHOW_FIRST_DIALOG':
+        return {
+          maxWidth: '500px', 
+          width: '500px',   
+        };
+      case 'SHOW_SECOND_DIALOG':
+        return {
+          maxWidth: '500px', 
+          width: '500px',  
+        };
+      case 'SHOW_ALL_DIALOG':
+        return {
+          maxWidth: '1000px', 
+          width: '100%',    
+        };
+      default:
+        return {
+          maxWidth: '500px',
+          width: '100%',
+        };
+    }
+  }
+
+  const dialogStyles = getDialogStyles(step);
 
   // Do not delete - keep for reference
   // In form dialog this method is not working where the dependencies are directly set with getValues('').
@@ -1159,7 +1185,9 @@ export default function ProjectInfoDialog({
   // },[savedJob]);
 
   return (
-    <Dialog open={open} onClose={handleClose} maxWidth={projectDialogArrangement?.dialogWidth}>
+    <Dialog  PaperProps={{
+      style: dialogStyles,
+    }} open={open} onClose={handleClose} maxWidth={projectDialogArrangement?.dialogWidth}>
       <DialogTitle>
         {/* {step === 'SHOW_FIRST_DIALOG' || step === ''
            ? 'PROJECT INFORMATION'
