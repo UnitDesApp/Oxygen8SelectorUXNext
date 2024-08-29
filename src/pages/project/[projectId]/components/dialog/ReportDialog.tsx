@@ -69,13 +69,13 @@ export default function ReportDialog({ isOpen, onClose, intProjectID }: ReportDi
 
     if (methods.quote) {
       const result = await ExportQuotePdf(Number(intProjectID));
-      if (result === 'server_error') {
-        setFailNotifyText('Server Error!');
-        setOpenFailNotify(true);
-      } else if (result === 'fail') {
-        setFailNotifyText('Quote muste be saved. Please check Quote info!');
-        setOpenFailNotify(true);
-      }
+      // if (result === 'server_error') {
+      //   setFailNotifyText('Server Error!');
+      //   setOpenFailNotify(true);
+      // } else if (result === 'fail') {
+      //   setFailNotifyText('Quote muste be saved. Please check Quote info!');
+      //   setOpenFailNotify(true);
+      // }
     }
 
 
@@ -96,24 +96,22 @@ export default function ReportDialog({ isOpen, onClose, intProjectID }: ReportDi
 
     if (methods.submittal) {
       const isSubmittalSuccess = await ExportSubmittalPdf(Number(intProjectID));
-      // const isSubmitallEpicorSuccess = await ExportSubmittalEpicor(Number(intProjectID));
 
-      // if (isSubmittalSuccess && isSubmitallEpicorSuccess) {
-      if (isSubmittalSuccess) {
-        setSuccessNotifyText('Success export report for Submitall!');
-        setOpenSuccessNotify(true);
-      } else if (!isSubmittalSuccess) {
-        setFailNotifyText('Unfortunately, fail in downloading Submttal Data.! Submittal must be saved!');
-        setOpenFailNotify(true);
-      // } else if (!isSubmitallEpicorSuccess) {
-      //   setFailNotifyText(
-      //     'Unfortunately, fail in downloading file, please check  Submttal and Quote data!'
-      //   );
+      // if (isSubmittalSuccess) {
+      //   setSuccessNotifyText('Success export report for Submitall!');
+      //   setOpenSuccessNotify(true);
+      // } else if (!isSubmittalSuccess) {
+      //   setFailNotifyText('Unfortunately, fail in downloading Submttal Data.! Submittal must be saved!');
       //   setOpenFailNotify(true);
-      } else {
-        setFailNotifyText('Please check the project submittal!');
-        setOpenFailNotify(true);
-      }
+      // // } else if (!isSubmitallEpicorSuccess) {
+      // //   setFailNotifyText(
+      // //     'Unfortunately, fail in downloading file, please check  Submttal and Quote data!'
+      // //   );
+      // //   setOpenFailNotify(true);
+      // } else {
+      //   setFailNotifyText('Please check the project submittal!');
+      //   setOpenFailNotify(true);
+      // }
     }
 
 
