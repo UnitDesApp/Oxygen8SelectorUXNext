@@ -30,21 +30,25 @@ export default function AccountForm({ accountInfo }: AccountFormProps) {
     txbFirstName: Yup.string().required('This field is required!'),
     txbLastName: Yup.string().required('This field is required!'),
     txbEmail: Yup.string().required('This field is required!'),
-    username: Yup.string().required('This field is required!'),
-    customerType: Yup.string().required('This field is required!'),
-    customerId: Yup.string().required('This field is required!'),
+    // txbUsername: Yup.string().required('This field is required!'),
+    // txbCustomerType: Yup.string().required('This field is required!'),
+    txbJobTile: Yup.string(),
+    txbCustomer: Yup.string(),
     txbPhoneNumber: Yup.string(),
     txbAddress1: Yup.string(),
     txbAddress2: Yup.string(),
     txbCity: Yup.string(),
-    ddlCountry: Yup.string(),
-    ddlProvState: Yup.string(),
-    access: Yup.string().required('This field is required!'),
-    accessLevel: Yup.string().required('This field is required!'),
-    accessPricing: Yup.string().required('This field is required!'),
-    fobPoint: Yup.string().required('This field is required!'),
-    createdDate: Yup.string().required('This field is required!'),
+    // ddlCountry: Yup.string(),
+    // ddlProvState: Yup.string(),
+    // access: Yup.string(),
+    // accessLevel: Yup.string(),
+    // accessPricing: Yup.string(),
+    // txbFob_Point: Yup.string(),
+    // createdDate: Yup.string(),
   }); 
+
+  const  userCustomer = dbtSavCustomer?.filter((e: any) => e.id === Number(user?.customerId))?.[0] || {};
+
 
   const defaultValues = useMemo(
     () => ({
@@ -53,32 +57,21 @@ export default function AccountForm({ accountInfo }: AccountFormProps) {
       txbLastName: user?.lastname,
       txbEmail: user?.email,
       txbJobTitle: '',
-      customerType: dbtSelCustomerType?.[0]?.id,
-      customerId: dbtSavCustomer?.[0]?.id,
+      // txbCustomerType: dbtSelCustomerType?.[0]?.id,
+      txbCustomer: '',
       txbPhoneNumber: '',
       txbAddress1: '',
       txbAddress2: '',
       txbCity: '',
       ddlCountry: 'CAN',
       ddlProvState: 'AB',
-      access: user?.access,
-      accessLevel: 10,
-      accessPricing: user?.accessPricing,
-      fobPoint: dbtSelFOB_Point?.[0]?.id,
-      createdDate: user?.createdDate,
+      // access: user?.access,
+      // accessLevel: 10,
+      // accessPricing: user?.accessPricing,
+      txbFOB_Point: '',
+      // createdDate: user?.createdDate,
     }),
-    [
-      dbtSavCustomer,
-      dbtSelCustomerType,
-      dbtSelFOB_Point,
-      user?.access,
-      user?.accessPricing,
-      user?.createdDate,
-      user?.email,
-      user?.firstname,
-      user?.lastname,
-      user?.username,
-    ]
+    [user?.email, user?.firstname, user?.lastname, user?.username]
   );  
   const methods = useForm({
     resolver: yupResolver(UpdateUserSchema),
@@ -95,19 +88,19 @@ export default function AccountForm({ accountInfo }: AccountFormProps) {
   const onSubmit = useCallback (
     async (data: any) => {
       try {
-        // data = {
-        //   intUserId:user?.userId,
-        //   strFirstName: getValues("txbFirstName"),
-        //   strLastName: getValues("txbLastName"),
-        //   strEmail: getValues("txbEmail"),
-        //   strJobTitle: getValues("txbJobTitle"),
-        //   strPhoneNumber: getValues("txbPhoneNumber"),
-        //   strAddress1: getValues("txbAddress1"),
-        //   strAddress2: getValues("txbAddress2"),
-        //   strCity: getValues("txbCity"),
-        //   strCountryIdCode: getValues("ddlCountry"),
-        //   strProvStateIdCode: getValues("ddlProvState")
-        // }
+        data = {
+          intUserId:user?.userId,
+          strFirstName: getValues("txbFirstName"),
+          strLastName: getValues("txbLastName"),
+          strEmail: getValues("txbEmail"),
+          strJobTitle: getValues("txbJobTitle"),
+          strPhoneNumber: getValues("txbPhoneNumber"),
+          strAddress1: getValues("txbAddress1"),
+          strAddress2: getValues("txbAddress2"),
+          strCity: getValues("txbCity"),
+          // strCountryIdCode: getValues("ddlCountry"),
+          // strProvStateIdCode: getValues("ddlProvState")
+        }
 
         await api.account.updateProfile({ ...data, userId: user?.userId });
         // await api.account.updateProfile({ data });
@@ -118,57 +111,79 @@ export default function AccountForm({ accountInfo }: AccountFormProps) {
         setFail(true);
       }
     },
-    [user?.userId, api.account, updateUser]
+    [user?.userId, getValues, api.account, updateUser]
     // [api.account, updateUser, user?.userId]
   );
 
-
-  const [countryInfo, setCountryInfo] = useState<any>([]);
-  useMemo(() => {
-    const info: { fdtCountry: any; isVisible: boolean; defaultId: string } = {
-      fdtCountry: [],
-      isVisible: false,
-      defaultId: '',
-    };
-
-    info.fdtCountry = accountInfo?.dbtSelCountry;
-
-    setCountryInfo(info);
-    info.defaultId = info.fdtCountry?.[0]?.value;
-
-    setValue('ddlCountry', info.defaultId);
-
-  }, [accountInfo, setValue]);
-
-
-  const [provStateInfo, setProvStateInfo] = useState<any>([]);
-  useEffect(() => {
-    const info: { fdtProvState: any; isVisible: boolean; defaultId: string } = {
-      fdtProvState: [],
-      isVisible: false,
-      defaultId: '',
-    };
-
-    // let controlsPrefProdTypeLink: any = [];
-    info.fdtProvState = accountInfo?.dbtSelProvState
-    info.fdtProvState = info.fdtProvState?.filter((item: { country_value: string }) => item.country_value === selectedCountry);
-
-
-    setProvStateInfo(info);
-
-    info.defaultId = info?.fdtProvState?.[0]?.value;
-    setValue('ddlProvState', info.defaultId);
-
-  }, [accountInfo, setValue, getValues, selectedCountry]);
   
 
-  const ddlCountryChanged = useCallback((e: any) => {
-    setValue('ddlCountry', e.target.value);
-    setSelectedCountry(e.target.value);
-  },
+  useEffect(() => {
 
-  [setValue]
-);
+    const fdtCustomer = dbtSavCustomer?.filter((e: {id: Number}) => e.id === Number(userCustomer?.id));
+    setValue('txbCustomer', fdtCustomer?.[0]?.name);
+
+
+    const fdtFOB_Point = dbtSelFOB_Point?.filter((e: {id: Number}) => e.id === Number(userCustomer?.fob_point_id));
+    setValue('txbFOB_Point', fdtFOB_Point?.[0]?.items);
+
+    const fdtCountry = dbtSelCountry?.filter((e: {id: Number}) => e.id === Number(userCustomer?.country_id));
+    // setValue('ddlCountry', fdtCountry?.[0]?.id);
+    setValue('ddlCountry', userCustomer?.country_id);
+
+    const fdtProvState = dbtSelProvState?.filter((e: {value: string}) => e.value === userCustomer?.state);
+    // setValue('ddlCountry', fdtProvState?.[0]?.id);
+    setValue('ddlProvState', userCustomer?.state);
+
+  }, [dbtSavCustomer, dbtSelCountry, dbtSelFOB_Point, dbtSelProvState, setValue, userCustomer?.country_id, userCustomer?.fob_point_id, userCustomer?.id, userCustomer?.state]);
+
+
+//   const [countryInfo, setCountryInfo] = useState<any>([]);
+//   useMemo(() => {
+//     const info: { fdtCountry: any; isVisible: boolean; defaultId: string } = {
+//       fdtCountry: [],
+//       isVisible: false,
+//       defaultId: '',
+//     };
+
+//     info.fdtCountry = accountInfo?.dbtSelCountry;
+
+//     setCountryInfo(info);
+//     // info.defaultId = info.fdtCountry?.[0]?.value;
+
+//     // setValue('ddlCountry', info.defaultId);
+//     setValue('ddlCountry', user?.country_id);
+
+//   }, [accountInfo?.dbtSelCountry, setValue, user?.country_id]);
+
+
+//   const [provStateInfo, setProvStateInfo] = useState<any>([]);
+//   useEffect(() => {
+//     const info: { fdtProvState: any; isVisible: boolean; defaultId: string } = {
+//       fdtProvState: [],
+//       isVisible: false,
+//       defaultId: '',
+//     };
+
+//     // let controlsPrefProdTypeLink: any = [];
+//     info.fdtProvState = accountInfo?.dbtSelProvState
+//     info.fdtProvState = info.fdtProvState?.filter((item: { country_value: string }) => item.country_value === selectedCountry);
+
+
+//     setProvStateInfo(info);
+
+//     info.defaultId = info?.fdtProvState?.[0]?.value;
+//     setValue('ddlProvState', info.defaultId);
+
+//   }, [accountInfo, setValue, getValues, selectedCountry]);
+  
+
+//   const ddlCountryChanged = useCallback((e: any) => {
+//     setValue('ddlCountry', e.target.value);
+//     setSelectedCountry(e.target.value);
+//   },
+
+//   [setValue]
+// );
 
   // const ddlProvStateChanged = useCallback((e: any) => 
   //   setValue('ddlProvState', e.target.value),
@@ -186,7 +201,7 @@ export default function AccountForm({ accountInfo }: AccountFormProps) {
                 <RHFTextField size="small" name="txbLastName" label="Last Name" />
               </Stack>
               <RHFTextField size="small" name="txbEmail" label="Email" />
-              <RHFTextField size="small" name="txbCompanyName" label="Company Name" disabled/>
+              <RHFTextField size="small" name="txbCustomer" label="Company Name" disabled/>
               <RHFTextField size="small" name="txbJobTitle" label="Job Title" />
               <RHFTextField size="small" name="txbPhoneNumber" label="Phone Number" />
               <Stack direction="row" justifyContent="space_around" spacing={1}>
@@ -201,14 +216,15 @@ export default function AccountForm({ accountInfo }: AccountFormProps) {
                       size="small"
                       name="ddlCountry"
                       label="Country"
-                      // sx={getDisplay(coolingCompInfo?.isVisible)}
-                      onChange={ddlCountryChanged}
-                      // onChange={(e: any) =>{
-                      //   setValue('ddlCountry', e.target.value)
-                      //   // setSelectedCountry(e.target.value)
-                      // } }
+                      disabled
+                      // // sx={getDisplay(coolingCompInfo?.isVisible)}
+                      // onChange={ddlCountryChanged}
+                      // // onChange={(e: any) =>{
+                      // //   setValue('ddlCountry', e.target.value)
+                      // //   // setSelectedCountry(e.target.value)
+                      // // } }
                       >
-                      {countryInfo?.fdtCountry?.map((item: any, index: number) => (
+                      {dbtSelCountry?.map((item: any, index: number) => (
                         <option key={index} value={item.value}>
                           {item.items}
                         </option>
@@ -220,16 +236,18 @@ export default function AccountForm({ accountInfo }: AccountFormProps) {
                       size="small"
                       name="ddlProvState"
                       label="Province/State"
+                      disabled
                       // sx={getDisplay(coolingCompInfo?.isVisible)}
                       // onChange={ddlProvStateChanged}
                     >
-                      {provStateInfo?.fdtProvState?.map((item: any, index: number) => (
+                      {dbtSelProvState?.map((item: any, index: number) => (
                         <option key={index} value={item.value}>
                           {item.items}
                         </option>
                       ))}
                 </RHFSelect>
               </Stack>
+              <RHFTextField size="small" name="txbFOB_Point" label="FOB point" disabled />
               <Stack spacing={3} alignItems="flex-end" sx={{ mt: 3 }}>
                 <LoadingButton type="submit" variant="contained" loading={isSubmitting}>
                   Save Changes

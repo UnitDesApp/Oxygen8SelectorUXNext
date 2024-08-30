@@ -6376,7 +6376,7 @@ useEffect(() => {
             </Grid>
           </AccordionDetails>
         </Accordion>
-        <Stack direction="row" justifyContent="flex-end" textAlign="right">
+        <Stack direction="row" justifyContent="center" textAlign="center">
           {/* <Box sx={{ width: '150px' }}> */}
           {/* <LoadingButton
               ref={submitButtonRef}
@@ -6398,8 +6398,8 @@ useEffect(() => {
               variant="contained"
               color="primary"
               onClick={onSubmit}
-              fullWidth
-            // disabled={validateContinue()}
+              sx={{ width:'30%'}}            
+              // disabled={validateContinue()}
             // loading={isSaving}
             >
               Add Unit
@@ -6411,8 +6411,9 @@ useEffect(() => {
                   variant="contained"
                   color="primary"
                   onClick={onSubmit}
-                  fullWidth
-                // disabled={validateContinue()}
+                  // fullWidth
+                  sx={{width:'30%'}}            
+                  // disabled={validateContinue()}
                 // loading={isSaving}
                 >
                   Update Unit
@@ -6425,6 +6426,7 @@ useEffect(() => {
                       color="primary"
                       onClick={onClickUnitInfo}
                       // sx={{ display: currentStep === 2 && !isProcessingData ? 'inline-flex' : 'none' }}
+                      sx={{ width:'30%'}}            
                       startIcon={<Iconify icon="akar-icons:arrow-left" />}
                     >
                       Unit info
