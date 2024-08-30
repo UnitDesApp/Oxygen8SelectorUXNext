@@ -32,9 +32,9 @@ import { useGetAllUnits } from 'src/hooks/useApi';
 import CircularProgressLoading from 'src/components/loading/CircularProgressLoading';
 import { PATH_APP } from 'src/routes/paths';
 import { useUnitTypeInfo } from 'src/state/state';
-import UnitTableRow from './UnitTableRow';
 import { useApiContext } from 'src/contexts/ApiContext';
 import ConfirmDialog from 'src/components/dialog/ConfirmDialog';
+import UnitTableRow from './UnitTableRow';
 
 const ROLE_OPTIONS = ['All', 'My Jobs', 'By Others'];
 
@@ -115,7 +115,17 @@ export default function UnitList() {
   };
 
   const handleDeleteRow = async () => {
-    project.deleteUnit({ action: 'DELETE_ONE', unittId: deleteRowID } as any).then(() => {
+    const data: any = {
+      intJobId: projectId?.toString() || '0',
+      intUnitNo: deleteRowID || '0',
+      intUAL: localStorage.getItem('UAL') || '0',
+      intUserId: localStorage.getItem('userId') || '0',
+      action: 'DELETE_ONE'
+    };
+
+    // project.deleteUnit({ action: 'DELETE_ONE', unittId: deleteRowID } as any).then(() => {
+    project.deleteUnit(data).then(() => {
+
     // project.deleteJob({ action: 'DELETE_MULTIPUL', projectIdData: selected }).then(() => {
       refetch();
     });
@@ -159,7 +169,14 @@ export default function UnitList() {
     // navigate(PATH_UNIT.add(jobId));
   };
   const handleDuplicate = (row: any) => {
-    project.duplicateUnit(row).then(() => refetch());
+    const data: any = {
+      intJobId: projectId?.toString() || '0',
+      intUnitNo: row?.unit_no || '0',
+      intUAL: localStorage.getItem('UAL') || '0',
+      intUserId: localStorage.getItem('userId') || '0',
+    };
+    // project.duplicateUnit(row).then(() => refetch());
+    project.duplicateUnit(data).then(() => refetch());
     // setOpenDuplicateSuccess(true);
   };
 

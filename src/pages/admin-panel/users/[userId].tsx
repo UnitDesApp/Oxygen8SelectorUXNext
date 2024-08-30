@@ -15,7 +15,7 @@ UserEdit.getLayout = (page: React.ReactElement) => <DashboardLayout>{page}</Dash
 
 export default function UserEdit() {
   const { data: accountInfo, isLoading, refetch } = useGetAccountInfo();
-  const { dbtSavUser, dbtSelCustomerType, dbtSelFOBPoint, dbtSelCountry, dbtSelProvState, dbtSavCustomer } = accountInfo || {
+  const { dbtSavUser, dbtSelCustomerType, dbtSelFOB_Point, dbtSelCountry, dbtSelProvState, dbtSavCustomer } = accountInfo || {
     users: [],
     customers: [],
     fobPoint: [],
@@ -61,7 +61,7 @@ export default function UserEdit() {
         <UserEditForm
           dbtSelCustomerType ={dbtSelCustomerType}
           dbtSavCustomer={dbtSavCustomer}
-          dbtSelFOBPoint={dbtSelFOBPoint}
+          dbtSelFOB_Point={dbtSelFOB_Point}
           dbtSavUser={dbtSavUser}
           setSuccessText={setSuccessText}
           setFailDlgOpen={setFailDlgOpen}

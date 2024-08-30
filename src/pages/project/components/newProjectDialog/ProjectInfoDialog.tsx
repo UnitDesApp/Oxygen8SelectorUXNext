@@ -425,8 +425,9 @@ export default function ProjectInfoDialog({
     setProjectDialogArrangement(returnInfo);
   }, [step]);
 
-  const getDialogStyles = (step:any) => {
-    switch (step) {
+
+  const getDialogStyles = (step1:any) => {
+    switch (step1) {
       case 'SHOW_FIRST_DIALOG':
         return {
           maxWidth: '500px', 

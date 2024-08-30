@@ -18,7 +18,7 @@ import { RHFSelect, RHFTextField } from 'src/components/hook-form';
 interface UserEditFormProps {
   dbtSavUser: any[];
   dbtSelCustomerType: any[];
-  dbtSelFOBPoint: any[];
+  dbtSelFOB_Point: any[];
   dbtSavCustomer: any[];
   setSuccessText?: Function;
   setFailDlgOpen?: Function;
@@ -28,7 +28,7 @@ interface UserEditFormProps {
 export default function UserEditForm({
   dbtSavUser,
   dbtSelCustomerType,
-  dbtSelFOBPoint,
+  dbtSelFOB_Point,
   dbtSavCustomer,
   setSuccessText,
   setFailDlgOpen,
@@ -38,6 +38,7 @@ export default function UserEditForm({
   const api = useApiContext();
 
   const selectedUser = dbtSavUser?.filter((user: any) => user.id === Number(userId))?.[0] || {};
+  const selFOB_Point = dbtSelFOB_Point?.filter((e: {id: Number}) => e.id === Number(selectedUser.fob_point_id))?.[0] || {};
 
   const UserSchema = Yup.object().shape({
     firstname: Yup.string().required('This field is required!'),
@@ -49,7 +50,7 @@ export default function UserEditForm({
     access: Yup.string().required('This field is required!'),
     accessLevel: Yup.string().required('This field is required!'),
     accessPricing: Yup.string().required('This field is required!'),
-    fobPoint: Yup.string().required('This field is required!'),
+    // fobPoint: Yup.string().required('This field is required!'),
     createdDate: Yup.string().required('This field is required!'),
     password: Yup.string().required('This field is required!'),
     confirmPassword: Yup.string().oneOf([Yup.ref('password')], 'Passwords must match'),
@@ -67,7 +68,8 @@ export default function UserEditForm({
     access: selectedUser?.access,
     accessLevel: selectedUser?.access_level,
     accessPricing: selectedUser?.access_pricing,
-    fobPoint: dbtSelFOBPoint?.[0]?.id,
+    // fobPoint: dbtSelFOB_Point?.[0]?.id,
+    fobPoint:selFOB_Point?.items,
     createdDate: selectedUser?.created_date,
   };
 
@@ -103,7 +105,10 @@ export default function UserEditForm({
     <FormProvider methods={methods} onSubmit={handleSubmit(onSubmit)}>
       <CustomBreadcrumbs
         heading="Project Submittal"
-        links={[{ name: 'Users', href: '/admin-panel/users' }, { name: 'User Edit' }]}
+        links={[{ name: 'Customers', href: '/admin-panel/customers' },
+                { name: 'Customer Edit' }, 
+                { name: 'Users', href: '/admin-panel/users' }, 
+                { name: 'User Edit' }]}
       />
 
       <Grid container spacing={2} sx={{ mb: 3 }}>
