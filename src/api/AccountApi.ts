@@ -12,7 +12,7 @@ export default class AccountApi extends AbstractApi {
     this.client.post(`/api/account/addNewUser`, data).then((res) => res.data);
     
   updateProfile = async (data: any): Promise<any> =>
-    this.client.post(`/api/account/updateUser`, data).then((res) => res.data);
+    this.client.post(`/api/account/updateProfile`, data).then((res) => res.data);
 
   updateUser = async (data: any): Promise<any> =>
     this.client.post(`/api/account/updateUser`, data).then((res) => res.data);

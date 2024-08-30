@@ -15,7 +15,9 @@ import {
   Typography,
   // colors,
   // Collapse,
-  Button
+  Button,
+  Snackbar,
+  Alert
 } from '@mui/material';
 // hooks
 import { yupResolver } from '@hookform/resolvers/yup';
@@ -4440,9 +4442,6 @@ useEffect(() => {
                 <Box sx={{ display: 'grid', rowGap: 3, columnGap: 3, gridTemplateColumns: { xs: 'repeat(3, 1fr)' }, }}>
                   <Stack>
                     <RHFTextField size="small" name="txtTag" label="Tag" />
-                    {isTagValue &&
-                      <Typography sx={{ color: '#e6382c' }}>Tag is required.</Typography>
-                    }
                   </Stack>
                   <Stack>
                     <RHFTextField
@@ -6441,6 +6440,20 @@ useEffect(() => {
         </Stack>
       </Stack>
     </FormProvider>
+    <Snackbar
+          open={isTagValue}
+          autoHideDuration={3000}
+          onClose={() => setIsTagValue(false)}
+        >
+          <Alert
+            onClose={() => setIsTagValue(false)}
+            severity="error"
+            sx={{ width: '100%' }}
+          >
+            Tag field is required
+          </Alert>
+        </Snackbar>
     </>
+    // </>
   );
 }

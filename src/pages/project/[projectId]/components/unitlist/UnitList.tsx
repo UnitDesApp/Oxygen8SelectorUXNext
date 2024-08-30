@@ -10,6 +10,8 @@ import {
   IconButton,
   TableContainer,
   TablePagination,
+  Snackbar,
+  Alert,
 } from '@mui/material';
 // hooks
 import useTabs from 'src/hooks/useTabs';
@@ -30,6 +32,8 @@ import { useGetAllUnits } from 'src/hooks/useApi';
 import CircularProgressLoading from 'src/components/loading/CircularProgressLoading';
 import { PATH_APP } from 'src/routes/paths';
 import { useUnitTypeInfo } from 'src/state/state';
+import { useApiContext } from 'src/contexts/ApiContext';
+import ConfirmDialog from 'src/components/dialog/ConfirmDialog';
 import UnitTableRow from './UnitTableRow';
 
 const ROLE_OPTIONS = ['All', 'My Jobs', 'By Others'];
@@ -86,6 +90,7 @@ export default function UnitList() {
   const [filterRole, setFilterRole] = useState('All');
 
   // Delete one row
+   const [openDuplicateSuccess, setOpenDuplicateSuccess] = useState(false);
   const [isOneConfirmDialog, setOneConfirmDialogState] = React.useState(false);
   const [isOpenMultiConfirmDialog, setMultiConfirmDialogState] = React.useState(false);
   const [deleteRowID, setDeleteRowID] = React.useState(-1);
@@ -93,6 +98,7 @@ export default function UnitList() {
     setIntProductTypeID: state.setIntProductTypeID,
     setIntUnitTypeID: state.setIntUnitTypeID,
   }));
+  const { project } = useApiContext();
 
   useEffect(() => {
     localStorage.setItem('isNewUnitSelected', '0');
@@ -109,6 +115,20 @@ export default function UnitList() {
   };
 
   const handleDeleteRow = async () => {
+    const data: any = {
+      intJobId: projectId?.toString() || '0',
+      intUnitNo: deleteRowID || '0',
+      intUAL: localStorage.getItem('UAL') || '0',
+      intUserId: localStorage.getItem('userId') || '0',
+      action: 'DELETE_ONE'
+    };
+
+    // project.deleteUnit({ action: 'DELETE_ONE', unittId: deleteRowID } as any).then(() => {
+    project.deleteUnit(data).then(() => {
+
+    // project.deleteJob({ action: 'DELETE_MULTIPUL', projectIdData: selected }).then(() => {
+      refetch();
+    });
     setDeleteRowID(-1);
     handleOneConfirmDialogClose();
   };
@@ -147,6 +167,17 @@ export default function UnitList() {
 
   const handleClickNewUnit = () => {
     // navigate(PATH_UNIT.add(jobId));
+  };
+  const handleDuplicate = (row: any) => {
+    const data: any = {
+      intJobId: projectId?.toString() || '0',
+      intUnitNo: row?.unit_no || '0',
+      intUAL: localStorage.getItem('UAL') || '0',
+      intUserId: localStorage.getItem('userId') || '0',
+    };
+    // project.duplicateUnit(row).then(() => refetch());
+    project.duplicateUnit(data).then(() => refetch());
+    // setOpenDuplicateSuccess(true);
   };
 
   const dataFiltered = useMemo(
@@ -197,7 +228,12 @@ export default function UnitList() {
               }
             />
           )}
-
+        <ConfirmDialog
+          isOpen={isOneConfirmDialog}
+          onClose={handleOneConfirmDialogClose}
+          onConfirm={handleDeleteRow}
+          isOneRow
+        />
           <Table size={dense ? 'small' : 'medium'}>
             <TableHeadCustom
               order={order}
@@ -225,7 +261,7 @@ export default function UnitList() {
                     onSelectRow={() => onSelectRow(row.unit_no)}
                     onDeleteRow={() => handleOneConfirmDialogOpen(row.unit_no)}
                     onEditRow={() => handleEditRow(row)}
-                    onDuplicate={() => {}}
+                    onDuplicate={() => handleDuplicate(row)}
                   />
                 ))}
 
@@ -251,6 +287,19 @@ export default function UnitList() {
           onRowsPerPageChange={onChangeRowsPerPage}
         />
       </Box>
+      <Snackbar
+          open={openDuplicateSuccess}
+          autoHideDuration={3000}
+          onClose={() => setOpenDuplicateSuccess(false)}
+        >
+          <Alert
+            onClose={() => setOpenDuplicateSuccess(false)}
+            severity="success"
+            sx={{ width: '100%' }}
+          >
+            Unit duplicate successfully!
+          </Alert>
+        </Snackbar>
     </>
   );
 }

@@ -20,19 +20,23 @@ interface AccountFormProps {
 
 export default function AccountForm({ accountInfo }: AccountFormProps) {
   const { user, updateUser } = useAuthContext();
-  const { dbtSelCustomerType, dbtSelFOBPoint, dbtSelCountry, dbtSelProvState, dbtSavCustomer } = accountInfo || {};
+  const { dbtSelCustomerType, dbtSelFOB_Point, dbtSelCountry, dbtSelProvState, dbtSavCustomer } = accountInfo || {};
   const api = useApiContext();
   const [success, setSuccess] = useState<boolean>(false);
   const [selectedCountry, setSelectedCountry] = useState('CAN')
   const [fail, setFail] = useState<boolean>(false);
 
   const UpdateUserSchema = Yup.object().shape({
-    firstname: Yup.string().required('This field is required!'),
-    lastname: Yup.string().required('This field is required!'),
-    email: Yup.string().required('This field is required!'),
+    txbFirstName: Yup.string().required('This field is required!'),
+    txbLastName: Yup.string().required('This field is required!'),
+    txbEmail: Yup.string().required('This field is required!'),
     username: Yup.string().required('This field is required!'),
     customerType: Yup.string().required('This field is required!'),
     customerId: Yup.string().required('This field is required!'),
+    txbPhoneNumber: Yup.string(),
+    txbAddress1: Yup.string(),
+    txbAddress2: Yup.string(),
+    txbCity: Yup.string(),
     ddlCountry: Yup.string(),
     ddlProvState: Yup.string(),
     access: Yup.string().required('This field is required!'),
@@ -40,28 +44,33 @@ export default function AccountForm({ accountInfo }: AccountFormProps) {
     accessPricing: Yup.string().required('This field is required!'),
     fobPoint: Yup.string().required('This field is required!'),
     createdDate: Yup.string().required('This field is required!'),
-  });
+  }); 
 
   const defaultValues = useMemo(
     () => ({
-      username: user?.username,
-      firstname: user?.firstname,
-      lastname: user?.lastname,
-      email: user?.email,
+      txbUsername: user?.username,
+      txbFirstName: user?.firstname,
+      txbLastName: user?.lastname,
+      txbEmail: user?.email,
+      txbJobTitle: '',
       customerType: dbtSelCustomerType?.[0]?.id,
       customerId: dbtSavCustomer?.[0]?.id,
+      txbPhoneNumber: '',
+      txbAddress1: '',
+      txbAddress2: '',
+      txbCity: '',
+      ddlCountry: 'CAN',
+      ddlProvState: 'AB',
       access: user?.access,
       accessLevel: 10,
       accessPricing: user?.accessPricing,
-      fobPoint: dbtSelFOBPoint?.[0]?.id,
+      fobPoint: dbtSelFOB_Point?.[0]?.id,
       createdDate: user?.createdDate,
-      ddlCountry: 'CAN',
-      ddlProvState: 'AB',
     }),
     [
       dbtSavCustomer,
       dbtSelCustomerType,
-      dbtSelFOBPoint,
+      dbtSelFOB_Point,
       user?.access,
       user?.accessPricing,
       user?.createdDate,
@@ -70,8 +79,7 @@ export default function AccountForm({ accountInfo }: AccountFormProps) {
       user?.lastname,
       user?.username,
     ]
-  );
-
+  );  
   const methods = useForm({
     resolver: yupResolver(UpdateUserSchema),
     defaultValues,
@@ -84,10 +92,25 @@ export default function AccountForm({ accountInfo }: AccountFormProps) {
     formState: { isSubmitting },
   } = methods;
 
-  const onSubmit = useCallback(
+  const onSubmit = useCallback (
     async (data: any) => {
       try {
+        // data = {
+        //   intUserId:user?.userId,
+        //   strFirstName: getValues("txbFirstName"),
+        //   strLastName: getValues("txbLastName"),
+        //   strEmail: getValues("txbEmail"),
+        //   strJobTitle: getValues("txbJobTitle"),
+        //   strPhoneNumber: getValues("txbPhoneNumber"),
+        //   strAddress1: getValues("txbAddress1"),
+        //   strAddress2: getValues("txbAddress2"),
+        //   strCity: getValues("txbCity"),
+        //   strCountryIdCode: getValues("ddlCountry"),
+        //   strProvStateIdCode: getValues("ddlProvState")
+        // }
+
         await api.account.updateProfile({ ...data, userId: user?.userId });
+        // await api.account.updateProfile({ data });
         updateUser(data);
         setSuccess(true);
       } catch (e) {
@@ -96,6 +119,7 @@ export default function AccountForm({ accountInfo }: AccountFormProps) {
       }
     },
     [user?.userId, api.account, updateUser]
+    // [api.account, updateUser, user?.userId]
   );
 
 
@@ -146,11 +170,6 @@ export default function AccountForm({ accountInfo }: AccountFormProps) {
   [setValue]
 );
 
-
-
-
-
-
   // const ddlProvStateChanged = useCallback((e: any) => 
   //   setValue('ddlProvState', e.target.value),
   // [setValue]
@@ -163,19 +182,19 @@ export default function AccountForm({ accountInfo }: AccountFormProps) {
           <FormProvider methods={methods} onSubmit={handleSubmit(onSubmit)}>
             <Stack spacing={2} p={2}>
               <Stack direction="row" justifyContent="space-around" spacing={1}>
-                <RHFTextField size="small" name="firstname" label="First Name" />
-                <RHFTextField size="small" name="lastname" label="Last Name" />
+                <RHFTextField size="small" name="txbFirstName" label="First Name" />
+                <RHFTextField size="small" name="txbLastName" label="Last Name" />
               </Stack>
-              <RHFTextField size="small" name="email" label="Email" />
-              <RHFTextField size="small" name="company_name" label="Company Name" disabled/>
-              <RHFTextField size="small" name="job_name" label="Job Title" />
-              <RHFTextField size="small" name="phone_number" label="Phone Number" />
+              <RHFTextField size="small" name="txbEmail" label="Email" />
+              <RHFTextField size="small" name="txbCompanyName" label="Company Name" disabled/>
+              <RHFTextField size="small" name="txbJobTitle" label="Job Title" />
+              <RHFTextField size="small" name="txbPhoneNumber" label="Phone Number" />
               <Stack direction="row" justifyContent="space_around" spacing={1}>
-                <RHFTextField size="small" name="address1" label="Address1" />
-                <RHFTextField size="small" name="address2" label="Address2" />
+                <RHFTextField size="small" name="txbAddress1" label="Address1" />
+                <RHFTextField size="small" name="txbAddress2" label="Address2" />
               </Stack>
               <Stack direction="row" justifyContent="space_around" spacing={1}>
-                <RHFTextField size="small" name="city" label="City" />
+                <RHFTextField size="small" name="txbCity" label="City" />
                 {/* <RHFTextField size="small" name="state/Province" label="Status" /> */}
                 <RHFSelect
                       native

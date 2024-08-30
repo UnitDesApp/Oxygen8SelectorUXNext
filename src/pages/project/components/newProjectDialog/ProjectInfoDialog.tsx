@@ -18,6 +18,8 @@ import {
   Typography,
   Grid,
   Container,
+  Snackbar,
+  Alert,
 } from '@mui/material';
 import { LoadingButton } from '@mui/lab';
 // form
@@ -79,25 +81,25 @@ export default function ProjectInfoDialog({
   // let { oSavedjob } = null || {};
 
   const JobFormSchema = Yup.object().shape({
-    txbJobName: Yup.string().required('Please enter a Project Name'),
+    txbJobName: Yup.string(),
     // ddlBasisOfDesign: Yup.string().required('Please enter a Basis Of Design'),
     ddlBasisOfDesign: Yup.number(),
-    txbReferenceNo: Yup.string().required('Please enter a Reference No'),
-    txbRevisionNo: Yup.number().required('Please enter a Revision No'),
+    txbReferenceNo: Yup.string(),
+    txbRevisionNo: Yup.string(),
     txbCompanyName: Yup.string(),
     // ddlCompanyName: Yup.string().required('Please enter a Company Name'),
     ddlCompanyName: Yup.number(),
     txbCompanyContactName: Yup.string(),
     ddlCompanyContactName: Yup.number(),
-    ddlApplication: Yup.string().required('Please enter a Application'),
-    ddlUoM: Yup.string().required('Please select a UoM'),
+    ddlApplication: Yup.string(),
+    ddlUoM: Yup.string(),
     // ddlCountry: Yup.string().required('Please select a County'),
     // ddlProvState: Yup.string().required('Please select a Province / State'),
     // ddlCity: Yup.number().required('Please select a City'),
     ddlCountry: Yup.string(),
     ddlProvState: Yup.string(),
     ddlCity: Yup.number(),
-    ddlAshareDesignConditions: Yup.string().required('Please enter a ASHARE Design Conditions'),
+    ddlAshareDesignConditions: Yup.string(),
     // txbAltitude: Yup.number().required('Please enter a Altitude'),
     txbAltitude: Yup.number(),
     txbSummerOA_DB: Yup.number(),
@@ -283,7 +285,36 @@ export default function ProjectInfoDialog({
     //     referenceNo: data?.referenceNo ? data.referenceNo : '',
     //     testNewPrice: data.testNewPrice ? 1 : 0,
     //   });
-
+    if (!data.txbJobName) {
+      setSnackbarMessage('Project Name is required');
+      setOpenSnackbar(true);
+      return;
+    }
+    if (!data.txbRevisionNo) {
+      setSnackbarMessage('Revision Number is required');
+      setOpenSnackbar(true);
+      return;
+    }
+    if (!data.txbReferenceNo) {
+      setSnackbarMessage('Reference Number is required');
+      setOpenSnackbar(true);
+      return;
+    }
+    if (!data.ddlApplication) {
+      setSnackbarMessage('Please enter an Application');
+      setOpenSnackbar(true);
+      return;
+    }
+    if (!data.ddlUoM) {
+      setSnackbarMessage('Please select a UoM');
+      setOpenSnackbar(true);
+      return;
+    }
+    if (!data.ddlAshareDesignConditions) {
+      setSnackbarMessage('Please enter ASHARE Design Conditions');
+      setOpenSnackbar(true);
+      return;
+    }
     if (submit === 1) {
       try {
         const oJC: any = getJobInputs(); // JC: Job Container
@@ -335,6 +366,8 @@ export default function ProjectInfoDialog({
   const handleClose = () => onClose && onClose();
 
   const [isLoading, setIsLoading] = useState(0);
+  const [openSnackbar, setOpenSnackbar] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState('');
 
   const [projectDialogArrangement, setProjectDialogArrangement] = useState<any>();
   useMemo(() => {
@@ -389,9 +422,36 @@ export default function ProjectInfoDialog({
       returnInfo.submitBtnDisplay = 'block';
       returnInfo.submitBtnLabel = 'Save Project';
     }
-
     setProjectDialogArrangement(returnInfo);
   }, [step]);
+
+
+  const getDialogStyles = (step1:any) => {
+    switch (step1) {
+      case 'SHOW_FIRST_DIALOG':
+        return {
+          maxWidth: '500px', 
+          width: '500px',   
+        };
+      case 'SHOW_SECOND_DIALOG':
+        return {
+          maxWidth: '500px', 
+          width: '500px',  
+        };
+      case 'SHOW_ALL_DIALOG':
+        return {
+          maxWidth: '1000px', 
+          width: '100%',    
+        };
+      default:
+        return {
+          maxWidth: '500px',
+          width: '100%',
+        };
+    }
+  }
+
+  const dialogStyles = getDialogStyles(step);
 
   // Do not delete - keep for reference
   // In form dialog this method is not working where the dependencies are directly set with getValues('').
@@ -1126,7 +1186,9 @@ export default function ProjectInfoDialog({
   // },[savedJob]);
 
   return (
-    <Dialog open={open} onClose={handleClose} maxWidth={projectDialogArrangement?.dialogWidth}>
+    <Dialog  PaperProps={{
+      style: dialogStyles,
+    }} open={open} onClose={handleClose} maxWidth={projectDialogArrangement?.dialogWidth}>
       <DialogTitle>
         {/* {step === 'SHOW_FIRST_DIALOG' || step === ''
            ? 'PROJECT INFORMATION'
@@ -1646,6 +1708,19 @@ export default function ProjectInfoDialog({
           </LoadingButton>
         </DialogActions>
       </FormProvider>
+      <Snackbar
+        open={openSnackbar}
+        autoHideDuration={3000}
+        onClose={() => setOpenSnackbar(false)}
+      >
+        <Alert
+          onClose={() => setOpenSnackbar(false)}
+          severity="error"
+          sx={{ width: '100%' }}
+        >
+          {snackbarMessage}
+        </Alert>
+      </Snackbar>
     </Dialog>
   );
 }
