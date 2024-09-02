@@ -24,6 +24,8 @@ interface NewUserDialogProps {
   onSuccess: Function;
   onFail: Function;
   refetch: Function;
+  name?: String;
+  row?: any;
 }
 
 export default function NewUserDialog({
@@ -32,6 +34,8 @@ export default function NewUserDialog({
   onSuccess,
   onFail,
   refetch,
+  row,
+  name,
 }: NewUserDialogProps) {
   const api = useApiContext();
   const { data: accountInfo, isLoading } = useGetAccountInfo();
@@ -53,7 +57,7 @@ export default function NewUserDialog({
     confirmPassword: Yup.string().oneOf([Yup.ref('password')], 'Passwords must match'),
   });
 
-  const defaultValues = useMemo(
+  const newDefaultValues = useMemo(
     () => ({
       firstname: '',
       lastname: '',
@@ -71,9 +75,24 @@ export default function NewUserDialog({
     []
   );
 
+  const editDefaultValues = {
+    firstname: row?.first_name,
+    lastname: row?.last_name,
+    email: row?.email,
+    username: row?.username,
+    password: '',
+    confirmPassword: '',
+    customerType: row?.customer_type,
+    customerId: row?.customer_id,
+    access: row?.access,
+    accessLevel: row?.access_level,
+    accessPricing: row?.access_pricing,
+    fobPoint: row?.fobPoint ?? 0,
+  };
+
   const methods = useForm({
     resolver: yupResolver(NewUserSchema),
-    defaultValues,
+    defaultValues: name === 'edit' ? editDefaultValues : newDefaultValues,
   });
 
   const {
@@ -82,13 +101,18 @@ export default function NewUserDialog({
     handleSubmit,
     formState: { isSubmitting },
   } = methods;
-
+  const userId = row?.id;
   const onSubmit = useCallback(
     async (data: any) => {
       try {
-        await api.account.addNewUser({ ...data, createdDate: '' });
+        if (name){
+          await api.account.updateUser({ ...data, userId });
+        }
+        else{
+          await api.account.addNewUser({ ...data, createdDate: '' });
+        }
         onSuccess();
-        reset(defaultValues);
+        reset(newDefaultValues);
         if (refetch) {
           refetch();
         }
@@ -98,12 +122,16 @@ export default function NewUserDialog({
         onFail();
       }
     },
-    [api.account, onSuccess, reset, defaultValues, refetch, onClose, onFail]
+    [api.account, onSuccess, reset, newDefaultValues,editDefaultValues, refetch, onClose, onFail]
   );
 
   return (
-    <Dialog open={open} onClose={() => onClose && onClose()} sx={{ mt: 10 }}>
+    <Dialog open={open} onClose={() => onClose && onClose()} sx={{ mt: 10 }}>{
+      name? 
+      <DialogTitle>Edit user</DialogTitle>
+      :
       <DialogTitle>Add new user</DialogTitle>
+}
       <FormProvider methods={methods} onSubmit={handleSubmit(onSubmit)}>
         <DialogContent>
           <Box sx={{ minWidth: '500px', display: 'grid', rowGap: 3, columnGap: 2 }}>

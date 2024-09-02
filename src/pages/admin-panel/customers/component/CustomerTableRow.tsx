@@ -2,6 +2,9 @@
 import { styled } from '@mui/material/styles';
 import { Checkbox, TableRow, TableCell, Stack, IconButton } from '@mui/material';
 import Iconify from 'src/components/iconify';
+import { useCallback, useState } from 'react';
+import NewCustomerDialog from '../../component/NewCustomerDialog';
+import { useGetAccountInfo } from 'src/hooks/useApi';
 
 // ----------------------------------------------------------------------
 const StyledIconButton = styled(IconButton)(({ theme }) => ({
@@ -32,8 +35,22 @@ export default function CustomerTableRow({
   onDeleteRow,
 }: CustomerTableRowProps) {
   const { name, customer_type_id, address, shipping_factor_percent, region } = row || {};
+  const [addCustomerDlgOpen, setAddCustomerDlgOpen] = useState(false);
+  const [failDlgOpen, setFailDlgOpen] = useState(false);
+  const [successDlgOpen, setSuccessDlgOpen] = useState(false);
+  const [successText, setSuccessText] = useState('');
 
+  const {refetch } = useGetAccountInfo();
+
+  const onCloseCustomerDlg = useCallback(() => {
+    setAddCustomerDlgOpen(false);
+  }, []);
+  const onSuccessAddCustomer = useCallback(() => {
+    setSuccessText('Customer Edit Successfully');
+    setSuccessDlgOpen(true);
+  }, []);
   return (
+    <>
     <TableRow hover sx={{ borderBottom: '1px solid #a7b1bc' }} selected={selected}>
       <TableCell padding="checkbox">
         <Checkbox checked={selected} onClick={() => onSelectRow && onSelectRow()} />
@@ -49,7 +66,9 @@ export default function CustomerTableRow({
 
       <TableCell align="right">
         <Stack direction="row">
-          <StyledIconButton onClick={() => onEditRow && onEditRow()}>
+          <StyledIconButton onClick={() => {
+            setAddCustomerDlgOpen(true)
+            } }>
             <Iconify icon="fa-solid:pen" />
           </StyledIconButton>
           <StyledIconButton onClick={() => onDeleteRow && onDeleteRow()}>
@@ -58,6 +77,16 @@ export default function CustomerTableRow({
         </Stack>
       </TableCell>
     </TableRow>
+    <NewCustomerDialog
+        name ='edit'
+        row={row}
+        open={addCustomerDlgOpen}
+        onClose={onCloseCustomerDlg}
+        onSuccess={onSuccessAddCustomer}
+        onFail={() => setFailDlgOpen(true)}
+        refetch={refetch}
+      />
+  </>
   );
 }
 

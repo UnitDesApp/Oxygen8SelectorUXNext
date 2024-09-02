@@ -90,7 +90,7 @@ export default function Project() {
   useEffect(() => {
     setCurrentTab(tab?.toString() || '');
   }, [setCurrentTab, tab]);
-
+  
   const TABS = useMemo(
     () => [
       {
@@ -157,7 +157,7 @@ export default function Project() {
           {projectName && projectName}
         </Typography>
         <CustomBreadcrumbs
-          heading={tabData?.title || ''}
+          heading= {projectName || ''}
           links={[{ name: 'Projects', href: PATH_APP.project }, { name: tabData?.title || '' }]}
           action={
             <Stack spacing={2} direction="row" alignItems="flex-end" sx={{ mt: 3 }}>

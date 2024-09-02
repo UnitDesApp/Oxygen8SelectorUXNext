@@ -25,7 +25,7 @@ export default function Account() {
       </Head>
 
       <Container maxWidth={themeStretch ? false : 'xl'}>
-        <CustomBreadcrumbs heading="My Account" links={[{ name: 'Edit Account' }]} />
+        <CustomBreadcrumbs heading="My Account" links={[{ name: '' }]} />
         <AccountForm accountInfo={accountInfo} />
       </Container>
     </>

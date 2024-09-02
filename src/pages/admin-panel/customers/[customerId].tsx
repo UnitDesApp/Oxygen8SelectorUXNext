@@ -140,7 +140,7 @@ export default function UserEdit() {
           links={[{ name: 'Customers', href: '/admin-panel/customers' }, { name: 'Customer Edit' }]}
         />
         <Stack spacing={2}>
-          <Accordion
+          {/* <Accordion
             expanded={expanded.panel1}
             onChange={() => setExpanded({ ...expanded, panel1: !expanded.panel1 })}
           >
@@ -207,7 +207,7 @@ export default function UserEdit() {
                 </Stack>
               </FormProvider>
             </AccordionDetails>
-          </Accordion>
+          </Accordion> */}
           <Accordion
             expanded={expanded.panel2}
             onChange={() => setExpanded({ ...expanded, panel2: !expanded.panel2 })}

@@ -53,12 +53,12 @@ const STEP_PAGE_NAME = ['Select product type', 'Info', 'Selection'];
 AddNewUnit.getLayout = (page: React.ReactElement) => <DashboardLayout>{page}</DashboardLayout>;
 
 
-export default function AddNewUnit() {
+export default function AddNewUnit({currentStep, setCurrentStep}:any) {
   // eslint-disable-next-line no-unused-vars
   const theme = useTheme();
   const { push, query } = useRouter();
   const { projectId } = query;
-  const [currentStep, setCurrentStep] = useState(0);
+  // const [currentStep, setCurrentStep] = useState(0);
   const [isSavedUnit, setIsSavedUnit] = useState(false);
   const [intUnitNo, setIntUnitNo] = useState(0);
   const [openRPDialog, setOpenRPDialog] = useState(false);
@@ -89,6 +89,7 @@ export default function AddNewUnit() {
   };
 
   const onSelectUnitTypeItem = (value: number, txb: string) => {
+    setCurrentStep(1);
     if(ProductTxb ==='Terra'){
       setUnitTypeData({ ...unitTypeData,txbProductType:ProductTxb, intProductTypeID: Productvalue, intUnitTypeID: value, txbUnitType: txb });
     }

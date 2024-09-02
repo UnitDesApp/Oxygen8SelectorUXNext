@@ -25,6 +25,8 @@ interface NewCustomerDialogProps {
   onSuccess: Function;
   onFail: Function;
   refetch: Function;
+  name?: String;
+  row?: any;
 }
 
 export default function NewCustomerDialog({
@@ -32,11 +34,13 @@ export default function NewCustomerDialog({
   onClose,
   onSuccess,
   onFail,
+  name,
+  row,
   refetch,
 }: NewCustomerDialogProps) {
   const api = useApiContext();
   const { data: accountInfo } = useGetAccountInfo();
-  const { dbtSelCustomerType, dbtSelFOB_Point, dbtSelCountry, } = accountInfo || {};
+  const { dbtSelCustomerType, dbtSelFOB_Point, dbtSelCountry,dbtSavCustomer } = accountInfo || {};
 
   const NewCustomerSchema = Yup.object().shape({
     username: Yup.string().required('This field is required!'),
@@ -47,8 +51,18 @@ export default function NewCustomerDialog({
     fobPoint: Yup.number().required('This field is required!'),
     shippingFactor: Yup.number().required('This field is required!'),
   });
+  const editdefaultValues = {
+    username: row?.name,
+    customerType: row?.customer_type_id,
+    countryId: row?.country_id,
+    address: row?.address,
+    contactName: row?.contact_name,
+    fobPoint: row?.fob_point_id,
+    shippingFactor: row?.shipping_factor_percent,
+    createdDate: row?.created_date,
+  };
 
-  const defaultValues = useMemo(
+  const newdefaultValues = useMemo(
     () => ({
       username: '',
       customerType: 1,
@@ -64,7 +78,7 @@ export default function NewCustomerDialog({
 
   const methods = useForm({
     resolver: yupResolver(NewCustomerSchema),
-    defaultValues,
+    defaultValues: name === 'edit' ? editdefaultValues : newdefaultValues,
   });
 
   const {
@@ -73,13 +87,20 @@ export default function NewCustomerDialog({
     handleSubmit,
     formState: { isSubmitting },
   } = methods;
-
+  const customerId = row?.id
   const onSubmit = useCallback(
     async (data: any) => {
       try {
-        await api.account.addNewCustomer({ ...data, createdDate: '' });
+        if (name){
+          await api.account.updateCustomer({ ...data, customerId });
+        }
+        else{
+          await api.account.addNewCustomer({ ...data, createdDate: '' });
+        }
         onSuccess();
-        reset(defaultValues);
+        if (!name){
+          reset(newdefaultValues);
+        }
         if (refetch) {
           refetch();
         }
@@ -89,12 +110,16 @@ export default function NewCustomerDialog({
         onFail();
       }
     },
-    [api.account, onSuccess, reset, defaultValues, refetch, onClose, onFail]
+    [api.account, onSuccess, reset,editdefaultValues, newdefaultValues, refetch, onClose, onFail]
   );
 
   return (
     <Dialog open={open} onClose={() => onClose()} sx={{ mt: 10 }}>
-      <DialogTitle>Add new customer</DialogTitle>
+      {name === 'edit'?
+        <DialogTitle>Edit customer</DialogTitle>
+        :
+        <DialogTitle>Add new customer</DialogTitle>
+      }
       <FormProvider methods={methods} onSubmit={handleSubmit(onSubmit)}>
         <DialogContent>
           <Box sx={{ minWidth: '500px', display: 'grid', rowGap: 3, columnGap: 2, mt: 1 }}>
