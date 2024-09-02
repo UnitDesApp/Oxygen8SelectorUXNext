@@ -118,10 +118,8 @@ export default function AccountForm({ accountInfo }: AccountFormProps) {
   
 
   useEffect(() => {
-
     const fdtCustomer = dbtSavCustomer?.filter((e: {id: Number}) => e.id === Number(userCustomer?.id));
     setValue('txbCustomer', fdtCustomer?.[0]?.name);
-
 
     const fdtFOB_Point = dbtSelFOB_Point?.filter((e: {id: Number}) => e.id === Number(userCustomer?.fob_point_id));
     setValue('txbFOB_Point', fdtFOB_Point?.[0]?.items);
