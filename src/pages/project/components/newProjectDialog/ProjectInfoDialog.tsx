@@ -227,10 +227,15 @@ export default function ProjectInfoDialog({
         dblWinterRA_WB: formCurrValues.txbWinterRA_WB,
         dblWinterRA_RH: formCurrValues.txbWinterRA_RH,
         // "strCreatedDate" : localStorage.getItem('createdDate'),
-        strCreatedDate: savedJob
-          ? savedDate
-          : `${today.getFullYear()}-${today.getMonth()}-${today.getDate()}`,
-        strRevisedDate: `${today.getFullYear()}-${today.getMonth()}-${today.getDate()}`,
+        // strCreatedDate: savedJob
+        //   ? savedDate
+        //   : `${today.getFullYear()}-${today.getMonth()}-${today.getDate()}`,
+        // strRevisedDate: `${today.getFullYear()}-${today.getMonth()}-${today.getDate()}`,
+
+        strCreatedDate: savedJob? savedDate : "", // Date setting is implemented in backend code. React month start at index 0
+        strRevisedDate: "", // Date setting is implemented in backend code. React month start at index 0
+
+
         intIsTestNewPrice: Number(formCurrValues.ckbTestNewPrice) === 1 ? 1 : 0, // Do not use formValues.ckbHeatPumpVal === true
       },
     };
@@ -1387,7 +1392,7 @@ export default function ProjectInfoDialog({
                             native
                             size="small"
                             name="ddlProvState"
-                            label="Province/state"
+                            label="Province / State"
                             placeholder="Please select province/state"
                           // onChange={(e: any) => {setValue('ddlProvState', e.target.value);}}
                           >

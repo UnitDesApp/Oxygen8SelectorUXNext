@@ -263,7 +263,8 @@ export default function Project() {
                           selected={selected.includes(row.id)}
                           onSelectRow={() => onSelectRow(row.id)}
                           onDeleteRow={() => handleOneConfirmDialogOpen(row.id)}
-                          onDuplicate={() => handleDuplicate(row)}
+                          // onDuplicate={() => handleDuplicate(row)}
+                          onDuplicate={() => handleDuplicate({intUserId: localStorage.getItem('userId'), intJobId: row.id})}
                           onEditRow={() => handleEditRow(row.id)}
                         />
                       ))}

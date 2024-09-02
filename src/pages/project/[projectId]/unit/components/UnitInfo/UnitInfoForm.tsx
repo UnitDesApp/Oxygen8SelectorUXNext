@@ -552,6 +552,8 @@ export default function UnitInfoForm({
   const [ekexvKitInstallIsVisible, setEkexvKitInstallIsVisible] = useState<any>([]);
   const [ekexvKitInstallIsEnabled, setEkexvKitInstallIsEnabled] = useState<any>([]);
 
+  const [isHeatingSectionVisible, setIsHeatingSectionVisible] = useState<any>([]);
+  const [isHeatingSetpointVisible, setIsHeatingSetpointVisible] = useState<any>([]);
 
   const getUMC = () => {
     let umc;
@@ -2076,39 +2078,82 @@ export default function UnitInfoForm({
   }, []);
   
 
+
+  const heatingSectionVisible = useEffect(() => {
+    if (intProductTypeID === IDs.intProdTypeIdNova || intProductTypeID === IDs.intProdTypeIdVentum ||
+        intProductTypeID === IDs.intProdTypeIdVentumPlus || Number(formCurrValues.ckbHeatPump) === 1) {
+      setIsHeatingSectionVisible(true);
+    } else {
+      setIsHeatingSectionVisible(false);
+    }
+  }, [intProductTypeID, formCurrValues.ckbHeatPump]);
+
+
+  const heatingSetpointVisible = useEffect(() => {
+    if (Number(formCurrValues.ddlHeatingComp) === IDs.intCompIdElecHeater || 
+        Number(formCurrValues.ddlHeatingComp) === IDs.intCompIdHWC || 
+        Number(formCurrValues.ckbHeatPump) === 1) {
+      setIsHeatingSetpointVisible(true);
+    } else {
+      setIsHeatingSetpointVisible(false);
+    }
+  }, [formCurrValues.ddlHeatingComp, formCurrValues.ckbHeatPump]);
+
+
   const [heatingCompInfo, setHeatingCompInfo] = useState<any>([]);
   useMemo(() => {
-    const info: { fdtHeatingComp: any;  isVisible: boolean; defaultId: number } = { fdtHeatingComp: [], isVisible: false, defaultId: 0,};
+    const info: { fdtHeatingComp: any;  isVisible: boolean; isEnabled: boolean; defaultId: number } = 
+                { fdtHeatingComp: [], isVisible: false, isEnabled: false, defaultId: 0, };
     
     info.fdtHeatingComp = db?.dbtSelUnitCoolingHeating;
-    info.isVisible = true;
+    // info.isVisible = true;
 
-    if (intProductTypeID === IDs.intProdTypeIdVentumLite){
-      // info.ftdHeatingComp = info.ftdHeatingComp?.filter((item: { id: { toString: () => any } }) =>  item.id.toString() !== IDs.intCompIdNA.toString());
-      info.fdtHeatingComp = info.fdtHeatingComp?.filter((item: { id: number }) =>  item.id === IDs.intCompIdNA);
-      info.defaultId = IDs.intCompIdAuto;
-      info.isVisible = false;
-    } else {
-      switch (intUnitTypeID) {
-        case IDs.intUnitTypeIdERV:
-          info.fdtHeatingComp = info.fdtHeatingComp?.filter((e: { erv_heating: number }) => Number(e.erv_heating) === 1) || [];
+    switch (intUnitTypeID) {
+      case IDs.intUnitTypeIdERV:
+        info.fdtHeatingComp = info.fdtHeatingComp?.filter((e: { erv_heating: number }) => Number(e.erv_heating) === 1) || [];
+        break;
+      case IDs.intUnitTypeIdHRV:
+        info.fdtHeatingComp = info.fdtHeatingComp?.filter((e: { hrv_heating: number }) => Number(e.hrv_heating) === 1) || [];
+        break;
+        case IDs.intUnitTypeIdAHU:
+          info.fdtHeatingComp = info.fdtHeatingComp?.filter((e: { fc_heating: number }) => Number(e.fc_heating) === 1) || [];
           break;
-        case IDs.intUnitTypeIdHRV:
-          info.fdtHeatingComp = info.fdtHeatingComp?.filter((e: { hrv_heating: number }) => Number(e.hrv_heating) === 1) || [];
-          break;
-          case IDs.intUnitTypeIdAHU:
-            info.fdtHeatingComp = info.fdtHeatingComp?.filter((e: { fc_heating: number }) => Number(e.fc_heating) === 1) || [];
-            break;
-        default:
-          // code block
-          break;
-      }
+      default:
+        // code block
+        break;
+    }
+
+    info.defaultId = info.fdtHeatingComp?.[0]?.id;
+
+
+    switch (intProductTypeID) {
+      case IDs.intProdTypeIdNova:
+      case IDs.intProdTypeIdVentum:
+        info.isVisible = true;
+        info.isEnabled = true;
+        break;
+      case IDs.intProdTypeIdVentumLite:
+      case IDs.intProdTypeIdTerra:
+        // info.ftdHeatingComp = info.ftdHeatingComp?.filter((item: { id: { toString: () => any } }) =>  item.id.toString() !== IDs.intCompIdNA.toString());
+        info.fdtHeatingComp = info.fdtHeatingComp?.filter((item: { id: number }) => item.id === IDs.intCompIdNA);
+        info.defaultId = IDs.intCompIdNA;
+        info.isVisible = false;
+        break;
+      case IDs.intProdTypeIdVentumPlus:
+        if (Number(formCurrValues.ddlCoolingComp) === IDs.intCompIdDX && Number(formCurrValues.ddlReheatComp) === IDs.intCompIdHGRH) {
+          info.fdtHeatingComp = info.fdtHeatingComp?.filter((item: { id: number }) => item.id === IDs.intCompIdNA);
+          info.defaultId = IDs.intCompIdNA;
+          info.isVisible = true;
+          info.isEnabled = false;
+        }
+        break;
+      default:
+        break;
     }
 
 
     setHeatingCompInfo(info);
-    info.defaultId = info.fdtHeatingComp?.[0]?.id;
-    setValue('ddlHeatingComp', info.fdtHeatingComp?.[0]?.id);
+    setValue('ddlHeatingComp', info.defaultId);
 
   }, []);
 
@@ -5188,53 +5233,7 @@ useEffect(() => {
                   </Stack>
                 </Box>
               </Grid>
-              <Grid item xs={12} md={12}>
-                <Box
-                  sx={{
-                    display: 'grid',
-                    rowGap: 3,
-                    columnGap: 3,
-                    gridTemplateColumns: { xs: 'repeat(4, 1fr)' },
-                  }}
-                >
-                  <Stack spacing={1}>
-                    <RHFTextField
-                      size="small"
-                      name="txbWinterPreheatSetpointDB"
-                      label="Preheat LAT Setpoint DB (F):"
-                      autoComplete="off"
-                      sx={getDisplay(
-                        formValues.ddlPreheatComp === IDs.intCompIdAuto ||
-                        formValues.ddlPreheatComp === IDs.intCompIdElecHeater ||
-                        formValues.ddlPreheatComp === IDs.intCompIdHWC
-                      )}
-                      onChange={(e: any) => {
-                        setValueWithCheck1(e, 'txbWinterPreheatSetpointDB');
-                      }}
-                    />
-                    <RHFCheckbox
-                      label="Backup Heating"
-                      name="ckbBackupHeating"
-                      sx={getInlineDisplay(
-                        intProductTypeID === IDs.intProdTypeIdTerra &&
-                        (formValues.ddlPreheatComp === IDs.intCompIdAuto ||
-                          formValues.ddlPreheatComp === IDs.intCompIdElecHeater)
-                      )}
-                      // checked={formValues.ckbHeatPump}
-                      // onChange={ckbHeatPumpChanged}
-                      onChange={(e: any) => setValue('ckbBackupHeating', Number(e.target.checked))}
-                    />
-                    <RHFTextField
-                      size="small"
-                      name="txbBackupHeatingSetpointDB"
-                      label="Backup Heating Setpoint DB (F):"
-                      autoComplete="off"
-                      sx={getDisplay(formCurrValues.ckbBackupHeating)}
-                      onChange={(e: any) => { setValueWithCheck1(e, 'txbBackupHeatingSetpointDB'); }}
-                    />
-                  </Stack>
-                </Box>
-              </Grid>
+
             </Grid>
           </AccordionDetails>
         </Accordion>
@@ -5470,7 +5469,7 @@ useEffect(() => {
         </Accordion>
         <Accordion  // HEATING
           expanded={expanded.panel4}
-          sx={getDisplay(heatingCompInfo?.isVisible)}
+          sx={getDisplay(isHeatingSectionVisible)}
           onChange={() => setExpanded({ ...expanded, panel4: !expanded.panel4 })}
         >
           <AccordionSummary
@@ -5492,7 +5491,8 @@ useEffect(() => {
                       size="small"
                       name="ddlHeatingComp"
                       label="Heating"
-                    // sx={getDisplay(heatingCompInfo?.isVisible)}
+                      disabled={!heatingCompInfo.isEnabled}
+                      sx={getDisplay(heatingCompInfo?.isVisible)}
                     // onChange={ddlHeatingCompChanged}
                     >
                       {heatingCompInfo?.fdtHeatingComp?.map((item: any, index: number) => (
@@ -5501,10 +5501,16 @@ useEffect(() => {
                         </option>
                       ))}
                     </RHFSelect>
+                    <RHFTextField
+                      size="small"
+                      name="txbWinterHeatingSetpointDB"
+                      label="Heating LAT Setpoint DB (F):"
+                      autoComplete="off"
+                      sx={getDisplay(isHeatingSetpointVisible)}
+                      onChange={(e: any) => { setValueWithCheck1(e, 'txbWinterHeatingSetpointDB'); }}
+                    /> 
                   </Stack>
-                  <Stack>
-                    { }
-                  </Stack>
+
                 </Box>
               </Grid>
               <Grid item xs={12} md={12} sx={{ ...getDisplay(Number(formValues.ddlHeatingComp) === IDs.intCompIdElecHeater), }}>
@@ -5627,52 +5633,7 @@ useEffect(() => {
                   </Stack>
                 </Box>
               </Grid>
-              <Grid item xs={12} md={12}>
-                <Box
-                  sx={{
-                    display: 'grid',
-                    rowGap: 3,
-                    columnGap: 3,
-                    gridTemplateColumns: { xs: 'repeat(4, 1fr)' },
-                  }}
-                >
-                  <Stack spacing={1}>
-                    <RHFTextField
-                      size="small"
-                      name="txbWinterHeatingSetpointDB"
-                      label="Heating LAT Setpoint DB (F):"
-                      autoComplete="off"
-                      sx={getDisplay(
-                        Number(formValues.ddlHeatingComp) === IDs.intCompIdElecHeater ||
-                        Number(formValues.ddlHeatingComp) === IDs.intCompIdHWC ||
-                        formValues.ckbHeatPump
-                      )}
-                      onChange={(e: any) => { setValueWithCheck1(e, 'txbWinterHeatingSetpointDB'); }}
-                    />
 
-                    <RHFCheckbox
-                      label="Backup Heating"
-                      name="ckbBackupHeating"
-                      sx={getInlineDisplay(
-                        intProductTypeID === IDs.intProdTypeIdTerra &&
-                        (formValues.ddlPreheatComp === IDs.intCompIdAuto ||
-                          formValues.ddlPreheatComp === IDs.intCompIdElecHeater)
-                      )}
-                      // checked={formValues.ckbHeatPump}
-                      // onChange={ckbHeatPumpChanged}
-                      onChange={(e: any) => setValue('ckbBackupHeating', Number(e.target.checked))}
-                    />
-                    <RHFTextField
-                      size="small"
-                      name="txbBackupHeatingSetpointDB"
-                      label="Backup Heating Setpoint DB (F):"
-                      autoComplete="off"
-                      sx={getDisplay(formCurrValues.ckbBackupHeating)}
-                      onChange={(e: any) => { setValueWithCheck1(e, 'txbBackupHeatingSetpointDB'); }}
-                    />
-                  </Stack>
-                </Box>
-              </Grid>
             </Grid>
           </AccordionDetails>
         </Accordion>
@@ -5915,6 +5876,60 @@ useEffect(() => {
             </Grid>
           </AccordionDetails>
         </Accordion>
+        <Accordion  // PRE-HEAT
+          expanded={expanded.panel2}
+          sx={getDisplay(true)}
+          onChange={() => setExpanded({ ...expanded, panel2: !expanded.panel2 })}
+        >
+          <AccordionSummary
+            expandIcon={<Iconify icon="il:arrow-down" />}
+            aria-controls="panel1a-content"
+            id="panel1a-header"
+          >
+            <Typography color="primary.main" variant="h6">
+              BACKUP HEATING
+            </Typography>
+          </AccordionSummary>
+          <AccordionDetails>
+            <Grid container spacing={2}>
+
+              <Grid item xs={12} md={12}>
+                <Box
+                  sx={{
+                    display: 'grid',
+                    rowGap: 3,
+                    columnGap: 3,
+                    gridTemplateColumns: { xs: 'repeat(4, 1fr)' },
+                  }}
+                >
+                  <Stack spacing={1}>
+                    <RHFCheckbox
+                      label="Backup Heating"
+                      name="ckbBackupHeating"
+                      sx={getInlineDisplay(
+                        intProductTypeID === IDs.intProdTypeIdTerra &&
+                        (formValues.ddlPreheatComp === IDs.intCompIdAuto ||
+                          formValues.ddlPreheatComp === IDs.intCompIdElecHeater)
+                      )}
+                      // checked={formValues.ckbHeatPump}
+                      // onChange={ckbHeatPumpChanged}
+                      onChange={(e: any) => setValue('ckbBackupHeating', Number(e.target.checked))}
+                    />
+                    <RHFTextField
+                      size="small"
+                      name="txbBackupHeatingSetpointDB"
+                      label="Backup Heating Setpoint DB (F):"
+                      autoComplete="off"
+                      sx={getDisplay(formCurrValues.ckbBackupHeating)}
+                      onChange={(e: any) => { setValueWithCheck1(e, 'txbBackupHeatingSetpointDB'); }}
+                    />
+                  </Stack>
+                </Box>
+              </Grid>
+            </Grid>
+          </AccordionDetails>
+        </Accordion>
+        
         <Accordion  // POWER
           expanded={expanded.panel1}
           onChange={() => setExpanded({ ...expanded, panel1: !expanded.panel1 })}
@@ -6376,7 +6391,7 @@ useEffect(() => {
             </Grid>
           </AccordionDetails>
         </Accordion>
-        <Stack direction="row" justifyContent="flex-end" textAlign="right">
+        <Stack direction="row" justifyContent="center" textAlign="center">
           {/* <Box sx={{ width: '150px' }}> */}
           {/* <LoadingButton
               ref={submitButtonRef}
@@ -6398,8 +6413,8 @@ useEffect(() => {
               variant="contained"
               color="primary"
               onClick={onSubmit}
-              fullWidth
-            // disabled={validateContinue()}
+              sx={{ width:'10%'}}            
+              // disabled={validateContinue()}
             // loading={isSaving}
             >
               Add Unit
@@ -6411,27 +6426,29 @@ useEffect(() => {
                   variant="contained"
                   color="primary"
                   onClick={onSubmit}
-                  fullWidth
-                // disabled={validateContinue()}
+                  // fullWidth
+                  sx={{width:'10%'}}            
+                  // disabled={validateContinue()}
                 // loading={isSaving}
                 >
                   Update Unit
                 </LoadingButton>
               ) : (
                 <>
-                  {(Number(unitId) > 0 && !isLoading) ? (
+                  {/* {(Number(unitId) > 0 && !isLoading) ? (
                     <Button
                       variant="contained"
                       color="primary"
                       onClick={onClickUnitInfo}
                       // sx={{ display: currentStep === 2 && !isProcessingData ? 'inline-flex' : 'none' }}
+                      sx={{ width:'10%'}}            
                       startIcon={<Iconify icon="akar-icons:arrow-left" />}
                     >
                       Unit info
                     </Button>
                   ) : (
                     null
-                  )}
+                  )} */}
                 </>
               )}
             </>

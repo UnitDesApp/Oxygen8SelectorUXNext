@@ -26,6 +26,7 @@ import { useRouter } from 'next/router';
 import Iconify from 'src/components/iconify';
 import Image from 'src/components/image';
 import { PATH_APP } from 'src/routes/paths';
+import * as Ids from 'src/utils/ids';
 import UnitInfo from '../UnitInfo/UnitInfo';
 
 //------------------------------------------------
@@ -112,11 +113,12 @@ interface SelectionProps {
   intJobId: any;
   intUnitNo: number;
   intProdTypeId: number;
+  intUnitTypeId: number;
   setCurrentStep: (value: number) => void;
 }
 
 // export default function Selection({ unitTypeData, intUnitNo }: SelectionProps) {
-export default function Selection({ intJobId, intUnitNo, intProdTypeId, setCurrentStep }: SelectionProps) {
+export default function Selection({ intJobId, intUnitNo, intProdTypeId, intUnitTypeId, setCurrentStep }: SelectionProps) {
   const { projectId } = useRouter().query;
   const [error, setError] = useState(null);
   const [expanded, setExpanded] = React.useState<{ [key: string]: boolean }>({
@@ -158,828 +160,7 @@ export default function Selection({ intJobId, intUnitNo, intProdTypeId, setCurre
     refetch()
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
-  // const viewSelectionInfo = useMemo(
-  //   () => ({
-  //     pricingDetail: selectionData?.pricingOutput?.pricingDataTbl,
-  //     pricingVisible: selectionData?.pricingOutput?.visible,
-  //     unitDetails: selectionData?.unitDetailsOutput?.unitDetails_1DataTbl.concat(
-  //       selectionData?.unitDetailsOutput?.unitDetails_2DataTbl
-  //     ),
-  //     unitDetailsVisible: selectionData?.unitDetailsOutput?.visible,
-  //     electricalRequirements: {
-  //       unitData: selectionData?.elecReqOutput?.unitDataTbl,
-  //       unitDataVisible: selectionData?.elecReqOutput?.unitVisible,
-  //       unitOnlyData: selectionData?.elecReqOutput?.unitOnlyDataTbl,
-  //       unitOnlyDataVisible: selectionData?.elecReqOutput?.unitOnlyVisible,
-  //       coolingDXCData: selectionData?.elecReqOutput?.coolingDXCDataTbl,
-  //       coolingDXCVisible: selectionData?.elecReqOutput?.coolingDXCVisible,
-  //       preheatElecHeaterData: selectionData?.elecReqOutput?.preheatElecHeaterDataTbl,
-  //       preheatElecHeaterVisible: selectionData?.elecReqOutput?.preheatElecHeaterVisible,
-  //       heatingElecHeaterData: selectionData?.elecReqOutput?.heatingElecHeaterDataTbl,
-  //       heatingElecHeaterVisible: selectionData?.elecReqOutput?.heatingElecHeaterVisible,
-  //     },
-  //     preheatElecHeater: {
-  //       Visible: selectionData?.preheatElecHeaterOutput?.visible,
-  //       Data: selectionData?.preheatElecHeaterOutput?.featuresDataTbl?.map((item: any) => [
-  //         item.cLabel,
-  //         item.cValue,
-  //       ]),
-  //     },
-  //     preheatHWC: {
-  //       Visible: selectionData?.preheatHWC_Output?.visible,
-  //       Data: selectionData?.preheatHWC_Output?.featuresDataTbl?.map((item: any) => [
-  //         item.cLabel,
-  //         item.cValue,
-  //       ]),
-  //       Entering: selectionData?.preheatHWC_Output?.enteringDataTbl?.map((item: any) => [
-  //         item.cLabel,
-  //         item.cValue,
-  //       ]),
-  //       Leaving: selectionData?.preheatHWC_Output?.leavingDataTbl?.map((item: any) => [
-  //         item.cLabel,
-  //         item.cValue,
-  //       ]),
-  //       ValveActuatorVisible: selectionData?.preheatHWC_Output?.valveActuatorVisible,
-  //       ValveActuator: selectionData?.preheatHWC_Output?.valveActuatorDataTbl?.map((item: any) => [
-  //         item.cLabel,
-  //         item.cValue,
-  //       ]),
-  //     },
-  //     heatExchCORE: {
-  //       performanceVisible: selectionData?.fixedPlateCORE_Output?.visible,
-  //       performance: selectionData?.fixedPlateCORE_Output?.performanceDataTbl?.map((item: any) => [
-  //         item.cLabel,
-  //         item.cValue_1,
-  //         item.cValue_2,
-  //       ]),
-  //       designConditions: selectionData?.fixedPlateCORE_Output?.enteringDataTbl?.map(
-  //         (item: any) => [item.cLabel, item.cValue_1, item.cValue_2]
-  //       ),
-  //       performanceLeavingAir: selectionData?.fixedPlateCORE_Output?.leavingDataTbl?.map(
-  //         (item: any) => [item.cLabel, item.cValue_1, item.cValue_2]
-  //       ),
-  //       // performanceLeavingAirVisible: selectionData?.fixedPlateCORE_Output?.gvOutHX_FP_LvgAirVisible,
-  //     },
-  //     heatExchRECUTECH: {
-  //       performanceVisible: selectionData?.fixedPlateRECUTECH_Output?.visible,
-  //       performance: selectionData?.fixedPlateRECUTECH_Output?.performanceDataTbl?.map(
-  //         (item: any) => [item.cLabel, item.cValue_1, item.cValue_2]
-  //       ),
-  //       designConditions: selectionData?.fixedPlateRECUTECH_Output?.enteringDataTbl?.map(
-  //         (item: any) => [item.cLabel, item.cValue_1, item.cValue_2]
-  //       ),
-  //       // designConditionsVisible: selectionData?.fixedPlateRECUTECH_Output?.gvOutHX_FP_EntAirVisible,
-  //       performanceLeavingAir: selectionData?.fixedPlateRECUTECH_Output?.leavingDataTbl?.map(
-  //         (item: any) => [item.cLabel, item.cValue_1, item.cValue_2]
-  //       ),
-  //       // performanceLeavingAirVisible: selectionData?.fixedPlateRECUTECH_Output?.gvOutHX_FP_LvgAirVisible,
-  //     },
-  //     heatExchPOLYBLOC: {
-  //       performanceVisible: selectionData?.fixedPlatePOLYBLOC_Output?.visible,
-  //       performance: selectionData?.fixedPlatePOLYBLOC_Output?.performanceDataTbl?.map(
-  //         (item: any) => [item.cLabel, item.cValue_1, item.cValue_2]
-  //       ),
-  //       designConditions: selectionData?.fixedPlatePOLYBLOC_Output?.enteringDataTbl?.map(
-  //         (item: any) => [item.cLabel, item.cValue_1, item.cValue_2]
-  //       ),
-  //       // designConditionsVisible: selectionData?.fixedPlatePOLYBLOC_Output?.gvOutHX_FP_EntAirVisible,
-  //       performanceLeavingAir: selectionData?.fixedPlatePOLYBLOC_Output?.leavingDataTbl?.map(
-  //         (item: any) => [item.cLabel, item.cValue_1, item.cValue_2]
-  //       ),
-  //       // performanceLeavingAirVisible: selectionData?.fixedPlatePOLYBLOC_Output?.gvOutHX_FP_LvgAirVisible,
-  //     },
-  //     coolingCWC: {
-  //       Visible: selectionData?.coolingCWC_Output?.visible,
-  //       Data: selectionData?.coolingCWC_Output?.featuresDataTbl?.map((item: any) => [
-  //         item.cLabel,
-  //         item.cValue,
-  //       ]),
-  //       Entering: selectionData?.coolingCWC_Output?.enteringDataTbl?.map((item: any) => [
-  //         item.cLabel,
-  //         item.cValue,
-  //       ]),
-  //       Leaving: selectionData?.coolingCWC_Output?.leavingDataTbl?.map((item: any) => [
-  //         item.cLabel,
-  //         item.cValue,
-  //       ]),
-  //       ValveActuatorVisible: selectionData?.coolingCWC_Output?.valveActuatorVisible,
-  //       ValveActuator: selectionData?.coolingCWC_Output?.valveActuatorDataTbl?.map((item: any) => [
-  //         item.cLabel,
-  //         item.cValue,
-  //       ]),
-  //     },
-  //     coolingDXC: {
-  //       Visible: selectionData?.coolingDXC_Output?.visible,
-  //       Data: selectionData?.coolingDXC_Output?.featuresDataTbl?.map((item: any) => [
-  //         item.cLabel,
-  //         item.cValue,
-  //       ]),
-  //       Entering: selectionData?.coolingDXC_Output?.enteringDataTbl?.map((item: any) => [
-  //         item.cLabel,
-  //         item.cValue,
-  //       ]),
-  //       Leaving: selectionData?.coolingDXC_Output?.leavingDataTbl?.map((item: any) => [
-  //         item.cLabel,
-  //         item.cValue,
-  //       ]),
-  //       PerfOutputs: selectionData?.coolingDXC_Output?.perfOutputsDataTbl?.map((item: any) => [
-  //         item.cLabel,
-  //         item.cValue,
-  //       ]),
-  //       EKEXV_Kit: selectionData?.coolingDXC_Output?.ekexvKitDataTbl?.map((item: any) => [
-  //         item.cLabel,
-  //         item.cValue,
-  //       ]),
-  //     },
-  //     heatingCondCoil: {
-  //       Visible: selectionData?.heatingCondCoilOutput?.visible,
-  //       Data: selectionData?.heatingCondCoilOutput?.featuresDataTbl?.map((item: any) => [
-  //         item.cLabel,
-  //         item.cValue,
-  //       ]),
-  //       Entering: selectionData?.heatingCondCoilOutput?.enteringDataTbl?.map((item: any) => [
-  //         item.cLabel,
-  //         item.cValue,
-  //       ]),
-  //       Leaving: selectionData?.heatingCondCoilOutput?.leavingDataTbl?.map((item: any) => [
-  //         item.cLabel,
-  //         item.cValue,
-  //       ]),
-  //     },
-  //     heatingElecHeater: {
-  //       Visible: selectionData?.heatingElecHeaterOutput?.visible,
-  //       Data: selectionData?.heatingElecHeaterOutput?.featuresDataTbl?.map((item: any) => [
-  //         item.cLabel,
-  //         item.cValue,
-  //       ]),
-  //     },
-  //     heatingHWC: {
-  //       Visible: selectionData?.heatingHWC_Output?.visible,
-  //       Data: selectionData?.heatingHWC_Output?.featuresDataTbl?.map((item: any) => [
-  //         item.cLabel,
-  //         item.cValue,
-  //       ]),
-  //       Entering: selectionData?.heatingHWC_Output?.enteringDataTbl?.map((item: any) => [
-  //         item.cLabel,
-  //         item.cValue,
-  //       ]),
-  //       Leaving: selectionData?.heatingHWC_Output?.leavingDataTbl?.map((item: any) => [
-  //         item.cLabel,
-  //         item.cValue,
-  //       ]),
-  //       ValveActuatorVisible: selectionData?.heatingHWC_Output?.valveActuatorVisible,
-  //       ValveActuator: selectionData?.heatingHWC_Output?.valveActuatorDataTbl?.map((item: any) => [
-  //         item.cLabel,
-  //         item.cValue,
-  //       ]),
-  //     },
-  //     reheatElecHeater: {
-  //       Visible: selectionData?.reheatElecHeaterOutput?.visible,
-  //       Data: selectionData?.reheatElecHeaterOutput?.featuresDataTbl?.map((item: any) => [
-  //         item.cLabel,
-  //         item.cValue,
-  //       ]),
-  //     },
-  //     reheatHWC: {
-  //       Visible: selectionData?.reheatHWC_Output?.visible,
-  //       Data: selectionData?.reheatHWC_Output?.featuresDataTbl?.map((item: any) => [
-  //         item.cLabel,
-  //         item.cValue,
-  //       ]),
-  //       Entering: selectionData?.reheatHWC_Output?.enteringDataTbl?.map((item: any) => [
-  //         item.cLabel,
-  //         item.cValue,
-  //       ]),
-  //       Leaving: selectionData?.reheatHWC_Output?.leavingDataTbl?.map((item: any) => [
-  //         item.cLabel,
-  //         item.cValue,
-  //       ]),
-  //       ValveActuatorVisible: selectionData?.reheatHWC_Output?.valveActuatorVisible,
-  //       ValveActuator:
-  //         selectionData?.reheatHWC_Output?.valveActuatorDataTbl?.map((item: any) => [
-  //           item.cLabel,
-  //           item.cValue,
-  //         ]) || [],
-  //     },
-  //     reheatHGRC: {
-  //       Visible: selectionData?.reheatHGRC_Output?.visible,
-  //       Data: selectionData?.reheatHGRC_Output?.featuresDataTbl?.map((item: any) => [
-  //         item.cLabel,
-  //         item.cValue,
-  //       ]),
-  //       Entering: selectionData?.reheatHGRC_Output?.enteringDataTbl?.map((item: any) => [
-  //         item.cLabel,
-  //         item.cValue,
-  //       ]),
-  //       Leaving: selectionData?.reheatHGRC_Output?.leavingDataTbl?.map((item: any) => [
-  //         item.cLabel,
-  //         item.cValue,
-  //       ]),
-  //       PerfOutputs: selectionData?.reheatHGRC_Output?.performanceDataTbl?.map((item: any) => [
-  //         item.cLabel,
-  //         item.cValue,
-  //       ]),
-  //       EKEXV_Kit: selectionData?.reheatHGRC_Output?.ekexvKitDataTbl?.map((item: any) => [
-  //         item.cLabel,
-  //         item.cValue,
-  //       ]),
-  //     },
-  //     supplyFan: {
-  //       Visible: selectionData?.supplyFanOutput?.visible,
-  //       Data: selectionData?.supplyFanOutput?.featuresDataTbl?.map((item: any) => [
-  //         item.cLabel,
-  //         item.cValue,
-  //       ]),
-  //       GraphImageUrl: selectionData?.supplyFanOutput?.graphImageUrl,
-  //       soundDataVisible: selectionData?.supplyFanOutput?.soundDataVisible,
-  //       soundData: selectionData?.supplyFanOutput?.soundDataDataTbl,
-  //     },
-  //     exhaustFan: {
-  //       Visible: selectionData?.exhaustFanOutput?.visible,
-  //       Data: selectionData?.exhaustFanOutput?.featuresDataTbl?.map((item: any) => [
-  //         item.cLabel,
-  //         item.cValue,
-  //       ]),
-  //       GraphImageUrl: selectionData?.exhaustFanOutput?.graphImageUrl,
-  //       soundDataVisible: selectionData?.exhaustFanOutput?.soundDataVisible,
-  //       soundData: selectionData?.exhaustFanOutput?.soundDataDataTbl,
-  //     },
-  //     soundData: {
-  //       Visible: selectionData?.soundDataOutput?.visible,
-  //       Data: selectionData?.soundDataOutput?.soundDataDataTbl?.map((item: any) => [
-  //         item.cLabel,
-  //         item.cValue_1,
-  //         item.cValue_2,
-  //         item.cValue_3,
-  //         item.cValue_4,
-  //         item.cValue_5,
-  //         item.cValue_6,
-  //         item.cValue_7,
-  //         item.cValue_8,
-  //         item.cValue_9,
-  //         item.cValue_10,
-  //       ]),
-  //     },
-  //   }),
-  //   [selectionData]
-  // );
 
-  // const {
-  //   pricingDetail,
-  //   pricingVisible,
-  //   unitDetails,
-  //   unitDetailsVisible,
-  //   electricalRequirements,
-  //   preheatElecHeater,
-  //   preheatHWC,
-  //   heatExchCORE,
-  //   heatExchRECUTECH,
-  //   heatExchPOLYBLOC,
-  //   coolingCWC,
-  //   coolingDXC,
-  //   heatingCondCoil,
-  //   heatingElecHeater,
-  //   heatingHWC,
-  //   reheatElecHeater,
-  //   reheatHWC,
-  //   reheatHGRC,
-  //   supplyFan,
-  //   exhaustFan,
-  //   soundData,
-  // } = viewSelectionInfo;
-
-  // const SelectionInfo: any = useMemo(() => {
-  //   const data = [];
-
-  //   if (pricingDetail) {
-  //     data?.push({
-  //       groupName: 'Pricing',
-  //       direction: 'column',
-  //       style: {},
-  //       visible: pricingVisible,
-  //       subGroups: [
-  //         {
-  //           title: 'Pricing Detail',
-  //           data: pricingDetail?.map((item: any) => [item.cLabel, item.cValue, item.cNotes]),
-  //           visible: pricingVisible,
-  //         },
-  //       ],
-  //     });
-  //   }
-
-  //   if (unitDetails) {
-  //     data?.push({
-  //       groupName: 'Unit Details',
-  //       direction: 'column',
-  //       style: {
-  //         display: 'grid',
-  //         gridTemplateColumns: 'repeat(2, 2fr)',
-  //       },
-  //       visible: unitDetailsVisible,
-  //       subGroups: [
-  //         {
-  //           title: 'Unit Details 1',
-  //           data: unitDetails?.slice(0, 6).map((item: any) => [item.cLabel, item.cValue]),
-  //           visible: unitDetailsVisible,
-  //         },
-  //         {
-  //           title: 'Unit Details 2',
-  //           data: unitDetails?.slice(6).map((item: any) => [item.cLabel, item.cValue]),
-  //           visible: unitDetailsVisible,
-  //         },
-  //       ],
-  //     });
-  //   }
-
-  //   if (electricalRequirements) {
-  //     data.push({
-  //       groupName: 'Electrical Requirements',
-  //       direction: 'row',
-  //       style: {
-  //         display: 'grid',
-  //         gridTemplateColumns: 'repeat(3, 1fr)',
-  //       },
-  //       visible:
-  //         electricalRequirements?.coolingDXCVisible ||
-  //         electricalRequirements?.unitDataVisible ||
-  //         electricalRequirements?.preheatElecHeaterVisible ||
-  //         electricalRequirements?.heatingElecHeaterVisible,
-  //       subGroups: [
-  //         {
-  //           title: 'Unit',
-  //           data: electricalRequirements?.unitData?.map((item: any) => [item.cLabel, item.cValue]),
-  //           visible: electricalRequirements?.unitDataVisible,
-  //         },
-  //         {
-  //           title: 'W-controller',
-  //           data:
-  //             electricalRequirements?.coolingDXCData !== undefined &&
-  //             electricalRequirements?.coolingDXCData?.map((item: any) => [
-  //               item.cLabel,
-  //               item.cValue,
-  //             ]),
-  //           visible:
-  //             electricalRequirements?.coolingDXCVisible !== undefined &&
-  //             electricalRequirements?.coolingDXCVisible,
-  //         },
-  //         {
-  //           title: 'Preheat Electric Heater',
-  //           data:
-  //             electricalRequirements?.preheatElecHeaterData !== undefined &&
-  //             electricalRequirements?.preheatElecHeaterData?.map((item: any) => [
-  //               item.cLabel,
-  //               item.cValue,
-  //             ]),
-  //           visible:
-  //             electricalRequirements?.preheatElecHeaterVisible !== undefined &&
-  //             electricalRequirements?.preheatElecHeaterVisible,
-  //         },
-  //         {
-  //           title: 'Heating Electric Heater',
-  //           data:
-  //             electricalRequirements?.heatingElecHeaterData !== undefined &&
-  //             electricalRequirements?.heatingElecHeaterData?.map((item: any) => [
-  //               item.cLabel,
-  //               item.cValue,
-  //             ]),
-  //           visible:
-  //             electricalRequirements?.heatingElecHeaterVisible !== undefined &&
-  //             electricalRequirements?.heatingElecHeaterVisible,
-  //         },
-  //       ],
-  //     });
-  //   }
-
-  //   if (preheatElecHeater) {
-  //     data.push({
-  //       groupName: 'Preheat Electric Heater',
-  //       direction: 'column',
-  //       visible: preheatElecHeater?.Visible,
-  //       style: {},
-  //       subGroups: [
-  //         {
-  //           title: 'Actual',
-  //           data: preheatElecHeater?.Data,
-  //           visible: preheatElecHeater?.Visible,
-  //         },
-  //       ],
-  //     });
-  //   }
-
-  //   if (preheatHWC) {
-  //     data.push({
-  //       groupName: 'Preheat HWC',
-  //       direction: 'row',
-  //       visible: preheatHWC?.Visible,
-  //       style: {
-  //         display: 'grid',
-  //         gridTemplateColumns: 'repeat(3, 1fr)',
-  //       },
-  //       subGroups: [
-  //         {
-  //           title: 'Coil',
-  //           data: preheatHWC?.Data,
-  //         },
-  //         {
-  //           title: 'Entering',
-  //           data: preheatHWC?.Entering,
-  //         },
-  //         {
-  //           title: 'Leaving',
-  //           data: preheatHWC?.Leaving,
-  //         },
-  //         {
-  //           title: 'Valve & Actuator',
-  //           data: preheatHWC?.ValveActuator,
-  //         },
-  //       ],
-  //     });
-  //   }
-
-  //   if (heatExchCORE) {
-  //     data.push({
-  //       groupName: 'Heat Exchanger',
-  //       direction: 'row',
-  //       visible: heatExchCORE?.performanceVisible,
-  //       style: {
-  //         display: 'grid',
-  //         gridTemplateColumns: 'repeat(1, 1fr)',
-  //       },
-  //       subGroups: [
-  //         {
-  //           title: 'Design Conditions',
-  //           data: heatExchCORE?.designConditions,
-  //         },
-  //         {
-  //           title: 'Performance Leaving Air',
-  //           data: heatExchCORE?.performanceLeavingAir,
-  //         },
-  //         {
-  //           title: 'Performance',
-  //           data: heatExchCORE?.performance,
-  //         },
-  //       ],
-  //     });
-  //   }
-
-  //   if (heatExchRECUTECH) {
-  //     data.push({
-  //       groupName: 'Heat Exchanger',
-  //       direction: 'row',
-  //       visible: heatExchRECUTECH?.performanceVisible,
-  //       style: {
-  //         display: 'grid',
-  //         gridTemplateColumns: 'repeat(1, 1fr)',
-  //       },
-  //       subGroups: [
-  //         {
-  //           title: 'Design Conditions',
-  //           data: heatExchRECUTECH?.designConditions,
-  //         },
-  //         {
-  //           title: 'Performance Leaving Air',
-  //           data: heatExchRECUTECH?.performanceLeavingAir,
-  //         },
-  //         {
-  //           title: 'Performance',
-  //           data: heatExchRECUTECH?.performance,
-  //         },
-  //       ],
-  //     });
-  //   }
-
-  //   if (heatExchPOLYBLOC) {
-  //     data.push({
-  //       groupName: 'Heat Exchanger',
-  //       direction: 'row',
-  //       visible: heatExchPOLYBLOC?.performanceVisible,
-  //       style: {
-  //         display: 'grid',
-  //         gridTemplateColumns: 'repeat(1, 1fr)',
-  //       },
-  //       subGroups: [
-  //         {
-  //           title: 'Design Conditions',
-  //           data: heatExchPOLYBLOC?.designConditions,
-  //         },
-  //         {
-  //           title: 'Performance Leaving Air',
-  //           data: heatExchPOLYBLOC?.performanceLeavingAir,
-  //         },
-  //         {
-  //           title: 'Performance',
-  //           data: heatExchPOLYBLOC?.performance,
-  //         },
-  //       ],
-  //     });
-  //   }
-
-  //   if (coolingCWC) {
-  //     data.push({
-  //       groupName: 'Cooling CWC',
-  //       direction: 'row',
-  //       visible: coolingCWC?.Visible,
-  //       style: {
-  //         display: 'grid',
-  //         gridTemplateColumns: 'repeat(3, 1fr)',
-  //       },
-  //       subGroups: [
-  //         {
-  //           title: 'Coil',
-  //           data: coolingCWC?.Data,
-  //         },
-  //         {
-  //           title: 'Entering',
-  //           data: coolingCWC?.Entering,
-  //         },
-  //         {
-  //           title: 'Leaving',
-  //           data: coolingCWC?.Leaving,
-  //         },
-  //         {
-  //           title: 'Valve & Actuator',
-  //           data: coolingCWC?.ValveActuator,
-  //         },
-  //       ],
-  //     });
-  //   }
-
-  //   if (coolingDXC) {
-  //     data.push({
-  //       groupName: 'Cooling DXC',
-  //       direction: 'row',
-  //       visible: coolingDXC?.Visible,
-  //       style: {
-  //         display: 'grid',
-  //         gridTemplateColumns: 'repeat(3, 1fr)',
-  //       },
-  //       subGroups: [
-  //         {
-  //           title: 'Coil',
-  //           data: coolingDXC?.Data,
-  //         },
-  //         {
-  //           title: 'Entering',
-  //           data: coolingDXC?.Entering,
-  //         },
-  //         [
-  //           {
-  //             title: 'Setpoint',
-  //             data: coolingDXC?.Leaving,
-  //           },
-  //           {
-  //             title: 'Coil Performance',
-  //             data: coolingDXC?.PerfOutputs,
-  //           },
-  //         ],
-  //         {
-  //           title: 'VRV Integration Kit',
-  //           data: coolingDXC?.EKEXV_Kit,
-  //         },
-  //       ],
-  //     });
-  //   }
-
-  //   if (heatingCondCoil) {
-  //     data.push({
-  //       groupName: 'Heating Mode DX Coil',
-  //       direction: 'row',
-  //       visible: heatingCondCoil?.Visible,
-  //       style: {},
-  //       subGroups: [
-  //         {
-  //           title: 'Coil',
-  //           data: heatingCondCoil?.Data,
-  //         },
-  //         {
-  //           title: 'Entering',
-  //           data: heatingCondCoil?.Entering,
-  //         },
-  //         {
-  //           title: 'Setpoint',
-  //           data: heatingCondCoil?.Leaving,
-  //         },
-  //       ],
-  //     });
-  //   }
-
-  //   if (heatingElecHeater) {
-  //     data.push({
-  //       groupName: 'Heating Electric Heater',
-  //       direction: 'column',
-  //       visible: heatingElecHeater?.Visible,
-  //       style: {},
-  //       subGroups: [
-  //         {
-  //           title: 'Actual',
-  //           data: heatingElecHeater?.Data,
-  //         },
-  //       ],
-  //     });
-  //   }
-
-  //   if (heatingHWC) {
-  //     data.push({
-  //       groupName: 'Heating HWC',
-  //       direction: 'row',
-  //       visible: heatingHWC?.Visible,
-  //       style: {
-  //         display: 'grid',
-  //         gridTemplateColumns: 'repeat(3, 1fr)',
-  //       },
-  //       subGroups: [
-  //         {
-  //           title: 'Coil',
-  //           data: heatingHWC?.Data,
-  //         },
-  //         {
-  //           title: 'Entering',
-  //           data: heatingHWC?.Entering,
-  //         },
-  //         {
-  //           title: 'Leaving',
-  //           data: heatingHWC?.Leaving,
-  //         },
-  //         {
-  //           title: 'Valve & Actuator',
-  //           data: heatingHWC?.ValveActuator,
-  //         },
-  //       ],
-  //     });
-  //   }
-
-  //   if (reheatElecHeater) {
-  //     data.push({
-  //       groupName: 'Reheat Electric Heater',
-  //       direction: 'column',
-  //       visible: reheatElecHeater?.Visible,
-  //       style: {},
-  //       subGroups: [
-  //         {
-  //           title: 'Actual',
-  //           data: reheatElecHeater?.Data,
-  //         },
-  //       ],
-  //     });
-  //   }
-
-  //   if (reheatHWC) {
-  //     data.push({
-  //       groupName: 'Reheat HWC',
-  //       direction: 'row',
-  //       visible: reheatHWC?.Visible,
-  //       style: {
-  //         display: 'grid',
-  //         gridTemplateColumns: 'repeat(3, 1fr)',
-  //       },
-  //       subGroups: [
-  //         {
-  //           title: 'Coil',
-  //           data: reheatHWC?.Data,
-  //         },
-  //         {
-  //           title: 'Entering',
-  //           data: reheatHWC?.Entering,
-  //         },
-  //         {
-  //           title: 'Leaving',
-  //           data: reheatHWC?.Leaving,
-  //         },
-  //         {
-  //           title: 'Valve & Actuator',
-  //           data: reheatHWC?.ValveActuator,
-  //         },
-  //       ],
-  //     });
-  //   }
-
-  //   if (reheatHGRC) {
-  //     data.push({
-  //       groupName: 'Reheat HGRC',
-  //       direction: 'row',
-  //       visible: reheatHGRC?.Visible,
-  //       style: {
-  //         display: 'grid',
-  //         gridTemplateColumns: 'repeat(3, 1fr)',
-  //       },
-  //       subGroups: [
-  //         {
-  //           title: 'Coil',
-  //           data: reheatHGRC?.Data,
-  //         },
-  //         {
-  //           title: 'Entering',
-  //           data: reheatHGRC?.Entering,
-  //         },
-  //         [
-  //           {
-  //             title: 'Setpoint',
-  //             data: reheatHGRC?.Leaving,
-  //           },
-  //           {
-  //             title: 'Coil Performance',
-  //             data: reheatHGRC?.PerfOutputs,
-  //           },
-  //         ],
-  //         {
-  //           title: 'VRV Integration Kit',
-  //           data: reheatHGRC?.EKEXV_Kit,
-  //         },
-  //       ],
-  //     });
-  //   }
-
-  //   if (supplyFan) {
-  //     data.push({
-  //       groupName: 'Supply Fan',
-  //       direction: 'row',
-  //       visible: supplyFan?.Visible,
-  //       style: {
-  //         display: 'grid',
-  //         gridTemplateColumns: 'repeat(2, 1fr)',
-  //       },
-  //       subGroups: [
-  //         {
-  //           title: 'Fan Data',
-  //           data: supplyFan?.Data,
-  //         },
-  //         {
-  //           title: 'Graph',
-  //           data: supplyFan?.GraphImageUrl,
-  //         },
-  //         {
-  //           title: 'Sound Data',
-  //           data: supplyFan?.soundData,
-  //         },
-  //       ],
-  //     });
-  //   }
-
-  //   if (exhaustFan) {
-  //     data.push({
-  //       groupName: 'Exhaust Fan',
-  //       direction: 'row',
-  //       visible: exhaustFan?.Visible,
-  //       style: {
-  //         display: 'grid',
-  //         gridTemplateColumns:
-  //           exhaustFan?.GraphImageUrl !== null ? 'repeat(2, 1fr)' : 'repeat(1, 1fr)',
-  //       },
-  //       subGroups: [
-  //         {
-  //           title: 'Fan Data',
-  //           data: exhaustFan?.Data,
-  //         },
-  //         {
-  //           title: 'Graph',
-  //           data: exhaustFan?.GraphImageUrl,
-  //         },
-  //         {
-  //           title: 'Sound Data',
-  //           data: exhaustFan?.soundData,
-  //         },
-  //       ],
-  //     });
-  //   }
-
-  //   if (soundData) {
-  //     data.push({
-  //       groupName: 'Unit Sound Data (Hz)',
-  //       direction: 'row',
-  //       style: {},
-  //       visible: soundData?.Visible,
-  //       subGroups: [
-  //         {
-  //           data: soundData?.Data,
-  //         },
-  //       ],
-  //     });
-  //   }
-
-  //   return data;
-  // }, [
-  //   coolingCWC,
-  //   coolingDXC,
-  //   electricalRequirements,
-  //   exhaustFan,
-  //   heatExchCORE,
-  //   heatExchPOLYBLOC,
-  //   heatExchRECUTECH,
-  //   heatingCondCoil,
-  //   heatingElecHeater,
-  //   heatingHWC,
-  //   preheatElecHeater,
-  //   preheatHWC,
-  //   pricingDetail,
-  //   pricingVisible,
-  //   reheatElecHeater,
-  //   reheatHGRC,
-  //   reheatHWC,
-  //   soundData,
-  //   supplyFan,
-  //   unitDetails,
-  //   unitDetailsVisible,
-  // ]);
 
   const onClickUnitInfo = () => {
    setCurrentStep(1)
@@ -987,6 +168,32 @@ export default function Selection({ intJobId, intUnitNo, intProdTypeId, setCurre
     push(PATH_APP.editUnit(projectId?.toString() || '0', intUnitNo?.toString() || '0'));
   };
 
+  const imgSFUrl = '';
+  const imgSF = selectionData?.dtSF_Graph?.[0]?.cValue.replace(/^.*[\\/]/, '')
+  const imgEF = selectionData?.dtEF_Graph?.[0]?.cValue.replace(/^.*[\\/]/, '')
+
+const fanImgFiles = ["FanCurveH04_GTB025FHC19R.bmp", 
+                    "FanCurvePSC_PI2E25080TB2M_IS_SB.png", 
+                    "FanCurvePSC_PI2E280133TB2M_IS_SB_2Fan.png", 
+                    "FanCurvePSC_PI2E280133TB2M_IS_SB.png"]
+const filteredImgSF = fanImgFiles.filter((item) => item.includes(imgSF));  
+const filteredImgEF = fanImgFiles.filter((item) => item.includes(imgEF));  
+
+let imgSFData = "";
+let imgEFData = "";
+
+if (fanImgFiles.includes(imgSF)) {
+  imgSFData = `/assets/Images/${imgSF}`;
+} else {
+  imgSFData = `data:image/jpeg;base64,${selectionData?.dtSF_Graph?.[0]?.cValue}`;
+}
+
+if (fanImgFiles.includes(imgEF)) {
+  imgEFData = `/assets/Images/${imgEF}`;
+} else {
+  imgEFData = `data:image/jpeg;base64,${selectionData?.dtEF_Graph?.[0]?.cValue}`;
+}
+  
 
   return (
     <RootStyle>
@@ -999,7 +206,8 @@ export default function Selection({ intJobId, intUnitNo, intProdTypeId, setCurre
         {isLoadingSelectionInfo || isFetchingSelectionInfo ? (
           <LinearProgress color="info" />
         ) : (
-          <Stack spacing={5} sx={{ mt: 2 }}>
+          <>
+            <Stack spacing={5} sx={{ mt: 2 }}>
             <Grid item xs={12}>
               <AccordionSummary
                   // expandIcon={<Iconify icon="il:arrow-down" />}
@@ -1040,7 +248,6 @@ export default function Selection({ intJobId, intUnitNo, intProdTypeId, setCurre
             </CustomGroupBox>
             </Grid>
             </Grid> 
-
 
             <Grid item xs={12}>
             <AccordionSummary
@@ -2597,12 +1804,13 @@ export default function Selection({ intJobId, intUnitNo, intProdTypeId, setCurre
                         <Grid item xs={7}>
                         <CustomGroupBox title="Graph">
                         <Image
-                                src={
-                                  intProdTypeId === 3
-                                    ? `/${selectionData?.dtSF_Graph?.[0]?.cValue}`
-                                    : `data:image/jpeg;base64,${selectionData?.dtSF_Graph?.[0]?.cValue}`
-                                }
-                                // height="100%" 
+                              //   src={
+                              //     intProdTypeId === 3
+                              //     ? `/${selectionData?.dtSF_Graph?.[0]?.cValue}`
+                              //     : `data:image/jpeg;base64,${selectionData?.dtSF_Graph?.[0]?.cValue}`
+                              // }
+                              src={imgSFData}
+                              // height="100%" 
                                 width={75}
                               />
                         </CustomGroupBox>
@@ -2695,11 +1903,13 @@ export default function Selection({ intJobId, intUnitNo, intProdTypeId, setCurre
                         <Grid item xs={7}>
                         <CustomGroupBox title="Graph">
                         <Image
-                                src={
-                                    intProdTypeId === 3
-                                    ? `/${selectionData?.dtEF_Graph?.[0]?.cValue}`
-                                    : `data:image/jpeg;base64,${selectionData?.dtEF_Graph?.[0]?.cValue}`
-                                }
+                                // src={
+                                //     intProdTypeId === 3
+                                //     ? `/${selectionData?.dtEF_Graph?.[0]?.cValue}`
+                                //     : `data:image/jpeg;base64,${selectionData?.dtEF_Graph?.[0]?.cValue}`
+                                // }
+
+                                src={imgEFData}
                                 height="100%"
                               />
                         </CustomGroupBox>
@@ -2823,18 +2033,21 @@ export default function Selection({ intJobId, intUnitNo, intProdTypeId, setCurre
                     </Grid>
             </Grid>
 
+
+          </Stack>
+          <Stack direction="row" justifyContent="center" textAlign="center">
             <Button
-              variant="contained"
-              color="primary"
-              onClick={onClickUnitInfo}
-              // sx={{ display: currentStep === 2 && !isProcessingData ? 'inline-flex' : 'none' }}
-              startIcon={<Iconify icon="akar-icons:arrow-left" />}
-            >
-            Unit info
-          </Button>
-       
-        </Stack>
-          
+                variant="contained"
+                color="primary"
+                onClick={onClickUnitInfo}
+                // sx={{ display: currentStep === 2 && !isProcessingData ? 'inline-flex' : 'none' }}
+                sx={{width:'10%', marginTop:'25px'}}            
+                startIcon={<Iconify icon="akar-icons:arrow-left" />}
+              >
+              Unit info
+            </Button>
+          </Stack>
+          </>
         )}
       </Container>
     </RootStyle>

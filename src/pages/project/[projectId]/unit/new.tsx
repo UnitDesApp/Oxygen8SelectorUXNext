@@ -187,10 +187,11 @@ export default function AddNewUnit() {
           )}
           {currentStep === 2 && (
             <Selection
-            setCurrentStep= {setCurrentStep}
+              setCurrentStep={setCurrentStep}
               intJobId={Number(projectId)}
               intUnitNo={Number(intUnitNo)}
-              intProdTypeId={Number(unitTypeData.intProductTypeID)}
+              intProdTypeId={Number(unitTypeData.intProductTypeID)} 
+              intUnitTypeId={unitTypeData.intUnitTypeID}            
             />
           )}
         </Box>

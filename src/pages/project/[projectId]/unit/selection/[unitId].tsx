@@ -106,6 +106,7 @@ export default function EditSelection() {
                     intJobId={Number(projectId)}
                     intUnitNo={Number(unitId)}
                     intProdTypeId={0}
+                    intUnitTypeId={0}
                   />
                 )}
               </Box>
