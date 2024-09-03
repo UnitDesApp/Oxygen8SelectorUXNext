@@ -4458,7 +4458,7 @@ useEffect(() => {
             </Typography>
 
             <Button variant="outlined" color="primary" onClick={() => setNewProjectDialog(!newProjectDialogOpen)}>
-              Edit Project Info
+              Edit Project Details
             </Button>
           </Box>
         ) : (
