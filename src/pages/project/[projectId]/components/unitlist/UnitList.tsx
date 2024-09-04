@@ -99,7 +99,7 @@ export default function UnitList() {
     setIntUnitTypeID: state.setIntUnitTypeID,
   }));
   const { project } = useApiContext();
-
+  
   useEffect(() => {
     localStorage.setItem('isNewUnitSelected', '0');
   }, []);
