@@ -78,7 +78,7 @@ export default function ReportDialog({ isOpen, onClose, intProjectID }: ReportDi
       // }
     }
 
-    const storedArrayString = sessionStorage.getItem('unitlist');
+    const storedArrayString = localStorage?.getItem('unitlist');
     const storedArray = storedArrayString ? JSON.parse(storedArrayString) : [];
 
     if (methods.selection) {

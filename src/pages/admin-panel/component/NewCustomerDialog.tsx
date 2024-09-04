@@ -179,15 +179,14 @@ export default function NewCustomerDialog({
       options = options?.filter((item: { value: string }) => item.value === selectedCustomer?.conuntry_id_code);
     }
 
-    setCountryOptions(options);
     defaultId = options?.[0]?.value;
 
+    setCountryOptions(options);
     setValue('ddlCountry', defaultId);
 
   }, [dbtSelCountry, selectedCustomer?.conuntry_id_code, setValue]);
 
 
-  const [provStateInfo, setProvStateInfo] = useState<any>([]);
   useEffect(() => {
     let options = dbtSelProvState;
     let defaultId = '';
@@ -204,7 +203,7 @@ export default function NewCustomerDialog({
     defaultId = selectedCustomer?.prov_state_id_code;
   }
 
-    setProvStateInfo(options);
+    setProvStateOptions(options);
 
     defaultId = options?.[0]?.value;
     setValue('ddlProvState', defaultId);

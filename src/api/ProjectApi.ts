@@ -177,7 +177,7 @@ export default class ProjectApi extends AbstractApi {
 
 
 
-    downloadMechanicalScheduleExcel = (params: any, config?: any): Promise<AxiosResponse<any, any>> =>
+    downloadMechanicalScheduleExcel = (params: JSON, config?: any): Promise<AxiosResponse<any, any>> =>
       this.client.post('/api/Output/DownloadMechanicalScheduleExcel', params, {
         responseType: 'blob',
         ...(config || []),
@@ -186,27 +186,27 @@ export default class ProjectApi extends AbstractApi {
 
 
 
-  downloadAllUnitsSelectionPdf = (params: any, config?: any): Promise<AxiosResponse<any, any>> =>
+  downloadAllUnitsSelectionPdf = (params: JSON, config?: any): Promise<AxiosResponse<any, any>> =>
     this.client.post('/api/Output/DownloadAllUnitsSelectionPdf', params, {
       responseType: 'blob',
       ...(config || []),
     });
   
 
-  downloadAllUnitsSelectionRevit = (params: any, config?: any): Promise<AxiosResponse<any, any>> =>
+  downloadAllUnitsSelectionRevit = (params: JSON, config?: any): Promise<AxiosResponse<any, any>> =>
       this.client.post('/api/Output/DownloadAllUnitsSelectionRevit', params, {
         responseType: 'blob',
         ...(config || []),
       });
   
 
-  downloadSubmittalPdf = (params: any, config?: any): Promise<AxiosResponse<any, any>> =>
+  downloadSubmittalPdf = (params: JSON, config?: any): Promise<AxiosResponse<any, any>> =>
     this.client.post('/api/Output/DownloadSubmittalPdf', params, {
       responseType: 'blob',
       ...(config || []),
     });
 
-  downloadSubmittalEpicorExcel = (params: any, config?: any): Promise<AxiosResponse<any, any>> =>
+  downloadSubmittalEpicorExcel = (params: JSON, config?: any): Promise<AxiosResponse<any, any>> =>
     this.client.post('/api/Output/DownloadSubmittalEpicorExcel', params, {
       responseType: 'blob',
       ...(config || []),
@@ -214,7 +214,7 @@ export default class ProjectApi extends AbstractApi {
 
 
 
-  downloadQuotePdf = (params: any, config?: any): Promise<AxiosResponse<any, any>> =>
+  downloadQuotePdf = (params: JSON, config?: any): Promise<AxiosResponse<any, any>> =>
     this.client.post('/api/Output/DownloadQuotePdf', params, {
       responseType: 'blob',
       ...(config || []),

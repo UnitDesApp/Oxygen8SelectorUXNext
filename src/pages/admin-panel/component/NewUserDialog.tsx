@@ -229,6 +229,7 @@ export default function NewUserDialog({
     defaultId = fdtCustomerType?.[0]?.id;
 
     if (Number(selectedUser?.customer_type_id) > 0) {
+      
       defaultId = selectedUser?.customer_type_id;
     }
 
@@ -279,7 +280,7 @@ export default function NewUserDialog({
 
   }, [dbtSelFOB_Point, selectedUser?.fob_point_id, setValue]);
 
-  
+
   const [countryInfo, setCountryInfo] = useState<any>([]);
   useEffect(() => {
     const info: { fdtCountry: any; isVisible: boolean; defaultId: string } = {
