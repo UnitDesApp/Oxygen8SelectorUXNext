@@ -155,7 +155,7 @@ export default function Selection({ intJobId, intUnitNo, intProdTypeId, intUnitT
 
   const { push } = useRouter();
 
-
+  
   useEffect(() =>  {
     refetch()
   // eslint-disable-next-line react-hooks/exhaustive-deps

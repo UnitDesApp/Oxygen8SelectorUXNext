@@ -1,5 +1,7 @@
-import { useMemo, useCallback } from 'react';
+import { useMemo, useCallback, useState, useEffect } from 'react';
 import * as Yup from 'yup';
+import * as Ids from 'src/utils/ids';
+
 // materials
 import {
   Box,
@@ -25,6 +27,8 @@ interface NewCustomerDialogProps {
   onSuccess: Function;
   onFail: Function;
   refetch: Function;
+  name?: String;
+  row?: any;
 }
 
 export default function NewCustomerDialog({
@@ -32,54 +36,101 @@ export default function NewCustomerDialog({
   onClose,
   onSuccess,
   onFail,
+  name,
+  row,
   refetch,
 }: NewCustomerDialogProps) {
   const api = useApiContext();
   const { data: accountInfo } = useGetAccountInfo();
-  const { dbtSelCustomerType, dbtSelFOB_Point, dbtSelCountry, } = accountInfo || {};
+  const { dbtSelCustomerType, dbtSelFOB_Point, dbtSelCountry, dbtSelProvState, dbtSavCustomer } = accountInfo || {};
+
 
   const NewCustomerSchema = Yup.object().shape({
-    username: Yup.string().required('This field is required!'),
-    customerType: Yup.number().required('This field is required!'),
-    countryId: Yup.number().required('This field is required!'),
-    address: Yup.string().required('This field is required!'),
-    contactName: Yup.string().required('This field is required!'),
-    fobPoint: Yup.number().required('This field is required!'),
-    shippingFactor: Yup.number().required('This field is required!'),
+    txbCustomerName: Yup.string().required('This field is required!'),
+    ddlCustomerType: Yup.number().required('This field is required!'),
+    txbContactName: Yup.string(),
+    txbAddress: Yup.string(),
+    ddlCountry: Yup.number(),
+    ddlProvState: Yup.string(),
+    ddlFOBPoint: Yup.number(),
+    txbShippingFactor: Yup.number().required('This field is required!'),
   });
 
-  const defaultValues = useMemo(
+  const [selectedCustomer, setSelectedCustomer] = useState<any>([]);
+  const [customerTypeOptions, setCustomerTypeOptions] = useState<any>([]);
+  // const [customerTypeId, setCustomerTypeId] = useState<number>(0);
+  // const [selCustomerId, setSelCustomerId] = useState<number>(0);
+  const [countryOptions, setCountryOptions] = useState<any>([]);
+  const [countryId, setCountryId] = useState<string>("");  
+  const [provStateOptions, setProvStateOptions] = useState<any>([]);
+  const [fobOptions, setFOBOptions] = useState<any>([]);
+
+
+
+  useMemo(() => {
+    setSelectedCustomer(row);
+  }, [row]);
+
+
+  const editdefaultValues = {
+    txbCustomerName: row?.name,
+    ddlCustomerType: row?.customer_type_id,
+    txbAddress: row?.address,
+    txbCity: row?.city,
+    ddlCountry: row?.country_id,
+    ddlProvState: row?.state,
+    txbRegion: row?.region,
+    txbContactName: row?.contact_name,
+    ddlFOBPoint: row?.fob_point_id,
+    txbShippingFactor: row?.shipping_factor_percent,
+    txbCreatedDate: row?.created_date,
+  };
+
+  const newdefaultValues = useMemo(
     () => ({
-      username: '',
-      customerType: 1,
-      countryId: 1,
-      region: '',
-      address: '',
-      contactName: '',
-      fobPoint: 1,
-      shippingFactor: '',
+      txbCustomerName: '',
+      ddlCustomerType: 1,
+      txbAddress: '',
+      txbCity: '',
+      ddlCountry: 1,
+      ddlProvState: 1,
+      txbRegion: '',
+      txbContactName: '',
+      ddlFOBPoint: 1,
+      txbShippingFactor: '',
+      txbCreatedDate: '',
     }),
     []
   );
 
+
+
   const methods = useForm({
     resolver: yupResolver(NewCustomerSchema),
-    defaultValues,
+    defaultValues: name === 'edit' ? editdefaultValues : newdefaultValues,
   });
 
   const {
+    setValue,
     getValues,
     reset,
     handleSubmit,
     formState: { isSubmitting },
   } = methods;
-
+  const customerId = row?.id
   const onSubmit = useCallback(
     async (data: any) => {
       try {
-        await api.account.addNewCustomer({ ...data, createdDate: '' });
+        if (name){
+          await api.account.updateCustomer({ ...data, customerId });
+        }
+        else{
+          await api.account.addNewCustomer({ ...data, createdDate: '' });
+        }
         onSuccess();
-        reset(defaultValues);
+        if (!name){
+          reset(newdefaultValues);
+        }
         if (refetch) {
           refetch();
         }
@@ -89,51 +140,143 @@ export default function NewCustomerDialog({
         onFail();
       }
     },
-    [api.account, onSuccess, reset, defaultValues, refetch, onClose, onFail]
+    // [api.account, onSuccess, reset,editdefaultValues, newdefaultValues, refetch, onClose, onFail]
+    [name, onSuccess, refetch, onClose, api.account, customerId, reset, newdefaultValues, onFail]
   );
+
+
+  // const [ddlCustomerTypeSelId, setDdlCustomerTypeSelId] = useState([]);
+  useMemo(() => {
+    let options = dbtSelCustomerType;
+    let defaultId = 0;
+
+    options = options?.filter((e: {id: Number}) => 
+      Number(e.id) !== Number(Ids.intCustomerTypeIdAll) && Number(e.id) !== Number(Ids.intCustomerTypeIdAdmin));
+
+
+    if (String(selectedCustomer?.customer_type_id) !== 'undefined' && selectedCustomer?.customer_type_id !== "") {
+      options = options?.filter((item: { value: string }) => item.value === selectedCustomer?.customer_type_id);
+    }
+
+    // if (customerTypeId > 0) {
+    //   options = options?.filter((e: {id: Number}) => e.id === Number(selCustomerTypeId))?.[0] || {};
+    // }
+    
+    defaultId = options?.[0]?.id;
+
+    setCustomerTypeOptions(options);
+
+    setValue('ddlCustomerType', defaultId);
+
+  }, [dbtSelCustomerType, selectedCustomer?.customer_type_id, setValue]);
+
+
+  useEffect(() => {
+    let options = dbtSelCountry;
+    let defaultId = '';
+
+    if (String(selectedCustomer?.conuntry_id_code) !== 'undefined' && selectedCustomer?.conuntry_id_code !== "") {
+      options = options?.filter((item: { value: string }) => item.value === selectedCustomer?.conuntry_id_code);
+    }
+
+    setCountryOptions(options);
+    defaultId = options?.[0]?.value;
+
+    setValue('ddlCountry', defaultId);
+
+  }, [dbtSelCountry, selectedCustomer?.conuntry_id_code, setValue]);
+
+
+  const [provStateInfo, setProvStateInfo] = useState<any>([]);
+  useEffect(() => {
+    let options = dbtSelProvState;
+    let defaultId = '';
+
+  if (countryId !== "") {
+    options = options?.filter((item: { country_value: string }) => item.country_value === countryId);
+  }
+
+  defaultId = options?.[0]?.value;
+
+
+  if (String(selectedCustomer?.prov_state_id_code) !== 'undefined' && selectedCustomer?.prov_state_id_code !== "") {
+    options = options?.filter((item: { prov_state_id_code: string }) => item.prov_state_id_code === selectedCustomer?.prov_state_id_code);
+    defaultId = selectedCustomer?.prov_state_id_code;
+  }
+
+    setProvStateInfo(options);
+
+    defaultId = options?.[0]?.value;
+    setValue('ddlProvState', defaultId);
+
+  }, [countryId, dbtSelProvState, selectedCustomer?.prov_state_id_code, setValue]);
+
+  
+
 
   return (
     <Dialog open={open} onClose={() => onClose()} sx={{ mt: 10 }}>
-      <DialogTitle>Add new customer</DialogTitle>
+      {name === 'edit'?
+        <DialogTitle>Edit customer</DialogTitle>
+        :
+        <DialogTitle>Add new customer</DialogTitle>
+      }
       <FormProvider methods={methods} onSubmit={handleSubmit(onSubmit)}>
         <DialogContent>
           <Box sx={{ minWidth: '500px', display: 'grid', rowGap: 3, columnGap: 2, mt: 1 }}>
             <Stack direction="row" justifyContent="space-around" spacing={1}>
-              <RHFTextField size="small" name="username" label="Customer Name" />
+              <RHFTextField size="small" name="txbCustomerName" label="Customer Name" />
               <RHFSelect
                 native
                 size="small"
-                name="customerType"
+                name="ddlCustomerType"
                 label="Customer type"
                 placeholder=""
               >
-                {dbtSelCustomerType?.map((item: any) => (
+                {customerTypeOptions?.map((item: any) => (
                   <option key={item.id} value={item.id}>
                     {item.items}
                   </option>
                 ))}
-                {!dbtSelCustomerType && <option value="" />}
+                {/* {!dbtSelCustomerType && <option value="" />} */}
               </RHFSelect>
             </Stack>
-            <RHFTextField size="small" name="address" label="Address" />
-            <RHFSelect native size="small" name="countryId" label="Country" placeholder="">
-              {dbtSelCountry?.map((item: any) => (
+            <RHFTextField size="small" name="txbAddress" label="Address" />
+            <Stack direction="row" justifyContent="space-around" spacing={1}>
+            <RHFSelect native size="small" name="ddlCountryId" label="Country" placeholder="">
+              {countryOptions?.map((item: any) => (
                 <option key={item.id} value={item.id}>
                   {item.items}
                 </option>
               ))}
-              {!dbtSelCountry && <option value="" />}
+              {/* {!dbtSelCountry && <option value="" />} */}
             </RHFSelect>
-            <RHFTextField size="small" name="contactName" label="Contact name" />
-            <RHFSelect native size="small" name="fobPoint" label="FOB point" placeholder="">
+            <RHFSelect
+              native
+              size="small"
+              name="ddlProvState"
+              label="Province/State"
+                      // sx={getDisplay(coolingCompInfo?.isVisible)}
+                      // onChange={ddlProvStateChanged}
+                    >
+                      {provStateOptions?.map((item: any, index: number) => (
+                        <option key={index} value={item.value}>
+                          {item.items}
+                        </option>
+                      ))}
+              </RHFSelect>            
+          </Stack>
+            <RHFTextField size="small" name="txbContactName" label="Contact name" />
+            <RHFTextField size="small" name="txbRegion" label="Region" />
+            <RHFSelect native size="small" name="ddlFOBPoint" label="FOB point" placeholder="">
               {dbtSelFOB_Point?.map((item: any) => (
                 <option key={item.id} value={item.id}>
                   {item.items}
                 </option>
               ))}
-              {!dbtSelFOB_Point && <option value="" />}
+              {/* {!dbtSelFOB_Point && <option value="" />} */}
             </RHFSelect>
-            <RHFTextField size="small" name="shippingFactor" label="Shipping factor(%)" />
+            <RHFTextField size="small" name="txbShippingFactor" label="Shipping factor(%)" />
           </Box>
         </DialogContent>
         <DialogActions>

@@ -77,7 +77,7 @@ export default function Users({ toolbar = true, checkbox = true }: UsersProps) {
   const [deleteRowID, setDeleteRowID] = useState(-1);
 
   useEffect(() => {
-    const filteredUsers = dbtSavUser.filter((user:any) => user.customer_id === Number(customerId));
+    const filteredUsers = dbtSavUser?.filter((user:any) => user.customer_id === Number(customerId));
     setTableData(filteredUsers);
   }, [customerId, dbtSavUser]);
 

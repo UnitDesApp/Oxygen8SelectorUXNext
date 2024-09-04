@@ -1320,7 +1320,9 @@ export default function ProjectInfoDialog({
                             onChange={(e: any) => setValue('ddlApplication', Number(e.target.value))}
                           >
                             {/* <option value="" /> */}
-                            {applicationInfo?.map((option: any, index: number) => (
+                            {applicationInfo
+                            ?.sort((a: any, b: any) => a.items.localeCompare(b.items))
+                            .map((option: any, index: number) => (
                               <option key={index} value={option.id}>
                                 {option.items}
                               </option>

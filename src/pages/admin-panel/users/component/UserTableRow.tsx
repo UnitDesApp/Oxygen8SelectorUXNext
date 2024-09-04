@@ -2,6 +2,9 @@
 import { styled } from '@mui/material/styles';
 import { Checkbox, TableRow, TableCell, Stack, IconButton } from '@mui/material';
 import Iconify from 'src/components/iconify';
+import { useState } from 'react';
+import { useGetAccountInfo } from 'src/hooks/useApi';
+import NewUserDialog from '../../component/NewUserDialog';
 // components
 
 // ----------------------------------------------------------------------
@@ -44,8 +47,22 @@ export default function UserTableRow({
   } = row || {};
 
   console.log(row);
+  const {refetch } = useGetAccountInfo();
+  const [addUserDlgOpen, setAddUserDlgOpen] = useState(false);
+  const [successDlgOpen, setSuccessDlgOpen] = useState(false);
+  const [failDlgOpen, setFailDlgOpen] = useState(false);
+  const [successText, setSuccessText] = useState('');
+
+  const onCloseUserDlg = () => {
+    setAddUserDlgOpen(false);
+  };
+  const onSuccessAddUser = () => {
+    setSuccessText('New user has been added');
+    setSuccessDlgOpen(true);
+  };
 
   return (
+    <>
     <TableRow hover sx={{ borderBottom: '1px solid #a7b1bc' }} selected={selected}>
       {isCheckbox && (
         <TableCell padding="checkbox">
@@ -64,7 +81,9 @@ export default function UserTableRow({
       <CustomTableCell label={created_date} onClick={() => onEditRow()} />
       <TableCell align="right">
         <Stack direction="row">
-          <StyledIconButton onClick={() => onEditRow()}>
+          <StyledIconButton onClick={() => 
+          setAddUserDlgOpen(true)
+}>
             <Iconify icon="fa-solid:pen" />
           </StyledIconButton>
           <StyledIconButton onClick={() => onDeleteRow()}>
@@ -73,6 +92,16 @@ export default function UserTableRow({
         </Stack>
       </TableCell>
     </TableRow>
+    <NewUserDialog
+        open={addUserDlgOpen}
+        name='edit'
+        row = {row}
+        onClose={onCloseUserDlg}
+        onSuccess={onSuccessAddUser}
+        onFail={() => setFailDlgOpen(true)}
+        refetch={refetch}
+      />
+  </>
   );
 }
 

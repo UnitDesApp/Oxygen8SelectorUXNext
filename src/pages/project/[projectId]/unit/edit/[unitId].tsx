@@ -1,4 +1,4 @@
-import React, { useCallback, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 // import PropTypes from 'prop-types';
 // @mui
 import { styled, useTheme } from '@mui/material/styles';
@@ -48,7 +48,7 @@ const Item = styled(Paper)(({ theme }) => ({
   color: theme.palette.text.secondary,
 }));
 
-const STEP_PAGE_NAME = ['Select product type', 'Info', 'Selection'];
+const STEP_PAGE_NAME = ['Select product type', 'Unit Details', 'Selection'];
 
 EditUnit.getLayout = (page: React.ReactElement) => <DashboardLayout>{page}</DashboardLayout>;
 
@@ -56,20 +56,26 @@ export default function EditUnit() {
   const theme = useTheme();
   const { push, query } = useRouter();
   const { projectId, unitId } = query;
-  const [currentStep, setCurrentStep] = useState(1);
+  const [currentStep, setCurrentStep] = useState(0);
   const [isSavedUnit, setIsSavedUnit] = useState(false);
   const [openRPDialog, setOpenRPDialog] = useState(false);
   const [isProcessingData, setIsProcessingData] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   // const submitButtonRef = useRef<HTMLButtonElement>(null);
   const isNewUnitSelected = localStorage?.getItem('isNewUnitSelected') || 0;
+  useEffect(()=>{
 
+    if (query?.unitId && Number(query?.unitId) > 0){
+      setCurrentStep(1)
+    }
+  },[query?.unitId])
   // const closeDialog = useCallback(() => {
   //   setOpenRPDialog(false);
   // }, []);
 
   const openDialog = useCallback(() => {
     setOpenRPDialog(true);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // const onClickUnitInfo = () => {
@@ -84,7 +90,7 @@ export default function EditUnit() {
       // } else {
       setCurrentStep(currentStep + 1);
       // }
-    } else if (currentStep === 2 && projectId)
+    } else if (currentStep === 1 && projectId)
       push(`/project/${projectId?.toString() || '0'}/unitlist`);
     // push(PATH_APP.editUnit(projectId?.toString() || '0', unitId?.toString() || '0'));
   };
@@ -108,7 +114,7 @@ export default function EditUnit() {
         <title> New Unit | Oxygen8 </title>
       </Head>
       {Number(isNewUnitSelected) === 0  && Number(unitId) === 0? (
-        <NewUnit />
+        <NewUnit currentStep={currentStep} setCurrentStep={setCurrentStep} />
       ) : (
         <>
           {isProcessingData ? (
@@ -193,7 +199,7 @@ export default function EditUnit() {
               >
                 <Stack direction="row" alignItems="center" gap={1}>
                   <Iconify icon="ph:number-circle-two-fill" width="25px" height="25px" />
-                  <Typography variant="body1">Add unit info</Typography>
+                  <Typography variant="body1">Add unit details</Typography>
                 </Stack>
               </Item>
               <Item

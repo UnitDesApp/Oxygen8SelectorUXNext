@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 // yup
 import * as Yup from 'yup';
 // mui
@@ -53,30 +53,29 @@ export default function UserEdit() {
     fobPoint: [],
   };
   // dbtSelFOB_Point
-  const selectedCustomer = dbtSavCustomer.filter(
-    (cusstomer: any) => cusstomer.id === Number(customerId?.toString() || '0')
-  )[0];
+  const selectedCustomer = dbtSavCustomer?.filter((cusstomer: any) => cusstomer.id === Number(customerId?.toString() || '0'))[0];
+
 
   const NewUserSchema = Yup.object().shape({
-    username: Yup.string().required('This field is required!'),
-    customerType: Yup.number().required('This field is required!'),
-    countryId: Yup.number().required('This field is required!'),
-    address: Yup.string().required('This field is required!'),
-    contactName: Yup.string().required('This field is required!'),
-    fobPoint: Yup.number().required('This field is required!'),
-    shippingFactor: Yup.number().required('This field is required!'),
-    createdDate: Yup.string().required('This field is required!'),
+    txbCustomerName: Yup.string(),
+    txbCustomerType: Yup.number(),
+    txbCountry: Yup.string(),
+    txbAddress: Yup.string(),
+    txbContactName: Yup.string(),
+    txbFOB_Point: Yup.number(),
+    txbShippingFactor: Yup.string(),
+    txbCreatedDate: Yup.string(),
   });
 
   const defaultValues = {
-    username: selectedCustomer?.name,
-    customerType: selectedCustomer?.customer_type_id,
-    countryId: selectedCustomer?.country_id,
-    address: selectedCustomer?.address,
-    contactName: selectedCustomer?.contact_name,
-    fobPoint: selectedCustomer?.fob_point_id,
-    shippingFactor: selectedCustomer?.shipping_factor_percent,
-    createdDate: selectedCustomer?.created_date,
+    txbCustomer: selectedCustomer?.name,
+    txbCustomerType: selectedCustomer?.customer_type_id,
+    txbCountry: selectedCustomer?.country_id,
+    txbAddress: selectedCustomer?.address,
+    txbContactName: selectedCustomer?.contact_name,
+    txbFOB_Point: selectedCustomer?.fob_point_id,
+    txbShippingFactor: selectedCustomer?.shipping_factor_percent,
+    txbCreatedDate: selectedCustomer?.created_date,
   };
 
   const methods = useForm({
@@ -86,6 +85,7 @@ export default function UserEdit() {
 
   const {
     getValues,
+    setValue,
     handleSubmit,
     formState: { isSubmitting },
   } = methods;
@@ -96,6 +96,46 @@ export default function UserEdit() {
   const [failDlgOpen, setFailDlgOpen] = useState(false);
   const [successText, setSuccessText] = useState('');
   const [expanded, setExpanded] = useState({ panel1: true, panel2: true });
+
+
+  // const [ddlCustomerTypeSelId, setDdlCustomerTypeSelId] = useState([]);
+  useEffect(() => {
+    const fdtCustomer : any = dbtSavCustomer?.filter((e: {id: Number}) => e.id === Number(selectedCustomer?.id))?.[0] || {};
+    const value = fdtCustomer?.name;
+    setValue("txbCustomer", fdtCustomer?.name || '');
+
+  }, [dbtSavCustomer, dbtSelCustomerType, selectedCustomer?.id, setValue]);
+
+
+  useEffect(() => {
+    const fdtCustomerType : any = dbtSelCustomerType?.filter((e: {id: Number}) => Number(e.id) === Number(selectedCustomer?.customer_type_id))?.[0] || {};
+    setValue('txbCustomerType', fdtCustomerType?.items || '');
+
+  }, [dbtSelCustomerType, selectedCustomer?.customer_type_id, setValue]);
+
+
+  useEffect(() => {
+
+    const fdtCountry = dbtSelCountry?.filter((item: { id: Number }) => item.id === selectedCustomer?.country_id)?.[0] || {};
+    setValue('txbCountry', fdtCountry?.items || '');
+
+  }, [dbtSelCountry, selectedCustomer?.country_id, setValue]);
+
+
+  // useEffect(() => {
+
+  //   const fdtProvState = dbtSelProvState?.filter((item: { prov_state_id_code: string }) => item.prov_state_id_code === selectedCustomer?.prov_state_id_code)?.[0] || {};
+  //   setValue('txbProvState', fdtProvState?.items || '');
+
+  // }, [dbtSelProvState, selectedCustomer?.prov_state_id_code, setValue]);
+
+  useEffect(() => {
+
+    const fdtFOB_Point = dbtSelFOB_Point?.filter((e: {id: Number}) => e.id === Number(selectedCustomer?.fob_point_id))?.[0] || {};
+    setValue('txbFOB_Point', fdtFOB_Point?.items || '');
+
+  }, [dbtSelFOB_Point, selectedCustomer?.fob_point_id, setValue]);
+
 
   const onCloseUserDlg = () => {
     setAddUserDlgOpen(false);
@@ -156,8 +196,8 @@ export default function UserEdit() {
             <AccordionDetails>
               <FormProvider methods={methods} onSubmit={handleSubmit(onSubmit)}>
                 <Box sx={{ display: 'grid', gap: 2, gridTemplateColumns: 'repeat(2, 1fr)' }}>
-                  <RHFTextField size="small" name="username" label="Customer Name" />
-                  <RHFSelect
+                  <RHFTextField size="small" name="txbCustomer" label="Customer Name" />
+                  {/* <RHFSelect
                     native
                     size="small"
                     name="customerType"
@@ -170,27 +210,31 @@ export default function UserEdit() {
                       </option>
                     ))}
                     {!dbtSelCustomerType && <option value="" />}
-                  </RHFSelect>
-                  <RHFTextField size="small" name="address" label="Address" />
-                  <RHFSelect native size="small" name="countryId" label="Country" placeholder="">
+                  </RHFSelect> */}
+                  <RHFTextField size="small" name="txbCustomerType" label="Customer Type" />
+                  <RHFTextField size="small" name="txbAddress" label="Address" />
+                  {/* <RHFSelect native size="small" name="countryId" label="Country" placeholder="">
                     {dbtSelCountry?.map((item: any) => (
                       <option key={item.id} value={item.id}>
                         {item.items}
                       </option>
                     ))}
                     {!dbtSavCustomer && <option value="" />}
-                  </RHFSelect>
-                  <RHFTextField size="small" name="contactName" label="Contact name" />
-                  <RHFSelect native size="small" name="fobPoint" label="FOB point" placeholder="">
+                  </RHFSelect> */}
+                  <RHFTextField size="small" name="txbCountry" label="Country" />
+
+                  <RHFTextField size="small" name="txbContactName" label="Contact name" />
+                  {/* <RHFSelect native size="small" name="fobPoint" label="FOB point" placeholder="">
                     {dbtSelFOB_Point?.map((item: any) => (
                       <option key={item.id} value={item.id}>
                         {item.items}
                       </option>
                     ))}
                     {!dbtSelFOB_Point && <option value="" />}
-                  </RHFSelect>
-                  <RHFTextField size="small" name="createdDate" label="Create date" />
-                  <RHFTextField size="small" name="shippingFactor" label="Shipping factor(%)" />
+                  </RHFSelect> */}
+                  <RHFTextField size="small" name="txbFOB_Point" label="FOB Point" />
+                  <RHFTextField size="small" name="txbCreatedDate" label="Create Date" />
+                  <RHFTextField size="small" name="txbShippingFactor" label="Shipping factor(%)" />
                 </Box>
                 <Stack spacing={2} p={2}>
                   <Stack direction="row" justifyContent="flex-end">
@@ -199,6 +243,7 @@ export default function UserEdit() {
                       loading={isSubmitting}
                       variant="contained"
                       color="primary"
+                      sx={{ display: 'none' }}
                       onClick={() => console.log(getValues())}
                     >
                       Update
