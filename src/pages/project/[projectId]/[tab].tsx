@@ -12,7 +12,7 @@ import useTabs from 'src/hooks/useTabs';
 import { capitalCase } from 'change-case';
 import CustomBreadcrumbs from 'src/components/custom-breadcrumbs';
 import Iconify from 'src/components/iconify';
-import { useGetSavedJobsByUserAndCustomer } from 'src/hooks/useApi';
+import { useGetSavedJob, useGetSavedJobsByUserAndCustomer } from 'src/hooks/useApi';
 import { useSettingsContext } from '../../../components/settings';
 import DashboardLayout from '../../../layouts/dashboard';
 // import sub components
@@ -63,22 +63,38 @@ export default function Project() {
   );
   const [projectName, setProjectName] = useState<string | null>(null);
 
-  useEffect(() => {
-    if (projects && projects.dbtJobList) {
-      const filteredProject = projects.dbtJobList.find(
-        (item: ProjectItem) => item.id === projectIdNumber
-      );
+  // useEffect(() => {
+  //   if (projects && projects.dbtJobList) {
+  //     const filteredProject = projects.dbtJobList.find(
+  //       (item: ProjectItem) => item.id === projectIdNumber
+  //     );
 
-      if (filteredProject) {
-        setProjectName(filteredProject.job_name);
-      } else {
-        setProjectName(null);
-      }
-    }
-  }, [projects, projectId, projectIdNumber]);
+  //     if (filteredProject) {
+  //       setProjectName(filteredProject.job_name);
+  //     } else {
+  //       setProjectName(null);
+  //     }
+  //   }
+  // }, [projects, projectId, projectIdNumber]);
+
+
+  // const inpData = {
+  //   intJobId: projectId
+  // };
+
+  const { data: dbtSavedJob } = useGetSavedJob({intJobId: projectId}); // useGetSavedJob api call returns data and stores in dbtSavedJob
+
 
   // useTab
   const { currentTab, onChangeTab, setCurrentTab } = useTabs(tab?.toString());
+
+    useEffect(() => {
+      if (dbtSavedJob) {
+        setProjectName(dbtSavedJob?.strJobName);
+      } else {
+        setProjectName(null);
+      }
+  }, [dbtSavedJob]);
 
   // useState
   const [openExportDialog, setOpenExportDialog] = useState<boolean>(false);
@@ -115,7 +131,7 @@ export default function Project() {
       },
       {
         value: PROJECT_DASHBOARD_TABS.SUBMITTAL,
-        title: 'Submittal(internal)',
+        title: 'Submittal',
         component: <ProjectSubmittal />,
       },
       {

@@ -102,7 +102,7 @@ export default function ProjectTableRow({
 
       <TableCell align="left" sx={{ cursor: 'pointer' }}>
         <Stack direction="row" spacing={1}>
-          <IconButton aria-label="delete" onClick={onDuplicate}>
+          <IconButton aria-label="duplicate" onClick={onDuplicate}>
             <Iconify icon="ic:outline-file-copy" />
           </IconButton>
           <IconButton aria-label="delete" onClick={onDeleteRow}>

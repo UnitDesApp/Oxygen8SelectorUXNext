@@ -109,8 +109,8 @@ export default class ProjectApi extends AbstractApi {
 
 
   // Quote =================================================================================
-  getQuoteSelTables = (): Promise<any> =>
-    this.client.get(`/api/Quote/GetQuoteSelTables`).then((res: any) => JSON.parse(res.data));
+  getQuoteSelTables = async (params: any): Promise<any> =>
+    this.client.post(`/api/Quote/GetQuoteSelTables`, params).then((res: any) => JSON.parse(res.data));
 
   saveQuote = async (params: JSON): Promise<any> =>
     this.client.post(`/api/Quote/SaveQuote`, params).then((res: any) => JSON.parse(res.data));

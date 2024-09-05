@@ -145,7 +145,9 @@ export default function ProjectQuoteForm({ projectId, quoteInfo, refetch }: Proj
   const [notesListInfo, setNotesListInfo] = useState<any>([]);
   const theme = useTheme();
 
-  const { data: db } = useGetQuoteSelTables(); // useGetQuoteSelTables api call returns data and stores in db
+
+
+  const { data: db } = useGetQuoteSelTables({intJobId: projectId}); // useGetQuoteSelTables api call returns data and stores in db
 
   // Form Schemar
   const QuoteFormSchema = Yup.object().shape({
@@ -260,10 +262,15 @@ export default function ProjectQuoteForm({ projectId, quoteInfo, refetch }: Proj
   // const [quoteInputs, setQuoteInputs] = useState<any>();
   // const setQV = useCallback(() => {
 
-  const getQuoteInputs = () => {
+
+  useMemo(() => {
+    setValue('txbProjectName', db?.dbtSavJob?.[0]?.job_name);
+  }, [db?.dbtSavJob, setValue]);
+
+
+  function getQuoteInputs() {
     //   // const jsonData = '{"name":"John", "age":30, "city":"London"}';
     //   // let oUnitInputs;
-
     formCurrValues = getValues(); // Do not use watch, must use getValues with the function to get current values.
     let savedDate = quoteInfo?.oQuoteInputs?.strCreatedDate;
 
@@ -307,7 +314,7 @@ export default function ProjectQuoteForm({ projectId, quoteInfo, refetch }: Proj
     };
 
     return oQuoteInputs;
-  };
+  }
 
   // setQuoteInputs(oQuoteInputs);
   // }, [projectId, quoteInfo?.oQuote?.strCreatedDate])
@@ -347,9 +354,11 @@ export default function ProjectQuoteForm({ projectId, quoteInfo, refetch }: Proj
   //   [api.project, projectId, refetch]
   // );
 
+
   useEffect(() => {
     setCurrQuoteInfo(currQuoteInfo);
   }, [currQuoteInfo]);
+
 
   useEffect(() => {
     const info: { fdtMisc: any } = { fdtMisc: [] };
@@ -365,6 +374,7 @@ export default function ProjectQuoteForm({ projectId, quoteInfo, refetch }: Proj
   //   setNotesListInfo(info);
   // },
   // [notesListInfo]);
+
 
   const [dateInfo, setDateInfo] = useState<any>();
   useEffect(() => {
@@ -382,6 +392,7 @@ export default function ProjectQuoteForm({ projectId, quoteInfo, refetch }: Proj
     setValue('ddlDiscountType', 2);
   }, [setValue]);
 
+
   const [quoteStageInfo, setQuoteStageInfo] = useState<any>([]);
   useEffect(() => {
     const info: { fdtQuoteStage: any; isVisible: boolean; defaultId: number } = {
@@ -396,6 +407,7 @@ export default function ProjectQuoteForm({ projectId, quoteInfo, refetch }: Proj
     info.defaultId = info.fdtQuoteStage?.[0]?.id;
     // setValue('ddlQuoteStage', info.fdtQuoteStage?.[0]?.id);
   }, [db, setValue]);
+
 
   const [fobPointInfo, setFOBPointInfo] = useState<any>([]);
   useEffect(() => {
@@ -412,6 +424,7 @@ export default function ProjectQuoteForm({ projectId, quoteInfo, refetch }: Proj
     // setValue('ddlFOBPoint', info.fdtFOBPoint?.[0]?.id);
     setValue('ddlFOBPoint', Ids.intFOB_PointIdVancouver);
   }, [db, setValue]);
+
 
   const [countryInfo, setCountryInfo] = useState<any>([]);
   useEffect(() => {
@@ -430,6 +443,7 @@ export default function ProjectQuoteForm({ projectId, quoteInfo, refetch }: Proj
   }, [db, setValue]);
 
   // // Event handler for addding misc
+
 
   // submmit function
   const onQuoteSubmit = async (data: any) => {
@@ -461,6 +475,7 @@ export default function ProjectQuoteForm({ projectId, quoteInfo, refetch }: Proj
     }
   };
 
+
   // event handler for adding shipping note
   const addMiscClicked = useCallback(async () => {
     if (
@@ -491,6 +506,7 @@ export default function ProjectQuoteForm({ projectId, quoteInfo, refetch }: Proj
     setIsProcessingData(false);
   }, [api.project, getValues, projectId, setValue]);
 
+
   const updateMiscClicked = useCallback(async () => {
     if (
       getValues('txbMisc') === '' ||
@@ -520,6 +536,7 @@ export default function ProjectQuoteForm({ projectId, quoteInfo, refetch }: Proj
     setIsProcessingData(false);
   }, [api.project, getValues, miscNo, projectId, setValue]);
 
+
   const deleteMiscClicked = useCallback(
     async (row: any) => {
       setIsProcessingData(true);
@@ -541,6 +558,7 @@ export default function ProjectQuoteForm({ projectId, quoteInfo, refetch }: Proj
     [api.project, projectId, setValue]
   );
 
+
   const editMiscClicked = useCallback(
     (row: any) => {
       setMiscNo(row?.misc_no);
@@ -550,6 +568,7 @@ export default function ProjectQuoteForm({ projectId, quoteInfo, refetch }: Proj
     },
     [setValue]
   );
+
 
   // event handler for addding note
   const addNotesClicked = useCallback(async () => {
@@ -575,6 +594,7 @@ export default function ProjectQuoteForm({ projectId, quoteInfo, refetch }: Proj
     setIsProcessingData(false);
   }, [api.project, getValues, projectId, setValue]);
 
+
   const updateNotesClicked = useCallback(async () => {
     if (getValues('txbNotes') === '') return;
 
@@ -598,6 +618,7 @@ export default function ProjectQuoteForm({ projectId, quoteInfo, refetch }: Proj
     setIsProcessingData(false);
   }, [api.project, getValues, notesNo, projectId, setValue]);
 
+
   const editNotesClicked = useCallback(
     (row: any) => {
       setNotesNo(row?.notes_no);
@@ -605,6 +626,7 @@ export default function ProjectQuoteForm({ projectId, quoteInfo, refetch }: Proj
     },
     [setValue]
   );
+
 
   const deleteNotesClicked = useCallback(
     async (row: any) => {
@@ -628,6 +650,7 @@ export default function ProjectQuoteForm({ projectId, quoteInfo, refetch }: Proj
     [api.project, projectId, setValue]
   );
 
+
   // Load saved Values
   useEffect(() => {
     if (currQuoteInfo !== undefined && currQuoteInfo !== null) {
@@ -636,6 +659,7 @@ export default function ProjectQuoteForm({ projectId, quoteInfo, refetch }: Proj
         currQuoteInfo?.oQuoteSaveInputs !== null &&
         currQuoteInfo?.oQuoteSaveInputs?.intQuoteId > 0
       ) {
+
         if (currQuoteInfo?.oQuoteSaveInputs?.intQuoteId > 0) {
           setValue('txbQuoteNo', currQuoteInfo?.oQuoteSaveInputs?.intQuoteId);
         }
@@ -699,10 +723,7 @@ export default function ProjectQuoteForm({ projectId, quoteInfo, refetch }: Proj
           currQuoteInfo?.oQuoteSaveInputs?.dblShippingFactor !== null &&
           currQuoteInfo?.oQuoteSaveInputs?.dblShippingFactor > 0
         ) {
-          setValue(
-            'txbShippingFactor',
-            currQuoteInfo?.oQuoteSaveInputs?.dblShippingFactor?.toFixed(1)
-          );
+          setValue('txbShippingFactor', currQuoteInfo?.oQuoteSaveInputs?.dblShippingFactor?.toFixed(1));
         }
 
         if (currQuoteInfo?.oQuoteSaveInputs?.intDiscountTypeId > 0) {
@@ -713,10 +734,7 @@ export default function ProjectQuoteForm({ projectId, quoteInfo, refetch }: Proj
           currQuoteInfo?.oQuoteSaveInputs?.dblDiscountFactor !== null &&
           currQuoteInfo?.oQuoteSaveInputs?.dblDiscountFactor > 0
         ) {
-          setValue(
-            'txbDiscountFactor',
-            currQuoteInfo?.oQuoteSaveInputs?.dblDiscountFactor?.toFixed(1)
-          );
+          setValue('txbDiscountFactor', currQuoteInfo?.oQuoteSaveInputs?.dblDiscountFactor?.toFixed(1));
         }
       }
 
@@ -759,15 +777,13 @@ export default function ProjectQuoteForm({ projectId, quoteInfo, refetch }: Proj
         currQuoteInfo?.oQuoteSaveInputs?.dblPriceFinalTotal !== null &&
         currQuoteInfo?.oQuoteSaveInputs?.dblPriceFinalTotal > 0
       ) {
-        setValue(
-          'txbPriceFinalTotal',
-          currQuoteInfo?.oQuoteSaveInputs?.dblPriceFinalTotal?.toFixed(2)
-        );
+        setValue('txbPriceFinalTotal', currQuoteInfo?.oQuoteSaveInputs?.dblPriceFinalTotal?.toFixed(2));
       }
     }
   }, [currQuoteInfo, currQuoteInfo?.oQuoteSaveInputs, setValue]); // <-- empty dependency array - This will only trigger when the component mounts and no-render
 
   // Calculate pricing with default values when Quote not saved yet
+
 
   useEffect(() => {
     async function fetchData() {
@@ -842,6 +858,7 @@ export default function ProjectQuoteForm({ projectId, quoteInfo, refetch }: Proj
     fetchData();
   }, [api.project, getValues, projectId, setValue]);
 
+
   useEffect(() => {
     async function fetchData() {
       const data: any = {
@@ -870,6 +887,18 @@ export default function ProjectQuoteForm({ projectId, quoteInfo, refetch }: Proj
       ) : (
         <FormProvider methods={methods} onSubmit={handleSubmit(onQuoteSubmit)}>
           <Grid container spacing={3}>
+          <Grid item xs={12}>
+              <Stack direction="row" justifyContent="flex-end">
+                <LoadingButton
+                  type="submit"
+                  startIcon={<Iconify icon="fluent:save-24-regular" />}
+                  loading={isSubmitting}
+                  sx={{ width: '150px' }}
+                >
+                  Save Changes
+                </LoadingButton>
+              </Stack>
+            </Grid>
             <Grid item xs={12}>
               <Grid container spacing={3}>
                 <Grid item xs={12} sm={6} md={4}>
@@ -1275,18 +1304,6 @@ export default function ProjectQuoteForm({ projectId, quoteInfo, refetch }: Proj
                   </Table>
                 </Scrollbar>
               </TableContainer>
-            </Grid>
-            <Grid item xs={12}>
-              <Stack direction="row" justifyContent="flex-end">
-                <LoadingButton
-                  type="submit"
-                  startIcon={<Iconify icon="fluent:save-24-regular" />}
-                  loading={isSubmitting}
-                  sx={{ width: '150px' }}
-                >
-                  Save Changes
-                </LoadingButton>
-              </Stack>
             </Grid>
             <Grid item xs={12}>
               {/* <CustomGroupBox title="Added Miscellaneous">

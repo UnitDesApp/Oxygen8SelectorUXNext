@@ -65,7 +65,7 @@ export default function useTable(props?: UseTableProps): ReturnType {
 
   const onSelectAllRows = useCallback((checked: boolean, newSelecteds: string[]) => {
     if (checked) {
-      localStorage.setItem('unitlist', JSON.stringify(newSelecteds));
+      localStorage?.setItem('unitlist', JSON.stringify(newSelecteds));
       setSelected(newSelecteds);
       return;
     }

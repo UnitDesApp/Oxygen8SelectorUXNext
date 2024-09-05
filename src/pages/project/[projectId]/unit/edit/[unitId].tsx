@@ -129,7 +129,10 @@ export default function EditUnit() {
                     name: 'Dashboard',
                     href: PATH_APP.projectDashboard(projectId?.toString() || '', 'unitlist'),
                   },
-                  { name: Number(unitId) === 0 ? 'New Unit' : 'Edit Unit' },
+                  { 
+                    name: Number(unitId) > 0 ? 'Edit Unit' : 'New Unit',
+                    href: Number(unitId) > 0 ? PATH_APP.editUnit(projectId?.toString() || '0', unitId?.toString() || '0') : '',
+                   },
                 ]}
                 sx={{ paddingLeft: '24px', paddingTop: '24px' }}
                 action={

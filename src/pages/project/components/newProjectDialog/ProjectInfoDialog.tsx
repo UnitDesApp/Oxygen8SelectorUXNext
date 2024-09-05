@@ -435,22 +435,22 @@ export default function ProjectInfoDialog({
     switch (step1) {
       case 'SHOW_FIRST_DIALOG':
         return {
-          maxWidth: '500px', 
-          width: '500px',   
+          maxWidth: '600px', 
+          width: '600px',   
         };
       case 'SHOW_SECOND_DIALOG':
         return {
-          maxWidth: '500px', 
-          width: '500px',  
+          maxWidth: '600px', 
+          width: '600px',  
         };
       case 'SHOW_ALL_DIALOG':
         return {
-          maxWidth: '1000px', 
+          maxWidth: '1200px', 
           width: '100%',    
         };
       default:
         return {
-          maxWidth: '500px',
+          maxWidth: '600px',
           width: '100%',
         };
     }
@@ -1070,8 +1070,8 @@ export default function ProjectInfoDialog({
 
       setValue('txbJobName', savedJob?.strJobName);
       setValue('txbProjectInternalId', savedJob?.strProjectInternalId);
-      setValue('txbReferenceNo', savedJob?.strReferenceNo);
-      setValue('txbRevisionNo', String(savedJob?.intRevisionNo));
+      setValue('txbReferenceNo', savedJob?.strReferenceNo !== "" ? savedJob?.strReferenceNo : "0");
+      setValue('txbRevisionNo', savedJob?.intRevisionNo !== "" ?String(savedJob?.intRevisionNo) : "0");
       setValue('txbCompanyName', savedJob?.strCompanyName);
       setValue('txbCompanyContactName', savedJob?.strCompanyContactName);
       setValue('txbAltitude', String(savedJob?.intAltitude));
