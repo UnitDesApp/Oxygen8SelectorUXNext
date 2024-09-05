@@ -57,7 +57,7 @@ export default function useTable(props?: UseTableProps): ReturnType {
           selected.slice(selectedIndex + 1)
         );
       }
-      localStorage.setItem('unitlist', JSON.stringify(newSelected));
+      typeof window !== 'undefined' && localStorage.setItem('unitlist', JSON.stringify(newSelected));
       setSelected(newSelected);
     },
     [selected]
@@ -65,7 +65,7 @@ export default function useTable(props?: UseTableProps): ReturnType {
 
   const onSelectAllRows = useCallback((checked: boolean, newSelecteds: string[]) => {
     if (checked) {
-      localStorage?.setItem('unitlist', JSON.stringify(newSelecteds));
+      typeof window !== 'undefined' && localStorage.setItem('unitlist', JSON.stringify(newSelecteds));
       setSelected(newSelecteds);
       return;
     }

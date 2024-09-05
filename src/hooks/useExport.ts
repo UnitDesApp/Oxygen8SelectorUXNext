@@ -4,7 +4,7 @@ import { useApiContext } from 'src/contexts/ApiContext';
 export const useExport = () => {
   const api = useApiContext();
 
-  const unitListArray = localStorage?.getItem('unitlist');
+  const unitListArray = typeof window !== 'undefined' &&  localStorage?.getItem('unitlist');
   const selectedUnits = unitListArray ? JSON.parse(unitListArray) : [];
   const selectedUnitList = selectedUnits.map((item:string|Number) => Number(item));
 
