@@ -78,6 +78,8 @@ export default function ReportDialog({ isOpen, onClose, intProjectID }: ReportDi
       // }
     }
 
+    const storedArrayString = typeof window !== 'undefined' && localStorage?.getItem('unitlist');
+    const storedArray = storedArrayString ? JSON.parse(storedArrayString) : [];
 
     if (methods.selection) {
       await ExportAllUnitsSelectionPdf(Number(intProjectID));

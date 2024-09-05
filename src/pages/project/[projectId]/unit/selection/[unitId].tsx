@@ -83,7 +83,11 @@ export default function EditSelection() {
                     name: 'Dashboard',
                     href: PATH_APP.projectDashboard(projectId?.toString() || '', 'unitlist'),
                   },
-                  { name: 'Edit Unit' },
+                  { 
+                    name: 'Edit Unit',
+                    href: PATH_APP.editUnit(projectId?.toString() || '0', unitId?.toString() || '0'),
+                  },
+                  { name: 'Unit Selection' },
                 ]}
                 sx={{ paddingLeft: '24px', paddingTop: '24px' }}
                 action={

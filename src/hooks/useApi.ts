@@ -92,9 +92,9 @@ export const useGetUnitSelection = (params: any, config?: UseQueryOptions<any, a
 };
 
 // Quote =================================================================================
-export const useGetQuoteSelTables = (config?: UseQueryOptions<any, any, any, any>) => {
+export const useGetQuoteSelTables = (params: any, config?: UseQueryOptions<any, any, any, any>) => {
   const api = useApiContext();
-  return useQuery<any>(`get-quote-sel-tables`, () => api.project.getQuoteSelTables(), config);
+  return useQuery<any>([`get-quote-sel-tables`, params], () => api.project.getQuoteSelTables(params), config);
 };
 
 export const useGetSavedQuote = (params: any, config?: UseQueryOptions<any, any, any, any>) => {

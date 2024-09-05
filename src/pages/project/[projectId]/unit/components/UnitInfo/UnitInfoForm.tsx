@@ -1779,6 +1779,7 @@ export default function UnitInfoForm({
     }
 
     setMixOADamperPosInfo(info);
+    setValue('ddlMixOADamperPos', info.ftdMixOADamperPos?.[0]?.id);
 
 
     if (Number(formCurrValues.ddlMixOADamperPos) !==  IDs.intDamperPosIdNA &&
@@ -1818,7 +1819,7 @@ export default function UnitInfoForm({
     }
 
     setMixRADamperPosInfo(info);
-    // setValue('ddlMixRADamperPos', info.ftdMixRADamperPos?.[0]?.id);
+    setValue('ddlMixRADamperPos', info.ftdMixRADamperPos?.[0]?.id);
 
 
     if (Number(formCurrValues.ddlMixRADamperPos) !==  IDs.intDamperPosIdNA &&
@@ -3836,6 +3837,22 @@ const ddlUnitModelChanged = useCallback((e: any) => {
   );
 
 
+  const ddlMixOADamperPosChanged = useCallback(
+    (e: any) => {
+      setValue('ddlMixOADamperPos', Number(e.target.value));
+    },
+    [setValue]
+  );  
+
+
+  const ddlMixRADamperPosChanged = useCallback(
+    (e: any) => {
+      setValue('ddlMixRADamperPos', Number(e.target.value));
+    },
+    [setValue]
+  );  
+
+
   const setValueWithCheck = useCallback(
     (e: any, key: any) => {
       if (e.target.value === '') {
@@ -4458,7 +4475,7 @@ useEffect(() => {
             </Typography>
 
             <Button variant="outlined" color="primary" onClick={() => setNewProjectDialog(!newProjectDialogOpen)}>
-              Edit Project Info
+              Edit Project Details
             </Button>
           </Box>
         ) : (
@@ -5876,9 +5893,10 @@ useEffect(() => {
             </Grid>
           </AccordionDetails>
         </Accordion>
-        <Accordion  // PRE-HEAT
+        <Accordion  // BACKUP HEATING
           expanded={expanded.panel2}
-          sx={getDisplay(true)}
+          sx={getDisplay(
+            intProductTypeID === IDs.intProdTypeIdTerra)}
           onChange={() => setExpanded({ ...expanded, panel2: !expanded.panel2 })}
         >
           <AccordionSummary
@@ -5892,7 +5910,6 @@ useEffect(() => {
           </AccordionSummary>
           <AccordionDetails>
             <Grid container spacing={2}>
-
               <Grid item xs={12} md={12}>
                 <Box
                   sx={{
@@ -6331,7 +6348,7 @@ useEffect(() => {
                     label="Mixing Outdoor Air Damper"
                     sx={getDisplay(getValues('ckbMixingBox'))}
                     placeholder=""
-                  // onChange={ddlReturnAirOpeningChanged}
+                  onChange={ddlMixOADamperPosChanged}
                   >
                     {mixOADamperPosInfo?.ftdMixOADamperPos?.map(
                       (item: any, index: number) => (
@@ -6348,7 +6365,7 @@ useEffect(() => {
                     label="Mixing Return Air Damper"
                     sx={getDisplay(getValues('ckbMixingBox'))}
                     placeholder=""
-                  // onChange={ddlReturnAirOpeningChanged}
+                  onChange={ddlMixRADamperPosChanged}
                   >
                     {mixRADamperPosInfo?.ftdMixRADamperPos?.map(
                       (item: any, index: number) => (

@@ -4,6 +4,10 @@ import { useApiContext } from 'src/contexts/ApiContext';
 export const useExport = () => {
   const api = useApiContext();
 
+  const unitListArray = typeof window !== 'undefined' &&  localStorage?.getItem('unitlist');
+  const selectedUnits = unitListArray ? JSON.parse(unitListArray) : [];
+  const selectedUnitList = selectedUnits.map((item:string|Number) => Number(item));
+
   const ExportUnitSelectionPdf = async (jobId: string, unitInfo: any) => {
     const data = {
       intJobId: jobId,
@@ -117,10 +121,11 @@ export const useExport = () => {
 
 
   const ExportAllUnitsSelectionPdf = async (jobId: number) => {
-    const data = {
-      intJobId: jobId,
-      intUAL: localStorage.getItem('UAL'),
+    const data : any = {
       intUserId: localStorage.getItem('userId'),
+      intUAL: localStorage.getItem('UAL'),
+      intJobId: jobId,
+      lstUnitNo: selectedUnitList,
     };
 
 
@@ -171,10 +176,11 @@ export const useExport = () => {
 
 
   const ExportSubmittalPdf = async (jobId: number) => {
-    const data = {
-      intJobId: jobId,
-      intUAL: localStorage.getItem('UAL'),
+    const data : any = {
       intUserId: localStorage.getItem('userId'),
+      intUAL: localStorage.getItem('UAL'),
+      intJobId: jobId,
+      lstUnitNo: selectedUnitList,
     };
 
     // Do not delete - Working code to receive byteArray by HttpResponseMessage
@@ -225,10 +231,11 @@ export const useExport = () => {
 
   // export pdf of form data
   const ExportSubmittalEpicorExcel = async (jobId: number) => {
-    const data = {
-      intJobId: jobId,
-      intUAL: localStorage.getItem('UAL'),
+    const data : any = {
       intUserId: localStorage.getItem('userId'),
+      intUAL: localStorage.getItem('UAL'),
+      intJobId: jobId,
+      lstUnitNo: selectedUnitList,
     };
 
     // const response = await api.project.downloadSubmittalEpicorExcel(data);
@@ -275,11 +282,11 @@ export const useExport = () => {
 
 
   const ExportMechanicalScheduleExcel = async (jobId: number) => {
-    const data = {
-      intJobId: jobId,
-      // intUnitNo: unitInfo,
-      intUAL: localStorage.getItem('UAL'),
+    const data : any = {
       intUserId: localStorage.getItem('userId'),
+      intUAL: localStorage.getItem('UAL'),
+      intJobId: jobId,
+      lstUnitNo: selectedUnitList,
     };
 
     await api.project.downloadMechanicalScheduleExcel(data).then((response) => {
@@ -306,11 +313,11 @@ export const useExport = () => {
 
 
   const ExportAllUnitsSelectionRevit = async (jobId: number) => {
-    const data = {
-      intJobId: jobId,
-      // intUnitNo: unitInfo,
-      intUAL: localStorage.getItem('UAL'),
+    const data : any = {
       intUserId: localStorage.getItem('userId'),
+      intUAL: localStorage.getItem('UAL'),
+      intJobId: jobId,
+      lstUnitNo: selectedUnitList,
     };
 
     await api.project.downloadAllUnitsSelectionRevit(data).then((response) => {
@@ -337,10 +344,11 @@ export const useExport = () => {
 
 
   const ExportQuotePdf = async (jobId: number) => {
-    const data = {
-      intJobId: jobId,
-      intUAL: localStorage.getItem('UAL'),
+    const data : any = {
       intUserId: localStorage.getItem('userId'),
+      intUAL: localStorage.getItem('UAL'),
+      intJobId: jobId,
+      lstUnitNo: selectedUnitList,
     };
 
     // const response = await api.project.downloadQuotePdf(data);

@@ -99,7 +99,7 @@ export default function UnitList() {
     setIntUnitTypeID: state.setIntUnitTypeID,
   }));
   const { project } = useApiContext();
-
+  
   useEffect(() => {
     localStorage.setItem('isNewUnitSelected', '0');
   }, []);
@@ -220,11 +220,12 @@ export default function UnitList() {
                 checked, units?.unitList.map((row: any) => row.unit_no))
               }
               action={
-                <Tooltip title="Delete">
-                  <IconButton color="primary" onClick={() => handleMultiConfirmDialogOpen()}>
-                    <Iconify icon="eva:trash-2-outline" />
-                  </IconButton>
-                </Tooltip>
+                <></>
+                // <Tooltip title="Delete">
+                //   <IconButton color="primary" onClick={() => handleMultiConfirmDialogOpen()}>
+                //     <Iconify icon="eva:trash-2-outline" />
+                //   </IconButton>
+                // </Tooltip>
               }
             />
           )}

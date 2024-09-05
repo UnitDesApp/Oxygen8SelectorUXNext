@@ -155,7 +155,7 @@ export default function Selection({ intJobId, intUnitNo, intProdTypeId, intUnitT
 
   const { push } = useRouter();
 
-
+  
   useEffect(() =>  {
     refetch()
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -167,6 +167,11 @@ export default function Selection({ intJobId, intUnitNo, intProdTypeId, intUnitT
     // setCurrentStep(1);
     push(PATH_APP.editUnit(projectId?.toString() || '0', intUnitNo?.toString() || '0'));
   };
+
+  const onClickUnitList = () => {
+     // setCurrentStep(1);
+     push(PATH_APP.projectDashboard(projectId?.toString() || '0', 'unitlist'));
+    };
 
   const imgSFUrl = '';
   const imgSF = selectionData?.dtSF_Graph?.[0]?.cValue.replace(/^.*[\\/]/, '')
@@ -2041,11 +2046,21 @@ if (fanImgFiles.includes(imgEF)) {
                 color="primary"
                 onClick={onClickUnitInfo}
                 // sx={{ display: currentStep === 2 && !isProcessingData ? 'inline-flex' : 'none' }}
-                sx={{width:'10%', marginTop:'25px'}}            
+                sx={{width:'10%', marginTop:'25px', marginLeft:'5px', marginRight:'5px'}}            
                 startIcon={<Iconify icon="akar-icons:arrow-left" />}
               >
-              Unit info
+              Edit Unit
             </Button>
+            <Button
+                variant="contained"
+                color="primary"
+                onClick={onClickUnitList}
+                // sx={{ display: currentStep === 2 && !isProcessingData ? 'inline-flex' : 'none' }}
+                sx={{width:'10%', marginTop:'25px', marginLeft:'5px', marginRight:'5px'}}            
+                startIcon={<Iconify icon="akar-icons:arrow-left" />}
+              >
+              Unit List
+            </Button>          
           </Stack>
           </>
         )}

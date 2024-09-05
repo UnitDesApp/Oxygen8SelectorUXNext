@@ -34,6 +34,7 @@ import { useApiContext } from 'src/contexts/ApiContext';
 import { RHFSelect, RHFTextField } from 'src/components/hook-form';
 import Scrollbar from 'src/components/scrollbar/Scrollbar';
 import CircularProgressLoading from 'src/components/loading/CircularProgressLoading';
+import { useGetSavedJob } from 'src/hooks/useApi';
 
 // components
 
@@ -66,10 +67,10 @@ const TableHeaderCellStyled = styled(TableCell)(({ theme }) => ({
   backgroundColor: theme.palette.primary.main,
   color: 'white',
   boxShadow: 'none!important',
-  fontSize:'0.77rem'
+  fontSize:'0.65rem'
 }));
 const TableBodyCellStyled = styled(TableCell)(({ theme }) => ({
-  fontSize:'0.76rem'
+  fontSize:'0.70rem'
 }));
 
 // -------------------------------------------------------------------
@@ -94,13 +95,7 @@ export default function ProjectSubmittalForm({
   const [shippingNotesListInfo, setShippingNotesListInfo] = useState <any>([]); 
   const [success, setSuccess] = useState(false);
   const [fail, setFail] = useState(false);
-  const [expanded, setExpanded] = useState({
-    panel1: true,
-    panel2: true,
-    panel3: true,
-    panel4: true,
-    panel5: true,
-  });
+  const [expanded, setExpanded] = useState({panel1: true, panel2: true, panel3: true, panel4: true, panel5: true, });
   const theme = useTheme();
 
 
@@ -150,9 +145,9 @@ export default function ProjectSubmittalForm({
       txbJobName: submittalInfo?.strProjectName ? submittalInfo?.strProjectName : '',
       txbRepName: submittalInfo?.strRepName ? submittalInfo?.strRepName : '',
       txbSalesEngineer: submittalInfo?.strSalesEngineer ? submittalInfo?.strSalesEngineer : '',
-      txbLeadTime: submittalInfo?.strLeadTime ? submittalInfo?.strLeadTime : '',
+      txbLeadTime: submittalInfo?.strLeadTime ? submittalInfo?.strLeadTime : '8-10 Weeks',
       txbRevisionNo: submittalInfo?.intRevisionNo ? submittalInfo?.intRevisionNo : '0',
-      txbPONumber: submittalInfo?.strPO_Number ? submittalInfo?.strPO_Number : '',
+      txbPONumber: submittalInfo?.strPO_Number ? submittalInfo?.strPO_Number : '0',
       txbShippingName: submittalInfo?.strShippingName ? submittalInfo?.strShippingName : '',
       txbShippingStreetAddress: submittalInfo?.strShippingStreetAddress ? submittalInfo?.strShippingStreetAddress : '',
       txbShippingCity: submittalInfo?.strShippingCity ? submittalInfo?.strShippingCity : '',
@@ -267,6 +262,22 @@ export default function ProjectSubmittalForm({
   //   },
   //   [api.project, projectId]
   // );
+
+
+  const { data: dbtSavedJob } = useGetSavedJob({intJobId: projectId}); // useGetSavedJob api call returns data and stores in dbtSavedJob
+
+  useEffect(() => {
+      if (dbtSavedJob) {
+        setValue('txbJobName', dbtSavedJob?.strJobName);
+        setValue('txbRepName', dbtSavedJob?.strCompanyName);
+        setValue('txbSalesEngineer', dbtSavedJob?.strCompanyContactName);
+      } else {
+        setValue('txbJobName', null);
+        setValue('txbRepName', null);
+        setValue('txbSalesEngineer', null);
+      }
+  }, [dbtSavedJob, setValue]);
+
 
 
   useEffect(() => {
@@ -607,11 +618,11 @@ export default function ProjectSubmittalForm({
                       <Table size="small" sx={{ textsize: 'small', overflow: 'hidden', tableLayout: 'fixed', pt: '5px' }}>
                         <TableHead color="primary.main">
                           <TableRow>
-                            <TableHeaderCellStyled component="th" scope="row" align="center" sx={{ width: '5%' }}>
+                            <TableHeaderCellStyled component="th" scope="row" align="center" sx={{ width: '4%' }}>
                               {/* <TableCell component="th" scope="row" align="left" sx={{fontWeight: item?.is_unit_bold ? 700 : 300}}> */}
                               QTY
                             </TableHeaderCellStyled>
-                            <TableHeaderCellStyled component="th" scope="row" align="center" sx={{ width: '10%' }}>
+                            <TableHeaderCellStyled component="th" scope="row" align="center" sx={{ width: '12.5%' }}>
                               TAG
                             </TableHeaderCellStyled>
                             <TableHeaderCellStyled component="th" scope="row" align="center" sx={{ width: '15%' }}>
@@ -623,7 +634,7 @@ export default function ProjectSubmittalForm({
                             <TableHeaderCellStyled component="th" scope="row" align="center" sx={{ width: '12.5%' }}>
                               VOLTAGE
                             </TableHeaderCellStyled>
-                            <TableHeaderCellStyled component="th" scope="row" align="center" sx={{ width: '10%' }}>
+                            <TableHeaderCellStyled component="th" scope="row" align="center" sx={{ width: '12.5%' }}>
                               CONTROLS
                               PREFERENCE
                             </TableHeaderCellStyled>
@@ -637,13 +648,13 @@ export default function ProjectSubmittalForm({
                             <TableHeaderCellStyled component="th" scope="row" align="center" sx={{ width: '8%' }}>
                               HANDING
                             </TableHeaderCellStyled>
-                            <TableHeaderCellStyled component="th" scope="row" align="center" sx={{ width: '22%' }} >
+                            <TableHeaderCellStyled component="th" scope="row" align="center" sx={{ width: '40%' }} >
                               PART DESC
                             </TableHeaderCellStyled>
                             <TableHeaderCellStyled component="th" scope="row" align="center" sx={{ width: '12.5%' }} >
                               PART NUMBER
                             </TableHeaderCellStyled>
-                            <TableHeaderCellStyled component="th" scope="row" align="center" sx={{ width: '7.5%' }}>
+                            <TableHeaderCellStyled component="th" scope="row" align="center" sx={{ width: '10%' }}>
                               PRICING
                             </TableHeaderCellStyled>
                           </TableRow>
