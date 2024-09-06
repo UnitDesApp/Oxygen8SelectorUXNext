@@ -35,6 +35,7 @@ import { getRandomNumber } from 'src/utils/referenceNumber';
 import { isInCurrentMonth } from 'src/utils/date';
 import { userInfo } from 'os';
 import { celsiusToFarenheit } from 'src/utils/convert';
+// import { firstName } from 'src/_mock/assets';
 
 type ProjectInfoDialogProps = {
   loadProjectStep: string;
@@ -568,8 +569,12 @@ export default function ProjectInfoDialog({
 
   const [applicationInfo, setApplicationInfo] = useState([]);
   useMemo(() => {
-    const dtSelApplication = dbtApplication?.sort((a: any, b: any) => a.items.localeCompare(b.items));;
-    // dtSelApplication.unshift("Select Application");
+    const sorteddtSelApplication = dbtApplication?.sort((a: any, b: any) => a.items.localeCompare(b.items));;
+    const dtSelApplication = sorteddtSelApplication;
+    const exists = applicationInfo?.some((option:any) => option.items.toLowerCase() === 'select application');
+    if(!exists){
+    dtSelApplication.unshift({id: 1,items: "Select Application"});
+    }
 
     // dtSelApplication = dtSelApplication?.sort((a: any, b: any) => a.items.localeCompare(b.items));
 
@@ -613,7 +618,9 @@ export default function ProjectInfoDialog({
       case Ids.intUAL_IntLvl_2:
       case Ids.intUAL_IntLvl_1:
         dtSelCompany = dbtCustomer;
-        // dtSelCompany.unshift("Select Company Name");
+        if (dtSelCompany[0].name != "Select Company Name"){
+          dtSelCompany.unshift({name: "Select Company Name"});
+        }
         break;
       case Ids.intUAL_External:
       case Ids.intUAL_ExternalSpecial:
@@ -645,7 +652,7 @@ export default function ProjectInfoDialog({
       case Ids.intUAL_IntAdmin:
       case Ids.intUAL_IntLvl_2:
       case Ids.intUAL_IntLvl_1:
-        // dtSelCompanyContacts.unshift("Select Contact Name");
+        dtSelCompanyContacts.unshift({first_name: "Select Contact Name"});
         break;
       case Ids.intUAL_External:
       case Ids.intUAL_ExternalSpecial:
@@ -1322,7 +1329,7 @@ export default function ProjectInfoDialog({
                             {companyContactInfo && companyContactInfo?.length > 0 ? (
                               companyContactInfo?.map((option: any, index: number) => (
                                 <option key={index} value={option.id}>
-                                  {`${option.first_name} ${option.last_name}`}
+                                  {`${option.first_name} ${option.last_name ? option.last_name : ''}`}
                                 </option>
                               ))
                             ) : (
