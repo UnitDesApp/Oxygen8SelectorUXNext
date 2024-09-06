@@ -372,19 +372,23 @@ const applySortFilter = ({
   if (filterName) {
     tableData = tableData.filter(
       (item: {
+        project_internal_id: string;
         job_name: string;
         reference_no: string;
         revision_no: string;
         Customer_Name: string;
-        User_Full_Name: string;
+        CreatedUserFullName: string;
+        RevisedUserFullName: string;
         created_date: string;
         revised_date: string;
       }) =>
+        item?.project_internal_id?.toLowerCase().indexOf(filterName.toLowerCase()) !== -1 ||
         item?.job_name?.toLowerCase().indexOf(filterName.toLowerCase()) !== -1 ||
         item?.reference_no?.toString().toLowerCase().indexOf(filterName.toLowerCase()) !== -1 ||
         item?.revision_no?.toString().toLowerCase().indexOf(filterName.toLowerCase()) !== -1 ||
         item?.Customer_Name?.toString().toLowerCase().indexOf(filterName.toLowerCase()) !== -1 ||
-        item?.User_Full_Name?.toLowerCase().indexOf(filterName.toLowerCase()) !== -1 ||
+        item?.CreatedUserFullName?.toLowerCase().indexOf(filterName.toLowerCase()) !== -1 ||
+        item?.RevisedUserFullName?.toLowerCase().indexOf(filterName.toLowerCase()) !== -1 ||
         item?.created_date?.toLowerCase().indexOf(filterName.toLowerCase()) !== -1 ||
         item?.revised_date?.toLowerCase().indexOf(filterName.toLowerCase()) !== -1
     );

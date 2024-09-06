@@ -66,6 +66,7 @@ export default function ProjectInfoDialog({
   // const [savedJobVals, setSavedJobVals] = useState<any[]>([])
   // const [savedJobVals, setSavedJobVals] = useState<any>([])
 
+
   const {
     dbtBasisOfDesign,
     dbtUoM,
@@ -122,36 +123,40 @@ export default function ProjectInfoDialog({
   // ---------------- Initalize Form with default values -----------------
   const defaultValues = useMemo(
     () => ({
-      txbJobName: savedJob ? savedJob?.strJobName : '',
-      ddlBasisOfDesign: savedJob ? savedJob?.intBasisOfDesignId : 0,
-      txbProjectInternalId: savedJob ? savedJob?.strProjectInternalId : '',
-      txbReferenceNo: savedJob ? savedJob?.strReferenceNo : '0',
-      txbRevisionNo: savedJob ? String(savedJob?.intRevisionNo) : '0',
-      ddlCompanyName: savedJob ? savedJob?.intCompanyNameId : 0,
-      txbCompanyName: savedJob ? savedJob?.strCompanyName : '',
-      ddlCompanyContactName: savedJob ? savedJob?.intCompanyContactNameId : 0,
-      txbCompanyContactName: savedJob ? savedJob?.strCompanyContactName : '',
-      txbSpecifyingFirm: savedJob ? savedJob?.strSpecifyingFirm : '',
-      ddlApplication: savedJob ? savedJob?.intApplicationId : 0,
-      ddlUoM: savedJob ? savedJob?.intUoMId : 0,
-      ddlCountry: savedJob ? savedJob?.strCountry : '',
-      ddlProvState: savedJob ? savedJob?.strProvState : '',
-      ddlCity: savedJob ? savedJob?.intCityId : 0,
-      ddlAshareDesignConditions: savedJob ? savedJob?.intDesignConditionsId : 0,
-      txbAltitude: savedJob ? savedJob?.intAltitude : '0',
-      txbSummerOA_DB: savedJob ? savedJob?.dblSummerOA_DB : '95.0',
-      txbSummerOA_WB: savedJob ? savedJob?.dblSummerOA_WB : '78.0',
-      txbSummerOA_RH: savedJob ? savedJob?.dblSummerOA_RH : '47.3',
-      txbWinterOA_DB: savedJob ? savedJob?.dblWinterOA_DB : '35.0',
-      txbWinterOA_WB: savedJob ? savedJob?.dblWinterOA_WB : '33.0',
-      txbWinterOA_RH: savedJob ? savedJob?.dblWinterOA_RH : '81.9',
-      txbSummerRA_DB: savedJob ? savedJob?.dblSummerRA_DB : '75.0',
-      txbSummerRA_WB: savedJob ? savedJob?.dblSummerRA_WB : '63.0',
-      txbSummerRA_RH: savedJob ? savedJob?.dblSummerRA_RH : '51.17',
-      txbWinterRA_DB: savedJob ? savedJob?.dblWinterRA_DB : '70.0',
-      txbWinterRA_WB: savedJob ? savedJob?.dblWinterRA_WB : '52.9',
-      txbWinterRA_RH: savedJob ? savedJob?.dblWinterRA_RH : '30.0',
-      ckbTestNewPrice: savedJob ? savedJob?.intIsTestNewPrice : 0,
+      txbJobName: savedJob ? savedJob?.[0]?.job_name : '',
+      ddlBasisOfDesign: savedJob ? savedJob?.[0]?.basis_of_design_id : 0,
+      txbProjectInternalId: savedJob ? savedJob?.[0]?.strProjectInternalId : '',
+      txbReferenceNo: savedJob ? savedJob?.[0]?.reference_no : '0',
+      txbRevisionNo: savedJob ? String(savedJob?.[0]?.revision_no) : '0',
+      ddlCompanyName: savedJob ? savedJob?.[0]?.company_name_id : 0,
+      txbCompanyName: savedJob ? savedJob?.[0]?.CompanyCustomerName : '',
+      ddlCompanyContactName: savedJob ? savedJob?.[0]?.company_contact_name_id : 0,
+      txbCompanyContactName: savedJob ? savedJob?.[0]?.CompanyCustomerContactName : '',
+      txbSpecifyingFirm: savedJob ? savedJob?.[0]?.specifying_firm : '',
+      ddlApplication: savedJob ? savedJob?.[0]?.application_id : 0,
+      ddlUoM: savedJob ? savedJob?.[0]?.uom_id : 0,
+      txbCreatedDate: savedJob ? savedJob?.[0]?.created_date : '',
+      txbCreatedBy: savedJob ? savedJob?.[0]?.CreatedUserFullName : '',
+      txbRevisedDate: savedJob ? savedJob?.[0]?.revised_date : '',
+      txbRevisedBy: savedJob ? savedJob?.[0]?.RevisedUserFullName : '',
+      ddlCountry: savedJob ? savedJob?.[0]?.country : '',
+      ddlProvState: savedJob ? savedJob?.[0]?.prov_state : '',
+      ddlCity: savedJob ? savedJob?.[0]?.city_id : 0,
+      ddlAshareDesignConditions: savedJob ? savedJob?.[0]?.design_conditions_id : 0,
+      txbAltitude: savedJob ? savedJob?.[0]?.altitude : '0',
+      txbSummerOA_DB: savedJob ? savedJob?.[0]?.summer_outdoor_air_db : '95.0',
+      txbSummerOA_WB: savedJob ? savedJob?.[0]?.summer_outdoor_air_wb : '78.0',
+      txbSummerOA_RH: savedJob ? savedJob?.[0]?.summer_outdoor_air_rh : '47.3',
+      txbWinterOA_DB: savedJob ? savedJob?.[0]?.winter_outdoor_air_db : '35.0',
+      txbWinterOA_WB: savedJob ? savedJob?.[0]?.winter_outdoor_air_wb : '33.0',
+      txbWinterOA_RH: savedJob ? savedJob?.[0]?.winter_outdoor_air_rh : '81.9',
+      txbSummerRA_DB: savedJob ? savedJob?.[0]?.summer_return_air_db : '75.0',
+      txbSummerRA_WB: savedJob ? savedJob?.[0]?.summer_return_air_wb : '63.0',
+      txbSummerRA_RH: savedJob ? savedJob?.[0]?.summer_return_air_rh : '51.17',
+      txbWinterRA_DB: savedJob ? savedJob?.[0]?.winter_return_air_db : '70.0',
+      txbWinterRA_WB: savedJob ? savedJob?.[0]?.winter_return_air_wb : '52.9',
+      txbWinterRA_RH: savedJob ? savedJob?.[0]?.winter_return_air_rh : '30.0',
+      ckbTestNewPrice: savedJob ? savedJob?.[0]?.is_test_new_price : 0,
     }),
     [savedJob]
   );
@@ -185,7 +190,7 @@ export default function ProjectInfoDialog({
     // const jsonData = '{"name":"John", "age":30, "city":"London"}';
     // let oUnitInputs;
     formCurrValues = getValues(); // Do not use watch, must use getValues with the function to get current values.
-    let savedDate = savedJob?.strCreatedDate;
+    let savedDate = savedJob?.[0]?.created_date;
 
     if (savedDate?.includes('/')) {
       const [month, day, year] = savedDate.split('/');
@@ -193,7 +198,7 @@ export default function ProjectInfoDialog({
     }
     const oJobInputs = {
       oJob: {
-        intJobId: savedJob ? savedJob?.intJobId : -1,
+        intJobId: savedJob ? savedJob?.[0]?.id : -1,
         intCreatedUserId: typeof window !== 'undefined' ? localStorage.getItem('userId') : 0,
         intRevisedUserId: typeof window !== 'undefined' ? localStorage.getItem('userId') : 0,
         strJobName: formCurrValues.txbJobName,
@@ -373,6 +378,8 @@ export default function ProjectInfoDialog({
   const [isLoading, setIsLoading] = useState(0);
   const [openSnackbar, setOpenSnackbar] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState('');
+  const [applicationId, setApplicationId] = useState(0);
+
 
   const [projectDialogArrangement, setProjectDialogArrangement] = useState<any>();
   useMemo(() => {
@@ -561,17 +568,23 @@ export default function ProjectInfoDialog({
 
   const [applicationInfo, setApplicationInfo] = useState([]);
   useMemo(() => {
-    const dtSelApplication = dbtApplication;
+    const dtSelApplication = dbtApplication?.sort((a: any, b: any) => a.items.localeCompare(b.items));;
     // dtSelApplication.unshift("Select Application");
+
+    // dtSelApplication = dtSelApplication?.sort((a: any, b: any) => a.items.localeCompare(b.items));
 
     setApplicationInfo(dtSelApplication);
 
     if (dtSelApplication?.length > 0) {
-      setValue('ddlApplication', dtSelApplication?.[0]?.id);
+      if (applicationId > 0) {
+        setValue('ddlApplication', applicationId);
+      } else {
+        setValue('ddlApplication', dtSelApplication?.[0]?.id);
+      }
     } else {
       setValue('ddlApplication', 0);
     }
-  }, [dbtApplication, setValue]);
+  }, [applicationId, dbtApplication, setValue]);
 
 
   const [uomInfo, setUoM] = useState([]);
@@ -666,6 +679,7 @@ export default function ProjectInfoDialog({
     }
   }, [dbtWeatherDesignConditions, setValue]);
 
+
   const [weatherDataCountryInfo, setWeatherDataCountryInfo] = useState([]);
   useMemo(() => {
     const dtSelCountry = dbtWeatherData
@@ -680,6 +694,7 @@ export default function ProjectInfoDialog({
       setValue('ddlCountry', '');
     }
   }, [dbtWeatherData, setValue]);
+
 
   const [weatherDataProvStateInfo, setWeatherDataProvStateInfo] = useState([]);
   useMemo(() => {
@@ -697,6 +712,7 @@ export default function ProjectInfoDialog({
     }
   }, [dbtWeatherData, formValues.ddlCountry, setValue]);
 
+
   const [weatherDataCityInfo, setWeatherDataCityInfo] = useState([]);
   useMemo(() => {
     let dtSelCity = dbtWeatherData?.filter((e: any) => e.country === formCurrValues.ddlCountry);
@@ -711,6 +727,7 @@ export default function ProjectInfoDialog({
       setValue('ddlCity', 0); //
     }
   }, [dbtWeatherData, formCurrValues.ddlCountry, formCurrValues.ddlProvState, setValue]);
+
 
   // useState<any>([])
   const [stationInfo, setStationInfo] = useState<any>();
@@ -1032,64 +1049,69 @@ export default function ProjectInfoDialog({
   // Load saved Values
   useEffect(() => {
     if (savedJob !== null) {
-      if (savedJob?.intBasisOfDesignId > 0) {
-        setValue('ddlBasisOfDesign', savedJob?.intBasisOfDesignId);
+      if (savedJob?.[0]?.basis_of_design_id > 0) {
+        setValue('ddlBasisOfDesign', savedJob?.[0]?.basis_of_design_id);
       }
 
-      if (savedJob?.intCompanyNameId > 0) {
-        setValue('ddlCompanyName', savedJob?.intCompanyNameId);
+      if (savedJob?.[0]?.company_name_id > 0) {
+        setValue('ddlCompanyName', savedJob?.[0]?.company_name_id);
       }
 
-      if (savedJob?.intCompanyContactNameId > 0) {
-        setValue('ddlCompanyContactName', savedJob?.intCompanyContactNameId);
+      if (savedJob?.[0]?.company_contact_name_id > 0) {
+        setValue('ddlCompanyContactName', savedJob?.[0]?.company_contact_name_id);
       }
 
-      if (savedJob?.intApplicationId > 0) {
-        setValue('ddlApplication', savedJob?.intApplicationId);
+      if (savedJob?.[0]?.application_id > 0) {
+        setValue('ddlApplication', savedJob?.[0]?.application_id);
+        setApplicationId(savedJob?.[0]?.application_id);
       }
 
-      if (savedJob?.intUoMId > 0) {
-        setValue('ddlUoM', savedJob?.intUoMId);
+      if (savedJob?.[0]?.uom_id > 0) {
+        setValue('ddlUoM', savedJob?.[0]?.uom_id);
       }
 
-      if (savedJob?.strCountry !== '') {
-        setValue('ddlCountry', savedJob?.strCountry);
+      if (savedJob?.[0]?.country !== '') {
+        setValue('ddlCountry', savedJob?.[0]?.country);
       }
 
-      if (savedJob?.strProvState !== '') {
-        setValue('ddlProvState', savedJob?.strProvState);
+      if (savedJob?.[0]?.prov_state !== '') {
+        setValue('ddlProvState', savedJob?.[0]?.prov_state);
       }
 
-      if (savedJob?.intCityId > 0) {
-        setValue('ddlCity', savedJob?.intCityId);
+      if (savedJob?.[0]?.city_id > 0) {
+        setValue('ddlCity', savedJob?.[0]?.city_id);
       }
 
-      if (savedJob?.intDesignConditionsId > 0) {
-        setValue('ddlAshareDesignConditions', savedJob?.intDesignConditionsId);
+      if (savedJob?.[0]?.design_conditions_id > 0) {
+        setValue('ddlAshareDesignConditions', savedJob?.[0]?.design_conditions_id);
       }
 
-      setValue('txbJobName', savedJob?.strJobName);
-      setValue('txbProjectInternalId', savedJob?.strProjectInternalId);
-      setValue('txbReferenceNo', savedJob?.strReferenceNo !== "" ? savedJob?.strReferenceNo : "0");
-      setValue('txbRevisionNo', savedJob?.intRevisionNo !== "" ?String(savedJob?.intRevisionNo) : "0");
-      setValue('txbCompanyName', savedJob?.strCompanyName);
-      setValue('txbCompanyContactName', savedJob?.strCompanyContactName);
-      setValue('txbAltitude', String(savedJob?.intAltitude));
-      setValue('txbSummerOA_DB', savedJob?.dblSummerOA_DB?.toFixed(1));
-      setValue('txbSummerOA_WB', savedJob?.dblSummerOA_WB?.toFixed(1));
-      setValue('txbSummerOA_RH', savedJob?.dblSummerOA_RH?.toFixed(1));
+      setValue('txbJobName', savedJob?.[0]?.job_name);
+      setValue('txbProjectInternalId', savedJob?.[0]?.project_internal_id);
+      setValue('txbReferenceNo', savedJob?.[0]?.strReferenceNo !== "" ? savedJob?.[0]?.reference_no : "0");
+      setValue('txbRevisionNo', savedJob?.[0]?.intRevisionNo !== "" ?String(savedJob?.[0]?.revision_no) : "0");
+      setValue('txbCompanyName', savedJob?.[0]?.CompanyCustomerName);
+      setValue('txbCompanyContactName', savedJob?.[0]?.CompanyCustomerContactName);
+      setValue('txbCreatedDate', savedJob?.[0]?.created_date);
+      setValue('txbCreatedBy', savedJob?.[0]?.CreatedUserFullName);
+      setValue('txbRevisedDate', savedJob?.[0]?.revised_date);
+      setValue('txbRevisedBy', savedJob?.[0]?.RevisedUserFullName);
+   setValue('txbAltitude', String(savedJob?.[0]?.altitude));
+      setValue('txbSummerOA_DB', savedJob?.[0]?.summer_outdoor_air_db?.toFixed(1));
+      setValue('txbSummerOA_WB', savedJob?.[0]?.summer_outdoor_air_wb?.toFixed(1));
+      setValue('txbSummerOA_RH', savedJob?.[0]?.summer_outdoor_air_rh?.toFixed(1));
 
-      setValue('txbWinterOA_DB', savedJob?.dblWinterOA_DB?.toFixed(1));
-      setValue('txbWinterOA_WB', savedJob?.dblWinterOA_WB?.toFixed(1));
-      setValue('txbWinterOA_RH', savedJob?.dblWinterOA_RH?.toFixed(1));
+      setValue('txbWinterOA_DB', savedJob?.[0]?.winter_outdoor_air_db?.toFixed(1));
+      setValue('txbWinterOA_WB', savedJob?.[0]?.winter_outdoor_air_wb?.toFixed(1));
+      setValue('txbWinterOA_RH', savedJob?.[0]?.winter_outdoor_air_rh?.toFixed(1));
 
-      setValue('txbSummerRA_DB', savedJob?.dblSummerRA_DB?.toFixed(1));
-      setValue('txbSummerRA_WB', savedJob?.dblSummerRA_WB?.toFixed(1));
-      setValue('txbSummerRA_RH', savedJob?.dblSummerRA_RH?.toFixed(1));
+      setValue('txbSummerRA_DB', savedJob?.[0]?.summer_return_air_db?.toFixed(1));
+      setValue('txbSummerRA_WB', savedJob?.[0]?.summer_return_air_wb?.toFixed(1));
+      setValue('txbSummerRA_RH', savedJob?.[0]?.summer_return_air_rh?.toFixed(1));
 
-      setValue('txbWinterRA_DB', savedJob?.dblWinterRA_DB?.toFixed(1));
-      setValue('txbWinterRA_WB', savedJob?.dblWinterRA_WB.toFixed(1));
-      setValue('txbWinterRA_RH', savedJob?.dblWinterRA_RH?.toFixed(1));
+      setValue('txbWinterRA_DB', savedJob?.[0]?.winter_return_air_db?.toFixed(1));
+      setValue('txbWinterRA_WB', savedJob?.[0]?.winter_return_air_wb?.toFixed(1));
+      setValue('txbWinterRA_RH', savedJob?.[0]?.winter_return_air_rh?.toFixed(1));
       setIsLoading(1);
     } else {
       // Keep these values in else statement rather than inline if statment
@@ -1189,6 +1211,13 @@ export default function ProjectInfoDialog({
   // useEffect(() => {
   //   setNewJobInfo(savedJob);
   // },[savedJob]);
+
+
+  const ddlApplicationChanged = useCallback((e: any) => {
+    setValue('ddlApplication', e.target.value);
+    setApplicationId(e.target.value);
+  }, [setValue]);
+
 
   return (
     <Dialog  PaperProps={{
@@ -1317,12 +1346,11 @@ export default function ProjectInfoDialog({
                             name="ddlApplication"
                             label="Application"
                             placeholder="Application"
-                            onChange={(e: any) => setValue('ddlApplication', Number(e.target.value))}
-                          >
+                            // onChange={(e: any) => setValue('ddlApplication', Number(e.target.value))}
+                            onChange={ddlApplicationChanged}
+                            >
                             {/* <option value="" /> */}
-                            {applicationInfo
-                            ?.sort((a: any, b: any) => a.items.localeCompare(b.items))
-                            .map((option: any, index: number) => (
+                            {applicationInfo?.map((option: any, index: number) => (
                               <option key={index} value={option.id}>
                                 {option.items}
                               </option>
@@ -1347,6 +1375,46 @@ export default function ProjectInfoDialog({
                             ))}
                           </RHFSelect>
                         </Stack>
+                        <Stack>
+                          <RHFTextField
+                            // type="number"
+                            size="small"
+                            name="txbCreatedDate"
+                            label="Date Created:"
+                          // value={stationInfo?.altitude}
+                          disabled
+                          />
+                        </Stack>
+                        <Stack>
+                          <RHFTextField
+                            // type="number"
+                            size="small"
+                            name="txbCreatedBy"
+                            label="Created By"
+                          // value={stationInfo?.altitude}
+                          disabled
+                          />
+                        </Stack>
+                        <Stack>
+                          <RHFTextField
+                            // type="number"
+                            size="small"
+                            name="txbRevisedDate"
+                            label="Revised Date"
+                          // value={stationInfo?.altitude}
+                          disabled
+                          />
+                        </Stack>
+                        <Stack>
+                          <RHFTextField
+                            // type="number"
+                            size="small"
+                            name="txbRevisedBy"
+                            label="Revised By"
+                          // value={stationInfo?.altitude}
+                          disabled
+                          />
+                        </Stack>                        
                       </Box>
                     </Grid>
                   </Grid>

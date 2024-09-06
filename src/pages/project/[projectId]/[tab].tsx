@@ -90,7 +90,7 @@ export default function Project() {
 
     useEffect(() => {
       if (dbtSavedJob) {
-        setProjectName(dbtSavedJob?.strJobName);
+        setProjectName(dbtSavedJob?.[0]?.job_name);
       } else {
         setProjectName(null);
       }

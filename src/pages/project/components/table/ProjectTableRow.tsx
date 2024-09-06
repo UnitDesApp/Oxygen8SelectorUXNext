@@ -9,12 +9,13 @@ const statusArr = ['draft', 'quoted', 'released', 'closed'];
 
 type ProjectTableRowProps = {
   row: {
+    project_internal_id: string;
     job_name: string;
     reference_no: string;
     revision_no: string;
     Customer_Name: string;
-    Created_User_Full_Name: string;
-    Revised_User_Full_Name: string;
+    CreatedUserFullName: string;
+    RevisedUserFullName: string;
     created_date: string;
     revised_date: string;
     status: number;
@@ -35,12 +36,13 @@ export default function ProjectTableRow({
   onDeleteRow,
 }: ProjectTableRowProps) {
   const {
+    project_internal_id,
     job_name,
     reference_no,
     revision_no,
     Customer_Name,
-    Created_User_Full_Name,
-    Revised_User_Full_Name,
+    CreatedUserFullName,
+    RevisedUserFullName,
     created_date,
     revised_date,
     status,
@@ -65,12 +67,16 @@ export default function ProjectTableRow({
       </TableCell>
 
       <TableCell align="left" sx={{ cursor: 'pointer' }} onClick={onEditRow}>
-        {job_name}
+        {project_internal_id}
       </TableCell>
 
       <TableCell align="left" sx={{ cursor: 'pointer' }} onClick={onEditRow}>
-        {reference_no}
+        {job_name}
       </TableCell>
+
+      {/* <TableCell align="left" sx={{ cursor: 'pointer' }} onClick={onEditRow}>
+        {reference_no}
+      </TableCell> */}
 
       <TableCell align="left" sx={{ cursor: 'pointer' }} onClick={onEditRow}>
         {revision_no}
@@ -84,17 +90,17 @@ export default function ProjectTableRow({
         {Customer_Name}
       </TableCell>
 
-      <TableCell align="left" sx={{ cursor: 'pointer' }} onClick={onEditRow}>
-        {Created_User_Full_Name}
-      </TableCell>
+      {/* <TableCell align="left" sx={{ cursor: 'pointer' }} onClick={onEditRow}>
+        {CreatedUserFullName}
+      </TableCell> */}
 
       <TableCell align="left" sx={{ cursor: 'pointer' }} onClick={onEditRow}>
-        {Revised_User_Full_Name}
+        {RevisedUserFullName}
       </TableCell>
 
-      <TableCell align="left" sx={{ cursor: 'pointer' }} onClick={onEditRow}>
+      {/* <TableCell align="left" sx={{ cursor: 'pointer' }} onClick={onEditRow}>
         {created_date}
-      </TableCell>
+      </TableCell> */}
 
       <TableCell align="left" sx={{ cursor: 'pointer' }} onClick={onEditRow}>
         {revised_date}
