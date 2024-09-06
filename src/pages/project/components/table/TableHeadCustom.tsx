@@ -23,17 +23,19 @@ export const TABLE_HEAD: {
   align?: 'left' | 'center' | 'right';
   width: number;
 }[] = [
-  { id: 'job_name', label: 'Project Name', align: 'left', width: 200 },
-  { id: 'reference_no', label: 'Ref no.', align: 'left', width: 80 },
-  { id: 'revision_no', label: 'Rev no.', align: 'left', width: 80 },
-  { id: 'status', label: 'status', align: 'left', width: 80 },
-  { id: 'Customer_Name', label: 'Rep', align: 'left', width: 120 },
-  { id: 'Created_User_Full_Name', label: 'Created By', align: 'left', width: 100 },
-  { id: 'Revised_User_Full_Name', label: 'Revisied By', align: 'left', width: 100 },
-  { id: 'created_date', label: 'Date created', align: 'left', width: 140 },
-  { id: 'revised_date', label: 'Date revised', align: 'left', width: 140 },
-  { id: '', label: 'Actions', align: 'center', width: 30 },
-  { id: '', width: 10 },
+  { id: 'project_internal_id', label: 'Project ID', align: 'left', width: 100 },
+  { id: 'job_name', label: 'Project Name', align: 'left', width: 250 },
+  // { id: 'reference_no', label: 'Ref no.', align: 'left', width: 80 },
+  { id: 'revision_no', label: 'Rev no.', align: 'left', width: 50 },
+  { id: 'status', label: 'status', align: 'left', width: 50 },
+  { id: 'Customer_Name', label: 'Rep', align: 'left', width: 150 },
+  // { id: 'Created_User_Full_Name', label: 'Created By', align: 'left', width: 100 },
+  { id: 'RevisedUserFullName', label: 'Revisied By', align: 'left', width: 150 },
+  // { id: 'created_date', label: 'Date created', align: 'left', width: 140 },
+  { id: 'revised_date', label: 'Date revised', align: 'left', width: 100 },
+  // { id: '', label: 'Actions', align: 'center', width: 30 },
+    { id: '', label: 'Actions', align: 'left', width: 30 },
+{ id: '', width: 10 },
 ];
 
 // ----------------------------------------------------------------------

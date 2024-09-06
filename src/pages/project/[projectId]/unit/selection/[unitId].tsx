@@ -145,7 +145,7 @@ export default function EditSelection() {
               >
                 <Stack direction="row" alignItems="center" gap={1}>
                   <Iconify icon="ph:number-circle-two-fill" width="25px" height="25px" />
-                  <Typography variant="body1">Add unit info</Typography>
+                  <Typography variant="body1">Add unit details</Typography>
                 </Stack>
               </Item>
               <Item

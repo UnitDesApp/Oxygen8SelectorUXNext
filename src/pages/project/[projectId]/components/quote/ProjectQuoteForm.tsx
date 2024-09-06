@@ -1333,7 +1333,7 @@ export default function ProjectQuoteForm({ projectId, quoteInfo, refetch }: Proj
                   <RHFTextField
                     size="small"
                     name="txbMisc"
-                    label="Enter MIscellaneous"
+                    label="Enter Miscellaneous"
                     sx={{ width: '50%' }}
                   />
                   <RHFTextField

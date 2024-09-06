@@ -268,9 +268,9 @@ export default function ProjectSubmittalForm({
 
   useEffect(() => {
       if (dbtSavedJob) {
-        setValue('txbJobName', dbtSavedJob?.strJobName);
-        setValue('txbRepName', dbtSavedJob?.strCompanyName);
-        setValue('txbSalesEngineer', dbtSavedJob?.strCompanyContactName);
+        setValue('txbJobName', dbtSavedJob?.job_name);
+        setValue('txbRepName', dbtSavedJob?.CompanyCustomerName);
+        setValue('txbSalesEngineer', dbtSavedJob?.CompanyCustomerContactName);
       } else {
         setValue('txbJobName', null);
         setValue('txbRepName', null);
