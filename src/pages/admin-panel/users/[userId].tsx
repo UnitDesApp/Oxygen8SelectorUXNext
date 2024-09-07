@@ -7,8 +7,8 @@ import DashboardLayout from 'src/layouts/dashboard/DashboardLayout';
 import Loading from 'src/components/loading';
 // import UserAccountForm from 'src/pages/account/component/AccountForm';
 // import ChangePasswordForm from 'src/pages/account/component/ChangePasswordForm';
-import NewUserDialog from '../component/NewUserDialog';
-import NewCustomerDialog from '../component/NewCustomerDialog';
+import userDialog from '../component/userDialog';
+import customerDialog from '../component/customerDialog';
 import UserEditForm from './component/UserEditForm';
 
 
@@ -84,14 +84,14 @@ export default function UserEdit() {
           Server error!
         </Alert>
       </Snackbar>
-      <NewUserDialog
+      <userDialog
         open={addUserDlgOpen}
         onClose={onCloseUserDlg}
         onSuccess={onSuccessAddUser}
         onFail={() => setFailDlgOpen(true)}
         refetch={refetch}
       />
-      <NewCustomerDialog
+      <customerDialog
         open={addCustomerDlgOpen}
         onClose={onCloseCustomerDlg}
         onSuccess={onSuccessAddCustomer}
