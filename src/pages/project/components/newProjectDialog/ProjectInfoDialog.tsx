@@ -93,6 +93,7 @@ export default function ProjectInfoDialog({
     txbCompanyContactName: Yup.string(),
     ddlCompanyContactName: Yup.number(),
     ddlApplication: Yup.string(),
+    txbApplicationOther: Yup.string(),
     ddlUoM: Yup.string(),
     // ddlCountry: Yup.string().required('Please select a County'),
     // ddlProvState: Yup.string().required('Please select a Province / State'),
@@ -134,6 +135,7 @@ export default function ProjectInfoDialog({
       txbCompanyContactName: savedJob ? savedJob?.[0]?.CompanyCustomerContactName : '',
       txbSpecifyingFirm: savedJob ? savedJob?.[0]?.specifying_firm : '',
       ddlApplication: savedJob ? savedJob?.[0]?.application_id : 0,
+      txbApplicationOther: savedJob ? savedJob?.[0]?.application_other : '',
       ddlUoM: savedJob ? savedJob?.[0]?.uom_id : 0,
       txbCreatedDate: savedJob ? savedJob?.[0]?.created_date : '',
       txbCreatedBy: savedJob ? savedJob?.[0]?.CreatedUserFullName : '',
@@ -212,7 +214,7 @@ export default function ProjectInfoDialog({
         strCompanyContactName: '',
         strSpecifyingFirm: formCurrValues.txbSpecifyingFirm,
         intApplicationId: Number(formCurrValues.ddlApplication),
-        strApplicationOther: '',
+        strApplicationOther: formCurrValues.txbApplicationOther,
         intUoMId: Number(formCurrValues.ddlUoM),
         intDesignConditionsId: Number(formCurrValues.ddlAshareDesignConditions),
         strCountry: formCurrValues.ddlCountry,
@@ -269,18 +271,6 @@ export default function ProjectInfoDialog({
     return info;
   }, []);
 
-  // onChange handle for company Name
-  const handleChangeCompanyName = (e: any) => {
-    setValue('ddlCompanyName', e.target.value);
-    // setValue('txbCompanyName', e.nativeEvent.target[e.target.selectedIndex].text);
-    // setValue('ddlContactName', 0);
-    // setValue('txbContactName', '');
-  };
-
-  const handleChangeContactName = (e: any) => {
-    setValue('ddlCompanyContactName', e.target.value);
-    setValue('txbCompanyContactName', e.nativeEvent.target[e.target.selectedIndex].text);
-  };
 
   const onSubmit = async (data: any) => {
     // try {
@@ -310,8 +300,18 @@ export default function ProjectInfoDialog({
       setOpenSnackbar(true);
       return;
     }
-    if (!data.ddlApplication) {
-      setSnackbarMessage('Please enter an Application');
+    if (!data.ddlCompanyName || Number(getValues('ddlCompanyName')) === 0) {
+      setSnackbarMessage('Please select Company Name');
+      setOpenSnackbar(true);
+      return;
+    }    
+    if (!data.ddlCompanyContactName || Number(getValues('ddlCompanyContactName')) === 0) {
+      setSnackbarMessage('Please select Contact Name');
+      setOpenSnackbar(true);
+      return;
+    }
+    if (!data.ddlApplication || Number(getValues('ddlApplication')) === 0) {
+      setSnackbarMessage('Please select Application');
       setOpenSnackbar(true);
       return;
     }
@@ -378,7 +378,10 @@ export default function ProjectInfoDialog({
   const [isLoading, setIsLoading] = useState(0);
   const [openSnackbar, setOpenSnackbar] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState('');
+  const [companyNameId, setCompanyNameId] = useState(0);
+  const [companyContactNameId, setCompanyContactNameId] = useState(0);
   const [applicationId, setApplicationId] = useState(0);
+  const [isVisibleApplicationOther, setIsVisibleApplicationOther] = useState(false);
 
 
   const [projectDialogArrangement, setProjectDialogArrangement] = useState<any>();
@@ -569,7 +572,8 @@ export default function ProjectInfoDialog({
   const [applicationInfo, setApplicationInfo] = useState([]);
   useMemo(() => {
     const dtSelApplication = dbtApplication?.sort((a: any, b: any) => a.items.localeCompare(b.items));;
-    // dtSelApplication.unshift("Select Application");
+    const selectMsgData : any = {id: 0, items: "Select Application", enabled:1}
+    dtSelApplication?.unshift(selectMsgData);
 
     // dtSelApplication = dtSelApplication?.sort((a: any, b: any) => a.items.localeCompare(b.items));
 
@@ -587,6 +591,16 @@ export default function ProjectInfoDialog({
   }, [applicationId, dbtApplication, setValue]);
 
 
+  useEffect(() => {
+    if (Number(applicationId) === Ids.intApplicationIdOther) {
+      setIsVisibleApplicationOther(true);
+    } else {
+      setIsVisibleApplicationOther(false);
+      setValue('txbApplicationOther', '');
+    }
+  }, [applicationId, setValue]);
+
+
   const [uomInfo, setUoM] = useState([]);
   useMemo(() => {
     const dtSelUoM = dbtUoM;
@@ -602,44 +616,49 @@ export default function ProjectInfoDialog({
 
   const [companyInfo, setCompanyInfo] = useState([]);
   useMemo(() => {
-    const dtSelUser = dbtUsers?.filter(
-      (e: any) => e.id === Number(typeof window !== 'undefined' ? localStorage.getItem('userId') : 0)
-    );
-    let dtSelCompany;
+    const dtSelUser = dbtUsers?.filter((e: any) => e.id === Number(typeof window !== 'undefined' ? localStorage.getItem('userId') : 0));
+   
+    let dtSelCompany = dbtCustomer?.sort((a: any, b: any) => a.name.localeCompare(b.name));
+
+    const selectMsgData : any = {id: 0, name: "Select Company Name"}
 
     switch (typeof window !== 'undefined' ? Number(localStorage.getItem('UAL')) : 0) {
       case Ids?.intUAL_Admin:
       case Ids.intUAL_IntAdmin:
       case Ids.intUAL_IntLvl_2:
       case Ids.intUAL_IntLvl_1:
-        dtSelCompany = dbtCustomer;
-        // dtSelCompany.unshift("Select Company Name");
-        break;
+        dtSelCompany?.unshift(selectMsgData);
+            break;
       case Ids.intUAL_External:
       case Ids.intUAL_ExternalSpecial:
-        dtSelCompany = dbtCustomer?.filter((e: any) => e.id === Number(dtSelUser?.[0]?.customer_id));
+        dtSelCompany = dtSelCompany?.filter((e: any) => e.id === Number(dtSelUser?.[0]?.customer_id));
         break;
       default:
         break;
     }
 
+
+
     setCompanyInfo(dtSelCompany);
 
     if (dtSelCompany?.length > 0) {
-      setValue('ddlCompanyName', dtSelCompany?.[0]?.id);
+      if (companyNameId > 0) {
+        setValue('ddlCompanyName', companyNameId);
+      } else {
+        setValue('ddlCompanyName', dtSelCompany?.[0]?.id);
+      }
     } else {
       setValue('txbCompanyName', '');
       setValue('ddlCompanyName', 0);
     }
-  }, [dbtCustomer, dbtUsers, setValue]);
+  }, [companyNameId, dbtCustomer, dbtUsers, setValue]);
 
 
   const [companyContactInfo, setCompanyContactInfo] = useState([]);
   useMemo(() => {
-    const dtSelCompanyContacts = dbtUsers?.filter(
-      (item: any) => Number(item.customer_id) === Number(formValues.ddlCompanyName)
-    );
-
+    let dtSelCompanyContacts = dbtUsers?.sort((a: any, b: any) => a.first_name.localeCompare(b.first_name));
+    dtSelCompanyContacts = dtSelCompanyContacts?.filter((item: any) => Number(item.customer_id) === Number(formValues.ddlCompanyName));
+    
     switch (typeof window !== 'undefined' ? Number(localStorage.getItem('UAL')) : 0) {
       case Ids?.intUAL_Admin:
       case Ids.intUAL_IntAdmin:
@@ -655,15 +674,23 @@ export default function ProjectInfoDialog({
     }
 
 
+    const selectMsgData : any = {id: 0, first_name: "Select Contact Name", last_name:""}
+    dtSelCompanyContacts?.unshift(selectMsgData);
+
+
     setCompanyContactInfo(dtSelCompanyContacts);
 
     if (dtSelCompanyContacts?.length > 0) {
-      setValue('ddlCompanyContactName', dtSelCompanyContacts?.[0]?.id);
+      if (companyContactNameId > 0) {
+        setValue('ddlCompanyContactName', companyContactNameId);
+      } else {
+        setValue('ddlCompanyContactName', dtSelCompanyContacts?.[0]?.id);
+      }
     } else {
       setValue('txbCompanyContactName', '');
       setValue('ddlCompanyContactName', 0);
     }
-  }, [dbtUsers, formValues.ddlCompanyName, setValue]);
+  }, [companyContactNameId, dbtUsers, formValues.ddlCompanyName, setValue]);
 
 
   const [designCondInfo, setDesignCondInfo] = useState([]);
@@ -1055,10 +1082,12 @@ export default function ProjectInfoDialog({
 
       if (savedJob?.[0]?.company_name_id > 0) {
         setValue('ddlCompanyName', savedJob?.[0]?.company_name_id);
+        setCompanyNameId(savedJob?.[0]?.company_name_id);
       }
 
       if (savedJob?.[0]?.company_contact_name_id > 0) {
         setValue('ddlCompanyContactName', savedJob?.[0]?.company_contact_name_id);
+        setCompanyContactNameId(savedJob?.[0]?.company_contact_name_id);
       }
 
       if (savedJob?.[0]?.application_id > 0) {
@@ -1092,11 +1121,12 @@ export default function ProjectInfoDialog({
       setValue('txbRevisionNo', savedJob?.[0]?.intRevisionNo !== "" ?String(savedJob?.[0]?.revision_no) : "0");
       setValue('txbCompanyName', savedJob?.[0]?.CompanyCustomerName);
       setValue('txbCompanyContactName', savedJob?.[0]?.CompanyCustomerContactName);
+      setValue('txbApplicationOther', savedJob?.[0]?.application_other);
       setValue('txbCreatedDate', savedJob?.[0]?.created_date);
       setValue('txbCreatedBy', savedJob?.[0]?.CreatedUserFullName);
       setValue('txbRevisedDate', savedJob?.[0]?.revised_date);
       setValue('txbRevisedBy', savedJob?.[0]?.RevisedUserFullName);
-   setValue('txbAltitude', String(savedJob?.[0]?.altitude));
+      setValue('txbAltitude', String(savedJob?.[0]?.altitude));
       setValue('txbSummerOA_DB', savedJob?.[0]?.summer_outdoor_air_db?.toFixed(1));
       setValue('txbSummerOA_WB', savedJob?.[0]?.summer_outdoor_air_wb?.toFixed(1));
       setValue('txbSummerOA_RH', savedJob?.[0]?.summer_outdoor_air_rh?.toFixed(1));
@@ -1212,6 +1242,32 @@ export default function ProjectInfoDialog({
   //   setNewJobInfo(savedJob);
   // },[savedJob]);
 
+  // const ddlCompanyNameChanged = useCallback((e: any) => {
+  //   setValue('ddlCompanyName', e.target.value);
+  //   setApplicationId(e.target.value);
+  // }, [setValue]);
+
+
+  // const ddlContactNameChanged = useCallback((e: any) => {
+  //   setValue('ddlContactName', e.target.value);
+  //   setApplicationId(e.target.value);
+  // }, [setValue]);
+
+
+    const ddlCompanyNameChanged = useCallback((e: any) => {
+      setValue('ddlCompanyName', e.target.value);
+      setCompanyNameId(e.target.value);
+      setCompanyContactNameId(0);
+    }, [setValue]);
+  
+
+    const ddlCompanyContactNameChanged = useCallback((e: any) => {
+      setValue('ddlCompanyContactName', e.target.value);
+      setValue('txbCompanyContactName', e.nativeEvent.target[e.target.selectedIndex].text);
+      setCompanyContactNameId(e.target.value);
+    }, [setValue]);
+  
+
 
   const ddlApplicationChanged = useCallback((e: any) => {
     setValue('ddlApplication', e.target.value);
@@ -1298,7 +1354,7 @@ export default function ProjectInfoDialog({
                             name="ddlCompanyName"
                             label="Company Name"
                             placeholder=""
-                          // onChange={handleChangeCompanyName}
+                          onChange={ddlCompanyNameChanged}
                           >
                             {/* <option value="" /> */}
                             {companyInfo?.map((option: any, index: number) => (
@@ -1316,7 +1372,7 @@ export default function ProjectInfoDialog({
                             label="Contact Name"
                             placeholder=""
                             disabled={UalInfo.isDisabled}
-                            onChange={handleChangeContactName}
+                            onChange={ddlCompanyContactNameChanged}
                           >
                             {/* <option value="" /> */}
                             {companyContactInfo && companyContactInfo?.length > 0 ? (
@@ -1358,6 +1414,16 @@ export default function ProjectInfoDialog({
                           </RHFSelect>
                         </Stack>
                         <Stack>
+                          <RHFTextField
+                            // type="number"
+                            size="small"
+                            name="txbApplicationOther"
+                            label="Application Other"
+                            sx={{display: isVisibleApplicationOther ? 'block' : 'none'}}
+
+                          />
+                        </Stack>
+                        <Stack>
                           <RHFSelect
                             native
                             size="small"
@@ -1365,7 +1431,7 @@ export default function ProjectInfoDialog({
                             label="UoM"
                             placeholder=""
                             disabled
-                          // onChange={(e: any) => setValue('ddlUoM', Number(e.target.value))}
+                            // onChange={(e: any) => setValue('ddlUoM', Number(e.target.value))}
                           >
                             {/* <option value="" /> */}
                             {uomInfo?.map((option: any, index: number) => (
@@ -1380,7 +1446,7 @@ export default function ProjectInfoDialog({
                             // type="number"
                             size="small"
                             name="txbCreatedDate"
-                            label="Date Created:"
+                            label="Date Created"
                           // value={stationInfo?.altitude}
                           disabled
                           />

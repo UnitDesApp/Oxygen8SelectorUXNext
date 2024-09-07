@@ -20,19 +20,19 @@ type ProductTypeItemProps = {
   active?: boolean;
 };
 
-type ImageLabels = 'Nova' | 'Ventum' | 'Ventum Lite' | 'Terra' | 'Ventum Plus';
+type ImageLabels = 'Nova' | 'Ventum' | 'Ventum Plus' | 'Ventum Lite' | 'Terra';
 
 export default function ProductTypeItem({ label, onSelectItem, id, active }: ProductTypeItemProps) {
   const images: Record<any, string> = {
-    Nova: '/assets/Images/new_unit_nova.png',
-    Ventum: '/assets/Images/new_unit_ventum_h.png',
-    'Ventum Lite': '/assets/Images/new_unit_ventum lite.png',
-    Terra: '/assets/Images/new_unit_terra.png',
+    'Nova': '/assets/Images/new_unit_nova.png',
+    'Ventum': '/assets/Images/new_unit_ventum_h.png',
     'Ventum Plus': '/assets/Images/new_unit_ventum_plus.png',
+    'Ventum Lite': '/assets/Images/new_unit_ventum lite.png',
+    'Terra': '/assets/Images/new_unit_terra.png',
   };
 
   const values: Record<ImageLabels, (string | JSX.Element)[]> = {
-    Nova: [
+    'Nova': [
       '325 - 8,100 cfm',
     //   <Button variant="outlined" color="primary"
     //   onClick={() => window.open('/CommercialProductLineComparison.pdf', '_blank')}
@@ -45,7 +45,7 @@ export default function ProductTypeItem({ label, onSelectItem, id, active }: Pro
       'Horizontal / Vertical',
       'Daikin VRV Integration, Electric heater, Hydronic Coil (HW & CW)',
     ],
-    Ventum: [
+    'Ventum': [
       '350 - 3,000 cfm',
     //   <Button variant="outlined" color="primary"
     //   onClick={() => window.open('/CommercialProductLineComparison.pdf', '_blank')}
@@ -56,6 +56,19 @@ export default function ProductTypeItem({ label, onSelectItem, id, active }: Pro
       'Counterflow Core (High Efficiency)',
       'Indoor',
       'Horizontal',
+      'Daikin VRV Integration, Electric heater, Hydronic Coil (HW & CW)',
+    ],
+    'Ventum Plus': [
+      '1,200 - 10,000 cfm',
+    //   <Button variant="outlined" color="primary"
+    //   onClick={() => window.open('/CommercialProductLineComparison.pdf', '_blank')}
+    // >
+    //    Comparison guide
+    // </Button>,
+      'ERV / HRV',
+      'Counterflow Core (High Efficiency)',
+      'Indoor / Outdoor',
+      'Vertical',
       'Daikin VRV Integration, Electric heater, Hydronic Coil (HW & CW)',
     ],
     'Ventum Lite': [
@@ -71,7 +84,7 @@ export default function ProductTypeItem({ label, onSelectItem, id, active }: Pro
       'Horizontal',
       'Electric pre-heater',
     ],
-    Terra: [
+    'Terra': [
       '425 - 4,800 cfm',
     //   <Button variant="outlined" color="primary"
     //   onClick={() => window.open('/CommercialProductLineComparison.pdf', '_blank')}
@@ -83,19 +96,6 @@ export default function ProductTypeItem({ label, onSelectItem, id, active }: Pro
       'Indoor',
       'Horizontal',
       'Daikin VRV Integration, Electric heater',
-    ],
-    'Ventum Plus': [
-      '1,200 - 10,000 cfm',
-    //   <Button variant="outlined" color="primary"
-    //   onClick={() => window.open('/CommercialProductLineComparison.pdf', '_blank')}
-    // >
-    //    Comparison guide
-    // </Button>,
-      'ERV / HRV',
-      'Counterflow Core (High Efficiency)',
-      'Indoor / Outdoor',
-      'Vertical',
-      'Daikin VRV Integration, Electric heater, Hydronic Coil (HW & CW)',
     ],
   };
 

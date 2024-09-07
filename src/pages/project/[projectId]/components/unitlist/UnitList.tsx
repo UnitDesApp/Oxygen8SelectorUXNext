@@ -253,8 +253,8 @@ export default function UnitList() {
 
             <TableBody>
               {dataFiltered
-                ?.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                .map((row, index) => (
+                // ?.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                ?.map((row, index) => (
                   <UnitTableRow
                     key={index}
                     row={row}
@@ -277,7 +277,7 @@ export default function UnitList() {
         </TableContainer>
       </Scrollbar>
 
-      <Box sx={{ position: 'relative' }}>
+      {/* <Box sx={{ position: 'relative' }}>
         <TablePagination
           rowsPerPageOptions={[5, 10, 25]}
           component="div"
@@ -287,7 +287,7 @@ export default function UnitList() {
           onPageChange={onChangePage}
           onRowsPerPageChange={onChangeRowsPerPage}
         />
-      </Box>
+      </Box> */}
       <Snackbar
           open={openDuplicateSuccess}
           autoHideDuration={3000}
