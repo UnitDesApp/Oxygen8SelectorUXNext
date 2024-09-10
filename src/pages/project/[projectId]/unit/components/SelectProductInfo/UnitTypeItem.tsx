@@ -20,6 +20,7 @@ type UnitTypeItemProps = {
   id?: number | string;
   active?: boolean;
   productTypeValue?: string;
+  unitTypeDesc: string;
   SetIsOpenSideDescriptionOfProductType: (value: boolean) => void;
 };
 
@@ -30,6 +31,7 @@ export default function UnitTypeItem({
   SetIsOpenSideDescriptionOfProductType,
   id,
   active,
+  unitTypeDesc,
 }: UnitTypeItemProps) {
   const images: Record<string, string> = {
     ERV: '/assets/Images/new_unit_crossflow_erv.png',
@@ -58,7 +60,8 @@ export default function UnitTypeItem({
       </BoxStyle>
       <Box sx={{ textAlign: 'center', fontSize: '14px' }} mb={1}>
         <Typography>
-          {label}
+          {/* {label} */}
+          {unitTypeDesc}
           <span>
             <IconButton aria-label="info" sx={{ padding: '5px', pt: 0 }} onClick={()=>SetIsOpenSideDescriptionOfProductType(true)}>
               {}
@@ -68,11 +71,13 @@ export default function UnitTypeItem({
       </Box>
       <Divider />
       <Stack textAlign="center" spacing={2} mt={1}>
-        <Typography>ERV</Typography>
+        {/* <Typography>ERV</Typography>
         <Typography>Indoor/Outdoor</Typography>
         <Typography>Standard Efficiency</Typography>
-        <Typography>VRV Integration</Typography>
+        <Typography>VRV Integration</Typography> */}
+        {/* {unitTypeDesc} */}
       </Stack>
+
     </Box>
   );
 }

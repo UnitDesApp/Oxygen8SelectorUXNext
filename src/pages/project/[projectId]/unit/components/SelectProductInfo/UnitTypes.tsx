@@ -11,6 +11,26 @@ type UnitTypesProps = {
   SetIsOpenSideDescriptionOfProductType: (value: boolean) => void;
 };
 
+export const getUnitTypeDesc = (unitType: string) => {
+  let unitTypeDesc = "";
+
+  switch (unitType) {
+    case 'ERV':
+      unitTypeDesc = "Energy Recovery Ventilator";
+      break;
+    case 'HRV':
+      unitTypeDesc = "Heat Recovery Ventilator";
+      break;
+      case 'AHU':
+        unitTypeDesc = "Air Handling Unit";
+      break;
+      default:
+        break;
+  }
+
+  return unitTypeDesc;
+};
+
 export default function UnitTypes(props: UnitTypesProps) {
   const { productTypeID, productTypeUnitTypeLinkDataTbl,SetIsOpenSideDescriptionOfProductType,productTypeValue, onSelectItem } = props;
 
@@ -39,6 +59,7 @@ export default function UnitTypes(props: UnitTypesProps) {
           SetIsOpenSideDescriptionOfProductType = {SetIsOpenSideDescriptionOfProductType}
             key={ele.unit_type_id}
             label={ele.unit_type}
+            unitTypeDesc={getUnitTypeDesc(ele.unit_type)}
             onSelectItem={() => {
               onSelectItem(ele.unit_type, ele.unit_type_id);
             }}

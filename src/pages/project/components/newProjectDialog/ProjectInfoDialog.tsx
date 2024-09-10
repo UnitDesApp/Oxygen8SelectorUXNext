@@ -572,7 +572,7 @@ export default function ProjectInfoDialog({
   const [applicationInfo, setApplicationInfo] = useState([]);
   useMemo(() => {
     const dtSelApplication = dbtApplication?.sort((a: any, b: any) => a.items.localeCompare(b.items));;
-    const selectMsgData : any = {id: 0, items: "Select Application", enabled:1}
+    const selectMsgData = {id: 0, items: "Select Application", enabled:1}
     dtSelApplication?.unshift(selectMsgData);
 
     // dtSelApplication = dtSelApplication?.sort((a: any, b: any) => a.items.localeCompare(b.items));

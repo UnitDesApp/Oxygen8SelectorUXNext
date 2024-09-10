@@ -1,6 +1,6 @@
 // @mui
 import { styled } from '@mui/material/styles';
-import { Box, Typography, IconButton, Button, Divider, Stack } from '@mui/material';
+import { Box, Typography, IconButton, Button, Divider, Stack, Grid } from '@mui/material';
 import Iconify from 'src/components/iconify';
 // ----------------------------------------------------------------------
 
@@ -18,12 +18,21 @@ type ProductTypeItemProps = {
   onSelectItem: Function;
   id?: string;
   active?: boolean;
+  prodTypeDesc: any;
+  prodTypeImage: any;
 };
 
 type ImageLabels = 'Nova' | 'Ventum' | 'Ventum Plus' | 'Ventum Lite' | 'Terra';
 
-export default function ProductTypeItem({ label, onSelectItem, id, active }: ProductTypeItemProps) {
-  const images: Record<any, string> = {
+export default function ProductTypeItem({ 
+  label, 
+  onSelectItem, 
+  id, 
+  active, 
+  prodTypeDesc,
+  prodTypeImage, }: ProductTypeItemProps) {
+  
+    const images: Record<any, string> = {
     'Nova': '/assets/Images/new_unit_nova.png',
     'Ventum': '/assets/Images/new_unit_ventum_h.png',
     'Ventum Plus': '/assets/Images/new_unit_ventum_plus.png',
@@ -104,29 +113,72 @@ export default function ProductTypeItem({ label, onSelectItem, id, active }: Pro
   
   return (
     <Box textAlign="center">
-      <BoxStyle
-        id={id || ''}
-        onClick={() => onSelectItem(id)}
-        sx={{ borderColor: active ? 'primary.main' : '#a3a3a3' }}
-      >
-        <img src={imageUrl} width="100%" height="100%" alt={label} />
-      </BoxStyle>
-      <Box sx={{ textAlign: 'center', fontSize: '14px' }} mb={1}>
-        <Typography>
-          {label}
-          <span>
-            <IconButton aria-label="info" sx={{ padding: '5px', pt: 0 }}>
-              <Iconify icon="ant-design:exclamation-circle-outlined" />
-            </IconButton>
-          </span>
-        </Typography>
-      </Box>
-      <Divider />
-      <Stack textAlign="center" spacing={2} mt={1}>
-        {labelValues.map((value, index) => (
-          <Typography key={index}>{value}</Typography>
-        ))}
-      </Stack>
+    <BoxStyle
+      id={id || ''}
+      onClick={() => onSelectItem(id)}
+      sx={{ display: prodTypeImage?.isLabel === true ? 'grid': 'grid',  borderColor: active ? 'primary.main' : '#a3a3a3', }}
+    >
+      {/* <img src={imageUrl} width="100%" height="100%" alt={label} /> */}
+      <img src={prodTypeImage?.imageUrl} width="100%" height="100%" alt={label} />
+    </BoxStyle>
+    <Divider />
+    <Box sx={{ textAlign: 'center', fontSize: '14px' }} mb={1}>
+      <Typography>
+        {label}
+        <span>
+          <IconButton aria-label="info" sx={{ padding: '5px', pt: 0 }}>
+            <Iconify icon="ant-design:exclamation-circle-outlined" />
+          </IconButton>
+        </span>
+      </Typography>
     </Box>
+    <Divider />
+    <Stack textAlign={prodTypeDesc?.textAlign} spacing={2} mt={1}>
+      {/* {labelValues.map((value, index) => (
+        <Typography key={index}>{value}</Typography>
+      ))} */}
+      <Typography>{prodTypeDesc?.airflow}</Typography>
+      <Typography>{prodTypeDesc?.typeOfRecovery}</Typography>
+      <Typography>{prodTypeDesc?.coreType}</Typography>
+      <Typography>{prodTypeDesc?.location}</Typography>
+      <Typography>{prodTypeDesc?.orientation}</Typography>
+      <Typography>{prodTypeDesc?.accessories}</Typography>
+    </Stack>
+  </Box>
+
+
+
+
+
+    // <>
+//     <Grid container spacing={1}>
+//     <Grid item xs={12} md={12} display='inline-flex'>
+//       <BoxStyle 
+//               id={id || ''}
+//               onClick={() => onSelectItem(id)}
+//       sx={{ display: 'grid', rowGap: 1, columnGap: 1, gridTemplateColumns: { xs: 'repeat(1, 1fr)' }, }}>
+//               <Stack sx={{ display: prodTypeImage?.isLabel === true ? 'inline-block': 'grid'}}><img src={prodTypeDesc?.imageUrl} width="100%" height="100%" alt={label} /></Stack>
+
+//       </BoxStyle>
+//     </Grid>
+//     <Grid item xs={12} md={12}>
+//       {}
+// </Grid>
+// <Divider/>
+//     <Grid item xs={12} md={12}>
+//       <Box sx={{ display: 'grid', rowGap: 1, columnGap: 1, gridTemplateColumns: { xs: 'repeat(1, 1fr)' }, }}>
+
+//         <Stack><Typography>{prodTypeDesc?.airflow}</Typography></Stack>
+//         <Stack><Typography>{prodTypeDesc?.typeOfRecovery}</Typography></Stack>
+//         <Stack><Typography>{prodTypeDesc?.coreType}</Typography></Stack>
+//         <Stack><Typography>{prodTypeDesc?.location}</Typography></Stack>
+//         <Stack><Typography>{prodTypeDesc?.orientation}</Typography></Stack>
+//         <Stack><Typography>{prodTypeDesc?.accessories}</Typography></Stack>
+//       </Box>
+//     </Grid>
+//   </Grid>
+
+
+    // {/* </> */}
   );
 }
