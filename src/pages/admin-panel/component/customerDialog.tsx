@@ -21,7 +21,7 @@ import { useApiContext } from 'src/contexts/ApiContext';
 import FormProvider from 'src/components/hook-form/FormProvider';
 import { RHFSelect, RHFTextField } from 'src/components/hook-form';
 
-interface NewCustomerDialogProps {
+interface customerDialogProps {
   open: boolean;
   onClose: Function;
   onSuccess: Function;
@@ -31,7 +31,7 @@ interface NewCustomerDialogProps {
   row?: any;
 }
 
-export default function NewCustomerDialog({
+export default function customerDialog({
   open,
   onClose,
   onSuccess,
@@ -39,7 +39,7 @@ export default function NewCustomerDialog({
   name,
   row,
   refetch,
-}: NewCustomerDialogProps) {
+}: customerDialogProps) {
   const api = useApiContext();
   const { data: accountInfo } = useGetAccountInfo();
   const { dbtSelCustomerType, dbtSelFOB_Point, dbtSelCountry, dbtSelProvState, dbtSavCustomer } = accountInfo || {};

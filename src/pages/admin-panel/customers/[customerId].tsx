@@ -28,8 +28,8 @@ import FormProvider from 'src/components/hook-form/FormProvider';
 import { RHFSelect, RHFTextField } from 'src/components/hook-form';
 import DashboardLayout from 'src/layouts/dashboard/DashboardLayout';
 import Users from '../users';
-import NewUserDialog from '../component/NewUserDialog';
-import NewCustomerDialog from '../component/NewCustomerDialog';
+import userDialog from '../component/userDialog';
+import customerDialog from '../component/customerDialog';
 
 // ------------------------------------------------------------------------
 
@@ -196,7 +196,7 @@ export default function UserEdit() {
             <AccordionDetails>
               <FormProvider methods={methods} onSubmit={handleSubmit(onSubmit)}>
                 <Box sx={{ display: 'grid', gap: 2, gridTemplateColumns: 'repeat(2, 1fr)' }}>
-                  <RHFTextField size="small" name="txbCustomer" label="Customer Name" />
+                  <RHFTextField size="small"   InputProps={{ readOnly: true }}  name="txbCustomer" label="Customer Name" />
                   {/* <RHFSelect
                     native
                     size="small"
@@ -211,8 +211,8 @@ export default function UserEdit() {
                     ))}
                     {!dbtSelCustomerType && <option value="" />}
                   </RHFSelect> */}
-                  <RHFTextField size="small" name="txbCustomerType" label="Customer Type" />
-                  <RHFTextField size="small" name="txbAddress" label="Address" />
+                  <RHFTextField size="small"   InputProps={{ readOnly: true }} name="txbCustomerType" label="Customer Type" />
+                  <RHFTextField size="small"   InputProps={{ readOnly: true }} name="txbAddress" label="Address" />
                   {/* <RHFSelect native size="small" name="countryId" label="Country" placeholder="">
                     {dbtSelCountry?.map((item: any) => (
                       <option key={item.id} value={item.id}>
@@ -221,9 +221,9 @@ export default function UserEdit() {
                     ))}
                     {!dbtSavCustomer && <option value="" />}
                   </RHFSelect> */}
-                  <RHFTextField size="small" name="txbCountry" label="Country" />
+                  <RHFTextField size="small"   InputProps={{ readOnly: true }} name="txbCountry" label="Country" />
 
-                  <RHFTextField size="small" name="txbContactName" label="Contact name" />
+                  <RHFTextField size="small"   InputProps={{ readOnly: true }}  name="txbContactName" label="Contact name" />
                   {/* <RHFSelect native size="small" name="fobPoint" label="FOB point" placeholder="">
                     {dbtSelFOB_Point?.map((item: any) => (
                       <option key={item.id} value={item.id}>
@@ -232,9 +232,9 @@ export default function UserEdit() {
                     ))}
                     {!dbtSelFOB_Point && <option value="" />}
                   </RHFSelect> */}
-                  <RHFTextField size="small" name="txbFOB_Point" label="FOB Point" />
-                  <RHFTextField size="small" name="txbCreatedDate" label="Create Date" />
-                  <RHFTextField size="small" name="txbShippingFactor" label="Shipping factor(%)" />
+                  <RHFTextField size="small"   InputProps={{ readOnly: true }} name="txbFOB_Point" label="FOB Point" />
+                  <RHFTextField size="small"   InputProps={{ readOnly: true }}  name="txbCreatedDate" label="Create Date" />
+                  <RHFTextField size="small"   name="txbShippingFactor" label="Shipping factor(%)" />
                 </Box>
                 <Stack spacing={2} p={2}>
                   <Stack direction="row" justifyContent="flex-end">
@@ -282,14 +282,14 @@ export default function UserEdit() {
           Server error!
         </Alert>
       </Snackbar>
-      <NewUserDialog
+      <userDialog
         open={addUserDlgOpen}
         onClose={onCloseUserDlg}
         onSuccess={onSuccessAddUser}
         onFail={() => setFailDlgOpen(true)}
         refetch={refetch}
       />
-      <NewCustomerDialog
+      <customerDialog
         open={addCustomerDlgOpen}
         onClose={onCloseCustomerDlg}
         onSuccess={onSuccessAddCustomer}

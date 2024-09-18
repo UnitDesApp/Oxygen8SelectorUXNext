@@ -19,7 +19,7 @@ import { useApiContext } from 'src/contexts/ApiContext';
 import FormProvider from 'src/components/hook-form/FormProvider';
 import { RHFSelect, RHFTextField } from 'src/components/hook-form';
 
-interface NewUserDialogProps {
+interface userDialogProps {
   open: boolean;
   onClose: Function;
   onSuccess: Function;
@@ -29,7 +29,7 @@ interface NewUserDialogProps {
   row?: any;
 }
 
-export default function NewUserDialog({
+export default function userDialog({
   open,
   onClose,
   onSuccess,
@@ -38,7 +38,7 @@ export default function NewUserDialog({
   row,
   name,
 
-}: NewUserDialogProps) {
+}: userDialogProps) {
   const api = useApiContext();
   const { data: accountInfo, isLoading } = useGetAccountInfo();
 

@@ -35,6 +35,7 @@ import { getRandomNumber } from 'src/utils/referenceNumber';
 import { isInCurrentMonth } from 'src/utils/date';
 import { userInfo } from 'os';
 import { celsiusToFarenheit } from 'src/utils/convert';
+// import { firstName } from 'src/_mock/assets';
 
 type ProjectInfoDialogProps = {
   loadProjectStep: string;
@@ -664,7 +665,7 @@ export default function ProjectInfoDialog({
       case Ids.intUAL_IntAdmin:
       case Ids.intUAL_IntLvl_2:
       case Ids.intUAL_IntLvl_1:
-        // dtSelCompanyContacts.unshift("Select Contact Name");
+        dtSelCompanyContacts.unshift({first_name: "Select Contact Name"});
         break;
       case Ids.intUAL_External:
       case Ids.intUAL_ExternalSpecial:
@@ -1378,7 +1379,7 @@ export default function ProjectInfoDialog({
                             {companyContactInfo && companyContactInfo?.length > 0 ? (
                               companyContactInfo?.map((option: any, index: number) => (
                                 <option key={index} value={option.id}>
-                                  {`${option.first_name} ${option.last_name}`}
+                                  {`${option.first_name} ${option.last_name ? option.last_name : ''}`}
                                 </option>
                               ))
                             ) : (
