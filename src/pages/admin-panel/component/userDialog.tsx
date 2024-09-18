@@ -29,7 +29,7 @@ interface userDialogProps {
   row?: any;
 }
 
-export default function userDialog({
+export default function UserDialog({
   open,
   onClose,
   onSuccess,

@@ -31,7 +31,7 @@ interface customerDialogProps {
   row?: any;
 }
 
-export default function customerDialog({
+export default function CustomerDialog({
   open,
   onClose,
   onSuccess,

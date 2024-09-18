@@ -28,8 +28,8 @@ import FormProvider from 'src/components/hook-form/FormProvider';
 import { RHFSelect, RHFTextField } from 'src/components/hook-form';
 import DashboardLayout from 'src/layouts/dashboard/DashboardLayout';
 import Users from '../users';
-import userDialog from '../component/userDialog';
-import customerDialog from '../component/customerDialog';
+import UserDialog from '../component/userDialog';
+import CustomerDialog from '../component/customerDialog';
 
 // ------------------------------------------------------------------------
 
@@ -282,14 +282,14 @@ export default function UserEdit() {
           Server error!
         </Alert>
       </Snackbar>
-      <userDialog
+      <UserDialog
         open={addUserDlgOpen}
         onClose={onCloseUserDlg}
         onSuccess={onSuccessAddUser}
         onFail={() => setFailDlgOpen(true)}
         refetch={refetch}
       />
-      <customerDialog
+      <CustomerDialog
         open={addCustomerDlgOpen}
         onClose={onCloseCustomerDlg}
         onSuccess={onSuccessAddCustomer}
