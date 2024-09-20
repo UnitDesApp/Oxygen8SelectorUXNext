@@ -60,80 +60,80 @@ export const getProdTypeImage = (prodType: string) => {
   return desc;
 };
 
-export const getProdTypeDesc = (prodType: string, prodName: string) => {
-  const desc: { 
-      isLabel: boolean; prodName: string, textAlign: string; imageUrl:  string; airflow: string; typeOfRecovery: string; coreType: string; location: string; orientation: string; accessories: string;} = { 
-      isLabel: false,  prodName: '', textAlign: 'center', imageUrl: '', airflow: '', typeOfRecovery: '', coreType: '', location: '', orientation: '', accessories: '', };
+// export const getProdTypeDesc = (prodType: string, prodName: string) => {
+//   const desc: { 
+//       isLabel: boolean; prodName: string, textAlign: string; imageUrl:  string; airflow: string; typeOfRecovery: string; coreType: string; location: string; orientation: string; accessories: string;} = { 
+//       isLabel: false,  prodName: '', textAlign: 'center', imageUrl: '', airflow: '', typeOfRecovery: '', coreType: '', location: '', orientation: '', accessories: '', };
 
-  switch (prodType) {
-    case 'LABEL':
-      desc.isLabel = true;
-      desc.prodName = '';
-      desc.textAlign = "left";
-      desc.imageUrl = "";
-      desc.airflow = "Airflow";
-      desc.typeOfRecovery = "Type of Recovery Options";
-      desc.coreType = "Core Type (Efficiency)";
-      desc.location = "Location Options";
-      desc.orientation = "Orientation Options";
-      desc.accessories = "Accessories Options";
-      break;
-    case 'NOVA':
-      desc.prodName = prodName;
-      desc.imageUrl = "/assets/Images/new_unit_nova.png";
-      desc.airflow = "325 - 8,100 cfm";
-      desc.typeOfRecovery = "ERV";
-      desc.coreType = "Crossflow Core (Standard Efficiency)";
-      desc.location = "Indoor / Outdoor";
-      desc.orientation = "Horizontal / Vertical";
-      desc.accessories = "Daikin VRV Integration, Electric heater, Hydronic Coil (HW & CW)";
-      break;
-    case 'VENTUM':
-      desc.prodName = prodName;
-      desc.imageUrl = "/assets/Images/new_unit_ventum_h.png";
-      desc.airflow = "350 - 3,000 cfm";
-      desc.typeOfRecovery = "ERV / HRV";
-      desc.coreType = "Counterflow Core (High Efficiency)";
-      desc.location = "Indoor";
-      desc.orientation = "Horizontal";
-      desc.accessories = "Daikin VRV Integration, Electric heater, Hydronic Coil (HW & CW)";
-      break;
-    case 'VENTUML':
-      desc.prodName = prodName;
-      desc.imageUrl = "/assets/Images/new_unit_ventum_lite.png";
-      desc.airflow = "200 - 450 cfm";
-      desc.typeOfRecovery = "ERV / HRV";
-      desc.coreType = "Counterflow Core (High Efficiency)";
-      desc.location = "Indoor";
-      desc.orientation = "Horizontal";
-      desc.accessories = "Electric pre-heater";
-      break;
-    case 'VENTUMP':
-      desc.prodName = prodName;
-      desc.imageUrl = "/assets/Images/new_unit_ventum_plus.png";
-      desc.airflow = "1,200 - 10,000 cfm";
-      desc.typeOfRecovery = "ERV / HRV";
-      desc.coreType = "Counterflow Core (High Efficiency)";
-      desc.location = "Indoor / Outdoor";
-      desc.orientation = "Vertical";
-      desc.accessories = "Daikin VRV Integration, Electric heater, Hydronic Coil (HW & CW)";
-      break;    
-    case 'TERRA':
-      desc.prodName = prodName;
-      desc.imageUrl = "/assets/Images/new_unit_terra.png";
-      desc.airflow = "425 - 4,800 cfm";
-      desc.typeOfRecovery = "-";
-      desc.coreType = "-";
-      desc.location = "Indoor";
-      desc.orientation = "Horizontal";
-      desc.accessories = "Daikin VRV Integration, Electric heater";
-      break;
-    default:
-      break;
-  }
+//   switch (prodType) {
+//     case 'LABEL':
+//       desc.isLabel = true;
+//       desc.prodName = '';
+//       desc.textAlign = "left";
+//       desc.imageUrl = "";
+//       desc.airflow = "Airflow";
+//       desc.typeOfRecovery = "Type of Recovery Options";
+//       desc.coreType = "Core Type (Efficiency)";
+//       desc.location = "Location Options";
+//       desc.orientation = "Orientation Options";
+//       desc.accessories = "Accessories Options";
+//       break;
+//     case 'NOVA':
+//       desc.prodName = prodName;
+//       desc.imageUrl = "/assets/Images/new_unit_nova.png";
+//       desc.airflow = "325 - 8,100 cfm";
+//       desc.typeOfRecovery = "ERV";
+//       desc.coreType = "Crossflow Core (Standard Efficiency)";
+//       desc.location = "Indoor / Outdoor";
+//       desc.orientation = "Horizontal / Vertical";
+//       desc.accessories = "Daikin VRV Integration, Electric heater, Hydronic Coil (HW & CW)";
+//       break;
+//     case 'VENTUM':
+//       desc.prodName = prodName;
+//       desc.imageUrl = "/assets/Images/new_unit_ventum_h.png";
+//       desc.airflow = "350 - 3,000 cfm";
+//       desc.typeOfRecovery = "ERV / HRV";
+//       desc.coreType = "Counterflow Core (High Efficiency)";
+//       desc.location = "Indoor";
+//       desc.orientation = "Horizontal";
+//       desc.accessories = "Daikin VRV Integration, Electric heater, Hydronic Coil (HW & CW)";
+//       break;
+//     case 'VENTUML':
+//       desc.prodName = prodName;
+//       desc.imageUrl = "/assets/Images/new_unit_ventum_lite.png";
+//       desc.airflow = "200 - 450 cfm";
+//       desc.typeOfRecovery = "ERV / HRV";
+//       desc.coreType = "Counterflow Core (High Efficiency)";
+//       desc.location = "Indoor";
+//       desc.orientation = "Horizontal";
+//       desc.accessories = "Electric pre-heater";
+//       break;
+//     case 'VENTUMP':
+//       desc.prodName = prodName;
+//       desc.imageUrl = "/assets/Images/new_unit_ventum_plus.png";
+//       desc.airflow = "1,200 - 10,000 cfm";
+//       desc.typeOfRecovery = "ERV / HRV";
+//       desc.coreType = "Counterflow Core (High Efficiency)";
+//       desc.location = "Indoor / Outdoor";
+//       desc.orientation = "Vertical";
+//       desc.accessories = "Daikin VRV Integration, Electric heater, Hydronic Coil (HW & CW)";
+//       break;    
+//     case 'TERRA':
+//       desc.prodName = prodName;
+//       desc.imageUrl = "/assets/Images/new_unit_terra.png";
+//       desc.airflow = "425 - 4,800 cfm";
+//       desc.typeOfRecovery = "-";
+//       desc.coreType = "-";
+//       desc.location = "Indoor";
+//       desc.orientation = "Horizontal";
+//       desc.accessories = "Daikin VRV Integration, Electric heater";
+//       break;
+//     default:
+//       break;
+//   }
 
-  return desc;
-};
+//   return desc;
+// };
 
 let productTypesNew : any = [];
 // let prodTypeNovaValue = "";

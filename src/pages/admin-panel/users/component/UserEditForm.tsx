@@ -117,7 +117,8 @@ export default function UserEditForm({
         intAccessPricingId: getValues("ddlAccessPricing"),
         strCreateDate : getValues("txbCreatedDate"),
       }
-      await api.account.updateUser({ ...data, userId });
+      // await api.account.updateUser({ ...data, userId });
+      
       if (setSuccessText) {
         setSuccessText('Successfully updated!');
       }

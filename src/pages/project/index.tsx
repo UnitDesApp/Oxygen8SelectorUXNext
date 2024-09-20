@@ -156,10 +156,6 @@ export default function Project() {
     setMultiConfirmDialogState(false);
   };
 
-  const handleFilterName = (name: string) => {
-    setFilterName(name);
-    setPage(0);
-  };
 
   const handleFilterRole = (value: string) => {
     setFilterRole(value);
@@ -194,6 +190,19 @@ export default function Project() {
       }),
     [filterName, filterRole, order, orderBy, projects, filterStatus]
   );
+  
+  const [filteredArray , setFilterArray] = useState<any>();
+    const handleFilterName = (name: string) => {
+    setFilterName(name);
+    const lowerCaseName = name.toLowerCase();
+    const array =   dataFiltered.filter((item: any) =>
+      [item.job_name, item.reference_no, item.created_date, item.Created_User_Full_Name]
+        .some(field => field && field.toLowerCase().includes(lowerCaseName))
+    );
+    setFilterArray(array);
+    setPage(0);
+  };
+  
 
   const isNotFound = useMemo(
     () =>
@@ -203,10 +212,10 @@ export default function Project() {
     [dataFiltered?.length, filterName, filterRole, filterStatus]
   );
   useEffect(() => {
-    if (dataFiltered && visibleRows >= dataFiltered.length) {
+    if ((dataFiltered || filteredArray)  && visibleRows >= filteredArray?.length ? filteredArray: dataFiltered && dataFiltered.length) {
       setHasMore(false);
     }
-  }, [dataFiltered, visibleRows]);
+  }, [dataFiltered,filteredArray, visibleRows]);
   return (
     <>
       <Head>
@@ -254,8 +263,7 @@ export default function Project() {
                     }
                   />
                   <TableBody>
-                  {dataFiltered
-                     ?.slice(0, visibleRows) 
+                  {(filteredArray ? filteredArray.slice(0, visibleRows) : dataFiltered?.slice(0, visibleRows))
                       ?.map((row: any) => (
                         <ProjectTableRow
                           key={row.id}
@@ -263,8 +271,7 @@ export default function Project() {
                           selected={selected.includes(row.id)}
                           onSelectRow={() => onSelectRow(row.id)}
                           onDeleteRow={() => handleOneConfirmDialogOpen(row.id)}
-                          // onDuplicate={() => handleDuplicate(row)}
-                          onDuplicate={() => handleDuplicate({intUserId: localStorage.getItem('userId'), intJobId: row.id})}
+                          onDuplicate={() => handleDuplicate({ intUserId: localStorage.getItem('userId'), intJobId: row.id })}
                           onEditRow={() => handleEditRow(row.id)}
                         />
                       ))}

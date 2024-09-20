@@ -17,6 +17,11 @@ export const useGetAccountInfo = (config?: UseQueryOptions<any, any, any, any>) 
   return useQuery<any>([`get-account-info`], () => api.account.getAccountInfo(), config);
 };
 
+
+export const useGetUser = (params: any, config?: UseQueryOptions<any, any, any, any>) => {
+  const api = useApiContext();
+  return useQuery<any>([`get-user`], () => api.account.getUser(params), config);
+};
 // Job ==================================================================================
 export const useGetJobSelTables = (config?: UseQueryOptions<any, any, any, any>) => {
   const api = useApiContext();

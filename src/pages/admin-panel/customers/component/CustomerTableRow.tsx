@@ -4,7 +4,7 @@ import { Checkbox, TableRow, TableCell, Stack, IconButton } from '@mui/material'
 import Iconify from 'src/components/iconify';
 import { useCallback, useState } from 'react';
 import { useGetAccountInfo } from 'src/hooks/useApi';
-import NewCustomerDialog from '../../component/NewCustomerDialog';
+import CustomerDialog from '../../component/customerDialog';
 
 // ----------------------------------------------------------------------
 const StyledIconButton = styled(IconButton)(({ theme }) => ({
@@ -77,7 +77,7 @@ export default function CustomerTableRow({
         </Stack>
       </TableCell>
     </TableRow>
-    <NewCustomerDialog
+    <CustomerDialog
         name ='edit'
         row={row}
         open={addCustomerDlgOpen}

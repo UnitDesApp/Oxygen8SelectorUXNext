@@ -6,8 +6,8 @@ import { Container, Button, Stack, Snackbar, Alert } from '@mui/material';
 import CustomBreadcrumbs from 'src/components/custom-breadcrumbs/CustomBreadcrumbs';
 import Iconify from 'src/components/iconify';
 import { useSettingsContext } from 'src/components/settings';
-import NewUserDialog from './NewUserDialog';
-import NewCustomerDialog from './NewCustomerDialog';
+import UserDialog from './userDialog';
+import CustomerDialog from './customerDialog';
 
 // ----------------------------------------------------------------------
 
@@ -107,14 +107,14 @@ export default function AdminPanelWrapper({
           Server error!
         </Alert>
       </Snackbar>
-      <NewUserDialog
+      <UserDialog
         open={addUserDlgOpen}
         onClose={onCloseUserDlg}
         onSuccess={onSuccessAddUser}
         onFail={() => setFailDlgOpen(true)}
         refetch={refetch}
       />
-      <NewCustomerDialog
+      <CustomerDialog
         open={addCustomerDlgOpen}
         onClose={onCloseCustomerDlg}
         onSuccess={onSuccessAddCustomer}
