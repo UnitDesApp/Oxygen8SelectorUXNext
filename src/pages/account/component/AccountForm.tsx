@@ -8,10 +8,12 @@ import { Grid, Divider, Stack, Snackbar, Alert } from '@mui/material';
 import { LoadingButton } from '@mui/lab';
 import { useApiContext } from 'src/contexts/ApiContext';
 import { useAuthContext } from 'src/auth/useAuthContext';
+import { useGetUser } from 'src/hooks/useApi';
 import GroupBox from 'src/components/GroupBox';
 import FormProvider from 'src/components/hook-form/FormProvider';
 import { RHFTextField, RHFSelect } from 'src/components/hook-form';
 import ChangePasswordForm from './ChangePasswordForm';
+
 // ----------------------------------------------------------------------
 
 interface AccountFormProps {
@@ -20,6 +22,8 @@ interface AccountFormProps {
 
 export default function AccountForm({ accountInfo }: AccountFormProps) {
   const { user, updateUser } = useAuthContext();
+  const { data: dbtSavedUser } = useGetUser({intUserId: Number(localStorage.getItem('userId'))}); // useGetSavedJob api call returns data and stores in dbtSavedJob
+
   const { dbtSelCustomerType, dbtSelFOB_Point, dbtSelCountry, dbtSelProvState, dbtSavCustomer } = accountInfo || {};
   const api = useApiContext();
   const [success, setSuccess] = useState<boolean>(false);
@@ -56,10 +60,10 @@ export default function AccountForm({ accountInfo }: AccountFormProps) {
       txbFirstName: user?.firstname,
       txbLastName: user?.lastname,
       txbEmail: user?.email,
-      txbJobTitle: '',
+      txbJobTitle: user?.job_title,
       // txbCustomerType: dbtSelCustomerType?.[0]?.id,
       txbCustomer: '',
-      txbPhoneNumber: '',
+      txbPhoneNumber: user?.phone_number,
       txbAddress1: '',
       txbAddress2: '',
       txbCity: '',
@@ -71,8 +75,9 @@ export default function AccountForm({ accountInfo }: AccountFormProps) {
       txbFOB_Point: '',
       // createdDate: user?.createdDate,
     }),
-    [user?.email, user?.firstname, user?.lastname, user?.username]
+    [user?.email, user?.firstname, user?.job_title, user?.lastname, user?.phone_number, user?.username]
   );  
+
   const methods = useForm({
     resolver: yupResolver(UpdateUserSchema),
     defaultValues,
@@ -86,10 +91,11 @@ export default function AccountForm({ accountInfo }: AccountFormProps) {
   } = methods;
 
   const onSubmit = useCallback (
-    async (data: any) => {
+    async (inpData: any) => {
       try {
-        data = {
-          intUserId:user?.userId,
+        inpData = {
+          intUserId: user?.userId,
+          intUpdateMyAccount: 1,
           strFirstName: getValues("txbFirstName"),
           strLastName: getValues("txbLastName"),
           strEmail: getValues("txbEmail"),
@@ -102,9 +108,10 @@ export default function AccountForm({ accountInfo }: AccountFormProps) {
           // strProvStateIdCode: getValues("ddlProvState")
         }
 
-        await api.account.updateProfile({ ...data, userId: user?.userId });
+        // await api.account.updateProfile({ ...inpData, userId: user?.userId });
+        await api.account.updateProfile(inpData);
         // await api.account.updateProfile({ data });
-        updateUser(data);
+        updateUser(inpData);
         setSuccess(true);
       } catch (e) {
         console.log(e);
@@ -187,6 +194,32 @@ export default function AccountForm({ accountInfo }: AccountFormProps) {
   //   setValue('ddlProvState', e.target.value),
   // [setValue]
   // );
+
+
+  useEffect(() => {
+    if (dbtSavedUser !== null) {
+      setValue('txbFirstName', String(dbtSavedUser?.[0]?.first_name) !== 'undefined' && dbtSavedUser?.[0]?.first_name !== "" ? dbtSavedUser?.[0]?.first_name : "");
+      setValue('txbLastName', String(dbtSavedUser?.[0]?.last_name) !== 'undefined' && dbtSavedUser?.[0]?.last_name !== "" ? dbtSavedUser?.[0]?.last_name : "");
+      setValue('txbEmail', String(dbtSavedUser?.[0]?.email) !== 'undefined' && dbtSavedUser?.[0]?.email !== "" ? dbtSavedUser?.[0]?.email : "");
+      setValue('txbUsername', String(dbtSavedUser?.[0]?.username) !== 'undefined' && dbtSavedUser?.[0]?.username !== "" ? dbtSavedUser?.[0]?.username : "");
+      // setValue('txbPassword', dbtUser?. !== null ? dbtUser?. : "");
+      // setValue('txbConfirmPassword', dbtUser?. !== "" ? dbtUser?. : "");
+      setValue('txbJobTitle', String(dbtSavedUser?.[0]?.job_title) !== 'undefined' && dbtSavedUser?.[0]?.job_title !== "" ? dbtSavedUser?.[0]?.job_title : "");
+      setValue('txbPhoneNumber', String(dbtSavedUser?.[0]?.phone_number) !== 'undefined' && dbtSavedUser?.[0]?.phone_number !== "" ? dbtSavedUser?.[0]?.phone_number : "");
+    } else {
+      // Keep these values in else statement rather than inline if statment
+      setValue('txbFirstName', '');
+      setValue('txbLastName', '');
+      setValue('txbEmail', '');
+      setValue('txbUsername', '');
+      setValue('txbJobTitle', '');
+      // setValue('ddlAccess', 1); // 1: Yes
+      // setValue('ddlAccessLevel', 1);  // 1: External
+      // setValue('ddlAccessPricing', 0);  // 0: No
+    }
+  }, [dbtSavedUser, setValue]); // <-- empty dependency array - This will only trigger when the component mounts and no-render
+
+
 
   return (
     <Grid container spacing={3} sx={{ mb: 3 }}>
