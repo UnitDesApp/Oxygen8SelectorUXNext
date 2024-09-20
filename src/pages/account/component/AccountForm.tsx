@@ -22,7 +22,7 @@ interface AccountFormProps {
 
 export default function AccountForm({ accountInfo }: AccountFormProps) {
   const { user, updateUser } = useAuthContext();
-  const { data: dbtSavedUser } = useGetUser({intUserId: Number(localStorage.getItem('userId'))}); // useGetSavedJob api call returns data and stores in dbtSavedJob
+  const { data: dbtSavedUser } = useGetUser({intUserId: Number(typeof window !== 'undefined' && localStorage.getItem('userId'))}); // useGetSavedJob api call returns data and stores in dbtSavedJob
 
   const { dbtSelCustomerType, dbtSelFOB_Point, dbtSelCountry, dbtSelProvState, dbtSavCustomer } = accountInfo || {};
   const api = useApiContext();
