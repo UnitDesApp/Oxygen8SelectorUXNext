@@ -4518,7 +4518,12 @@ useEffect(() => {
                     />
                   </Stack>
                   <Stack>
-                    { }
+                  <RHFTextField
+                      size="small"
+                      name="txbAreaServed"
+                      label="Area Served"
+                      // onChange={(e: any) => { setValueWithCheck1(e, 'txbAreaServed'); }}
+                    />
                   </Stack>
                 </Box>
               </Grid>
@@ -4529,7 +4534,7 @@ useEffect(() => {
                       native
                       size="small"
                       name="ddlLocation"
-                      label="Location"
+                      label="Installation Location"
                       placeholder=""
                       onChange={ddlLocationChanged}
                     >
@@ -4698,7 +4703,30 @@ useEffect(() => {
                       sx={getDisplay(intProductTypeID === IDs.intProdTypeIdTerra)}
                     />
                   </Stack>
-
+                </Box>
+              </Grid>
+              <Grid item xs={12} md={12}>
+              <Typography  color="primary.main" bgcolor="lightblue" variant="body1" marginBottom="10px">
+              Unit Electrical
+            </Typography>
+                <Box sx={{ display: 'grid', rowGap: 3, columnGap: 3, gridTemplateColumns: { xs: 'repeat(3, 1fr)' }, }}>
+                  <Stack>
+                  <Stack>
+                    <RHFSelect
+                      native
+                      size="small"
+                      name="ddlUnitVoltage"
+                      label="Unit Voltage"
+                      onChange={ddlUnitVoltageChanged}
+                    >
+                      {unitVoltageInfo?.fdtUnitVoltage?.map((item: any, index: number) => (
+                        <option key={index} value={item.id}>
+                          {item.items}
+                        </option>
+                      ))}
+                    </RHFSelect>
+                  </Stack>
+                  </Stack>
                 </Box>
               </Grid>
             </Grid>
@@ -4739,6 +4767,23 @@ useEffect(() => {
                   </RHFSelect>
                   </Stack>
                   <Stack>
+                  <RHFSelect
+                    native
+                    size="small"
+                    name="ddlOA_FilterCondition"
+                    label="Filter Condition"
+                    onChange={(e: any) => setValue('ddlOA_FilterCondition', Number(e.target.value))}
+                  >
+                    {outdoorAirFilterInfo?.fdtOutdoorAirFilter?.map(
+                      (item: any, index: number) => (
+                        <option key={index} value={item.id}>
+                          {item.items}
+                        </option>
+                      )
+                    )}
+                  </RHFSelect>            
+                  </Stack>
+                  <Stack>
                   <RHFTextField
                     size="small"
                     name="txbOA_FilterPD"
@@ -4767,6 +4812,9 @@ useEffect(() => {
                   </RHFSelect>
                   </Stack>
                   <Stack>
+                    {}
+                  </Stack>        
+                  <Stack>
                   <RHFTextField
                     size="small"
                     name="txbRA_FilterPD"
@@ -4774,9 +4822,7 @@ useEffect(() => {
                     onChange={(e: any) => { setValueWithCheck1(e, 'txbRA_FilterPD'); }}
                     onBlur={handleBlurExhaustAirESP}
                   />
-                  </Stack>
-                  <Stack>
-                    {}
+                 
                   </Stack>
                 </Box>
               </Grid>
@@ -5120,24 +5166,43 @@ useEffect(() => {
                         </option>
                       ))}
                     </RHFSelect>
-
                   </Stack>
                   <Stack>
-                    { }
+                    <RHFSelect
+                      native
+                      size="small"
+                      name="ddlPreheatElecHeaterInstall"
+                      label="Preheat Elec. Heater Installation"
+                      placeholder=""
+                      onChange={(e: any) => setValue('ddlPreheatElecHeaterInstall', Number(e.target.value))}
+                    >
+                      {preheatElecHeaterInstallInfo?.fdtElecHeaterInstall?.map(
+                        (item: any, index: number) => (
+                          <option key={index} value={item.id}>
+                            {item.items}
+                          </option>
+                        )
+                      )}
+                    </RHFSelect>
                   </Stack>
                 </Box>
               </Grid>
               <Grid item xs={12} md={12} sx={{ ...getDisplay(Number(formValues.ddlPreheatComp) === IDs.intCompIdElecHeater) }}>
+              <Typography  color="primary.main" bgcolor="lightblue" variant="body1" marginBottom="10px">
+                  Heater Electrical
+                </Typography>
                 <Box sx={{ display: 'grid', rowGap: 3, columnGap: 3, gridTemplateColumns: { xs: 'repeat(4, 1fr)' }, }}>
-                  <RHFSelect
+                <RHFSelect
                     native
                     size="small"
-                    name="ddlPreheatElecHeaterInstall"
-                    label="Preheat Elec. Heater Installation"
+                    name="ddlElecHeaterVoltage"
+                    label="Electric Heater Voltage"
                     placeholder=""
-                    onChange={(e: any) => setValue('ddlPreheatElecHeaterInstall', Number(e.target.value))}
+                    sx={getInlineDisplay(elecHeaterVoltageIsVisible)}
+                    disabled={!elecHeaterVoltageIsEnabled}
+                    onChange={ddlElecHeaterVoltageChanged}
                   >
-                    {preheatElecHeaterInstallInfo?.fdtElecHeaterInstall?.map(
+                    {elecHeaterVoltageTable?.map(
                       (item: any, index: number) => (
                         <option key={index} value={item.id}>
                           {item.items}
@@ -5145,9 +5210,19 @@ useEffect(() => {
                       )
                     )}
                   </RHFSelect>
+                  <RHFCheckbox
+                    label="Single Point Power Connection"
+                    name="ckbVoltageSPP"
+                    // checked={}
+                    onChange={(e: any) => setValue('ckbVoltageSPP', Number(e.target.value))}
+                    sx={getDisplay(voltageSPPIsVisible)}
+                  />
                 </Box>
               </Grid>
               <Grid item xs={12} md={12} sx={{ ...getDisplay(formValues.ddlPreheatComp === IDs.intCompIdHWC) }}>
+              <Typography  color="primary.main" bgcolor="lightblue" variant="body1" marginBottom="10px">
+                  Fluid Properties
+                </Typography>
                 <Box sx={{ display: 'grid', rowGap: 3, columnGap: 3, gridTemplateColumns: { xs: 'repeat(4, 1fr)' }, }}>
                   <Stack
                     spacing={1}
@@ -5250,6 +5325,40 @@ useEffect(() => {
                   </Stack>
                 </Box>
               </Grid>
+              <Grid item xs={12} md={12}>
+              <Typography  color="primary.main" bgcolor="lightblue" variant="body1" marginBottom="10px">
+              Air Properties
+            </Typography>
+                <Box sx={{ display: 'grid', rowGap: 3, columnGap: 3, gridTemplateColumns: { xs: 'repeat(4, 1fr)' }, }}>
+                  <Stack>
+                    <RHFTextField
+                      size="small"
+                      name="txbWinterPreheatSetpointDB"
+                      label="Preheat LAT Setpoint DB (F):"
+                      autoComplete="off"
+                      sx={getDisplay(isPreheatSetpointVisible)}
+                      onChange={(e: any) => { setValueWithCheck1(e, 'txbWinterPreheatSetpointDB'); }}
+                    /> 
+                  </Stack>
+                </Box>
+              </Grid>
+              <Grid item xs={12} md={12}>
+              <Typography  color="primary.main" bgcolor="lightblue" variant="body1" marginBottom="10px">
+              ACCESSORIES
+            </Typography>
+                <Box sx={{ display: 'grid', rowGap: 3, columnGap: 3, gridTemplateColumns: { xs: 'repeat(4, 1fr)' }, }}>
+                  <Stack>
+                  <RHFCheckbox
+                  label="Control Valve"
+                  name="ckbValveAndActuator"
+                  sx={getDisplay(valveAndActuatorInfo.divValveAndActuatorVisible)}
+                  defaultChecked={formValues.ckbValveAndActuator}
+                  // onChange={() => setCkbValveAndActuatorVal(!formValues.ckbValveAndActuatorVal)}
+                  onChange={(e: any) => setValue('ckbValveAndActuator', Number(e.target.checked))}
+                />
+                  </Stack>
+                </Box>
+              </Grid>
 
             </Grid>
           </AccordionDetails>
@@ -5316,6 +5425,10 @@ useEffect(() => {
               </Grid>
               <Grid item xs={12} md={12}
                 sx={{ ...getDisplay(Number(formValues.ddlCoolingComp) === IDs.intCompIdCWC) }}>
+                  <Typography  color="primary.main" bgcolor="lightblue" variant="body1" marginBottom="10px">
+                    Fluid Properties
+                  </Typography>
+
                 <Box sx={{ display: 'grid', rowGap: 3, columnGap: 3, gridTemplateColumns: { xs: 'repeat(4, 1fr)' }, }}>
                   <Stack spacing={1}>
                     {isAvailable(db?.dbtSelFluidType) && (
@@ -5382,7 +5495,6 @@ useEffect(() => {
                       checked={formValues.ckbCoolingCWCUseCap}
                       onChange={(e: any) => setValue('ckbCoolingCWCUseCap', Number(e.target.checked))}
                     />
-
                   </Stack>
                   <Stack>
                     <RHFTextField
@@ -5423,7 +5535,55 @@ useEffect(() => {
               </Grid>
               <Grid item xs={12} md={12}
                 sx={getDisplay(Number(formCurrValues.ddlCoolingComp) === IDs.intCompIdDX)}>
-                <Box sx={{ display: 'grid', rowGap: 3, columnGap: 3, gridTemplateColumns: { xs: 'repeat(4, 1fr)' }, }}>
+                <Typography color="primary.main" bgcolor="lightblue" variant="body1" marginBottom="10px">
+              REFRIGERANT
+            </Typography>
+                <Box sx={{ display: 'grid', rowGap: 3, columnGap: 3, gridTemplateColumns: { xs: 'repeat(4, 1fr)' },}}>
+                  <Stack>
+                  <RHFSelect
+                        native
+                        size="small"
+                        name="ddlRefrigerant"
+                        label="Refrigerant"
+                        disabled
+                      >
+                          <option>
+                            R-410a
+                          </option>
+                      </RHFSelect>
+                  </Stack>
+                  <Stack>                    
+                    <RHFCheckbox
+                      // sx={getInlineDisplay(customInputs.divCoolingCWC_UseFlowRateVisible)}
+                      label="Heating HWC Use Capacity"
+                      name="ckbDaikinVRV"
+                      checked={true}
+                      // onChange={(e: any) => setValue('ckbHeatingHWCUseCap', Number(e.target.checked))}
+                    />
+                  </Stack>
+                  <Stack>                
+                  <RHFSelect
+                    native
+                    size="small"
+                    name="ddlEKEXVKitInstallation"
+                    label="EKEXV Valves and Controllers"
+                    sx={getDisplay(ekexvKitInstallIsVisible)}
+                    onChange={(e: any) => { setValue('ddlEKEXVKitInstallation', Number(e.target.value)); }}
+                    placeholder=""
+                  >
+                    {db?.dbtSelEKEXVKitInstallation?.map((item: any, index: number) => (
+                      <option key={index} value={item.id}>
+                        {item.items}
+                      </option>
+                    ))}
+                  </RHFSelect>
+                  </Stack>
+                  <Stack>{}</Stack>
+                  </Box>
+                  </Grid>
+              <Grid item xs={12} md={12}
+              sx={getDisplay(Number(formCurrValues.ddlCoolingComp) === IDs.intCompIdDX)}>
+              <Box sx={{ display: 'grid', rowGap: 3, columnGap: 3, gridTemplateColumns: { xs: 'repeat(4, 1fr)' },}}>
                   <Stack>
                     <RHFTextField
                       size="small"
@@ -5458,6 +5618,9 @@ useEffect(() => {
                 </Box>
               </Grid>
               <Grid item xs={12} md={12} sx={getDisplay(Number(formValues.ddlCoolingComp) === IDs.intCompIdCWC || Number(formValues.ddlCoolingComp) === IDs.intCompIdDX)}>
+              <Typography  color="primary.main" bgcolor="lightblue" variant="body1" marginBottom="10px">
+              Air Properties
+            </Typography>
                 <Box sx={{ display: 'grid', rowGap: 3, columnGap: 3, gridTemplateColumns: { xs: 'repeat(4, 1fr)' }, }}>
                   <Stack>
                     <RHFTextField
@@ -5481,6 +5644,24 @@ useEffect(() => {
                   </Stack>
                 </Box>
               </Grid>
+              <Grid item xs={12} md={12}>
+              <Typography  color="primary.main" bgcolor="lightblue" variant="body1" marginBottom="10px">
+              ACCESSORIES
+            </Typography>
+                <Box sx={{ display: 'grid', rowGap: 3, columnGap: 3, gridTemplateColumns: { xs: 'repeat(4, 1fr)' }, }}>
+                  <Stack>
+                  <RHFCheckbox
+                  label="Control Valve"
+                  name="ckbValveAndActuator"
+                  sx={getDisplay(valveAndActuatorInfo.divValveAndActuatorVisible)}
+                  defaultChecked={formValues.ckbValveAndActuator}
+                  // onChange={() => setCkbValveAndActuatorVal(!formValues.ckbValveAndActuatorVal)}
+                  onChange={(e: any) => setValue('ckbValveAndActuator', Number(e.target.checked))}
+                />
+                  </Stack>
+                </Box>
+              </Grid>
+
             </Grid>
           </AccordionDetails>
         </Accordion>
@@ -5498,7 +5679,7 @@ useEffect(() => {
               HEATING
             </Typography>
           </AccordionSummary>
-          <AccordionDetails>
+            <AccordionDetails>
             <Grid container spacing={2}>
               <Grid item xs={12} md={12}>
                 <Box sx={{ display: 'grid', rowGap: 3, columnGap: 3, gridTemplateColumns: { xs: 'repeat(4, 1fr)' }, }}>
@@ -5518,14 +5699,6 @@ useEffect(() => {
                         </option>
                       ))}
                     </RHFSelect>
-                    <RHFTextField
-                      size="small"
-                      name="txbWinterHeatingSetpointDB"
-                      label="Heating LAT Setpoint DB (F):"
-                      autoComplete="off"
-                      sx={getDisplay(isHeatingSetpointVisible)}
-                      onChange={(e: any) => { setValueWithCheck1(e, 'txbWinterHeatingSetpointDB'); }}
-                    /> 
                   </Stack>
 
                 </Box>
@@ -5552,6 +5725,39 @@ useEffect(() => {
                   </RHFSelect>
                 </Box>
               </Grid>
+              <Grid item xs={12} md={12} sx={{ ...getDisplay(Number(formValues.ddlHeatingComp) === IDs.intCompIdElecHeater) }}>
+              <Typography  color="primary.main" bgcolor="lightblue" variant="body1" marginBottom="10px">
+                  Heater Electrical
+                </Typography>
+                <Box sx={{ display: 'grid', rowGap: 3, columnGap: 3, gridTemplateColumns: { xs: 'repeat(4, 1fr)' }, }}>
+                <RHFSelect
+                    native
+                    size="small"
+                    name="ddlElecHeaterVoltage"
+                    label="Electric Heater Voltage"
+                    placeholder=""
+                    sx={getInlineDisplay(elecHeaterVoltageIsVisible)}
+                    disabled={!elecHeaterVoltageIsEnabled}
+                    onChange={ddlElecHeaterVoltageChanged}
+                  >
+                    {elecHeaterVoltageTable?.map(
+                      (item: any, index: number) => (
+                        <option key={index} value={item.id}>
+                          {item.items}
+                        </option>
+                      )
+                    )}
+                  </RHFSelect>
+                  <RHFCheckbox
+                    label="Single Point Power Connection"
+                    name="ckbVoltageSPP"
+                    // checked={}
+                    onChange={(e: any) => setValue('ckbVoltageSPP', Number(e.target.value))}
+                    sx={getDisplay(voltageSPPIsVisible)}
+                  />
+                </Box>
+              </Grid>
+
               <Grid item xs={12} md={12} sx={{ ...getDisplay(Number(formValues.ddlHeatingComp) === IDs.intCompIdHWC) }}>
                 <Box sx={{ display: 'grid', rowGap: 3, columnGap: 3, gridTemplateColumns: { xs: 'repeat(4, 1fr)' }, }}>
                   <Stack spacing={1}>
@@ -5607,6 +5813,9 @@ useEffect(() => {
               </Grid>
               <Grid item xs={12} md={12}
                 sx={getDisplay(Number(formCurrValues.ddlHeatingComp) === IDs.intCompIdHWC && internCompInfo?.isCustomCompVisible)}>
+                <Typography  color="primary.main" bgcolor="lightblue" variant="body1" marginBottom="10px">
+                  Fluid Properties
+                </Typography>
                 <Box sx={{ display: 'grid', rowGap: 3, columnGap: 3, gridTemplateColumns: { xs: 'repeat(4, 1fr)' }, }}>
                   <Stack spacing={1}>
                     <RHFCheckbox
@@ -5650,6 +5859,40 @@ useEffect(() => {
                   </Stack>
                 </Box>
               </Grid>
+              <Grid item xs={12} md={12}>
+              <Typography  color="primary.main" bgcolor="lightblue" variant="body1" marginBottom="10px">
+              Air Properties
+            </Typography>
+                <Box sx={{ display: 'grid', rowGap: 3, columnGap: 3, gridTemplateColumns: { xs: 'repeat(4, 1fr)' }, }}>
+                  <Stack>
+                  <RHFTextField
+                      size="small"
+                      name="txbWinterHeatingSetpointDB"
+                      label="Heating LAT Setpoint DB (F):"
+                      autoComplete="off"
+                      sx={getDisplay(isHeatingSetpointVisible)}
+                      onChange={(e: any) => { setValueWithCheck1(e, 'txbWinterHeatingSetpointDB'); }}
+                    /> 
+                  </Stack>
+                </Box>
+              </Grid>
+              <Grid item xs={12} md={12}>
+              <Typography  color="primary.main" bgcolor="lightblue" variant="body1" marginBottom="10px">
+              ACCESSORIES
+            </Typography>
+                <Box sx={{ display: 'grid', rowGap: 3, columnGap: 3, gridTemplateColumns: { xs: 'repeat(4, 1fr)' }, }}>
+                  <Stack>
+                  <RHFCheckbox
+                  label="Control Valve"
+                  name="ckbValveAndActuator"
+                  sx={getDisplay(valveAndActuatorInfo.divValveAndActuatorVisible)}
+                  defaultChecked={formValues.ckbValveAndActuator}
+                  // onChange={() => setCkbValveAndActuatorVal(!formValues.ckbValveAndActuatorVal)}
+                  onChange={(e: any) => setValue('ckbValveAndActuator', Number(e.target.checked))}
+                />
+                  </Stack>
+                </Box>
+              </Grid>
 
             </Grid>
           </AccordionDetails>
@@ -5690,14 +5933,7 @@ useEffect(() => {
                     </RHFSelect>
                   </Stack>
                   <Stack>
-                    { }
-                  </Stack>
-                </Box>
-              </Grid>
-              <Grid item xs={12} md={12} sx={{ ...getDisplay(Number(formValues.ddlReheatComp) === IDs.intCompIdElecHeater) }}>
-                <Box sx={{ display: 'grid', rowGap: 3, columnGap: 3, gridTemplateColumns: { xs: 'repeat(4, 1fr)' }, }}>
-                  <Stack spacing={1}>
-                    <RHFSelect
+                  <RHFSelect
                       native
                       size="small"
                       name="ddlReheatElecHeaterInstall"
@@ -5713,11 +5949,52 @@ useEffect(() => {
                           </option>
                         )
                       )}
-                    </RHFSelect>
+                    </RHFSelect>s
                   </Stack>
                 </Box>
               </Grid>
+              {/* <Grid item xs={12} md={12} sx={{ ...getDisplay(Number(formValues.ddlReheatComp) === IDs.intCompIdElecHeater) }}>
+                <Box sx={{ display: 'grid', rowGap: 3, columnGap: 3, gridTemplateColumns: { xs: 'repeat(4, 1fr)' }, }}>
+                  <Stack spacing={1}>
+                  </Stack>
+                </Box>
+              </Grid> */}
+              <Grid item xs={12} md={12} sx={{ ...getDisplay(Number(formValues.ddlReheatComp) === IDs.intCompIdElecHeater) }}>
+              <Typography  color="primary.main" bgcolor="lightblue" variant="body1" marginBottom="10px">
+                  Heater Electrical
+                </Typography>
+                <Box sx={{ display: 'grid', rowGap: 3, columnGap: 3, gridTemplateColumns: { xs: 'repeat(4, 1fr)' }, }}>
+                <RHFSelect
+                    native
+                    size="small"
+                    name="ddlElecHeaterVoltage"
+                    label="Electric Heater Voltage"
+                    placeholder=""
+                    sx={getInlineDisplay(elecHeaterVoltageIsVisible)}
+                    disabled={!elecHeaterVoltageIsEnabled}
+                    onChange={ddlElecHeaterVoltageChanged}
+                  >
+                    {elecHeaterVoltageTable?.map(
+                      (item: any, index: number) => (
+                        <option key={index} value={item.id}>
+                          {item.items}
+                        </option>
+                      )
+                    )}
+                  </RHFSelect>
+                  <RHFCheckbox
+                    label="Single Point Power Connection"
+                    name="ckbVoltageSPP"
+                    // checked={}
+                    onChange={(e: any) => setValue('ckbVoltageSPP', Number(e.target.value))}
+                    sx={getDisplay(voltageSPPIsVisible)}
+                  />
+                </Box>
+              </Grid>
               <Grid item xs={12} md={12} sx={{ ...getDisplay(Number(formValues.ddlReheatComp) === IDs.intCompIdHWC) }}>
+              <Typography  color="primary.main" bgcolor="lightblue" variant="body1" marginBottom="10px">
+                  Fluid Properties
+                </Typography>
                 <Box sx={{ display: 'grid', rowGap: 3, columnGap: 3, gridTemplateColumns: { xs: 'repeat(4, 1fr)' }, }}>
                   <Stack spacing={1}>
                     <RHFSelect
@@ -5820,6 +6097,10 @@ useEffect(() => {
                 </Box>
               </Grid>
               <Grid item xs={12} md={12} sx={{ ...getDisplay(Number(formValues.ddlReheatComp) === IDs.intCompIdHGRH) }}>
+              <Typography  color="primary.main" bgcolor="lightblue" variant="body1" marginBottom="10px">
+                  Refrigerant
+                </Typography>
+
                 <Box sx={{ display: 'grid', rowGap: 3, columnGap: 3, gridTemplateColumns: { xs: 'repeat(4, 1fr)' }, }}>
                   <Stack spacing={1}>
                     <RHFTextField
@@ -5864,14 +6145,10 @@ useEffect(() => {
                 </Box>
               </Grid>
               <Grid item xs={12} md={12}>
-                <Box
-                  sx={{
-                    display: 'grid',
-                    rowGap: 3,
-                    columnGap: 3,
-                    gridTemplateColumns: { xs: 'repeat(4, 1fr)' },
-                  }}
-                >
+              <Typography  color="primary.main" bgcolor="lightblue" variant="body1" marginBottom="10px">
+                  Air Properties
+                </Typography>
+                <Box sx={{display: 'grid', rowGap: 3, columnGap: 3,  gridTemplateColumns: { xs: 'repeat(4, 1fr)' },}}>
                   <Stack spacing={1}>
                     <RHFTextField
                       size="small"
@@ -5887,6 +6164,23 @@ useEffect(() => {
                         setValueWithCheck1(e, 'txbSummerReheatSetpointDB');
                       }}
                     />
+                  </Stack>
+                </Box>
+              </Grid>
+              <Grid item xs={12} md={12}>
+              <Typography  color="primary.main" bgcolor="lightblue" variant="body1" marginBottom="10px">
+              ACCESSORIES
+            </Typography>
+                <Box sx={{ display: 'grid', rowGap: 3, columnGap: 3, gridTemplateColumns: { xs: 'repeat(4, 1fr)' }, }}>
+                  <Stack>
+                  <RHFCheckbox
+                  label="Control Valve"
+                  name="ckbValveAndActuator"
+                  sx={getDisplay(valveAndActuatorInfo.divValveAndActuatorVisible)}
+                  defaultChecked={formValues.ckbValveAndActuator}
+                  // onChange={() => setCkbValveAndActuatorVal(!formValues.ckbValveAndActuatorVal)}
+                  onChange={(e: any) => setValue('ckbValveAndActuator', Number(e.target.checked))}
+                />
                   </Stack>
                 </Box>
               </Grid>
@@ -5964,48 +6258,10 @@ useEffect(() => {
             <Grid container spacing={5}>
               <Grid item xs={4} md={4}>
                 <Box sx={{ display: 'grid', rowGap: 3, columnGap: 3 }}>
-                  <RHFSelect
-                    native
-                    size="small"
-                    name="ddlUnitVoltage"
-                    label="Unit Voltage"
-                    onChange={ddlUnitVoltageChanged}
-                  >
-                    {unitVoltageInfo?.fdtUnitVoltage?.map((item: any, index: number) => (
-                      <option key={index} value={item.id}>
-                        {item.items}
-                      </option>
-                    ))}
-                  </RHFSelect>
-                  <RHFSelect
-                    native
-                    size="small"
-                    name="ddlElecHeaterVoltage"
-                    label="Electric Heater Voltage"
-                    placeholder=""
-                    sx={getInlineDisplay(elecHeaterVoltageIsVisible)}
-                    disabled={!elecHeaterVoltageIsEnabled}
-                    onChange={ddlElecHeaterVoltageChanged}
-                  >
-                    {elecHeaterVoltageTable?.map(
-                      (item: any, index: number) => (
-                        <option key={index} value={item.id}>
-                          {item.items}
-                        </option>
-                      )
-                    )}
-                  </RHFSelect>
                 </Box>
               </Grid>
               <Grid item xs={4} md={4}>
                 <Box sx={{ display: 'grid', rowGap: 3, columnGap: 3 }}>
-                  <RHFCheckbox
-                    label="Single Point Power Connection"
-                    name="ckbVoltageSPP"
-                    // checked={}
-                    onChange={(e: any) => setValue('ckbVoltageSPP', Number(e.target.value))}
-                    sx={getDisplay(voltageSPPIsVisible)}
-                  />
                 </Box>
               </Grid>
               <Grid item xs={4} md={4}>
@@ -6031,27 +6287,39 @@ useEffect(() => {
           </AccordionSummary>
           <AccordionDetails>
             <Grid container spacing={5}>
-              <Grid item xs={4} md={4}>
+              <Grid item xs={12} md={12}>
                 <Box sx={{ display: 'grid', rowGap: 3, columnGap: 3 }}>
-                  <RHFSelect
+                <RHFSelect
                     native
                     size="small"
-                    name="ddlControlsPref"
-                    label="Controls Preference"
+                    name="ddlTempControl"
+                    label="Temperature Control"
                     placeholder=""
                     // sx={getDisplay(controlsPrefInfo?.isVisible)}
-                    onChange={(e: any) => { setValue('ddlControlsPref', Number(e.target.value)); }}
-                  >
+                    onChange={(e: any) => { setValue('ddlTempControl', Number(e.target.value)); }}
+                  >                    
                     {controlsPrefInfo?.fdtControlsPref?.map((item: any, index: number) => (
                       <option key={index} value={item.id}>
                         {item.items}
                       </option>
                     ))}
                   </RHFSelect>
-                </Box>
-              </Grid>
-              <Grid item xs={4} md={4}>
-                <Box sx={{ display: 'grid', rowGap: 3, columnGap: 3 }}>
+
+                  <RHFSelect
+                    native
+                    size="small"
+                    name="ddlControlsPref"
+                    label="Fan Control"
+                    placeholder=""
+                    // sx={getDisplay(controlsPrefInfo?.isVisible)}
+                    onChange={(e: any) => { setValue('ddlControlsPref', Number(e.target.value)); }}
+                  >                    
+                    {controlsPrefInfo?.fdtControlsPref?.map((item: any, index: number) => (
+                      <option key={index} value={item.id}>
+                        {item.items}
+                      </option>
+                    ))}
+                  </RHFSelect>
                   <RHFSelect
                     native
                     size="small"
@@ -6069,7 +6337,7 @@ useEffect(() => {
                   </RHFSelect>
                 </Box>
               </Grid>
-              <Grid item xs={4} md={4}>
+              <Grid item xs={12} md={12}>
                 <Box sx={{ display: 'grid', rowGap: 3, columnGap: 3 }}>
                   { }
                 </Box>
@@ -6120,14 +6388,6 @@ useEffect(() => {
                 {/* <FormControlLabel
                   sx={getDisplay(valveAndActuatorInfo.divValveAndActuatorVisible)}
                   control={ */}
-                <RHFCheckbox
-                  label="Include Valves & Actuator"
-                  name="ckbValveAndActuator"
-                  sx={getDisplay(valveAndActuatorInfo.divValveAndActuatorVisible)}
-                  defaultChecked={formValues.ckbValveAndActuator}
-                  // onChange={() => setCkbValveAndActuatorVal(!formValues.ckbValveAndActuatorVal)}
-                  onChange={(e: any) => setValue('ckbValveAndActuator', Number(e.target.checked))}
-                />
                 {/* }
                   label="Include Valves & Actuator"
                 /> */}
@@ -6157,21 +6417,6 @@ useEffect(() => {
                   onChange={ddlValveTypeChanged}
                 >
                   {valveTypeInfo?.fdtValveType?.map((item: any, index: number) => (
-                    <option key={index} value={item.id}>
-                      {item.items}
-                    </option>
-                  ))}
-                </RHFSelect>
-                <RHFSelect
-                  native
-                  size="small"
-                  name="ddlEKEXVKitInstallation"
-                  label="EKEXV Valves and Controllers"
-                  sx={getDisplay(ekexvKitInstallIsVisible)}
-                  onChange={(e: any) => { setValue('ddlEKEXVKitInstallation', Number(e.target.value)); }}
-                  placeholder=""
-                >
-                  {db?.dbtSelEKEXVKitInstallation?.map((item: any, index: number) => (
                     <option key={index} value={item.id}>
                       {item.items}
                     </option>
