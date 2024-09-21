@@ -2082,11 +2082,10 @@ export default function UnitInfoForm({
 
 
   const heatingSectionVisible = useEffect(() => {
-    if (intProductTypeID === IDs.intProdTypeIdNova || intProductTypeID === IDs.intProdTypeIdVentum ||
-        intProductTypeID === IDs.intProdTypeIdVentumPlus || Number(formCurrValues.ckbHeatPump) === 1) {
-      setIsHeatingSectionVisible(true);
-    } else {
+    if (intProductTypeID === IDs.intProdTypeIdVentumPlus || Number(formCurrValues.ddlReheatComp) === IDs.intCompIdHGRH) {
       setIsHeatingSectionVisible(false);
+    } else {
+      setIsHeatingSectionVisible(true);
     }
   }, [intProductTypeID, formCurrValues.ckbHeatPump]);
 
@@ -2126,13 +2125,13 @@ export default function UnitInfoForm({
     }
 
     info.defaultId = info.fdtHeatingComp?.[0]?.id;
+    info.isVisible = true;
+    info.isEnabled = true;
 
 
     switch (intProductTypeID) {
       case IDs.intProdTypeIdNova:
       case IDs.intProdTypeIdVentum:
-        info.isVisible = true;
-        info.isEnabled = true;
         break;
       case IDs.intProdTypeIdVentumLite:
       case IDs.intProdTypeIdTerra:
@@ -2145,7 +2144,6 @@ export default function UnitInfoForm({
         if (Number(formCurrValues.ddlCoolingComp) === IDs.intCompIdDX && Number(formCurrValues.ddlReheatComp) === IDs.intCompIdHGRH) {
           info.fdtHeatingComp = info.fdtHeatingComp?.filter((item: { id: number }) => item.id === IDs.intCompIdNA);
           info.defaultId = IDs.intCompIdNA;
-          info.isVisible = true;
           info.isEnabled = false;
         }
         break;
@@ -2157,7 +2155,7 @@ export default function UnitInfoForm({
     setHeatingCompInfo(info);
     setValue('ddlHeatingComp', info.defaultId);
 
-  }, []);
+  }, [getValues('ddlCoolingComp'), getValues('ddlReheatComp')]);
 
 
   const [reheatCompInfo, setReheatCompInfo] = useState<any>([]);
@@ -2493,7 +2491,7 @@ export default function UnitInfoForm({
   
         if (Number(formCurrValues.ckbVoltageSPP)) {
           info.defaultId = Number(formCurrValues.ddlUnitVoltage);
-          info.isVisible = false;
+          info.isVisible = true;
           info.isEnabled = false;
         } else {
           info.isEnabled = true;
@@ -5630,8 +5628,8 @@ useEffect(() => {
               </Grid>
               <Grid item xs={12} md={12} sx={getDisplay(Number(formValues.ddlCoolingComp) === IDs.intCompIdCWC || Number(formValues.ddlCoolingComp) === IDs.intCompIdDX)}>
               <Typography  color="primary.main" bgcolor="lightblue" variant="body1" marginBottom="10px">
-              Air Properties
-            </Typography>
+                Air Properties
+              </Typography>
                 <Box sx={{ display: 'grid', rowGap: 3, columnGap: 3, gridTemplateColumns: { xs: 'repeat(4, 1fr)' }, }}>
                   <Stack>
                     <RHFTextField
@@ -5680,7 +5678,7 @@ useEffect(() => {
         </Accordion>
         <Accordion  // HEATING
           expanded={expanded.panel4}
-          sx={getDisplay(isHeatingSectionVisible)}
+          // sx={getDisplay(isHeatingSectionVisible)}
           onChange={() => setExpanded({ ...expanded, panel4: !expanded.panel4 })}
         >
           <AccordionSummary
@@ -5712,6 +5710,8 @@ useEffect(() => {
                         </option>
                       ))}
                     </RHFSelect>
+                    </Stack>
+                    <Stack>
                     <RHFSelect
                     native
                     label="Heating Elec. Heater Installation"
