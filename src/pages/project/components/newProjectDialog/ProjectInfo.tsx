@@ -33,9 +33,7 @@ export default function NewProject({ projectId, onClose }: NewProjectProps) {
     isRefetching: isRefetchingProject,
   } = useGetSavedJob(
     { intJobId: projectId },
-    {
-      enabled: !!projectId,
-    }
+    { enabled: !!projectId,}
   );
   const [newProjectDialogOpen, setNewProjectDialog] = useState<boolean>(false);
   const [openSuccess, setOpenSuccess] = useState<boolean>(false);

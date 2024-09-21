@@ -4,7 +4,7 @@ import { Checkbox, TableRow, TableCell, Stack, IconButton } from '@mui/material'
 import Iconify from 'src/components/iconify';
 import { useState } from 'react';
 import { useGetAccountInfo } from 'src/hooks/useApi';
-import NewUserDialog from '../../component/NewUserDialog';
+import UserDialog from '../../component/userDialog';
 // components
 
 // ----------------------------------------------------------------------
@@ -92,7 +92,7 @@ export default function UserTableRow({
         </Stack>
       </TableCell>
     </TableRow>
-    <NewUserDialog
+    <UserDialog
         open={addUserDlgOpen}
         name='edit'
         row = {row}

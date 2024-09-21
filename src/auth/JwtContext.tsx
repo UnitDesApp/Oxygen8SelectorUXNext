@@ -129,7 +129,6 @@ export function AuthProvider({ children }: AuthProviderProps) {
               lastname: localStorage.getItem('lastname'),
               initials: localStorage.getItem('initials'),
               email: localStorage.getItem('email'),
-              title: localStorage.getItem('title'),
               customerId: localStorage.getItem('customerId'),
               access: localStorage.getItem('access'),
               UAL: localStorage.getItem('UAL'),
@@ -185,7 +184,6 @@ export function AuthProvider({ children }: AuthProviderProps) {
         localStorage.setItem('lastname', data[0].last_name);
         localStorage.setItem('initials', data[0].initials);
         localStorage.setItem('email', data[0].email);
-        localStorage.setItem('title', data[0].title);
         localStorage.setItem('customerId', data[0].customer_id);
         localStorage.setItem('access', data[0].access);
         localStorage.setItem('UAL', data[0].access_level);
@@ -204,7 +202,6 @@ export function AuthProvider({ children }: AuthProviderProps) {
               lastname: data[0].last_name,
               initials: data[0].initials,
               email: data[0].email,
-              title: data[0].title,
               customerId: data[0].customer_id,
               access: data[0].access,
               UAL: data[0].access_level,

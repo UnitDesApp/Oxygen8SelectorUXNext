@@ -163,6 +163,7 @@ const {
       ddlUnitModel: edit ? intUnitModelId : 1,
       ddlLocation: edit ? intLocationId : 1,
       ddlOrientation: edit ? intOrientationId : 1,
+      ddlTempControl: 0,
       ddlControlsPref: edit ? intControlsPreferenceId : 1,
       ddlControlVia: edit ? intControlViaId : 1,
       ckbDownshot: edit ? intIsDownshot : 0,
@@ -210,6 +211,7 @@ const {
       txbExhaustAirESP: edit ? dblExhaustAirESP : 0.75,
       // Comp Opt
       ddlOA_FilterModel: edit ? intOAFilterModelId : 0,
+      ddlOA_FilterCondition: 0,
       ddlRA_FilterModel: edit ? intRAFilterModelId : 0,
       ckbMixingBox: edit ? intIsMixingBox : 0,
       ddlPreheatComp: edit ? intPreheatCompId : 0,
@@ -453,6 +455,7 @@ export const unitEditFormSchema = Yup.object().shape({
   txbWinterHeatingSetpointDB: Yup.number().required('This field is required!'),
   txbSummerReheatSetpointDB: Yup.number().required('This field is required!'),
   ddlOA_FilterModel: Yup.number(),
+  ddlOA_FilterCondition: Yup.number(),
   ddlRA_FilterModel: Yup.number(),
   ddlPreheatComp: Yup.number(),
   ddlHeatExchComp: Yup.number(),
