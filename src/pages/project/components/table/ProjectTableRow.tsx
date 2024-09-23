@@ -13,7 +13,7 @@ type ProjectTableRowProps = {
     job_name: string;
     reference_no: string;
     revision_no: string;
-    Customer_Name: string;
+    CustomerName: string;
     CreatedUserFullName: string;
     RevisedUserFullName: string;
     created_date: string;
@@ -40,7 +40,7 @@ export default function ProjectTableRow({
     job_name,
     reference_no,
     revision_no,
-    Customer_Name,
+    CustomerName,
     CreatedUserFullName,
     RevisedUserFullName,
     created_date,
@@ -87,7 +87,7 @@ export default function ProjectTableRow({
       </TableCell>
 
       <TableCell align="left" sx={{ cursor: 'pointer' }} onClick={onEditRow}>
-        {Customer_Name}
+        {CustomerName}
       </TableCell>
 
       {/* <TableCell align="left" sx={{ cursor: 'pointer' }} onClick={onEditRow}>
