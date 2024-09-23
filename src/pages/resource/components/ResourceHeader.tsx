@@ -42,6 +42,12 @@ const ResourceHeader = ({ curValue, updateCurValue }: ResourceHeaderProps) => {
           )}
           <Typography>Ventum</Typography>
         </ToggleButton>
+        <ToggleButton value="ventum_plus">
+          {curValue === 'ventum_plus' && (
+            <Iconify icon="material-symbols:check-circle-outline" sx={{ marginRight: '10px' }} />
+          )}
+          <Typography>Ventum Plus</Typography>
+        </ToggleButton>
         <ToggleButton value="terra">
           {curValue === 'terra' && (
             <Iconify icon="material-symbols:check-circle-outline" sx={{ marginRight: '10px' }} />
