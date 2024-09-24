@@ -125,7 +125,7 @@ export default function ProjectStatus() {
                       }}
                     />
                   </ListItemAvatar>
-                  <ListItemText primary="Step 3" secondary="Make a selection" />
+                  <ListItemText primary="Step 3" secondary="Get a selection" />
                 </ListItem>
                 <ListItem>
                   <ListItemAvatar>

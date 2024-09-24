@@ -76,7 +76,7 @@ export default function EditSelection() {
           ) : (
             <Container maxWidth="xl">
               <CustomBreadcrumbs
-                heading={`Edit: ${STEP_PAGE_NAME[currentStep]}`}
+                heading={`Unit ${STEP_PAGE_NAME[currentStep]}`}
                 links={[
                   { name: 'My projects', href: PATH_APP.project },
                   {
@@ -156,7 +156,7 @@ export default function EditSelection() {
               >
                 <Stack direction="row" alignItems="center" gap={1}>
                   <Iconify icon="ph:number-circle-three-fill" width="25px" height="25px" />
-                  <Typography variant="body1">Make a selection</Typography>
+                  <Typography variant="body1">Get a selection</Typography>
                 </Stack>
               </Item>
             </Stack>

@@ -2047,7 +2047,7 @@ if (fanImgFiles.includes(imgEF)) {
                 onClick={onClickUnitInfo}
                 // sx={{ display: currentStep === 2 && !isProcessingData ? 'inline-flex' : 'none' }}
                 sx={{width:'10%', marginTop:'25px', marginLeft:'5px', marginRight:'5px'}}            
-                startIcon={<Iconify icon="akar-icons:arrow-left" />}
+                // startIcon={<Iconify icon="akar-icons:arrow-left" />}
               >
               Edit Unit
             </Button>
@@ -2057,9 +2057,9 @@ if (fanImgFiles.includes(imgEF)) {
                 onClick={onClickUnitList}
                 // sx={{ display: currentStep === 2 && !isProcessingData ? 'inline-flex' : 'none' }}
                 sx={{width:'10%', marginTop:'25px', marginLeft:'5px', marginRight:'5px'}}            
-                startIcon={<Iconify icon="akar-icons:arrow-left" />}
+                // startIcon={<Iconify icon="akar-icons:arrow-left" />}
               >
-              Unit List
+              Save
             </Button>          
           </Stack>
           </>

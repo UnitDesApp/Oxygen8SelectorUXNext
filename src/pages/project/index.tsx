@@ -196,7 +196,7 @@ export default function Project() {
     setFilterName(name);
     const lowerCaseName = name.toLowerCase();
     const array =   dataFiltered.filter((item: any) =>
-      [item.job_name, item.reference_no, item.created_date, item.Created_User_Full_Name]
+      [item.job_name, item.reference_no, item.created_date, item.CreatedUserFullName]
         .some(field => field && field.toLowerCase().includes(lowerCaseName))
     );
     setFilterArray(array);
@@ -285,13 +285,13 @@ export default function Project() {
                 </Table>
               </TableContainer>
             </Scrollbar>
-            {hasMore && dataFiltered?.length > 0 && (
+            {/* {hasMore && dataFiltered?.length > 0 && ( */}
               <Box sx={{ display: 'flex', justifyContent: 'center', mt: 2 }}>
                 <Button variant="outlined" color="primary" onClick={handleLoadMore}>
                   Load More
                 </Button>
               </Box>
-            )}
+             {/* )} */}
           </Box>
         )}
 

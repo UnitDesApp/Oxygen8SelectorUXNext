@@ -60,80 +60,80 @@ export const getProdTypeImage = (prodType: string) => {
   return desc;
 };
 
-export const getProdTypeDesc = (prodType: string, prodName: string) => {
-  const desc: { 
-      isLabel: boolean; prodName: string, textAlign: string; imageUrl:  string; airflow: string; typeOfRecovery: string; coreType: string; location: string; orientation: string; accessories: string;} = { 
-      isLabel: false,  prodName: '', textAlign: 'center', imageUrl: '', airflow: '', typeOfRecovery: '', coreType: '', location: '', orientation: '', accessories: '', };
+// export const getProdTypeDesc = (prodType: string, prodName: string) => {
+//   const desc: { 
+//       isLabel: boolean; prodName: string, textAlign: string; imageUrl:  string; airflow: string; typeOfRecovery: string; coreType: string; location: string; orientation: string; accessories: string;} = { 
+//       isLabel: false,  prodName: '', textAlign: 'center', imageUrl: '', airflow: '', typeOfRecovery: '', coreType: '', location: '', orientation: '', accessories: '', };
 
-  switch (prodType) {
-    case 'LABEL':
-      desc.isLabel = true;
-      desc.prodName = '';
-      desc.textAlign = "left";
-      desc.imageUrl = "";
-      desc.airflow = "Airflow";
-      desc.typeOfRecovery = "Type of Recovery Options";
-      desc.coreType = "Core Type (Efficiency)";
-      desc.location = "Location Options";
-      desc.orientation = "Orientation Options";
-      desc.accessories = "Accessories Options";
-      break;
-    case 'NOVA':
-      desc.prodName = prodName;
-      desc.imageUrl = "/assets/Images/new_unit_nova.png";
-      desc.airflow = "325 - 8,100 cfm";
-      desc.typeOfRecovery = "ERV";
-      desc.coreType = "Crossflow Core (Standard Efficiency)";
-      desc.location = "Indoor / Outdoor";
-      desc.orientation = "Horizontal / Vertical";
-      desc.accessories = "Daikin VRV Integration, Electric heater, Hydronic Coil (HW & CW)";
-      break;
-    case 'VENTUM':
-      desc.prodName = prodName;
-      desc.imageUrl = "/assets/Images/new_unit_ventum_h.png";
-      desc.airflow = "350 - 3,000 cfm";
-      desc.typeOfRecovery = "ERV / HRV";
-      desc.coreType = "Counterflow Core (High Efficiency)";
-      desc.location = "Indoor";
-      desc.orientation = "Horizontal";
-      desc.accessories = "Daikin VRV Integration, Electric heater, Hydronic Coil (HW & CW)";
-      break;
-    case 'VENTUML':
-      desc.prodName = prodName;
-      desc.imageUrl = "/assets/Images/new_unit_ventum_lite.png";
-      desc.airflow = "200 - 450 cfm";
-      desc.typeOfRecovery = "ERV / HRV";
-      desc.coreType = "Counterflow Core (High Efficiency)";
-      desc.location = "Indoor";
-      desc.orientation = "Horizontal";
-      desc.accessories = "Electric pre-heater";
-      break;
-    case 'VENTUMP':
-      desc.prodName = prodName;
-      desc.imageUrl = "/assets/Images/new_unit_ventum_plus.png";
-      desc.airflow = "1,200 - 10,000 cfm";
-      desc.typeOfRecovery = "ERV / HRV";
-      desc.coreType = "Counterflow Core (High Efficiency)";
-      desc.location = "Indoor / Outdoor";
-      desc.orientation = "Vertical";
-      desc.accessories = "Daikin VRV Integration, Electric heater, Hydronic Coil (HW & CW)";
-      break;    
-    case 'TERRA':
-      desc.prodName = prodName;
-      desc.imageUrl = "/assets/Images/new_unit_terra.png";
-      desc.airflow = "425 - 4,800 cfm";
-      desc.typeOfRecovery = "-";
-      desc.coreType = "-";
-      desc.location = "Indoor";
-      desc.orientation = "Horizontal";
-      desc.accessories = "Daikin VRV Integration, Electric heater";
-      break;
-    default:
-      break;
-  }
+//   switch (prodType) {
+//     case 'LABEL':
+//       desc.isLabel = true;
+//       desc.prodName = '';
+//       desc.textAlign = "left";
+//       desc.imageUrl = "";
+//       desc.airflow = "Airflow";
+//       desc.typeOfRecovery = "Type of Recovery Options";
+//       desc.coreType = "Core Type (Efficiency)";
+//       desc.location = "Location Options";
+//       desc.orientation = "Orientation Options";
+//       desc.accessories = "Accessories Options";
+//       break;
+//     case 'NOVA':
+//       desc.prodName = prodName;
+//       desc.imageUrl = "/assets/Images/new_unit_nova.png";
+//       desc.airflow = "325 - 8,100 cfm";
+//       desc.typeOfRecovery = "ERV";
+//       desc.coreType = "Crossflow Core (Standard Efficiency)";
+//       desc.location = "Indoor / Outdoor";
+//       desc.orientation = "Horizontal / Vertical";
+//       desc.accessories = "Daikin VRV Integration, Electric heater, Hydronic Coil (HW & CW)";
+//       break;
+//     case 'VENTUM':
+//       desc.prodName = prodName;
+//       desc.imageUrl = "/assets/Images/new_unit_ventum_h.png";
+//       desc.airflow = "350 - 3,000 cfm";
+//       desc.typeOfRecovery = "ERV / HRV";
+//       desc.coreType = "Counterflow Core (High Efficiency)";
+//       desc.location = "Indoor";
+//       desc.orientation = "Horizontal";
+//       desc.accessories = "Daikin VRV Integration, Electric heater, Hydronic Coil (HW & CW)";
+//       break;
+//     case 'VENTUML':
+//       desc.prodName = prodName;
+//       desc.imageUrl = "/assets/Images/new_unit_ventum_lite.png";
+//       desc.airflow = "200 - 450 cfm";
+//       desc.typeOfRecovery = "ERV / HRV";
+//       desc.coreType = "Counterflow Core (High Efficiency)";
+//       desc.location = "Indoor";
+//       desc.orientation = "Horizontal";
+//       desc.accessories = "Electric pre-heater";
+//       break;
+//     case 'VENTUMP':
+//       desc.prodName = prodName;
+//       desc.imageUrl = "/assets/Images/new_unit_ventum_plus.png";
+//       desc.airflow = "1,200 - 10,000 cfm";
+//       desc.typeOfRecovery = "ERV / HRV";
+//       desc.coreType = "Counterflow Core (High Efficiency)";
+//       desc.location = "Indoor / Outdoor";
+//       desc.orientation = "Vertical";
+//       desc.accessories = "Daikin VRV Integration, Electric heater, Hydronic Coil (HW & CW)";
+//       break;    
+//     case 'TERRA':
+//       desc.prodName = prodName;
+//       desc.imageUrl = "/assets/Images/new_unit_terra.png";
+//       desc.airflow = "425 - 4,800 cfm";
+//       desc.typeOfRecovery = "-";
+//       desc.coreType = "-";
+//       desc.location = "Indoor";
+//       desc.orientation = "Horizontal";
+//       desc.accessories = "Daikin VRV Integration, Electric heater";
+//       break;
+//     default:
+//       break;
+//   }
 
-  return desc;
-};
+//   return desc;
+// };
 
 let productTypesNew : any = [];
 // let prodTypeNovaValue = "";
@@ -260,9 +260,9 @@ export default function ProductType(props: ProductTypeProps) {
     </Grid>
     <Grid item xs={12} md={12}>
       <Box sx={{ display: 'grid', rowGap: 1, columnGap: 1, gridTemplateColumns: { xs: 'repeat(6, 1fr)' }, }}>
-      <Stack><Typography fontSize="15px">Unit</Typography></Stack>
+      <Stack><Typography fontSize="13px">Unit</Typography></Stack>
       <Stack>
-        <Typography textAlign='center' fontSize="15px">Nova        
+        <Typography textAlign='center' fontSize="13px">Nova        
           <span>
           <IconButton aria-label="info" sx={{ padding: '5px', pt: 0 }}>
             <Iconify icon="ant-design:exclamation-circle-outlined" />
@@ -270,7 +270,7 @@ export default function ProductType(props: ProductTypeProps) {
         </span>
         </Typography>
         </Stack>
-        <Stack><Typography textAlign='center' fontSize="15px">Ventum
+        <Stack><Typography textAlign='center' fontSize="13px">Ventum
         <span>
           <IconButton aria-label="info" sx={{ padding: '5px', pt: 0 }}>
             <Iconify icon="ant-design:exclamation-circle-outlined" />
@@ -278,7 +278,7 @@ export default function ProductType(props: ProductTypeProps) {
         </span>
         </Typography>
         </Stack>
-        <Stack><Typography textAlign='center' fontSize="15px">Ventum Plus
+        <Stack><Typography textAlign='center' fontSize="13px">Ventum Plus
         <span>
           <IconButton aria-label="info" sx={{ padding: '5px', pt: 0 }}>
             <Iconify icon="ant-design:exclamation-circle-outlined" />
@@ -286,7 +286,7 @@ export default function ProductType(props: ProductTypeProps) {
         </span>
         </Typography>
         </Stack>
-        <Stack><Typography textAlign='center' fontSize="15px">Ventum Lite
+        <Stack><Typography textAlign='center' fontSize="13px">Ventum Lite
         <span>
           <IconButton aria-label="info" sx={{ padding: '5px', pt: 0 }}>
             <Iconify icon="ant-design:exclamation-circle-outlined" />
@@ -294,7 +294,7 @@ export default function ProductType(props: ProductTypeProps) {
         </span>
         </Typography>
         </Stack>
-        <Stack><Typography textAlign='center' fontSize="15px">Terra
+        <Stack><Typography textAlign='center' fontSize="13px">Terra
         <span>
           <IconButton aria-label="info" sx={{ padding: '5px', pt: 0 }}>
             <Iconify icon="ant-design:exclamation-circle-outlined" />
@@ -306,62 +306,62 @@ export default function ProductType(props: ProductTypeProps) {
     </Grid>
     <Grid item xs={12} md={12}>
       <Box sx={{ display: 'grid', rowGap: 1, columnGap: 1, gridTemplateColumns: { xs: 'repeat(6, 1fr)' }, }}>
-      <Stack><Typography fontSize="15px">Airflow</Typography></Stack>
-        <Stack><Typography textAlign='center' fontSize="15px">325 - 8,100 cfm</Typography></Stack>
-        <Stack><Typography textAlign='center' fontSize="15px">350 - 3,000 cfm</Typography></Stack>
-        <Stack><Typography textAlign='center' fontSize="15px">1,200 - 10,000 cfm</Typography></Stack>
-        <Stack><Typography textAlign='center' fontSize="15px">200 - 450 cfm</Typography></Stack>
-        <Stack><Typography textAlign='center' fontSize="15px">425 - 4,800 cfm</Typography></Stack>
+      <Stack><Typography fontSize="13px">Airflow</Typography></Stack>
+        <Stack><Typography textAlign='center' fontSize="13px">325 - 8,100 cfm</Typography></Stack>
+        <Stack><Typography textAlign='center' fontSize="13px">350 - 3,000 cfm</Typography></Stack>
+        <Stack><Typography textAlign='center' fontSize="13px">1,200 - 10,000 cfm</Typography></Stack>
+        <Stack><Typography textAlign='center' fontSize="13px">200 - 450 cfm</Typography></Stack>
+        <Stack><Typography textAlign='center' fontSize="13px">425 - 4,800 cfm</Typography></Stack>
       </Box>
     </Grid>
     <Grid item xs={12} md={12}>
       <Box sx={{ display: 'grid', rowGap: 1, columnGap: 1, gridTemplateColumns: { xs: 'repeat(6, 1fr)' }, }}>
-        <Stack><Typography fontSize="14px">Type of Recovery Options</Typography></Stack>
-        <Stack><Typography textAlign='center' fontSize="14px">ERV</Typography></Stack>
-        <Stack><Typography textAlign='center' fontSize="14px">ERV / HRV</Typography></Stack>
-        <Stack><Typography textAlign='center' fontSize="14px">ERV / HRV</Typography></Stack>
-        <Stack><Typography textAlign='center' fontSize="14px">ERV / HRV</Typography></Stack>
-        <Stack><Typography textAlign='center' fontSize="14px">-</Typography></Stack>
+        <Stack><Typography fontSize="13px">Type of Recovery Options</Typography></Stack>
+        <Stack><Typography textAlign='center' fontSize="13px">ERV</Typography></Stack>
+        <Stack><Typography textAlign='center' fontSize="13px">ERV / HRV</Typography></Stack>
+        <Stack><Typography textAlign='center' fontSize="13px">ERV / HRV</Typography></Stack>
+        <Stack><Typography textAlign='center' fontSize="13px">ERV / HRV</Typography></Stack>
+        <Stack><Typography textAlign='center' fontSize="13px">-</Typography></Stack>
         </Box>
     </Grid>
     <Grid item xs={12} md={12}>
       <Box sx={{ display: 'grid', rowGap: 1, columnGap: 1, gridTemplateColumns: { xs: 'repeat(6, 1fr)' }, }}>
-      <Stack><Typography fontSize="14px">Core Type (Efficiency)</Typography></Stack>
-        <Stack><Typography textAlign='center' fontSize="14px">Crossflow Core (Standard Efficiency)</Typography></Stack>
-        <Stack><Typography textAlign='center' fontSize="14px">Counterflow Core (High Efficiency)</Typography></Stack>
-        <Stack><Typography textAlign='center' fontSize="14px">Counterflow Core (High Efficiency)</Typography></Stack>
-        <Stack><Typography textAlign='center' fontSize="14px">Counterflow Core (High Efficiency)</Typography></Stack>
-        <Stack><Typography textAlign='center' fontSize="14px">-</Typography></Stack>
+      <Stack><Typography fontSize="13px">Core Type (Efficiency)</Typography></Stack>
+        <Stack><Typography textAlign='center' fontSize="13px">Crossflow Core (Standard Efficiency)</Typography></Stack>
+        <Stack><Typography textAlign='center' fontSize="13px">Counterflow Core (High Efficiency)</Typography></Stack>
+        <Stack><Typography textAlign='center' fontSize="13px">Counterflow Core (High Efficiency)</Typography></Stack>
+        <Stack><Typography textAlign='center' fontSize="13px">Counterflow Core (High Efficiency)</Typography></Stack>
+        <Stack><Typography textAlign='center' fontSize="13px">-</Typography></Stack>
       </Box>
     </Grid>
     <Grid item xs={12} md={12}>
       <Box sx={{ display: 'grid', rowGap: 1, columnGap: 1, gridTemplateColumns: { xs: 'repeat(6, 1fr)' }, }}>
-      <Stack><Typography fontSize="14px">Location Options</Typography></Stack>
-      <Stack><Typography textAlign='center' fontSize="14px">Indoor / Outdoor</Typography></Stack>
-      <Stack><Typography textAlign='center' fontSize="14px">Indoor</Typography></Stack>
-        <Stack><Typography textAlign='center' fontSize="14px">Indoor / Outdoor</Typography></Stack>
-        <Stack><Typography textAlign='center' fontSize="14px">Indoor</Typography></Stack>
-        <Stack><Typography textAlign='center' fontSize="14px">Indoor</Typography></Stack>
+      <Stack><Typography fontSize="13px">Location Options</Typography></Stack>
+      <Stack><Typography textAlign='center' fontSize="13px">Indoor / Outdoor</Typography></Stack>
+      <Stack><Typography textAlign='center' fontSize="13px">Indoor</Typography></Stack>
+        <Stack><Typography textAlign='center' fontSize="13px">Indoor / Outdoor</Typography></Stack>
+        <Stack><Typography textAlign='center' fontSize="13px">Indoor</Typography></Stack>
+        <Stack><Typography textAlign='center' fontSize="13px">Indoor</Typography></Stack>
       </Box>
     </Grid>
     <Grid item xs={12} md={12}>
       <Box sx={{ display: 'grid', rowGap: 1, columnGap: 1, gridTemplateColumns: { xs: 'repeat(6, 1fr)' }, }}>
-      <Stack><Typography fontSize="14px">Orientation Options</Typography></Stack>
-      <Stack><Typography textAlign='center' fontSize="14px">Horizontal / Vertical</Typography></Stack>
-      <Stack><Typography textAlign='center' fontSize="14px">Horizontal</Typography></Stack>
-        <Stack><Typography textAlign='center' fontSize="14px">Vertical</Typography></Stack>
-        <Stack><Typography textAlign='center' fontSize="14px">Horizontal</Typography></Stack>
-        <Stack><Typography textAlign='center' fontSize="14px">Horizontal</Typography></Stack>
+      <Stack><Typography fontSize="13px">Orientation Options</Typography></Stack>
+      <Stack><Typography textAlign='center' fontSize="13px">Horizontal / Vertical</Typography></Stack>
+      <Stack><Typography textAlign='center' fontSize="13px">Horizontal</Typography></Stack>
+        <Stack><Typography textAlign='center' fontSize="13px">Vertical</Typography></Stack>
+        <Stack><Typography textAlign='center' fontSize="13px">Horizontal</Typography></Stack>
+        <Stack><Typography textAlign='center' fontSize="13px">Horizontal</Typography></Stack>
       </Box>
     </Grid>
     <Grid item xs={12} md={12}>
       <Box sx={{ display: 'grid', rowGap: 1, columnGap: 1, gridTemplateColumns: { xs: 'repeat(6, 1fr)' }, }}>
-      <Stack><Typography fontSize="14px">Accessories Options</Typography></Stack>
-      <Stack><Typography textAlign='center' fontSize="14px">Daikin VRV Integration, Electric heater, Hydronic Coil (HW & CW)</Typography></Stack>
-        <Stack><Typography textAlign='center' fontSize="14px">Daikin VRV Integration, Electric heater, Hydronic Coil (HW & CW)</Typography></Stack>
-        <Stack><Typography textAlign='center' fontSize="14px">Daikin VRV Integration, Electric heater, Hydronic Coil (HW & CW)</Typography></Stack>
-        <Stack><Typography textAlign='center' fontSize="14px">Electric pre-heater</Typography></Stack>
-        <Stack><Typography textAlign='center' fontSize="14px">Daikin VRV Integration, Electric heater</Typography></Stack>
+      <Stack><Typography fontSize="13px">Accessories Options</Typography></Stack>
+      <Stack><Typography textAlign='center' fontSize="13px">Daikin VRV Integration, Electric heater, Hydronic Coil (HW & CW)</Typography></Stack>
+        <Stack><Typography textAlign='center' fontSize="13px">Daikin VRV Integration, Electric heater, Hydronic Coil (HW & CW)</Typography></Stack>
+        <Stack><Typography textAlign='center' fontSize="13px">Daikin VRV Integration, Electric heater, Hydronic Coil (HW & CW)</Typography></Stack>
+        <Stack><Typography textAlign='center' fontSize="13px">Electric pre-heater</Typography></Stack>
+        <Stack><Typography textAlign='center' fontSize="13px">Daikin VRV Integration, Electric heater</Typography></Stack>
       </Box>
     </Grid>
         {/* </Container> */}
