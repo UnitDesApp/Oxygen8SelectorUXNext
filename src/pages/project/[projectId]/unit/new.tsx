@@ -235,7 +235,7 @@ export default function AddNewUnit({currentStep, setCurrentStep}:any) {
               >
                 <Stack direction="row" alignItems="center" gap={1}>
                   <Iconify icon="ph:number-circle-three-fill" width="25px" height="25px" />
-                  <Typography variant="body1">Make a selection</Typography>
+                  <Typography variant="body1">Get a selection</Typography>
                 </Stack>
               </Item>
             </Stack>
