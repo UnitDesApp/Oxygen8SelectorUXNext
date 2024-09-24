@@ -305,11 +305,12 @@ export default function ProjectQuoteForm({ projectId, quoteInfo, refetch }: Proj
         dblPriceSubtotal: formCurrValues.txbPriceSubtotal,
         dblPriceDiscount: formCurrValues.txbPriceDiscount,
         dblPriceFinalTotal: formCurrValues.txbPriceFinalTotal,
-        strCreatedDate: currQuoteInfo?.oQuoteSaveInputs?.strCreatedDate
-          ? savedDate
-          : formCurrValues.txbCreatedDate,
-        strRevisedDate: `${today.getFullYear()}-${today.getMonth()}-${today.getDate()}`,
-        strValidDate: `${newValidDate.getFullYear()}-${newValidDate.getMonth()}-${newValidDate.getDate()}`,
+        // strCreatedDate: currQuoteInfo?.oQuoteSaveInputs?.strCreatedDate ? savedDate : formCurrValues.txbCreatedDate,
+        // strRevisedDate: `${today.getFullYear()}-${today.getMonth()}-${today.getDate()}`,
+        // strValidDate: `${newValidDate.getFullYear()}-${newValidDate.getMonth()}-${newValidDate.getDate()}`,
+        strCreatedDate: "",
+        strRevisedDate: "",
+        strValidDate: "",
       },
     };
 
@@ -902,9 +903,9 @@ export default function ProjectQuoteForm({ projectId, quoteInfo, refetch }: Proj
             <Grid item xs={12}>
               <Grid container spacing={3}>
                 <Grid item xs={12} sm={6} md={4}>
-                  <CustomGroupBox title="Project Info">
+                  <CustomGroupBox title="Quote Information">
                     <Box sx={{ display: 'grid', rowGap: 1, columnGap: 1 }}>
-                      <RHFTextField size="small" name="txbRevisionNo" label="Revision No" />
+                      <RHFTextField size="small" name="txbProjectName" label="Project Name" />
                       <RHFSelect
                         native
                         size="small"
@@ -922,8 +923,8 @@ export default function ProjectQuoteForm({ projectId, quoteInfo, refetch }: Proj
                         ))}
                         {/* <option value="2">USA</option> */}
                       </RHFSelect>
-                      <RHFTextField size="small" name="txbProjectName" label="Project Name" />
                       <RHFTextField size="small" name="txbQuoteNo" label="Quote No" disabled />
+                      <RHFTextField size="small" name="txbRevisionNo" label="Revision No" />
                       <RHFSelect
                         native
                         size="small"
@@ -941,16 +942,16 @@ export default function ProjectQuoteForm({ projectId, quoteInfo, refetch }: Proj
                       <RHFTextField
                         size="small"
                         name="txbCreatedDate"
-                        label="Created Date"
+                        label="Quote Created Date"
                         disabled
                       />
                       <RHFTextField
                         size="small"
                         name="txbRevisedDate"
-                        label="Revised Date"
+                        label="Quote Revised Date"
                         disabled
                       />
-                      <RHFTextField size="small" name="txbValidDate" label="Valid Date" disabled />
+                      <RHFTextField size="small" name="txbValidDate" label="Quote Valid Date" disabled />
                     </Box>
                   </CustomGroupBox>
                 </Grid>
