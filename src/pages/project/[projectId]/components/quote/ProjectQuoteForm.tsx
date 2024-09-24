@@ -905,7 +905,7 @@ export default function ProjectQuoteForm({ projectId, quoteInfo, refetch }: Proj
                 <Grid item xs={12} sm={6} md={4}>
                   <CustomGroupBox title="Quote Information">
                     <Box sx={{ display: 'grid', rowGap: 1, columnGap: 1 }}>
-                      <RHFTextField size="small" name="txbProjectName" label="Project Name" />
+                      <RHFTextField size="small" name="txbProjectName" label="Project Name"  InputProps={{ readOnly: true }} />
                       <RHFSelect
                         native
                         size="small"
@@ -923,7 +923,7 @@ export default function ProjectQuoteForm({ projectId, quoteInfo, refetch }: Proj
                         ))}
                         {/* <option value="2">USA</option> */}
                       </RHFSelect>
-                      <RHFTextField size="small" name="txbQuoteNo" label="Quote No" disabled />
+                      <RHFTextField size="small" name="txbQuoteNo" label="Quote No"  InputProps={{ readOnly: true }} />
                       <RHFTextField size="small" name="txbRevisionNo" label="Revision No" />
                       <RHFSelect
                         native
@@ -1016,15 +1016,17 @@ export default function ProjectQuoteForm({ projectId, quoteInfo, refetch }: Proj
                     <Box sx={{ display: 'grid', rowGap: 1, columnGap: 1 }}>
                       <RHFTextField
                         size="small"
+                        InputProps={{ readOnly: true }}
                         name="txbPriceAllUnits"
                         label="Price All Units ($)"
                       />
-                      <RHFTextField size="small" name="txbPriceMisc" label="Price Misc ($)" />
-                      <RHFTextField size="small" name="txbPriceShipping" label="Shipping ($)" />
-                      <RHFTextField size="small" name="txbPriceSubtotal" label="Sub Total ($)" />
-                      <RHFTextField size="small" name="txbPriceDiscount" label="Discount ($)" />
+                      <RHFTextField size="small" InputProps={{ readOnly: true }} name="txbPriceMisc" label="Price Misc ($)" />
+                      <RHFTextField size="small" InputProps={{ readOnly: true }} name="txbPriceShipping" label="Shipping ($)" />
+                      <RHFTextField size="small" InputProps={{ readOnly: true }} name="txbPriceSubtotal" label="Sub Total ($)" />
+                      <RHFTextField size="small" InputProps={{ readOnly: true }} name="txbPriceDiscount" label="Discount ($)" />
                       <RHFTextField
                         size="small"
+                        InputProps={{ readOnly: true }}
                         name="txbPriceFinalTotal"
                         label="Final Total ($)"
                       />
