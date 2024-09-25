@@ -343,6 +343,7 @@ export default function UnitInfoForm({
         intOrientationId: Number(formCurrValues.ddlOrientation),
         intControlsPreferenceId: Number(formCurrValues.ddlControlsPref),
         intControlViaId: Number(formCurrValues.ddlControlVia),
+        strConfigNotes: formCurrValues.txbConfigNotes,
       },
       oUnitAirflow: {
         intJobId: projectId,
@@ -2063,28 +2064,65 @@ export default function UnitInfoForm({
   
     info.fdtCoolingComp  = db?.dbtSelUnitCoolingHeating;
     info.isVisible = true;
+    
+    switch (intProductTypeID) {
+      case IDs.intProdTypeIdVentumLite:
+        // info.ftdHeatingComp = info.ftdHeatingComp?.filter((item: { id: { toString: () => any } }) =>  item.id.toString() !== IDs.intCompIdNA.toString());
+        info.fdtCoolingComp  = info.fdtCoolingComp .filter((item: { id: number }) =>  item.id === IDs.intCompIdNA);
+        info.defaultId = IDs.intCompIdNA;
+        info.isVisible = false;
+        break;
+      case IDs.intProdTypeIdNova:
+      case IDs.intProdTypeIdVentumPlus:
+      case IDs.intProdTypeIdVentum: 
+        switch (intUnitTypeID) {
+          case IDs.intUnitTypeIdERV:
+            info.fdtCoolingComp = info.fdtCoolingComp ?.filter((e: { erv_cooling: number }) => Number(e.erv_cooling) === 1) || [];
+            break;
+          case IDs.intUnitTypeIdHRV:
+            info.fdtCoolingComp = info.fdtCoolingComp ?.filter((e: { hrv_cooling: number }) => Number(e.hrv_cooling) === 1) || [];
+            break;
+          default:
+            // code block
+            break;
+        }        
 
-    if (intProductTypeID === IDs.intProdTypeIdVentumLite) {
-      // info.ftdHeatingComp = info.ftdHeatingComp?.filter((item: { id: { toString: () => any } }) =>  item.id.toString() !== IDs.intCompIdNA.toString());
-      info.fdtCoolingComp  = info.fdtCoolingComp .filter((item: { id: number }) =>  item.id === IDs.intCompIdNA);
-      info.defaultId = IDs.intCompIdAuto;
-      info.isVisible = false;
-    } else {
-      switch (intUnitTypeID) {
-        case IDs.intUnitTypeIdERV:
-          info.fdtCoolingComp = info.fdtCoolingComp ?.filter((e: { erv_cooling: number }) => Number(e.erv_cooling) === 1) || [];
-          break;
-        case IDs.intUnitTypeIdHRV:
-          info.fdtCoolingComp = info.fdtCoolingComp ?.filter((e: { hrv_cooling: number }) => Number(e.hrv_cooling) === 1) || [];
-          break;
-        case IDs.intUnitTypeIdAHU:
-          info.fdtCoolingComp = info.fdtCoolingComp ?.filter((e: { fc_cooling: number }) => Number(e.fc_cooling) === 1) || [];
-          break;
-        default:
-          // code block
-          break;
-      }
+        if (intProductTypeID === IDs.intProdTypeIdVentum && Number(formCurrValues.ddlUnitModel)  === IDs.intVentumUnitModelIdH05IN_ERV)
+        {
+          info.fdtCoolingComp  = info.fdtCoolingComp .filter((item: { id: number }) =>  item.id !== IDs.intCompIdDX);
+        }        
+      break;
+
+      case IDs.intProdTypeIdTerra: 
+        info.fdtCoolingComp = info.fdtCoolingComp ?.filter((e: { fc_cooling: number }) => Number(e.fc_cooling) === 1) || [];
+      break;
+      default:
+        // code block
+        break;
     }
+
+
+    // if (intProductTypeID === IDs.intProdTypeIdVentumLite) {
+    //   // info.ftdHeatingComp = info.ftdHeatingComp?.filter((item: { id: { toString: () => any } }) =>  item.id.toString() !== IDs.intCompIdNA.toString());
+    //   info.fdtCoolingComp  = info.fdtCoolingComp .filter((item: { id: number }) =>  item.id === IDs.intCompIdNA);
+    //   info.defaultId = IDs.intCompIdAuto;
+    //   info.isVisible = false;
+    // } else {
+    //   switch (intUnitTypeID) {
+    //     case IDs.intUnitTypeIdERV:
+    //       info.fdtCoolingComp = info.fdtCoolingComp ?.filter((e: { erv_cooling: number }) => Number(e.erv_cooling) === 1) || [];
+    //       break;
+    //     case IDs.intUnitTypeIdHRV:
+    //       info.fdtCoolingComp = info.fdtCoolingComp ?.filter((e: { hrv_cooling: number }) => Number(e.hrv_cooling) === 1) || [];
+    //       break;
+    //     case IDs.intUnitTypeIdAHU:
+    //       info.fdtCoolingComp = info.fdtCoolingComp ?.filter((e: { fc_cooling: number }) => Number(e.fc_cooling) === 1) || [];
+    //       break;
+    //     default:
+    //       // code block
+    //       break;
+    //   }
+    // }
     setCoolingCompInfo(info);
     info.defaultId = info.fdtCoolingComp?.[0]?.id;
     setValue('ddlCoolingComp', info.fdtCoolingComp?.[0]?.id);
@@ -4614,7 +4652,7 @@ useEffect(() => {
                     <RHFTextField
                       size="small"
                       name="txbSummerSupplyAirCFM"
-                      label="Supply Air (CFM)"
+                      label="Supply Airflow (CFM)"
                       // onChange={(e: any) => {setValueWithCheck(e, 'txbSummerSupplyAirCFM');}}
                       onBlur={handleBlurSummerSupplyAirCFM}
                     />
@@ -4654,7 +4692,7 @@ useEffect(() => {
                     <RHFTextField
                       size="small"
                       name="txbSummerReturnAirCFM"
-                      label="Exhaust Air (CFM)"
+                      label="Exhaust Airflow (CFM)"
                       sx={getDisplay(!isUnitTypeAHU())}
                       onChange={(e: any) => {
                         setValueWithCheck(e, 'txbSummerReturnAirCFM');
@@ -6651,7 +6689,7 @@ useEffect(() => {
           </AccordionSummary>
           <AccordionDetails>
             <Grid container>
-              <TextField label="Take a note..." variant="standard" fullWidth />
+              <TextField label="Take a note..." variant="standard" fullWidth name='txbConfigNotes' />
             </Grid>
           </AccordionDetails>
         </Accordion>
