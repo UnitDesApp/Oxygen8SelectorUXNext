@@ -136,6 +136,9 @@ export default function ProjectQuoteForm({ projectId, quoteInfo, refetch }: Proj
   // status
   const [success, setSuccess] = useState<boolean>(false);
   const [fail, setFail] = useState<boolean>(false);
+  const [openSnackbar, setOpenSnackbar] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState('');
+
   const [currQuoteInfo, setCurrQuoteInfo] = useState<any>([]);
   const [isLoadingQuoteInfo, setIsLoadingQuoteInfo] = useState(true);
   const [isProcessingData, setIsProcessingData] = useState(false);
@@ -479,14 +482,37 @@ export default function ProjectQuoteForm({ projectId, quoteInfo, refetch }: Proj
 
   // event handler for adding shipping note
   const addMiscClicked = useCallback(async () => {
-    if (
-      getValues('txbMisc') === '' ||
-      getValues('txbMiscQty') === '' ||
-      getValues('txbMiscPrice') === ''
-    )
+    // if (
+    //   getValues('txbMisc') === '' ||
+    //   getValues('txbMiscQty') === '' ||
+    //   getValues('txbMiscPrice') === ''
+    // )
+    //   return;
+
+    if (getValues('txbMisc').length < 3) {
+      setSnackbarMessage('Miscellaneous is required or too short.');
+      setOpenSnackbar(true);
       return;
+    }
+
+    if (Number(getValues('txbMiscQty')) < 1) {
+      setSnackbarMessage('Miscellaneous quantity is required.');
+      setOpenSnackbar(true);
+      return;
+    }
+
+    if (Number(getValues('txbMiscPrice')) < 1) {
+      setSnackbarMessage('Miscellaneous price is required.');
+      setOpenSnackbar(true);
+      return;
+    }
+
 
     setIsProcessingData(true);
+
+
+
+
 
     const data: any = {
       // intUserId: typeof window !== 'undefined' && localStorage.getItem('userId'),
@@ -573,7 +599,13 @@ export default function ProjectQuoteForm({ projectId, quoteInfo, refetch }: Proj
 
   // event handler for addding note
   const addNotesClicked = useCallback(async () => {
-    if (getValues('txbNotes') === '') return;
+    // if (getValues('txbNotes') === '') return;
+
+    if (getValues('txbNotes').length < 3) {
+      setSnackbarMessage('Notes is required or too short.');
+      setOpenSnackbar(true);
+      return;
+    }
 
     setIsProcessingData(true);
 
@@ -584,6 +616,8 @@ export default function ProjectQuoteForm({ projectId, quoteInfo, refetch }: Proj
       intNotesNo: 0,
       strNotes: getValues('txbNotes'),
     };
+
+
     const result = await api.project.saveQuoteNotes(data);
 
     const info: { fdtNotes: any } = { fdtNotes: [] };
@@ -878,6 +912,37 @@ export default function ProjectQuoteForm({ projectId, quoteInfo, refetch }: Proj
 
     fetchData();
   }, [api.project, projectId]);
+
+
+  const setValueWithCheck = useCallback(
+    (e: any, key: any) => {
+      if (e.target.value === '') {
+        setValue(key, '');
+      } else if (e.target.value[0] === '0') {
+        setValue(key, '0');
+        return true;
+      } else if (!Number.isNaN(+e.target.value)) {
+        setValue(key, parseFloat(e.target.value));
+        return true;
+      }
+      return false;
+    },
+    [setValue]
+  );
+
+  const setValueWithCheck1 = useCallback(
+    (e: any, key: any) => {
+      if (e.target.value === '') {
+        setValue(key, '');
+      } else if (!Number.isNaN(Number(+e.target.value))) {
+        setValue(key, e.target.value);
+        return true;
+      }
+      return false;
+    },
+    [setValue]
+  );
+
 
   if (isLoadingQuoteInfo) return <LinearProgress color="info" />;
 
@@ -1344,12 +1409,14 @@ export default function ProjectQuoteForm({ projectId, quoteInfo, refetch }: Proj
                     name="txbMiscQty"
                     label="Enter Qty"
                     sx={{ width: '10%' }}
+                    onChange={(e: any) => {setValueWithCheck(e, 'txbMiscQty');}}
                   />
                   <RHFTextField
                     size="small"
                     name="txbMiscPrice"
                     label="Enter Price"
                     sx={{ width: '10%' }}
+                    onChange={(e: any) => {setValueWithCheck1(e, 'txbMiscPrice');}}
                   />
                   <Button
                     sx={{ width: '15%', borderRadius: '5px', mt: '1px' }}
@@ -1639,7 +1706,7 @@ export default function ProjectQuoteForm({ projectId, quoteInfo, refetch }: Proj
           severity="success"
           sx={{ width: '100%' }}
         >
-          Submittal Information Saved!
+          Quote Information Saved!
         </Alert>
       </Snackbar>
       <Snackbar
@@ -1659,6 +1726,20 @@ export default function ProjectQuoteForm({ projectId, quoteInfo, refetch }: Proj
           Server Error!
         </Alert>
       </Snackbar>
+      <Snackbar
+        open={openSnackbar}
+        autoHideDuration={3000}
+        onClose={() => setOpenSnackbar(false)}
+      >
+        <Alert
+          onClose={() => setOpenSnackbar(false)}
+          severity="error"
+          sx={{ width: '100%' }}
+        >
+          {snackbarMessage}
+        </Alert>
+      </Snackbar>
+
     </Container>
   );
 }

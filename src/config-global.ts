@@ -7,8 +7,8 @@ import { PATH_APP } from './routes/paths';
 // export const BACKEND_ENDPOINT = 'https://localhost:44307';
 // export const BACKEND_ENDPOINT = 'https://52.173.26.247'; // Production
 // export const BACKEND_ENDPOINT = 'https://40.78.147.179'; // Testing
-export const BACKEND_ENDPOINT = 'https://oxygen8apitest.com';
-// export const BACKEND_ENDPOINT = 'https://oxygen8api.com';
+// export const BACKEND_ENDPOINT = 'https://oxygen8apitest.com';  // https://40.78.147.179 // Testing
+export const BACKEND_ENDPOINT = 'https://oxygen8api.com';      // https://52.173.26.247 // Production
 
 export const HOST_API_KEY = process.env.HOST_API_KEY || '';
 

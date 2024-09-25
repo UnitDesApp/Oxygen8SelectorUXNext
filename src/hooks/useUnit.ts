@@ -25,6 +25,7 @@ const {
     dblUnitWidth,
     intIsselectionCompleted,
     dblUnitPrice,
+    strConfigNotes,
   } = unitInfo?.oUnit || {};
 
 
@@ -169,7 +170,7 @@ const {
       ckbDownshot: edit ? intIsDownshot : 0,
       ckbBypass: edit ? intIsBypass : 0,
       ckbPHI: edit ? intIsPHI : 0,
-
+      txbConfigNotes: edit ? strConfigNotes: '',
       // Airflow
       txbAltitude: intAltitude || 0,
       txbSummerSupplyAirCFM: edit ? intSummerSupplyAirCFM : 325,
@@ -317,6 +318,7 @@ const {
       intIsDownshot,
       intIsPHI,
       intIsBypass,
+      strConfigNotes,
       // Airflow
       intAltitude,
       intSummerSupplyAirCFM,
