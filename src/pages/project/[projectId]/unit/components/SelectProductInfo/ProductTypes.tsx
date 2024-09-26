@@ -278,7 +278,7 @@ export default function ProductType(props: ProductTypeProps) {
         </span>
         </Typography>
         </Stack>
-        <Stack><Typography textAlign='center' fontSize="13px">Ventum Plus
+        <Stack><Typography textAlign='center' fontSize="13px" fontStyle="bold: true">Ventum+
         <span>
           <IconButton aria-label="info" sx={{ padding: '5px', pt: 0 }}>
             <Iconify icon="ant-design:exclamation-circle-outlined" />
