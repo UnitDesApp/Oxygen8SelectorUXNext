@@ -35,8 +35,11 @@ const FooterStepStyle = styled(Card)(() => ({
   padding: '30px',
   zIndex: 1250,
   width: '100%',
+  height: '60px',
   bottom: 0,
   position: 'fixed',
+  display: 'flex',
+  alignItems: 'center'
 }));
 
 const Item = styled(Paper)(({ theme }) => ({

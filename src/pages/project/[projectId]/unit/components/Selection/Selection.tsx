@@ -21,7 +21,7 @@ import {
 } from '@mui/material';
 // lodash
 import { isEmpty } from 'lodash';
-import { useGetUnitSelection } from 'src/hooks/useApi';
+import { useGetSavedJob, useGetUnitSelection } from 'src/hooks/useApi';
 import { useRouter } from 'next/router';
 import Iconify from 'src/components/iconify';
 import Image from 'src/components/image';
@@ -120,6 +120,15 @@ interface SelectionProps {
 // export default function Selection({ unitTypeData, intUnitNo }: SelectionProps) {
 export default function Selection({ intJobId, intUnitNo, intProdTypeId, intUnitTypeId, setCurrentStep }: SelectionProps) {
   const { projectId } = useRouter().query;
+  const {
+    data: savedJob,
+  } = useGetSavedJob(
+    { intJobId: projectId },
+    {
+      enabled: !!projectId,
+    }
+  );
+
   const [error, setError] = useState(null);
   const [expanded, setExpanded] = React.useState<{ [key: string]: boolean }>({
     panel1: true,
@@ -202,6 +211,12 @@ if (fanImgFiles.includes(imgEF)) {
 
   return (
     <RootStyle>
+      <Typography color="primary.main" variant="h3" sx={{display:'flex',justifyContent:'center'}}>
+           {savedJob[0].job_name}
+      </Typography>
+      <Typography color="primary.main" variant="h3" sx={{display:'flex',justifyContent:'center',mt:'10px'}}>
+           {selectionData?.dtUnitDetails_1[0].cValue}
+      </Typography>
       <Container maxWidth="xl">
         {error && (
           <Box sx={{ maringLeft: 'auto', marginRight: 'auto', marginTop: '50px' }}>

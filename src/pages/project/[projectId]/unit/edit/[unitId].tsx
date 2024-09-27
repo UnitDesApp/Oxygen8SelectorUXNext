@@ -29,16 +29,19 @@ import NewUnit from '../new';
 
 // ----------------------------------------------------------------------
 
-const FooterStepStyle = styled(Card)(() => ({
-  borderRadius: 0,
-  background: '#fff',
-  paddingTop: '20px',
-  padding: '30px',
-  zIndex: 1250,
-  width: '100%',
-  bottom: 0,
-  position: 'fixed',
-}));
+  const FooterStepStyle = styled(Card)(() => ({
+    borderRadius: 0,
+    background: '#fff',
+    paddingTop: '20px',
+    padding: '30px',
+    zIndex: 1250,
+    width: '100%',
+    height: '60px',
+    bottom: 0,
+    position: 'fixed',
+    display: 'flex',
+    alignItems: 'center'
+  }));
 
 const Item = styled(Paper)(({ theme }) => ({
   backgroundColor: theme.palette.mode === 'dark' ? '#1A2027' : '#fff',

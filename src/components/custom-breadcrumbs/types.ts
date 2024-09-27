@@ -1,5 +1,6 @@
 // @mui
 import { BreadcrumbsProps } from '@mui/material';
+import { ReactNode } from 'react';
 
 // ----------------------------------------------------------------------
 
@@ -10,7 +11,7 @@ export type BreadcrumbsLinkProps = {
 };
 
 export interface CustomBreadcrumbsProps extends BreadcrumbsProps {
-  heading?: string;
+  heading: string | ReactNode;
   moreLink?: string[];
   activeLast?: boolean;
   action?: React.ReactNode;
