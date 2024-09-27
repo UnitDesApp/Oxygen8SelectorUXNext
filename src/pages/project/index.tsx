@@ -262,26 +262,29 @@ export default function Project() {
                       )
                     }
                   />
-                  <TableBody>
-                  {(filteredArray ? filteredArray.slice(0, visibleRows) : dataFiltered?.slice(0, visibleRows))
-                      ?.map((row: any) => (
-                        <ProjectTableRow
-                          key={row.id}
-                          row={row}
-                          selected={selected.includes(row.id)}
-                          onSelectRow={() => onSelectRow(row.id)}
-                          onDeleteRow={() => handleOneConfirmDialogOpen(row.id)}
-                          onDuplicate={() => handleDuplicate({ intUserId: localStorage.getItem('userId'), intJobId: row.id })}
-                          onEditRow={() => handleEditRow(row.id)}
-                        />
-                      ))}
-                    <TableEmptyRows
-                      height={52}
-                      emptyRows={emptyRows(page, rowsPerPage, dataFiltered?.length || 0)}
-                    />
-                    <TableLoadingData isLoading={isLoadingProjects} />
-                    <TableNoData isNotFound={isNotFound} />
-                  </TableBody>
+                <TableBody>
+                {(filteredArray ? filteredArray.slice(0, visibleRows) : dataFiltered?.slice(0, visibleRows))
+                .sort((a: any, b: any) => {
+                  return getComparator(order, orderBy)(a, b);
+                })
+                .map((row: any) => (
+      <ProjectTableRow
+        key={row.id}
+        row={row}
+        selected={selected.includes(row.id)}
+        onSelectRow={() => onSelectRow(row.id)}
+        onDeleteRow={() => handleOneConfirmDialogOpen(row.id)}
+        onDuplicate={() => handleDuplicate({ intUserId: localStorage.getItem('userId'), intJobId: row.id })}
+        onEditRow={() => handleEditRow(row.id)}
+      />
+    ))}
+  <TableEmptyRows
+    height={52}
+    emptyRows={emptyRows(page, rowsPerPage, dataFiltered?.length || 0)}
+  />
+  <TableLoadingData isLoading={isLoadingProjects} />
+  <TableNoData isNotFound={isNotFound} />
+</TableBody>
                 </Table>
               </TableContainer>
             </Scrollbar>
