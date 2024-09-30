@@ -69,7 +69,7 @@ export default function Project() {
   // const { data: projects, isLoading: isLoadingProjects, refetch } = useGetAllProjects();
   // const { data: projects, isLoading: isLoadingProjects, refetch } = useGetSavedJobs();
   const { data: projects, isLoading: isLoadingProjects, refetch } = useGetSavedJobsByUserAndCustomer(
-    {    
+    {
       // oJobs: {
       intUserId: typeof window !== 'undefined' && localStorage.getItem('userId'),
       intUAL: typeof window !== 'undefined' && localStorage.getItem('UAL'),
@@ -77,7 +77,7 @@ export default function Project() {
     },
     {
       enabled: typeof window !== 'undefined',
-    }  
+    }
   );
   const [visibleRows, setVisibleRows] = useState<number>(10);
   const [hasMore, setHasMore] = useState<boolean>(true);
@@ -190,19 +190,19 @@ export default function Project() {
       }),
     [filterName, filterRole, order, orderBy, projects, filterStatus]
   );
-  
-  const [filteredArray , setFilterArray] = useState<any>();
-    const handleFilterName = (name: string) => {
+
+  const [filteredArray, setFilterArray] = useState<any>();
+  const handleFilterName = (name: string) => {
     setFilterName(name);
     const lowerCaseName = name.toLowerCase();
-    const array =   dataFiltered.filter((item: any) =>
+    const array = dataFiltered.filter((item: any) =>
       [item.job_name, item.reference_no, item.created_date, item.CreatedUserFullName]
         .some(field => field && field.toLowerCase().includes(lowerCaseName))
     );
     setFilterArray(array);
     setPage(0);
   };
-  
+
 
   const isNotFound = useMemo(
     () =>
@@ -212,7 +212,7 @@ export default function Project() {
     [dataFiltered?.length, filterName, filterRole, filterStatus]
   );
   useEffect(() => {
-    if ((dataFiltered || filteredArray)  && visibleRows >= filteredArray?.length ? filteredArray: dataFiltered && dataFiltered.length) {
+    if ((dataFiltered || filteredArray) && visibleRows >= filteredArray?.length ? filteredArray : dataFiltered && dataFiltered.length) {
       setHasMore(false);
     }
   }, [dataFiltered,filteredArray, visibleRows]);
@@ -222,7 +222,7 @@ export default function Project() {
         <title> Project | Oxygen8 </title>
       </Head>
       <Container maxWidth={themeStretch ? false : 'xl'}>
-      <Alert sx={{ width: '100%', mt: 3, mb: 3 }} severity="info">
+        <Alert sx={{ width: '100%', mt: 3, mb: 3 }} severity="info">
           <b>Pricing module is now availble</b> - select Quote after making a selection to review
           and generate a PDF. All values shown are Net prices.
         </Alert>
@@ -262,39 +262,46 @@ export default function Project() {
                       )
                     }
                   />
-                <TableBody>
-                {(filteredArray ? filteredArray.slice(0, visibleRows) : dataFiltered?.slice(0, visibleRows))
-                .sort((a: any, b: any) => {
-                  return getComparator(order, orderBy)(a, b);
-                })
-                .map((row: any) => (
-      <ProjectTableRow
-        key={row.id}
-        row={row}
-        selected={selected.includes(row.id)}
-        onSelectRow={() => onSelectRow(row.id)}
-        onDeleteRow={() => handleOneConfirmDialogOpen(row.id)}
-        onDuplicate={() => handleDuplicate({ intUserId: localStorage.getItem('userId'), intJobId: row.id })}
-        onEditRow={() => handleEditRow(row.id)}
-      />
-    ))}
-  <TableEmptyRows
-    height={52}
-    emptyRows={emptyRows(page, rowsPerPage, dataFiltered?.length || 0)}
-  />
-  <TableLoadingData isLoading={isLoadingProjects} />
-  <TableNoData isNotFound={isNotFound} />
-</TableBody>
+                  <TableBody>
+                    {(() => {
+                      let dataToDisplay = [];
+
+                      if (filteredArray) {
+                        dataToDisplay = filteredArray.slice(0, visibleRows);
+                      } else if (dataFiltered) {
+                        dataToDisplay = dataFiltered.slice(0, visibleRows);
+                      }
+                      return dataToDisplay
+                        .sort((a: any, b: any) => getComparator(order, orderBy)(a, b))
+                        .map((row: any) => (
+                          <ProjectTableRow
+                            key={row.id}
+                            row={row}
+                            selected={selected.includes(row.id)}
+                            onSelectRow={() => onSelectRow(row.id)}
+                            onDeleteRow={() => handleOneConfirmDialogOpen(row.id)}
+                            onDuplicate={() => handleDuplicate({ intUserId: localStorage.getItem('userId'), intJobId: row.id })}
+                            onEditRow={() => handleEditRow(row.id)}
+                          />
+                        ));
+                    })()}
+                    <TableEmptyRows
+                      height={52}
+                      emptyRows={emptyRows(page, rowsPerPage, dataFiltered?.length || 0)}
+                    />
+                    <TableLoadingData isLoading={isLoadingProjects} />
+                    <TableNoData isNotFound={isNotFound} />
+                  </TableBody>
                 </Table>
               </TableContainer>
             </Scrollbar>
             {/* {hasMore && dataFiltered?.length > 0 && ( */}
-              <Box sx={{ display: 'flex', justifyContent: 'center', mt: 2 }}>
-                <Button variant="outlined" color="primary" onClick={handleLoadMore}>
-                  Load More
-                </Button>
-              </Box>
-             {/* )} */}
+            <Box sx={{ display: 'flex', justifyContent: 'center', mt: 2 }}>
+              <Button variant="outlined" color="primary" onClick={handleLoadMore}>
+                Load More
+              </Button>
+            </Box>
+            {/* )} */}
           </Box>
         )}
 
