@@ -173,7 +173,7 @@ export default function Project() {
           {projectName && projectName}
         </Typography>
         <CustomBreadcrumbs
-          heading= {projectName || ''}
+          heading={<Typography sx={{fontSize:'14px', color: 'rgb(99, 115, 129)' }}>{projectName || ''}</Typography>}
           links={[{ name: 'Projects', href: PATH_APP.project }, { name: tabData?.title || '' }]}
           action={
             <Stack spacing={2} direction="row" alignItems="flex-end" sx={{ mt: 3 }}>

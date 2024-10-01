@@ -27,7 +27,7 @@ export default function Login() {
         <Stack direction="row" alignItems="center" sx={{ mb: 5 }}>
           <Box alignItems="center" sx={{ flexGrow: 1 }}>
             <Typography variant="h3" textAlign="center">
-              Welcome to Configure8!
+              Welcome to Configur8!
             </Typography>
           </Box>
         </Stack>

@@ -41,11 +41,12 @@ export const StyledContent = styled('div')(({ theme }) => ({
   width: 800,
   margin: 'auto',
   display: 'flex',
-  minHeight: '100vh',
+  minHeight: '100%',
+  alignItems: 'center',
   justifyContent: 'center',
   padding: theme.spacing(15, 2),
   [theme.breakpoints.up('md')]: {
     flexShrink: 0,
-    padding: theme.spacing(30, 8, 0, 8),
+    padding: theme.spacing(0, 16, 0, 16),
   },
 }));
