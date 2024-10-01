@@ -4552,7 +4552,7 @@ useEffect(() => {
               <Grid item xs={12} md={12}>
                 <Box sx={{ display: 'grid', rowGap: 3, columnGap: 3, gridTemplateColumns: { xs: 'repeat(3, 1fr)' }, }}>
                   <Stack>
-                    <RHFTextField size="small" name="txtTag" label="Tag" />
+                    <RHFTextField size="small" name="txtTag" label="Unit Tag" />
                   </Stack>
                   <Stack>
                     <RHFTextField
@@ -4625,6 +4625,20 @@ useEffect(() => {
                         </option>
                       ))}
                     </RHFSelect>
+                  </Stack>
+                </Box>
+              </Grid>
+              <Grid item xs={12} md={12}>
+                <Box sx={{ display: 'grid', rowGap: 3, columnGap: 3, gridTemplateColumns: { xs: 'repeat(3, 1fr)' }, }}>
+                <Stack>
+                    <RHFCheckbox
+                      sx={{ ...getInlineDisplay(formValues.ddlLocation === IDs.intLocationIdOutdoor) }}
+                      label="Downshot"
+                      name="ckbDownshot"
+                      checked={formValues.ckbDownshot}
+                      // onChange={() => setCkbDownshotVal(!formValues.ckbDownshotVal)}
+                      onChange={(e: any) => setValue('ckbDownshot', Number(e.target.checked))}
+                    />
                   </Stack>
                 </Box>
               </Grid>
@@ -4725,7 +4739,7 @@ useEffect(() => {
                     // onChange={ckbPHIOnChange}
                     />
                     <RHFCheckbox
-                      label={`Bypass for Economizer: ${bypassMsg}`}
+                      label={`Economizer Bypass Damper ${bypassMsg}`}
                       name="ckbBypass"
                       sx={getInlineDisplay(bypassIsVisible)}
                       // sx={{color: ckbBypassInfo.text !== '' ? colors.red[500] : 'text.primary', size: 'small', }}
@@ -4735,14 +4749,6 @@ useEffect(() => {
                       // onChange={(e: any) => setValue('ckbBypass', Number(e.target.checked))}
 
                       onChange={ckbBypassOnChange}
-                    />
-                    <RHFCheckbox
-                      sx={{ ...getInlineDisplay(formValues.ddlLocation === IDs.intLocationIdOutdoor) }}
-                      label="Downshot"
-                      name="ckbDownshot"
-                      checked={formValues.ckbDownshot}
-                      // onChange={() => setCkbDownshotVal(!formValues.ckbDownshotVal)}
-                      onChange={(e: any) => setValue('ckbDownshot', Number(e.target.checked))}
                     />
                     <RHFCheckbox
                       label="Mixing Section"

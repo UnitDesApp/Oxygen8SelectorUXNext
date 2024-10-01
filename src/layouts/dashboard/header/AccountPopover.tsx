@@ -88,7 +88,7 @@ export default function AccountPopover() {
       </IconButtonAnimate>
 
       <MenuPopover open={openPopover} onClose={handleClosePopover} sx={{ width: 200, p: 0 }}>
-        <Box sx={{ my: 1.5, px: 2.5 }}>
+        <Box sx={{ my: 1.5, px: 2.0 }}>
           <Typography variant="subtitle2" noWrap>
             {user?.username || `${user?.firstname} ${user?.lastname}`}
           </Typography>
@@ -113,7 +113,14 @@ export default function AccountPopover() {
         <MenuItem onClick={handleLogout} sx={{ m: 1 }}>
           Logout
         </MenuItem>
+        <Box sx={{ my: 1.5, px: 2.0 }}>
+
+        <Typography variant="body2" sx={{ color: 'text.secondary' }} noWrap>
+          Version 1.0.0.7
+        </Typography>
+        </Box>
       </MenuPopover>
+
     </>
   );
 }
