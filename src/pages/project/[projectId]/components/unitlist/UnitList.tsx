@@ -41,6 +41,7 @@ const ROLE_OPTIONS = ['All', 'My Jobs', 'By Others'];
 const TABLE_HEAD = [
   { id: 'tag', label: 'Tag', align: 'left' },
   { id: 'qty', label: 'Qty', align: 'left' },
+  { id: 'product', label: 'Product', align: 'left' },
   { id: 'type', label: 'Type', align: 'left' },
   { id: 'modal', label: 'Modal', align: 'left' },
   { id: 'cfm', label: 'CFM', align: 'left' },
@@ -334,9 +335,10 @@ const applySortFilter = ({
 
   if (filterName) {
     tableData = tableData.filter(
-      (item: { tag: string; qty: string; unit_type: string; unit_model: string; cfm: string }) =>
+      (item: { tag: string; qty: string; prod_type: string; unit_type: string; unit_model: string; cfm: string }) =>
         item.tag.toLowerCase().indexOf(filterName.toLowerCase()) !== -1 ||
         item.qty.toString().toLowerCase().indexOf(filterName.toLowerCase()) !== -1 ||
+        item.prod_type.toLowerCase().indexOf(filterName.toLowerCase()) !== -1 ||
         item.unit_type.toLowerCase().indexOf(filterName.toLowerCase()) !== -1 ||
         item.unit_model.toLowerCase().indexOf(filterName.toLowerCase()) !== -1 ||
         item.cfm.toString().toLowerCase().indexOf(filterName.toLowerCase()) !== -1

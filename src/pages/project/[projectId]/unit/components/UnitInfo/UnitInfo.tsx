@@ -28,6 +28,7 @@ interface TUnitInfoData {
 //------------------------------------------------
 type UnitInfoProps = {
   projectId: number;
+  // projectName?: string;
   unitId?: number;
   setIsSavedUnit?: Function;
   isSavedUnit: boolean;
@@ -46,6 +47,7 @@ type UnitInfoProps = {
 
 export default function UnitInfo({
   projectId,
+  // projectName,
   unitId,
   setIsSavedUnit,
   isSavedUnit,
@@ -112,6 +114,7 @@ export default function UnitInfo({
           {unitData && baseData && unitInfo && (
             <UnitInfoForm
               projectId={projectId}
+              // projectName={projectName}
               unitId={edit ? unitId : -1}
               db={baseData}
               unitInfo={unitInfo}

@@ -70,6 +70,7 @@ import { UnitTypeContext } from './unitTypeDataContext';
 //------------------------------------------------
 type UnitInfoFormProps = {
   projectId: number;
+  // projectName?:string;
   unitId?: number;
   intProductTypeID: number;
   intUnitTypeID: number;
@@ -146,6 +147,7 @@ const intTERA_INT_USERS_MAX_CFM_WITH_BYPASS = 4800;
 
 export default function UnitInfoForm({
   projectId,
+  // projectName,
   unitId,
   setIsSavedUnit,
   isSavedUnit,

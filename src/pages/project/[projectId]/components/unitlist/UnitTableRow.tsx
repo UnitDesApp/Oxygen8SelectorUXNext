@@ -13,6 +13,7 @@ type UnitTableRowProps = {
   row: {
     tag: string;
     qty: string;
+    prod_type: string;
     unit_type: string;
     unit_model: string;
     cfm: string;
@@ -35,7 +36,7 @@ export default function UnitTableRow({
 }: UnitTableRowProps) {
   // const theme = useTheme();
 
-  const { tag, qty, unit_type, unit_model, cfm } = row || {};
+  const { tag, qty, prod_type, unit_type, unit_model, cfm } = row || {};
 
   const [openMenu, setOpenMenuActions] = useState(null);
 
@@ -57,6 +58,9 @@ export default function UnitTableRow({
       </TableCell>
       <TableCell align="left" sx={{ cursor: 'pointer' }} onClick={onEditRow}>
         {qty}
+      </TableCell>
+      <TableCell align="left" sx={{ cursor: 'pointer' }} onClick={onEditRow}>
+        {prod_type}
       </TableCell>
       <TableCell align="left" sx={{ cursor: 'pointer' }} onClick={onEditRow}>
         {unit_type}
