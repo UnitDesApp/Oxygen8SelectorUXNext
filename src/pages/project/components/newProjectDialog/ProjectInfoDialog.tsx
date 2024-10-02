@@ -1343,9 +1343,7 @@ export default function ProjectInfoDialog({
                             // type="number"
                             name="txbRevisionNo"
                             label="Revision #"
-                            onChange={(e: any) => {
-                              setValueWithCheck(e, 'txbRevisionNo');
-                            }}
+                            onChange={(e: any) => {setValueWithCheck(e, 'txbRevisionNo');}}
                           />
                         </Stack>
                         <Stack>
@@ -1414,13 +1412,14 @@ export default function ProjectInfoDialog({
                             ))}
                           </RHFSelect>
                         </Stack>
-                        <Stack>
+                        <Stack
+                          sx={{display: isVisibleApplicationOther ? 'block' : 'none'}}>
                           <RHFTextField
                             // type="number"
                             size="small"
                             name="txbApplicationOther"
                             label="Application Other"
-                            sx={{display: isVisibleApplicationOther ? 'block' : 'none'}}
+                            
 
                           />
                         </Stack>
@@ -1442,44 +1441,48 @@ export default function ProjectInfoDialog({
                             ))}
                           </RHFSelect>
                         </Stack>
-                        <Stack>
+                        <Stack
+                          sx={{display: savedJob?.[0]?.id > 0 ? 'block' : 'none'}}>
                           <RHFTextField
                             // type="number"
                             size="small"
                             name="txbCreatedDate"
                             label="Date Created"
                           // value={stationInfo?.altitude}
-                          disabled
+                            disabled
                           />
                         </Stack>
-                        <Stack>
+                        <Stack
+                          sx={{display: savedJob?.[0]?.id > 0 ? 'block' : 'none'}}>
                           <RHFTextField
                             // type="number"
                             size="small"
                             name="txbCreatedBy"
                             label="Created By"
                           // value={stationInfo?.altitude}
-                          disabled
+                            disabled
                           />
                         </Stack>
-                        <Stack>
+                        <Stack
+                          sx={{display: savedJob?.[0]?.id > 0 ? 'block' : 'none'}}>
                           <RHFTextField
                             // type="number"
                             size="small"
                             name="txbRevisedDate"
                             label="Revised Date"
                           // value={stationInfo?.altitude}
-                          disabled
+                            disabled
                           />
                         </Stack>
-                        <Stack>
+                        <Stack
+                          sx={{display: savedJob?.[0]?.id > 0 ? 'block' : 'none'}}>
                           <RHFTextField
                             // type="number"
                             size="small"
                             name="txbRevisedBy"
                             label="Revised By"
                           // value={stationInfo?.altitude}
-                          disabled
+                            disabled
                           />
                         </Stack>                        
                       </Box>
