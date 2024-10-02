@@ -60,7 +60,7 @@ export default function AddNewUnit({currentStep, setCurrentStep}:any) {
   // eslint-disable-next-line no-unused-vars
   const theme = useTheme();
   const { push, query } = useRouter();
-  const { projectId } = query;
+  const { projectId, projectName } = query;
   // const [currentStep, setCurrentStep] = useState(0);
   const [isSavedUnit, setIsSavedUnit] = useState(false);
   const [intUnitNo, setIntUnitNo] = useState(0);
@@ -175,6 +175,7 @@ export default function AddNewUnit({currentStep, setCurrentStep}:any) {
           {currentStep === 1 && (
               <UnitInfo
                 projectId={Number(projectId)}
+                // projectName={projectName}
                 isSavedUnit={isSavedUnit}
                 intProductTypeID={unitTypeData.intProductTypeID}
                 intUnitTypeID={unitTypeData.intUnitTypeID}

@@ -58,7 +58,7 @@ EditUnit.getLayout = (page: React.ReactElement) => <DashboardLayout>{page}</Dash
 export default function EditUnit() {
   const theme = useTheme();
   const { push, query } = useRouter();
-  const { projectId, unitId } = query;
+  const { projectId, projectName, unitId } = query;
   const [currentStep, setCurrentStep] = useState(0);
   const [isSavedUnit, setIsSavedUnit] = useState(false);
   const [openRPDialog, setOpenRPDialog] = useState(false);
@@ -154,6 +154,7 @@ export default function EditUnit() {
                 { currentStep === 1 && projectId && unitId && (
                   <UnitInfo
                     projectId={Number(projectId)}
+                    // projectName={projectName}
                     unitId={Number(unitId)}
                     isSavedUnit={isSavedUnit}
                     setIsSavedUnit={(no: number) => {
