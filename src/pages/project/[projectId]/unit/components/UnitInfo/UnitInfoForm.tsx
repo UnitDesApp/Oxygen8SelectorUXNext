@@ -1028,6 +1028,13 @@ export default function UnitInfoForm({
 }, [getValues('txbQty')]);
 
 
+const txbSummerCoolingSetpointDBChanged = useCallback((e: any) => {
+  if (setValueWithCheck1(e, 'txbSummerCoolingSetpointDB')) {
+    setValue('txbSummerCoolingSetpointDB', parseFloat(e.target.value).toFixed(1));
+    setValue('txbSummerCoolingSetpointWB', parseFloat(e.target.value).toFixed(1));
+  }
+}, []);
+
 
   const [locationInfo, setLocationInfo] = useState<any>([]);
   useMemo(() => {
@@ -1699,6 +1706,7 @@ export default function UnitInfoForm({
       defaultId: 0,
     };
     info.fdtOutdoorAirFilter = db?.dbtSelFilterModel;
+    info.fdtOutdoorAirFilter = info.fdtOutdoorAirFilter?.filter((item: { outdoor_air: number }) => item.outdoor_air === 1);
 
     switch (intProductTypeID) {
       case IDs.intProdTypeIdNova:
@@ -1740,6 +1748,7 @@ export default function UnitInfoForm({
       defaultId: 0,
     };
     info.fdtReturnAirFilter = db?.dbtSelFilterModel;
+    info.fdtReturnAirFilter = info.fdtReturnAirFilter?.filter((item: { return_air: number }) => item.return_air === 1);
 
     switch (intProductTypeID) {
       case IDs.intProdTypeIdNova:
@@ -4828,6 +4837,7 @@ useEffect(() => {
                     name="ddlOA_FilterModel"
                     label="Outdoor Air Filter"
                     onChange={(e: any) => setValue('ddlOA_FilterModel', Number(e.target.value))}
+                    disabled
                   >
                     {outdoorAirFilterInfo?.fdtOutdoorAirFilter?.map(
                       (item: any, index: number) => (
@@ -4877,6 +4887,7 @@ useEffect(() => {
                     name="ddlRA_FilterModel"
                     label="Return Air Filter"
                     onChange={(e: any) => setValue('ddlRA_FilterModel', Number(e.target.value))}
+                    disabled
                   >
                     {returnAirFilterInfo?.fdtReturnAirFilter?.map((item: any, index: number) => (
                       <option key={index} value={item.id}>
@@ -5725,12 +5736,15 @@ useEffect(() => {
                     <RHFTextField
                       size="small"
                       name="txbSummerCoolingSetpointDB"
-                      label="Cooling LAT Setpoint DB (F):"
+                      label="Cooling LAT Setpoint (F):"
                       autoComplete="off"
-                      onChange={(e: any) => { setValueWithCheck1(e, 'txbSummerCoolingSetpointDB'); }}
+                      // onChange={(e: any) => { setValueWithCheck1(e, 'txbSummerCoolingSetpointDB'); }}
+                      onChange={txbSummerCoolingSetpointDBChanged}
                     />
                   </Stack>
-                  <Stack>
+                  <Stack                   
+                    sx={getDisplay(false)}
+                  >
                     <RHFTextField
                       size="small"
                       name="txbSummerCoolingSetpointWB"

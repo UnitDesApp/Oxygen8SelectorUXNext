@@ -17,6 +17,7 @@ type UnitTableRowProps = {
     unit_type: string;
     unit_model: string;
     cfm: string;
+    sel_comp: string;
     actions: string;
   };
   selected: boolean;
@@ -36,7 +37,7 @@ export default function UnitTableRow({
 }: UnitTableRowProps) {
   // const theme = useTheme();
 
-  const { tag, qty, prod_type, unit_type, unit_model, cfm } = row || {};
+  const { tag, qty, prod_type, unit_type, unit_model, cfm, sel_comp } = row || {};
 
   const [openMenu, setOpenMenuActions] = useState(null);
 
@@ -71,6 +72,21 @@ export default function UnitTableRow({
       <TableCell align="left" sx={{ cursor: 'pointer' }} onClick={onEditRow}>
         {cfm}
       </TableCell>
+      <TableCell align="center" sx={{ cursor: 'pointer' }} onClick={onEditRow}>
+      {sel_comp === "Yes" ? 
+        <Stack direction="row" spacing={1} alignItems="center">
+          <IconButton aria-label="edit">
+            <Iconify  icon="ic:outline-file-copy" />
+          </IconButton>
+        </Stack>
+        :
+        <Stack direction="row" spacing={1} alignItems="center">
+          <IconButton aria-label="delete">
+            <Iconify icon="mdi:trash-outline" />
+          </IconButton>
+        </Stack>
+      }
+      </TableCell>      
       <TableCell align="right">
       <TableCell align="left" sx={{ cursor: 'pointer' }}>
         <Stack direction="row" spacing={1}>
