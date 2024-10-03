@@ -45,6 +45,7 @@ const TABLE_HEAD = [
   { id: 'type', label: 'Type', align: 'left' },
   { id: 'modal', label: 'Modal', align: 'left' },
   { id: 'cfm', label: 'CFM', align: 'left' },
+  { id: 'sel_comp', label: 'SELECTION COMPLETE', align: 'center' },
   { id: 'actions', label: 'ACTIONS', align: 'left' },
   { id: '' },
 ];
@@ -335,14 +336,15 @@ const applySortFilter = ({
 
   if (filterName) {
     tableData = tableData.filter(
-      (item: { tag: string; qty: string; prod_type: string; unit_type: string; unit_model: string; cfm: string }) =>
+      (item: { tag: string; qty: string; prod_type: string; unit_type: string; unit_model: string; cfm: string; sel_comp: string }) =>
         item.tag.toLowerCase().indexOf(filterName.toLowerCase()) !== -1 ||
         item.qty.toString().toLowerCase().indexOf(filterName.toLowerCase()) !== -1 ||
         item.prod_type.toLowerCase().indexOf(filterName.toLowerCase()) !== -1 ||
         item.unit_type.toLowerCase().indexOf(filterName.toLowerCase()) !== -1 ||
         item.unit_model.toLowerCase().indexOf(filterName.toLowerCase()) !== -1 ||
-        item.cfm.toString().toLowerCase().indexOf(filterName.toLowerCase()) !== -1
-    );
+        item.cfm.toString().toLowerCase().indexOf(filterName.toLowerCase()) !== -1 ||
+        item.sel_comp.toString().toLowerCase().indexOf(filterName.toLowerCase()) !== -1
+      );
   }
 
   if (filterStatus !== 'All') {
