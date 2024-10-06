@@ -66,6 +66,12 @@ export const intFilterModelIdNA = 1;
 export const intFilterModelId2in_85_MERV_13 = 9;
 export const intFilterModelId4in_85_MERV_13 = 10;
 
+export const intFilterConditionIdNA = 1;
+export const intFilterConditionIdClean = 2;
+export const intFilterConditionIdMidLife = 3;
+export const intFilterConditionIdDirty = 4;
+
+
 export const intCoilTypeIdHotWater = 1;
 export const intCoilTypeIdChilledWater = 2;
 export const intCoilTypeIdDX = 3;
