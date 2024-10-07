@@ -262,7 +262,7 @@ export default function ProductType(props: ProductTypeProps) {
       <Box sx={{ display: 'grid', rowGap: 1, columnGap: 1, gridTemplateColumns: { xs: 'repeat(5, 1fr)' }, }}>
       {/* <Stack><Typography fontSize="13px">Unit</Typography></Stack> */}
       <Stack>
-        <Typography textAlign='center' fontSize="13px">Nova        
+        <Typography textAlign='center' fontSize="15px" fontWeight={600}>Nova        
           <span>
           <IconButton aria-label="info" sx={{ padding: '5px', pt: 0 }}>
             <Iconify icon="ant-design:exclamation-circle-outlined" />
@@ -270,7 +270,7 @@ export default function ProductType(props: ProductTypeProps) {
         </span>
         </Typography>
         </Stack>
-        <Stack><Typography textAlign='center' fontSize="13px">Ventum
+        <Stack><Typography textAlign='center' fontSize="15px" fontWeight={600}>Ventum
         <span>
           <IconButton aria-label="info" sx={{ padding: '5px', pt: 0 }}>
             <Iconify icon="ant-design:exclamation-circle-outlined" />
@@ -278,7 +278,7 @@ export default function ProductType(props: ProductTypeProps) {
         </span>
         </Typography>
         </Stack>
-        <Stack><Typography textAlign='center' fontSize="13px" fontStyle="bold: true">Ventum+
+        <Stack><Typography textAlign='center' fontSize="15px" fontWeight={600}>Ventum+
         <span>
           <IconButton aria-label="info" sx={{ padding: '5px', pt: 0 }}>
             <Iconify icon="ant-design:exclamation-circle-outlined" />
@@ -286,7 +286,7 @@ export default function ProductType(props: ProductTypeProps) {
         </span>
         </Typography>
         </Stack>
-        <Stack><Typography textAlign='center' fontSize="13px">Ventum Lite
+        <Stack><Typography textAlign='center' fontSize="15px" fontWeight={600}>Ventum Lite
         <span>
           <IconButton aria-label="info" sx={{ padding: '5px', pt: 0 }}>
             <Iconify icon="ant-design:exclamation-circle-outlined" />
@@ -294,7 +294,7 @@ export default function ProductType(props: ProductTypeProps) {
         </span>
         </Typography>
         </Stack>
-        <Stack><Typography textAlign='center' fontSize="13px">Terra
+        <Stack><Typography textAlign='center' fontSize="15px" fontWeight={600}>Terra
         <span>
           <IconButton aria-label="info" sx={{ padding: '5px', pt: 0 }}>
             <Iconify icon="ant-design:exclamation-circle-outlined" />
