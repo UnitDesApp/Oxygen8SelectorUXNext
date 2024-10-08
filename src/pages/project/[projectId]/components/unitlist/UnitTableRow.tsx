@@ -72,7 +72,19 @@ export default function UnitTableRow({
       <TableCell align="left" sx={{ cursor: 'pointer' }} onClick={onEditRow}>
         {cfm}
       </TableCell>
-
+      <TableCell align="center" sx={{ cursor: 'pointer' }} onClick={onEditRow}>
+       <Stack direction="row" spacing={1} justifyContent="center"  alignItems="center">
+       {sel_comp === "Yes" ? (
+        <IconButton aria-label="check" sx={{ backgroundColor: 'white', color: 'green' }}>
+          <Iconify icon="mdi:check-circle" />
+        </IconButton>
+        ) : (
+          <IconButton aria-label="close" sx={{ backgroundColor: 'white', color: 'red' }}>
+              <Iconify icon="mdi:close-circle" /> 
+            </IconButton>
+        )}
+      </Stack>
+    </TableCell>
       <TableCell align="right">
       <TableCell align="left" sx={{ cursor: 'pointer' }}>
         <Stack direction="row" spacing={1}>
@@ -113,26 +125,7 @@ export default function UnitTableRow({
             </>
           }
         />  */}
-      </TableCell>
-      <TableCell align="center" sx={{ cursor: 'pointer' }} onClick={onEditRow}>
-       <Stack direction="row" spacing={1} justifyContent="center"  alignItems="center">
-       {sel_comp === "Yes" ? (
-      <>
-        <IconButton aria-label="check" sx={{ backgroundColor: 'white', color: 'green' }}>
-          <Iconify icon="mdi:check-circle" />
-        </IconButton>
-     
-      </>
-    ) : (
-      <>
-      <IconButton aria-label="close" sx={{ backgroundColor: 'white', color: 'red' }}>
-          <Iconify icon="mdi:close-circle" /> 
-        </IconButton>
-      </>
-    )}
-  </Stack>
-</TableCell>
-    
+      </TableCell>    
     </TableRow>
   );
 }
