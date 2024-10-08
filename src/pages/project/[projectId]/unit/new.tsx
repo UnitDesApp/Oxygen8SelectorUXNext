@@ -20,6 +20,7 @@ import Iconify from 'src/components/iconify';
 import Head from 'next/head';
 import DashboardLayout from 'src/layouts/dashboard/DashboardLayout';
 import * as IDs from 'src/utils/ids';
+import { useGetSavedJobsByUserAndCustomer } from 'src/hooks/useApi';
 import SelectProductInfo from './components/SelectProductInfo/SelectProductInfo';
 import UnitInfo from './components/UnitInfo/UnitInfo';
 import Selection from './components/Selection/Selection';
@@ -68,6 +69,20 @@ export default function AddNewUnit({currentStep, setCurrentStep}:any) {
   const [isSaving, setIsSaving] = useState(false);
   const submitButtonRef = useRef<HTMLButtonElement>(null);
   const { unitTypeData, setUnitTypeData } = useContext(UnitTypeContext);
+
+
+  const { data: projects, isLoading: isLoadingProjects, refetch } = useGetSavedJobsByUserAndCustomer(
+    {
+      // oJobs: {
+      intUserId: typeof window !== 'undefined' && localStorage.getItem('userId'),
+      intUAL: typeof window !== 'undefined' && localStorage.getItem('UAL'),
+      // strSearchBy: filterName,
+    },
+    {
+      enabled: typeof window !== 'undefined',
+    }
+  );
+  const filteredData = projects?.dbtJobList.filter((item: any) => item.id ===  Number(projectId));
 
 
   const closeDialog = useCallback(() => {
@@ -146,7 +161,7 @@ export default function AddNewUnit({currentStep, setCurrentStep}:any) {
           links={[
             { name: 'My projects', href: PATH_APP.project },
             {
-              name: 'Dashboard',
+              name: filteredData[0]?.job_name,
               href: PATH_APP.projectDashboard(projectId?.toString() || '', 'unitlist'),
             },
             { name: 'New Unit' },

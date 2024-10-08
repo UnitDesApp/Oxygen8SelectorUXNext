@@ -88,12 +88,12 @@ export default function ProjectTableRow({
         {statusValue}
       </TableCell>
 
-      {/* <TableCell align="left" sx={{ cursor: 'pointer' }} onClick={onEditRow}>
-        {CustomerName}
-      </TableCell> */}
       <TableCell align="left" sx={{ cursor: 'pointer' }} onClick={onEditRow}>
-        {CreatedUserCustomerName}
+        {CustomerName}
       </TableCell>
+      {/* <TableCell align="left" sx={{ cursor: 'pointer' }} onClick={onEditRow}>
+        {CreatedUserCustomerName}
+      </TableCell> */}
       
       {/* <TableCell align="left" sx={{ cursor: 'pointer' }} onClick={onEditRow}>
         {CreatedUserFullName}
