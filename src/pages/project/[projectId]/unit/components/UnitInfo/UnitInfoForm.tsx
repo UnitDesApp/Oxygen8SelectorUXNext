@@ -309,18 +309,18 @@ export default function UnitInfoForm({
     if (Number(getValues('ddlReheatComp')) === IDs.intCompIdHWC) {
       heatingFluidTypeId = formCurrValues.ddlReheatFluidType;
       heatingFluidConcenId = formCurrValues.ddlReheatFluidConcentration;
-      heatingFluidEntTemp = formCurrValues.txbReheatHWCFluidEntTemp;
-      heatingFluidLvgTemp = formCurrValues.txbReheatHWCFluidLvgTemp;
+      // heatingFluidEntTemp = formCurrValues.txbReheatHWCFluidEntTemp;
+      // heatingFluidLvgTemp = formCurrValues.txbReheatHWCFluidLvgTemp;
     } else if (Number(getValues('ddlHeatingComp')) === IDs.intCompIdHWC) {
       heatingFluidTypeId = formCurrValues.ddlHeatingFluidType;
       heatingFluidConcenId = formCurrValues.ddlHeatingFluidConcentration;
-      heatingFluidEntTemp = formCurrValues.txbHeatingHWCFluidEntTemp;
-      heatingFluidLvgTemp = formCurrValues.txbHeatingHWCFluidLvgTemp;
+      // heatingFluidEntTemp = formCurrValues.txbHeatingHWCFluidEntTemp;
+      // heatingFluidLvgTemp = formCurrValues.txbHeatingHWCFluidLvgTemp;
     } else {
       heatingFluidTypeId = formCurrValues.ddlPreheatFluidType;
       heatingFluidConcenId = formCurrValues.ddlPreheatFluidConcentration;
-      heatingFluidEntTemp = formCurrValues.txbPreheatHWCFluidEntTemp;
-      heatingFluidLvgTemp = formCurrValues.txbPreheatHWCFluidLvgTemp;
+      // heatingFluidEntTemp = formCurrValues.txbPreheatHWCFluidEntTemp;
+      // heatingFluidLvgTemp = formCurrValues.txbPreheatHWCFluidLvgTemp;
     }
 
     const oUnitInputs = {
@@ -425,6 +425,7 @@ export default function UnitInfoForm({
         intIsDaikinVRV: Number(formCurrValues.ckbDaikinVRV) === 1 ? 1 : 0, // Do not use formValues.ckbDaikinVRV === true
         intElecHeaterVoltageId: Number(formCurrValues.ddlElecHeaterVoltage),
         intPreheatElecHeaterInstallationId: Number(formCurrValues.ddlPreheatElecHeaterInstall),
+        intIsPreheatElecHeaterVoltageSPP: Number(formCurrValues.ckbPreheatElecHeaterVoltageSPP) === 1 ? 1 : 0,
         intHeatingElecHeaterInstallationId:
           Number(getValues('ddlReheatComp')) === IDs.intCompIdElecHeater
             ? formCurrValues.ddlReheatElecHeaterInstall
@@ -433,7 +434,9 @@ export default function UnitInfoForm({
         intCoolingDX_VRVKitQty: 0,
         dblCoolingDX_VRVKitTonnage: 0,
         intHeatingElecHeaterStdCoilNo: 0,
+        intIsHeatingElecHeaterVoltageSPP: Number(formCurrValues.ckbHeatingElecHeaterVoltageSPP) === 1 ? 1 : 0,
         intReheatElecHeaterStdCoilNo: 0,
+        intIsReheatElecHeaterVoltageSPP: Number(formCurrValues.ckbReheatElecHeaterVoltageSPP) === 1 ? 1 : 0,
         intReheatHGRC_VRVKitQty: 0,
         dblReheatHGRC_VRVKitTonnage: 0,
         intDamperAndActuatorId: Number(formCurrValues.ddlDamperAndActuator),
@@ -451,14 +454,20 @@ export default function UnitInfoForm({
         dblHeatingSetpointDB: formCurrValues.txbWinterHeatingSetpointDB,
         dblReheatSetpointDB: formCurrValues.txbSummerReheatSetpointDB,
         dblBackupHeatingSetpontDB:  formCurrValues.txbBackupHeatingSetpointDB,
+        dblPreheatFluidEntTemp: formCurrValues.txbPreheatHWCFluidEntTemp,
+        dblPreheatFluidLvgTemp: formCurrValues.txbPreheatHWCFluidLvgTemp,
         intCoolingFluidTypeId: Number(formCurrValues.ddlCoolingFluidType),
         intCoolingFluidConcentId: Number(formCurrValues.ddlCoolingFluidConcentration),
         dblCoolingFluidEntTemp: formCurrValues.txbCoolingCWCFluidEntTemp,
         dblCoolingFluidLvgTemp: formCurrValues.txbCoolingCWCFluidLvgTemp,
         intHeatingFluidTypeId: heatingFluidTypeId,
         intHeatingFluidConcentId: heatingFluidConcenId,
-        dblHeatingFluidEntTemp: heatingFluidEntTemp,
-        dblHeatingFluidLvgTemp: heatingFluidLvgTemp,
+        // dblHeatingFluidEntTemp: heatingFluidEntTemp,
+        // dblHeatingFluidLvgTemp: heatingFluidLvgTemp,
+        dblHeatingFluidEntTemp: formCurrValues.txbHeatingHWCFluidEntTemp,
+        dblHeatingFluidLvgTemp: formCurrValues.txbHeatingHWCFluidLvgTemp,
+        dblReheatFluidEntTemp: formCurrValues.txbReheatHWCFluidEntTemp,
+        dblReheatFluidLvgTemp: formCurrValues.txbReheatHWCFluidLvgTemp,
         dblRefrigSuctionTemp: formCurrValues.txbRefrigSuctionTemp,
         dblRefrigLiquidTemp: formCurrValues.txbRefrigLiquidTemp,
         dblRefrigSuperheatTemp: formCurrValues.txbRefrigSuperheatTemp,
@@ -1146,7 +1155,9 @@ useEffect(() => {
   switch (Number(getValues('ckbPreheatHWCUseFluidLvgTemp'))) {
     case 1:
       setIsTxbPreheatHWCFluidLvgTempEnabled(true);
-      setValue('txbPreheatHWCFluidLvgTemp', Number(getValues('txbPreheatHWCFluidEntTemp')) - 20);
+      if (Number(getValues('txbPreheatHWCFluidLvgTemp')) === 0) {
+        setValue('txbPreheatHWCFluidLvgTemp', Number(getValues('txbPreheatHWCFluidEntTemp')) - 20);
+      }
 
       setValue('ckbPreheatHWCUseFluidFlowRate', 0)
       setIsTxbPreheatHWCFluidFlowRateEnabled(false);
@@ -1172,7 +1183,9 @@ useEffect(() => {
   switch (Number(getValues('ckbPreheatHWCUseFluidFlowRate'))) {
     case 1:
       setIsTxbPreheatHWCFluidFlowRateEnabled(true);
-      setValue('txbPreheatHWCFluidFlowRate', '10');
+      if (Number(getValues('txbPreheatHWCFluidFlowRate')) === 0) {
+        setValue('txbPreheatHWCFluidFlowRate', '10');
+      }
 
       setValue('ckbPreheatHWCUseFluidLvgTemp', 0)
       setIsTxbPreheatHWCFluidLvgTempEnabled(false);
@@ -1200,7 +1213,9 @@ useEffect(() => {
   switch (Number(getValues('ckbCoolingCWCUseFluidLvgTemp'))) {
     case 1:
       setIsTxbCoolingCWCFluidLvgTempEnabled(true);
-      setValue('txbCoolingCWCFluidLvgTemp', Number(getValues('txbCoolingCWCFluidEntTemp')) + 10);
+      if (Number(getValues('txbCoolingCWCFluidLvgTemp')) === 0) {
+        setValue('txbCoolingCWCFluidLvgTemp', Number(getValues('txbCoolingCWCFluidEntTemp')) + 10);
+      }
 
       setValue('ckbCoolingCWCUseFluidFlowRate', 0)
       setIsTxbCoolingCWCFluidFlowRateEnabled(false);
@@ -1225,7 +1240,9 @@ useEffect(() => {
   switch (Number(getValues('ckbCoolingCWCUseFluidFlowRate'))) {
     case 1:
       setIsTxbCoolingCWCFluidFlowRateEnabled(true);
-      setValue('txbCoolingCWCFluidFlowRate', '10');
+      if (Number(getValues('txbCoolingCWCFluidFlowRate')) === 0) {
+        setValue('txbCoolingCWCFluidFlowRate', '10');
+      }
 
       setValue('ckbCoolingCWCUseFluidLvgTemp', 0);
       setIsTxbCoolingCWCFluidLvgTempEnabled(false);
@@ -1255,7 +1272,9 @@ useEffect(() => {
   switch (Number(getValues('ckbHeatingHWCUseFluidLvgTemp'))) {
     case 1:
       setIsTxbHeatingHWCFluidLvgTempEnabled(true);
-      setValue('txbHeatingHWCFluidLvgTemp', Number(getValues('txbHeatingHWCFluidEntTemp')) - 20);
+      if (Number(getValues('txbHeatingHWCFluidLvgTemp')) === 0) {
+        setValue('txbHeatingHWCFluidLvgTemp', Number(getValues('txbHeatingHWCFluidEntTemp')) - 20);
+      }
 
       setValue('ckbHeatingHWCUseFluidFlowRate', 0)
       setIsTxbHeatingHWCFluidFlowRateEnabled(false);
@@ -1279,7 +1298,9 @@ useEffect(() => {
   switch (Number(getValues('ckbHeatingHWCUseFluidFlowRate'))) {
     case 1:
       setIsTxbHeatingHWCFluidFlowRateEnabled(true);
-      setValue('txbHeatingHWCFluidFlowRate', '10');
+      if (Number(getValues('txbHeatingHWCFluidFlowRate')) === 0) {
+        setValue('txbHeatingHWCFluidFlowRate', '10');
+      }
 
       setValue('ckbHeatingHWCUseFluidLvgTemp', 0)
       setIsTxbHeatingHWCFluidLvgTempEnabled(false);
@@ -1304,7 +1325,9 @@ useEffect(() => {
   switch (Number(getValues('ckbReheatHWCUseFluidLvgTemp'))) {
     case 1:
       setIsTxbReheatHWCFluidLvgTempEnabled(true);
-      setValue('txbReheatHWCFluidLvgTemp', Number(getValues('txbReheatHWCFluidEntTemp')) - 20);
+      if (Number(getValues('txbReheatHWCFluidLvgTemp')) === 0) {
+        setValue('txbReheatHWCFluidLvgTemp', Number(getValues('txbReheatHWCFluidEntTemp')) - 20);
+      }
 
       setValue('ckbReheatHWCUseFluidFlowRate', 0)
       setIsTxbReheatHWCFluidFlowRateEnabled(false);
@@ -1329,7 +1352,9 @@ useEffect(() => {
   switch (Number(getValues('ckbReheatHWCUseFluidFlowRate'))) {
     case 1:
       setIsTxbReheatHWCFluidFlowRateEnabled(true);
-      setValue('txbReheatHWCFluidFlowRate', '10');
+      if (Number(getValues('txbReheatHWCFluidFlowRate')) === 0) {
+        setValue('txbReheatHWCFluidFlowRate', '10');
+      }
 
       setValue('ckbReheatHWCUseFluidLvgTemp', 0)
       setIsTxbReheatHWCFluidLvgTempEnabled(false);
@@ -3038,26 +3063,26 @@ useEffect(() => {
 
     setPreheatFluidTypeInfo(info);
 
-    if (
-      Number(getValues('ddlPreheatComp')) === IDs.intCompIdHWC &&
-      Number(getValues('ddlHeatingComp')) === IDs.intCompIdHWC
-    ) {
-      setValue('ddlPreheatFluidType', getValues('ddlHeatingFluidType'));
-      setValue('ddlPreheatFluidConcentration', getValues('ddlHeatingFluidConcentration'));
-      setValue('txbPreheatHWCFluidEntTemp', getValues('txbHeatingHWCFluidEntTemp'));
-      setValue('txbPreheatHWCFluidLvgTemp', getValues('txbHeatingHWCFluidLvgTemp'));
-    } else if (
-      Number(getValues('ddlPreheatComp')) === IDs.intCompIdHWC &&
-      Number(getValues('ddlReheatComp')) === IDs.intCompIdHWC
-    ) {
-      setValue('ddlPreheatFluidType', getValues('ddlReheatFluidType'));
-      setValue('ddlPreheatFluidConcentration', getValues('ddlReheatFluidConcentration'));
-      setValue('txbPreheatHWCFluidEntTemp', getValues('txbReheatHWCFluidEntTemp'));
-      setValue('txbPreheatHWCFluidLvgTemp', getValues('txbReheatHWCFluidLvgTemp'));
-    } else {
+    // if (
+    //   Number(getValues('ddlPreheatComp')) === IDs.intCompIdHWC &&
+    //   Number(getValues('ddlHeatingComp')) === IDs.intCompIdHWC
+    // ) {
+    //   setValue('ddlPreheatFluidType', getValues('ddlHeatingFluidType'));
+    //   setValue('ddlPreheatFluidConcentration', getValues('ddlHeatingFluidConcentration'));
+    //   // setValue('txbPreheatHWCFluidEntTemp', getValues('txbHeatingHWCFluidEntTemp'));
+    //   // setValue('txbPreheatHWCFluidLvgTemp', getValues('txbHeatingHWCFluidLvgTemp'));
+    // } else if (
+    //   Number(getValues('ddlPreheatComp')) === IDs.intCompIdHWC &&
+    //   Number(getValues('ddlReheatComp')) === IDs.intCompIdHWC
+    // ) {
+    //   setValue('ddlPreheatFluidType', getValues('ddlReheatFluidType'));
+    //   setValue('ddlPreheatFluidConcentration', getValues('ddlReheatFluidConcentration'));
+    //   // setValue('txbPreheatHWCFluidEntTemp', getValues('txbReheatHWCFluidEntTemp'));
+    //   // setValue('txbPreheatHWCFluidLvgTemp', getValues('txbReheatHWCFluidLvgTemp'));
+    // } else {
       info.defaultId = info.fdtFluidType?.[0]?.id;
       setValue('ddlPreheatFluidType', info.fdtFluidType?.[0]?.id);
-    }
+    // }
   }, [db, getValues('ddlPreheatComp')]);
 
 
@@ -3082,51 +3107,55 @@ useEffect(() => {
     info.fdtFluidConcen = db?.dbtSelFluidConcentration?.filter((e: { id: any }) => fluidConFluidTypLink?.filter(
           (e_link: { fluid_concen_id: any }) => e.id === e_link.fluid_concen_id) ?.length > 0);
 
+
+    info.fdtFluidConcen = info.fdtFluidConcen?.sort((a: any, b: any) => a.items.localeCompare(b.items));;
+      
+
     setPreheatFluidConcenInfo(info);
 
-    if (
-      Number(getValues('ddlPreheatComp')) === IDs.intCompIdHWC &&
-      Number(getValues('ddlHeatingComp')) === IDs.intCompIdHWC
-    ) {
-      setValue('ddlPreheatFluidConcentration', getValues('ddlHeatingFluidConcentration'));
-    } else if (
-      Number(getValues('ddlPreheatComp')) === IDs.intCompIdHWC &&
-      Number(getValues('ddlReheatComp')) === IDs.intCompIdHWC
-    ) {
-      setValue('ddlPreheatFluidConcentration', getValues('ddlReheatFluidConcentration'));
-    } else {
+    // if (
+    //   Number(getValues('ddlPreheatComp')) === IDs.intCompIdHWC &&
+    //   Number(getValues('ddlHeatingComp')) === IDs.intCompIdHWC
+    // ) {
+    //   setValue('ddlPreheatFluidConcentration', getValues('ddlHeatingFluidConcentration'));
+    // } else if (
+    //   Number(getValues('ddlPreheatComp')) === IDs.intCompIdHWC &&
+    //   Number(getValues('ddlReheatComp')) === IDs.intCompIdHWC
+    // ) {
+    //   setValue('ddlPreheatFluidConcentration', getValues('ddlReheatFluidConcentration'));
+    // } else {
       info.defaultId = info.fdtFluidConcen?.[0]?.id;
       setValue('ddlPreheatFluidConcentration', info.fdtFluidConcen?.[0]?.id);
-    }
+    // }
   }, [db, getValues('ddlPreheatComp'), getValues('ddlPreheatFluidType')]);
 
 
-  useEffect(() => {
-    if (
-      Number(getValues('ddlPreheatComp')) === IDs.intCompIdHWC &&
-      Number(getValues('ddlHeatingComp')) === IDs.intCompIdHWC
-    ) {
-      setValue('ddlHeatingFluidType', getValues('ddlPreheatFluidType'));
-      setValue('ddlHeatingFluidConcentration', getValues('ddlPreheatFluidConcentration'));
-      setValue('txbHeatingHWCFluidEntTemp', getValues('txbPreheatHWCFluidEntTemp'));
-      setValue('txbHeatingHWCFluidLvgTemp', getValues('txbPreheatHWCFluidLvgTemp'));
-    }
+  // useEffect(() => {
+  //   if (
+  //     Number(getValues('ddlPreheatComp')) === IDs.intCompIdHWC &&
+  //     Number(getValues('ddlHeatingComp')) === IDs.intCompIdHWC
+  //   ) {
+  //     setValue('ddlHeatingFluidType', getValues('ddlPreheatFluidType'));
+  //     setValue('ddlHeatingFluidConcentration', getValues('ddlPreheatFluidConcentration'));
+  //     // setValue('txbHeatingHWCFluidEntTemp', getValues('txbPreheatHWCFluidEntTemp'));
+  //     // setValue('txbHeatingHWCFluidLvgTemp', getValues('txbPreheatHWCFluidLvgTemp'));
+  //   }
 
-    if (
-      Number(getValues('ddlPreheatComp')) === IDs.intCompIdHWC &&
-      Number(getValues('ddlReheatComp')) === IDs.intCompIdHWC
-    ) {
-      setValue('ddlReheatFluidType', getValues('ddlPreheatFluidType'));
-      setValue('ddlReheatFluidConcentration', getValues('ddlPreheatFluidConcentration'));
-      setValue('txbReheatHWCFluidEntTemp', getValues('txbPreheatHWCFluidEntTemp'));
-      setValue('txbReheatHWCFluidLvgTemp', getValues('txbPreheatHWCFluidLvgTemp'));
-    }
-  }, [
-    getValues('ddlPreheatFluidType'),
-    getValues('ddlPreheatFluidConcentration'),
-    getValues('txbPreheatHWCFluidEntTemp'),
-    getValues('txbPreheatHWCFluidLvgTemp'),
-  ]);
+  //   if (
+  //     Number(getValues('ddlPreheatComp')) === IDs.intCompIdHWC &&
+  //     Number(getValues('ddlReheatComp')) === IDs.intCompIdHWC
+  //   ) {
+  //     setValue('ddlReheatFluidType', getValues('ddlPreheatFluidType'));
+  //     setValue('ddlReheatFluidConcentration', getValues('ddlPreheatFluidConcentration'));
+  //     // setValue('txbReheatHWCFluidEntTemp', getValues('txbPreheatHWCFluidEntTemp'));
+  //     // setValue('txbReheatHWCFluidLvgTemp', getValues('txbPreheatHWCFluidLvgTemp'));
+  //   }
+  // }, [
+  //   getValues('ddlPreheatFluidType'),
+  //   getValues('ddlPreheatFluidConcentration'),
+  //   // getValues('txbPreheatHWCFluidEntTemp'),
+  //   // getValues('txbPreheatHWCFluidLvgTemp'),
+  // ]);
 
 
   const [coolingFluidTypeInfo, setCoolingFluidTypeInfo] = useState<any>([]);
@@ -3183,6 +3212,10 @@ useEffect(() => {
         )?.length > 0
     );
 
+
+    info.fdtFluidConcen = info.fdtFluidConcen?.sort((a: any, b: any) => a.items.localeCompare(b.items));;
+
+    
     setCoolingFluidConcenInfo(info);
 
     info.defaultId = info.fdtFluidConcen?.[0]?.id;
@@ -3213,26 +3246,26 @@ useEffect(() => {
 
     setHeatingFluidTypeInfo(info);
 
-    if (
-      Number(getValues('ddlHeatingComp')) === IDs.intCompIdHWC &&
-      Number(getValues('ddlPreheatComp')) === IDs.intCompIdHWC
-    ) {
-      setValue('ddlHeatingFluidType', getValues('ddlPreheatFluidType'));
-      setValue('ddlHeatingFluidConcentration', getValues('ddlPreheatFluidConcentration'));
-      setValue('txbHeatingHWCFluidEntTemp', getValues('txbPreheatHWCFluidEntTemp'));
-      setValue('txbHeatingHWCFluidLvgTemp', getValues('txbPreheatHWCFluidLvgTemp'));
-    } else if (
-      Number(getValues('ddlHeatingComp')) === IDs.intCompIdHWC &&
-      Number(getValues('ddlReheatComp')) === IDs.intCompIdHWC
-    ) {
-      setValue('ddlHeatingFluidType', getValues('ddlReheatFluidType'));
-      setValue('ddlHeatingFluidConcentration', getValues('ddlReheatFluidConcentration'));
-      setValue('txbHeatingHWCFluidEntTemp', getValues('txbReheatHWCFluidEntTemp'));
-      setValue('txbHeatingHWCFluidLvgTemp', getValues('txbReheatHWCFluidLvgTemp'));
-    } else {
+    // if (
+    //   Number(getValues('ddlHeatingComp')) === IDs.intCompIdHWC &&
+    //   Number(getValues('ddlPreheatComp')) === IDs.intCompIdHWC
+    // ) {
+    //   setValue('ddlHeatingFluidType', getValues('ddlPreheatFluidType'));
+    //   setValue('ddlHeatingFluidConcentration', getValues('ddlPreheatFluidConcentration'));
+    //   // setValue('txbHeatingHWCFluidEntTemp', getValues('txbPreheatHWCFluidEntTemp'));
+    //   // setValue('txbHeatingHWCFluidLvgTemp', getValues('txbPreheatHWCFluidLvgTemp'));
+    // } else if (
+    //   Number(getValues('ddlHeatingComp')) === IDs.intCompIdHWC &&
+    //   Number(getValues('ddlReheatComp')) === IDs.intCompIdHWC
+    // ) {
+    //   setValue('ddlHeatingFluidType', getValues('ddlReheatFluidType'));
+    //   setValue('ddlHeatingFluidConcentration', getValues('ddlReheatFluidConcentration'));
+    //   // setValue('txbHeatingHWCFluidEntTemp', getValues('txbReheatHWCFluidEntTemp'));
+    //   // setValue('txbHeatingHWCFluidLvgTemp', getValues('txbReheatHWCFluidLvgTemp'));
+    // } else {
       info.defaultId = info.fdtFluidType?.[0]?.id;
       setValue('ddlHeatingFluidType', info.fdtFluidType?.[0]?.id);
-    }
+    // }
   }, [db, getValues('ddlHeatingComp')]);
 
 
@@ -3264,51 +3297,55 @@ useEffect(() => {
         )?.length > 0
     );
 
+
+    info.fdtFluidConcen = info.fdtFluidConcen?.sort((a: any, b: any) => a.items.localeCompare(b.items));;
+
+
     setHeatingFluidConcenInfo(info);
 
-    if (
-      Number(getValues('ddlHeatingComp')) === IDs.intCompIdHWC &&
-      Number(getValues('ddlPreheatComp')) === IDs.intCompIdHWC
-    ) {
-      setValue('ddlHeatingFluidConcentration', getValues('ddlPreheatFluidConcentration'));
-    } else if (
-      Number(getValues('ddlHeatingComp')) === IDs.intCompIdHWC &&
-      Number(getValues('ddlReheatComp')) === IDs.intCompIdHWC
-    ) {
-      setValue('ddlHeatingFluidConcentration', getValues('ddlReheatFluidConcentration'));
-    } else {
+    // if (
+    //   Number(getValues('ddlHeatingComp')) === IDs.intCompIdHWC &&
+    //   Number(getValues('ddlPreheatComp')) === IDs.intCompIdHWC
+    // ) {
+    //   setValue('ddlHeatingFluidConcentration', getValues('ddlPreheatFluidConcentration'));
+    // } else if (
+    //   Number(getValues('ddlHeatingComp')) === IDs.intCompIdHWC &&
+    //   Number(getValues('ddlReheatComp')) === IDs.intCompIdHWC
+    // ) {
+    //   setValue('ddlHeatingFluidConcentration', getValues('ddlReheatFluidConcentration'));
+    // } else {
       info.defaultId = info.fdtFluidConcen?.[0]?.id;
       setValue('ddlHeatingFluidConcentration', info.fdtFluidConcen?.[0]?.id);
-    }
+    // }
   }, [db, getValues('ddlHeatingComp'), getValues('ddlHeatingFluidType')]);
 
   // Heating Fluid
-  useEffect(() => {
-    if (
-      Number(getValues('ddlHeatingComp')) === IDs.intCompIdHWC &&
-      Number(getValues('ddlPreheatComp')) === IDs.intCompIdHWC
-    ) {
-      setValue('ddlPreheatFluidType', getValues('ddlHeatingFluidType'));
-      setValue('ddlPreheatFluidConcentration', getValues('ddlHeatingFluidConcentration'));
-      setValue('txbPreheatHWCFluidEntTemp', getValues('txbHeatingHWCFluidEntTemp'));
-      setValue('txbPreheatHWCFluidLvgTemp', getValues('txbHeatingHWCFluidLvgTemp'));
-    }
+  // useEffect(() => {
+  //   if (
+  //     Number(getValues('ddlHeatingComp')) === IDs.intCompIdHWC &&
+  //     Number(getValues('ddlPreheatComp')) === IDs.intCompIdHWC
+  //   ) {
+  //     setValue('ddlPreheatFluidType', getValues('ddlHeatingFluidType'));
+  //     setValue('ddlPreheatFluidConcentration', getValues('ddlHeatingFluidConcentration'));
+  //     // setValue('txbPreheatHWCFluidEntTemp', getValues('txbHeatingHWCFluidEntTemp'));
+  //     // setValue('txbPreheatHWCFluidLvgTemp', getValues('txbHeatingHWCFluidLvgTemp'));
+  //   }
 
-    if (
-      Number(getValues('ddlHeatingComp')) === IDs.intCompIdHWC &&
-      Number(getValues('ddlReheatComp')) === IDs.intCompIdHWC
-    ) {
-      setValue('ddlReheatFluidType', getValues('ddlHeatingFluidType'));
-      setValue('ddlReheatFluidConcentration', getValues('ddlHeatingFluidConcentration'));
-      setValue('txbReheatHWCFluidEntTemp', getValues('txbHeatingHWCFluidEntTemp'));
-      setValue('txbReheatHWCFluidLvgTemp', getValues('txbHeatingHWCFluidLvgTemp'));
-    }
-  }, [
-    getValues('ddlHeatingFluidType'),
-    getValues('ddlHeatingFluidConcentration'),
-    getValues('txbHeatingHWCFluidEntTemp'),
-    getValues('txbHeatingHWCFluidLvgTemp'),
-  ]);
+  //   if (
+  //     Number(getValues('ddlHeatingComp')) === IDs.intCompIdHWC &&
+  //     Number(getValues('ddlReheatComp')) === IDs.intCompIdHWC
+  //   ) {
+  //     setValue('ddlReheatFluidType', getValues('ddlHeatingFluidType'));
+  //     setValue('ddlReheatFluidConcentration', getValues('ddlHeatingFluidConcentration'));
+  //     // setValue('txbReheatHWCFluidEntTemp', getValues('txbHeatingHWCFluidEntTemp'));
+  //     // setValue('txbReheatHWCFluidLvgTemp', getValues('txbHeatingHWCFluidLvgTemp'));
+  //   }
+  // }, [
+  //   getValues('ddlHeatingFluidType'),
+  //   getValues('ddlHeatingFluidConcentration'),
+  //   // getValues('txbHeatingHWCFluidEntTemp'),
+  //   // getValues('txbHeatingHWCFluidLvgTemp'),
+  // ]);
 
 
   const [reheatFluidTypeInfo, setReheatFluidTypeInfo] = useState<any>([]);
@@ -3332,26 +3369,26 @@ useEffect(() => {
 
     setReheatFluidTypeInfo(info);
 
-    if (
-      Number(getValues('ddlReheatComp')) === IDs.intCompIdHWC &&
-      Number(getValues('ddlPreheatComp')) === IDs.intCompIdHWC
-    ) {
-      setValue('ddlReheatFluidType', getValues('ddlPreheatFluidType'));
-      setValue('ddlReheatFluidConcentration', getValues('ddlPreheatFluidConcentration'));
-      setValue('txbReheatHWCFluidEntTemp', getValues('txbPreheatHWCFluidEntTemp'));
-      setValue('txbReheatHWCFluidLvgTemp', getValues('txbPreheatHWCFluidLvgTemp'));
-    } else if (
-      Number(getValues('ddlReheatComp')) === IDs.intCompIdHWC &&
-      Number(getValues('ddlHeatingComp')) === IDs.intCompIdHWC
-    ) {
-      setValue('ddlReheatFluidType', getValues('ddlHeatingFluidType'));
-      setValue('ddlReheatFluidConcentration', getValues('ddlHeatingFluidConcentration'));
-      setValue('txbReheatHWCFluidEntTemp', getValues('txbHeatingHWCFluidEntTemp'));
-      setValue('txbReheatHWCFluidLvgTemp', getValues('txbHeatingHWCFluidLvgTemp'));
-    } else {
+    // if (
+    //   Number(getValues('ddlReheatComp')) === IDs.intCompIdHWC &&
+    //   Number(getValues('ddlPreheatComp')) === IDs.intCompIdHWC
+    // ) {
+    //   setValue('ddlReheatFluidType', getValues('ddlPreheatFluidType'));
+    //   setValue('ddlReheatFluidConcentration', getValues('ddlPreheatFluidConcentration'));
+    //   // setValue('txbReheatHWCFluidEntTemp', getValues('txbPreheatHWCFluidEntTemp'));
+    //   // setValue('txbReheatHWCFluidLvgTemp', getValues('txbPreheatHWCFluidLvgTemp'));
+    // } else if (
+    //   Number(getValues('ddlReheatComp')) === IDs.intCompIdHWC &&
+    //   Number(getValues('ddlHeatingComp')) === IDs.intCompIdHWC
+    // ) {
+    //   setValue('ddlReheatFluidType', getValues('ddlHeatingFluidType'));
+    //   setValue('ddlReheatFluidConcentration', getValues('ddlHeatingFluidConcentration'));
+    //   // setValue('txbReheatHWCFluidEntTemp', getValues('txbHeatingHWCFluidEntTemp'));
+    //   // setValue('txbReheatHWCFluidLvgTemp', getValues('txbHeatingHWCFluidLvgTemp'));
+    // } else {
       info.defaultId = info.fdtFluidType?.[0]?.id;
       setValue('ddlReheatFluidType', info.fdtFluidType?.[0]?.id);
-    }
+    // }
   }, [db, getValues('ddlReheatComp')]);
 
 
@@ -3366,70 +3403,65 @@ useEffect(() => {
     let fluidConFluidTypLink: any = [];
 
     if (Number(getValues('ddlReheatComp')) === IDs.intCompIdHWC) {
-      fluidConFluidTypLink = db?.dbtSelFluidConcenFluidTypeLink?.filter(
-        (item: { fluid_type_id: number }) =>
-          item.fluid_type_id === Number(getValues('ddlReheatFluidType'))
-      );
+      fluidConFluidTypLink = db?.dbtSelFluidConcenFluidTypeLink?.filter((item: { fluid_type_id: number }) => item.fluid_type_id === Number(getValues('ddlReheatFluidType')));
     } else {
-      fluidConFluidTypLink = db?.dbtSelFluidConcenFluidTypeLink?.filter(
-        (item: { fluid_type_id: number }) => item.fluid_type_id === reheatFluidTypeInfo?.defaultId
-      );
+      fluidConFluidTypLink = db?.dbtSelFluidConcenFluidTypeLink?.filter((item: { fluid_type_id: number }) => item.fluid_type_id === reheatFluidTypeInfo?.defaultId);
     }
 
-    info.fdtFluidConcen = db?.dbtSelFluidConcentration?.filter(
-      (e: { id: any }) =>
-        fluidConFluidTypLink?.filter(
-          (e_link: { fluid_concen_id: any }) => e.id === e_link.fluid_concen_id
-        )?.length > 0
+    info.fdtFluidConcen = db?.dbtSelFluidConcentration?.filter((e: { id: any }) => fluidConFluidTypLink?.filter((e_link: { fluid_concen_id: any }) => e.id === e_link.fluid_concen_id)?.length > 0
     );
+
+
+    info.fdtFluidConcen = info.fdtFluidConcen?.sort((a: any, b: any) => a.items.localeCompare(b.items));;
+
 
     setReheatFluidConcenInfo(info);
 
-    if (
-      Number(getValues('ddlReheatComp')) === IDs.intCompIdHWC &&
-      Number(getValues('ddlPreheatComp')) === IDs.intCompIdHWC
-    ) {
-      setValue('ddlReheatFluidConcentration', getValues('ddlPreheatFluidConcentration'));
-    } else if (
-      Number(getValues('ddlReheatComp')) === IDs.intCompIdHWC &&
-      Number(getValues('ddlHeatingComp')) === IDs.intCompIdHWC
-    ) {
-      setValue('ddlReheatFluidConcentration', getValues('ddlHeatingFluidConcentration'));
-    } else {
+    // if (
+    //   Number(getValues('ddlReheatComp')) === IDs.intCompIdHWC &&
+    //   Number(getValues('ddlPreheatComp')) === IDs.intCompIdHWC
+    // ) {
+    //   setValue('ddlReheatFluidConcentration', getValues('ddlPreheatFluidConcentration'));
+    // } else if (
+    //   Number(getValues('ddlReheatComp')) === IDs.intCompIdHWC &&
+    //   Number(getValues('ddlHeatingComp')) === IDs.intCompIdHWC
+    // ) {
+    //   setValue('ddlReheatFluidConcentration', getValues('ddlHeatingFluidConcentration'));
+    // } else {
       info.defaultId = info.fdtFluidConcen?.[0]?.id;
       setValue('ddlReheatFluidConcentration', info.fdtFluidConcen?.[0]?.id);
-    }
+    // }
   }, [db, getValues('ddlReheatComp'), getValues('ddlReheatFluidType')]);
 
 
-  // useCallback(
-  //   (e: any) => {
-  useEffect(() => {
-    if (
-      Number(getValues('ddlReheatComp')) === IDs.intCompIdHWC &&
-      Number(getValues('ddlPreheatComp')) === IDs.intCompIdHWC
-    ) {
-      setValue('ddlPreheatFluidType', getValues('ddlReheatFluidType'));
-      setValue('ddlPreheatFluidConcentration', getValues('ddlReheatFluidConcentration'));
-      setValue('txbPreheatHWCFluidEntTemp', getValues('txbReheatHWCFluidEntTemp'));
-      setValue('txbPreheatHWCFluidLvgTemp', getValues('txbReheatHWCFluidLvgTemp'));
-    }
 
-    if (
-      Number(getValues('ddlReheatComp')) === IDs.intCompIdHWC &&
-      Number(getValues('ddlHeatingComp')) === IDs.intCompIdHWC
-    ) {
-      setValue('ddlHeatingFluidType', getValues('ddlReheatFluidType'));
-      setValue('ddlHeatingFluidConcentration', getValues('ddlReheatFluidConcentration'));
-      setValue('txbHeatingHWCFluidEntTemp', getValues('txbReheatHWCFluidEntTemp'));
-      setValue('txbHeatingHWCFluidLvgTemp', getValues('txbReheatHWCFluidLvgTemp'));
-    }
-  }, [
-    getValues('ddlReheatFluidType'),
-    getValues('ddlReheatFluidConcentration'),
-    getValues('txbReheatHWCFluidEntTemp'),
-    getValues('txbReheatHWCFluidLvgTemp'),
-  ]);
+
+  // useEffect(() => {
+  //   if (
+  //     Number(getValues('ddlReheatComp')) === IDs.intCompIdHWC &&
+  //     Number(getValues('ddlPreheatComp')) === IDs.intCompIdHWC
+  //   ) {
+  //     setValue('ddlPreheatFluidType', getValues('ddlReheatFluidType'));
+  //     setValue('ddlPreheatFluidConcentration', getValues('ddlReheatFluidConcentration'));
+  //     // setValue('txbPreheatHWCFluidEntTemp', getValues('txbReheatHWCFluidEntTemp'));
+  //     // setValue('txbPreheatHWCFluidLvgTemp', getValues('txbReheatHWCFluidLvgTemp'));
+  //   }
+
+  //   if (
+  //     Number(getValues('ddlReheatComp')) === IDs.intCompIdHWC &&
+  //     Number(getValues('ddlHeatingComp')) === IDs.intCompIdHWC
+  //   ) {
+  //     setValue('ddlHeatingFluidType', getValues('ddlReheatFluidType'));
+  //     setValue('ddlHeatingFluidConcentration', getValues('ddlReheatFluidConcentration'));
+  //     // setValue('txbHeatingHWCFluidEntTemp', getValues('txbReheatHWCFluidEntTemp'));
+  //     // setValue('txbHeatingHWCFluidLvgTemp', getValues('txbReheatHWCFluidLvgTemp'));
+  //   }
+  // }, [
+  //   getValues('ddlReheatFluidType'),
+  //   getValues('ddlReheatFluidConcentration'),
+  //   // getValues('txbReheatHWCFluidEntTemp'),
+  //   // getValues('txbReheatHWCFluidLvgTemp'),
+  // ]);
 
 
   const [damperActuatorInfo, setDamperActuatorInfo] = useState<any>([]);
@@ -3440,16 +3472,11 @@ useEffect(() => {
     };
 
     let damperActuatorProdTypeLink = db?.dbtSelDamperActuatorProdTypeLink;
-    damperActuatorProdTypeLink = damperActuatorProdTypeLink?.filter(
-      (item: { prod_type_id: number }) => item.prod_type_id === intProductTypeID
-    );
+    damperActuatorProdTypeLink = damperActuatorProdTypeLink?.filter((item: { prod_type_id: number }) => item.prod_type_id === intProductTypeID);
 
     // info.fdtDamperActuator = db?.dbtSelDamperActuator;
     info.fdtDamperActuator = db?.dbtSelDamperActuator?.filter(
-      (e: { id: number }) =>
-        damperActuatorProdTypeLink?.filter(
-          (e_link: { damper_actuator_id: number }) => e.id === e_link.damper_actuator_id
-        )?.length > 0
+      (e: { id: number }) => damperActuatorProdTypeLink?.filter((e_link: { damper_actuator_id: number }) => e.id === e_link.damper_actuator_id)?.length > 0
     );
 
     info.isVisible = true;
@@ -4534,13 +4561,17 @@ useEffect(() => {
 
       setValue('ddlPreheatElecHeaterInstall', unitInfo?.oUnitCompOpt?.intPreheatElecHeaterInstallationId > 0 ? unitInfo?.oUnitCompOpt?.intPreheatElecHeaterInstallationId : getValues('ddlPreheatElecHeaterInstall'));
 
+      setValue('ckbPreheatElecHeaterVoltageSPP', unitInfo?.oUnitCompOpt?.intIsPreheatElecHeaterVoltageSPP > 0 ? unitInfo?.oUnitCompOpt?.intIsPreheatElecHeaterVoltageSPP : getValues('ckbPreheatElecHeaterVoltageSPP'));
+
       setValue('ddlPreheatFluidType', unitInfo?.oUnitCompOpt?.intHeatingFluidTypeId > 0 ? unitInfo?.oUnitCompOpt?.intHeatingFluidTypeId : getValues('ddlPreheatFluidType'));
 
       setValue('ddlPreheatFluidConcentration', unitInfo?.oUnitCompOpt?.intHeatingFluidConcentId > 0 ? unitInfo?.oUnitCompOpt?.intHeatingFluidConcentId : getValues('ddlPreheatFluidConcentration'));
 
-      setValue('txbPreheatHWCFluidEntTemp', Number.parseFloat(unitInfo?.oUnitCompOpt?.dblHeatingFluidEntTemp) > 0.0 ? unitInfo?.oUnitCompOpt?.dblHeatingFluidEntTemp : '140');
+      setValue('txbPreheatHWCFluidEntTemp', Number.parseFloat(unitInfo?.oUnitCompOpt?.dblPreheatFluidEntTemp) > 0.0 ? unitInfo?.oUnitCompOpt?.dblPreheatFluidEntTemp : '140');
 
-      setValue('txbPreheatHWCFluidLvgTemp', Number.parseFloat(unitInfo?.oUnitCompOpt?.dblHeatingFluidLvgTemp) > 0.0 ? unitInfo?.oUnitCompOpt?.dblHeatingFluidLvgTemp : '120');
+      // setValue('ckbPreheatHWCUseFluidLvgTemp', getValues('ckbPreheatHWCUseFluidLvgTemp'));
+      
+      setValue('txbPreheatHWCFluidLvgTemp', Number.parseFloat(unitInfo?.oUnitCompOpt?.dblPreheatFluidLvgTemp) > 0.0 ? unitInfo?.oUnitCompOpt?.dblPreheatFluidLvgTemp : '120');
 
       setValue('ckbPreheatHWCUseCap', unitInfo?.oUnitCompOpt?.intIsPreheatHWCUseCap > 0 ? unitInfo?.oUnitCompOpt?.intIsPreheatHWCUseCap : 0);
 
@@ -4611,6 +4642,8 @@ useEffect(() => {
 
       setValue('ddlHeatingElecHeaterInstall', unitInfo?.oUnitCompOpt?.intHeatingElecHeaterInstallationId > 0 ? unitInfo?.oUnitCompOpt?.intHeatingElecHeaterInstallationId : getValues('ddlHeatingElecHeaterInstall'));
 
+      setValue('ckbHeatingElecHeaterVoltageSPP', unitInfo?.oUnitCompOpt?.intIsHeatingElecHeaterVoltageSPP > 0 ? unitInfo?.oUnitCompOpt?.intIsHeatingElecHeaterVoltageSPP : getValues('ckbHeatingElecHeaterVoltageSPP'));
+
       setValue('ddlHeatingFluidType', unitInfo?.oUnitCompOpt?.intHeatingFluidTypeId > 0 ? unitInfo?.oUnitCompOpt?.intHeatingFluidTypeId : getValues('ddlHeatingFluidType'));
 
       setValue('ddlHeatingFluidConcentration', unitInfo?.oUnitCompOpt?.intHeatingFluidConcentId > 0 ? unitInfo?.oUnitCompOpt?.intHeatingFluidConcentId : getValues('ddlHeatingFluidConcentration'));
@@ -4643,13 +4676,15 @@ useEffect(() => {
 
       setValue('ddlReheatElecHeaterInstall', unitInfo?.oUnitCompOpt?.intHeatingElecHeaterInstallationId > 0 ? unitInfo?.oUnitCompOpt?.intHeatingElecHeaterInstallationId : getValues('ddlReheatElecHeaterInstall'));
 
+      setValue('ckbReheatElecHeaterVoltageSPP', unitInfo?.oUnitCompOpt?.intIsReheatElecHeaterVoltageSPP > 0 ? unitInfo?.oUnitCompOpt?.intIsReheatElecHeaterVoltageSPP : getValues('ckbReheatElecHeaterVoltageSPP'));
+
       setValue('ddlReheatFluidType', unitInfo?.oUnitCompOpt?.intHeatingFluidTypeId > 0 ?  unitInfo?.oUnitCompOpt?.intHeatingFluidTypeId : getValues('ddlReheatFluidType'));
 
       setValue('ddlReheatFluidConcentration', unitInfo?.oUnitCompOpt?.intHeatingFluidConcentId > 0 ?  unitInfo?.oUnitCompOpt?.intHeatingFluidConcentId : getValues('ddlReheatFluidConcentration'));
 
-      setValue('txbReheatHWCFluidEntTemp', Number.parseFloat(unitInfo?.oUnitCompOpt?.dblHeatingFluidEntTemp) > 0.0 ?  unitInfo?.oUnitCompOpt?.dblHeatingFluidEntTemp : '140');
+      setValue('txbReheatHWCFluidEntTemp', Number.parseFloat(unitInfo?.oUnitCompOpt?.dblReheatFluidEntTemp) > 0.0 ?  unitInfo?.oUnitCompOpt?.dblReheatFluidEntTemp : '140');
 
-      setValue('txbReheatHWCFluidLvgTemp', Number.parseFloat(unitInfo?.oUnitCompOpt?.dblHeatingFluidLvgTemp) > 0.0 ?  unitInfo?.oUnitCompOpt?.dblHeatingFluidLvgTemp : '120');
+      setValue('txbReheatHWCFluidLvgTemp', Number.parseFloat(unitInfo?.oUnitCompOpt?.dblReheatFluidLvgTemp) > 0.0 ?  unitInfo?.oUnitCompOpt?.dblReheatFluidLvgTemp : '120');
 
 
       if (unitInfo?.oUnitCompOptCust?.intIsReheatHWCUseFlowRate > 0) {
@@ -5508,9 +5543,9 @@ useEffect(() => {
                   </RHFSelect>
                   <RHFCheckbox
                     label="Single Point Power Connection"
-                    name="ckbVoltageSPP"
+                    name="ckbPreheatElecHeaterVoltageSPP"
                     // checked={}
-                    onChange={(e: any) => setValue('ckbVoltageSPP', Number(e.target.value))}
+                    onChange={(e: any) => setValue('ckbPreheatElecHeaterVoltageSPP', Number(e.target.value))}
                     sx={getDisplay(voltageSPPIsVisible)}
                   />
                 </Box>
@@ -6233,9 +6268,9 @@ useEffect(() => {
                   </RHFSelect>
                   <RHFCheckbox
                     label="Single Point Power Connection"
-                    name="ckbVoltageSPP"
+                    name="ckbHeatingElecHeaterVoltageSPP"
                     // checked={}
-                    onChange={(e: any) => setValue('ckbVoltageSPP', Number(e.target.value))}
+                    onChange={(e: any) => setValue('ckbHeatingElecHeaterVoltageSPP', Number(e.target.value))}
                     sx={getDisplay(voltageSPPIsVisible)}
                   />
                 </Box>
@@ -6518,9 +6553,9 @@ useEffect(() => {
                   </RHFSelect>
                   <RHFCheckbox
                     label="Single Point Power Connection"
-                    name="ckbVoltageSPP"
+                    name="ckbReheatElecHeaterVoltageSPP"
                     // checked={}
-                    onChange={(e: any) => setValue('ckbVoltageSPP', Number(e.target.value))}
+                    onChange={(e: any) => setValue('ckbReheatElecHeaterVoltageSPP', Number(e.target.value))}
                     sx={getDisplay(voltageSPPIsVisible)}
                   />
                 </Box>
