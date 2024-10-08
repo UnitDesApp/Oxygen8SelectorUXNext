@@ -25,6 +25,7 @@ import UnitInfo from './components/UnitInfo/UnitInfo';
 import Selection from './components/Selection/Selection';
 import SelectionReportDialog from '../components/dialog/SelectionReportDialog';
 import { UnitTypeContext } from './components/UnitInfo/unitTypeDataContext';
+import { useGetSavedJobsByUserAndCustomer } from 'src/hooks/useApi';
 
 // ----------------------------------------------------------------------
 
@@ -68,6 +69,22 @@ export default function AddNewUnit({currentStep, setCurrentStep}:any) {
   const [isSaving, setIsSaving] = useState(false);
   const submitButtonRef = useRef<HTMLButtonElement>(null);
   const { unitTypeData, setUnitTypeData } = useContext(UnitTypeContext);
+
+
+  const { data: projects, isLoading: isLoadingProjects, refetch } = useGetSavedJobsByUserAndCustomer(
+    {
+      // oJobs: {
+      intUserId: typeof window !== 'undefined' && localStorage.getItem('userId'),
+      intUAL: typeof window !== 'undefined' && localStorage.getItem('UAL'),
+      // strSearchBy: filterName,
+    },
+    {
+      enabled: typeof window !== 'undefined',
+    }
+  );
+  const filteredData = projects?.dbtJobList.filter((item: any) => {
+    return item.id ===  Number(projectId);
+  });
 
 
   const closeDialog = useCallback(() => {
@@ -146,7 +163,7 @@ export default function AddNewUnit({currentStep, setCurrentStep}:any) {
           links={[
             { name: 'My projects', href: PATH_APP.project },
             {
-              name: 'Dashboard',
+              name: filteredData[0]?.job_name,
               href: PATH_APP.projectDashboard(projectId?.toString() || '', 'unitlist'),
             },
             { name: 'New Unit' },
