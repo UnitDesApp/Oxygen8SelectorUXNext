@@ -305,6 +305,7 @@ export default function UnitInfoForm({
     let heatingFluidConcenId;
     let heatingFluidEntTemp;
     let heatingFluidLvgTemp;
+    let isVoltageSPP; // Temp used until switching to new ux
 
     if (Number(getValues('ddlReheatComp')) === IDs.intCompIdHWC) {
       heatingFluidTypeId = formCurrValues.ddlReheatFluidType;
@@ -323,6 +324,15 @@ export default function UnitInfoForm({
       // heatingFluidLvgTemp = formCurrValues.txbPreheatHWCFluidLvgTemp;
     }
 
+    if (Number(getValues('ddlReheatComp')) === IDs.intCompIdElecHeater) {
+      isVoltageSPP = formCurrValues.ckbReheatElecHeaterVoltageSPP;
+    } else if (Number(getValues('ddlHeatingComp')) === IDs.intCompIdElecHeater) {
+      isVoltageSPP = formCurrValues.ckbHeatingElecHeaterVoltageSPP;
+    } else {
+      isVoltageSPP = formCurrValues.ckbPreheatElecHeaterVoltageSPP;
+    }
+
+
     const oUnitInputs = {
       oUser: {
         intUserId: typeof window !== 'undefined' && localStorage.getItem('userId'),
@@ -336,7 +346,8 @@ export default function UnitInfoForm({
         strTag: formCurrValues.txtTag,
         intQty: formCurrValues.txbQty,
         intUnitVoltageId: Number(formCurrValues.ddlUnitVoltage),
-        intIsVoltageSPP: Number(formCurrValues.ckbVoltageSPP) === 1 ? 1 : 0,
+        // intIsVoltageSPP: Number(formCurrValues.ckbVoltageSPP) === 1 ? 1 : 0,
+        intIsVoltageSPP: Number(isVoltageSPP),
         intIsPHI: Number(formCurrValues.ckbPHI) === 1 ? 1 : 0,
         intIsBypass: Number(formCurrValues.ckbBypass) === 1 ? 1 : 0,
         intUnitModelId: Number(formCurrValues.ddlUnitModel),
@@ -594,6 +605,7 @@ export default function UnitInfoForm({
   const [isTxbPreheatHWCFluidLvgTempEnabled, setIsTxbPreheatHWCFluidLvgTempEnabled] = useState<boolean>(false);
   const [isTxbPreheatHWCFluidFlowRateEnabled, setIsTxbPreheatHWCFluidFlowRateEnabled] = useState<boolean>(false);
 
+  const [isTxbPreheatSetpointEnabled, setIsTxbPreheatSetpointEnabled] = useState<boolean>(false);
 
   const [ckbCoolingCWCUseFluidLvgTempValue, setCkbCoolingCWCUseFluidLvgTempValue] = useState<boolean>(false);
   const [ckbCoolingCWCUseFluidFlowRateValue, setCkbCoolingCWCUseFluidFlowRateValue] = useState<boolean>(false);
@@ -1096,6 +1108,11 @@ const ckbPreheatHWCUseFluidFlowRateChanged = useCallback((e: any) => {
 }, []);
 
 
+const ckbPreheatAutoSizeChanged = useCallback((e: any) => {
+  setValue('ckbPreheatAutoSize', e.target.value);
+}, []);
+
+
 const ckbCoolingCWCUseFluidLvgTempChanged = useCallback((e: any) => {
   setValue('ckbCoolingCWCUseFluidLvgTemp', e.target.value);
   // setCkbCoolingCWCUseFluidLvgTempValue(e.target.value);
@@ -1168,7 +1185,7 @@ useEffect(() => {
       setValue('txbPreheatHWCFluidLvgTemp', '0');
 
       setValue('ckbPreheatHWCUseFluidFlowRate', 1)
-      setValue('txbPreheatHWCFluidFlowRate', '10');
+      setValue('txbPreheatHWCFluidFlowRate', '5');
       setIsTxbPreheatHWCFluidFlowRateEnabled(true);
       break;
     default:
@@ -1184,7 +1201,7 @@ useEffect(() => {
     case 1:
       setIsTxbPreheatHWCFluidFlowRateEnabled(true);
       if (Number(getValues('txbPreheatHWCFluidFlowRate')) === 0) {
-        setValue('txbPreheatHWCFluidFlowRate', '10');
+        setValue('txbPreheatHWCFluidFlowRate', '5');
       }
 
       setValue('ckbPreheatHWCUseFluidLvgTemp', 0)
@@ -1208,6 +1225,22 @@ useEffect(() => {
 // }, [ckbPreheatHWCUseFluidFlowRateValue]);
 
 
+useEffect(() => {
+  switch (Number(getValues('ckbPreheatAutoSize'))) {
+    case 1:
+      setIsTxbPreheatSetpointEnabled(false);
+      setValue('txbWinterPreheatSetpointDB', '0');
+      break;
+    case 0:
+      setIsTxbPreheatSetpointEnabled(true);
+      setValue('txbWinterPreheatSetpointDB', '40');
+      break;
+    default:
+      break;
+  }
+
+}, [getValues('ckbPreheatAutoSize')]);
+
 
 useEffect(() => {
   switch (Number(getValues('ckbCoolingCWCUseFluidLvgTemp'))) {
@@ -1225,7 +1258,7 @@ useEffect(() => {
       setIsTxbCoolingCWCFluidLvgTempEnabled(false);
 
       setValue('ckbCoolingCWCUseFluidFlowRate', 1)
-      setValue('txbCoolingCWCFluidFlowRate', '10');
+      setValue('txbCoolingCWCFluidFlowRate', '5');
       setIsTxbCoolingCWCFluidFlowRateEnabled(true);
       setValue('txbCoolingCWCFluidLvgTemp', '0');
       break;
@@ -1241,7 +1274,7 @@ useEffect(() => {
     case 1:
       setIsTxbCoolingCWCFluidFlowRateEnabled(true);
       if (Number(getValues('txbCoolingCWCFluidFlowRate')) === 0) {
-        setValue('txbCoolingCWCFluidFlowRate', '10');
+        setValue('txbCoolingCWCFluidFlowRate', '5');
       }
 
       setValue('ckbCoolingCWCUseFluidLvgTemp', 0);
@@ -1299,7 +1332,7 @@ useEffect(() => {
     case 1:
       setIsTxbHeatingHWCFluidFlowRateEnabled(true);
       if (Number(getValues('txbHeatingHWCFluidFlowRate')) === 0) {
-        setValue('txbHeatingHWCFluidFlowRate', '10');
+        setValue('txbHeatingHWCFluidFlowRate', '5');
       }
 
       setValue('ckbHeatingHWCUseFluidLvgTemp', 0)
@@ -1338,7 +1371,7 @@ useEffect(() => {
       setValue('txbReheatHWCFluidLvgTemp', '0');
 
       setValue('ckbReheatHWCUseFluidFlowRate', 1)
-      setValue('txbReheatHWCFluidFlowRate', '10');
+      setValue('txbReheatHWCFluidFlowRate', '5');
       setIsTxbReheatHWCFluidFlowRateEnabled(true);
       break;
     default:
@@ -1353,7 +1386,7 @@ useEffect(() => {
     case 1:
       setIsTxbReheatHWCFluidFlowRateEnabled(true);
       if (Number(getValues('txbReheatHWCFluidFlowRate')) === 0) {
-        setValue('txbReheatHWCFluidFlowRate', '10');
+        setValue('txbReheatHWCFluidFlowRate', '5');
       }
 
       setValue('ckbReheatHWCUseFluidLvgTemp', 0)
@@ -5622,6 +5655,8 @@ useEffect(() => {
                       size="small"
                       name="txbPreheatHWCFluidEntTemp"
                       label="Heating Fluid Ent Temp (F)"
+                      // type="number"
+                      InputProps={{ inputProps: { min: 80, max: 180 } }}
                       onChange={(e: any) => { setValueWithCheck1(e, 'txbPreheatHWCFluidEntTemp'); }}
                     />
                   </Stack>
@@ -5630,6 +5665,7 @@ useEffect(() => {
                       size="small"
                       name="txbPreheatHWCFluidLvgTemp"
                       label="Heating Fluid Lvg Temp (F)"
+                      InputProps={{ inputProps: { min: 40, max: 180 } }}
                       disabled={!isTxbPreheatHWCFluidLvgTempEnabled}
                       onChange={(e: any) => { setValueWithCheck1(e, 'txbPreheatHWCFluidLvgTemp'); }}
                     />
@@ -5639,6 +5675,7 @@ useEffect(() => {
                       size="small"
                       name="txbPreheatHWCFluidFlowRate"
                       label="Preheat HWC Flow Rate (GPM)"
+                      InputProps={{ inputProps: { min: 0.1, max: 50 } }}
                       // sx={getDisplay(customInputs.divPreheatHWC_UseFlowRateVisible)}
                       disabled={!isTxbPreheatHWCFluidFlowRateEnabled}
                       onChange={(e: any) => {setValueWithCheck1(e, 'txbPreheatHWCFluidFlowRate'); }}
@@ -5687,7 +5724,7 @@ useEffect(() => {
                       size="small"
                       name="txbWinterPreheatSetpointDB"
                       label="Preheat LAT Setpoint DB (F):"
-                      autoComplete="off"
+                      disabled={!isTxbPreheatSetpointEnabled}
                       sx={getDisplay(isPreheatSetpointVisible)}
                       onChange={(e: any) => { setValueWithCheck1(e, 'txbWinterPreheatSetpointDB'); }}
                     /> 
@@ -5880,6 +5917,7 @@ useEffect(() => {
                       size="small"
                       name="txbCoolingCWCFluidEntTemp"
                       label="Cooling Fluid Ent Temp (F)"
+                      InputProps={{ inputProps: { min: 20, max: 120 } }}
                       onChange={(e: any) => {setValueWithCheck1(e, 'txbCoolingCWCFluidEntTemp');}}
                     />
                   </Stack>
@@ -5888,6 +5926,7 @@ useEffect(() => {
                       size="small"
                       name="txbCoolingCWCFluidLvgTemp"
                       label="Cooling Fluid Lvg Temp (F)"
+                      InputProps={{ inputProps: { min: 20, max: 120 } }}
                       disabled={!isTxbCoolingCWCFluidLvgTempEnabled}
                       onChange={(e: any) => {setValueWithCheck1(e, 'txbCoolingCWCFluidLvgTemp');}}
                     />
@@ -5897,7 +5936,7 @@ useEffect(() => {
                       size="small"
                       name="txbCoolingCWCFluidFlowRate"
                       label="Cooling CWC Flow Rate (GPM)"
-                      // sx={getDisplay(customInputs.divCoolingCWC_UseFlowRateVisible)}
+                      InputProps={{ inputProps: { min: 0.1, max: 50 } }}
                       disabled={!isTxbCoolingCWCFluidFlowRateEnabled}
                       onChange={(e: any) => {setValueWithCheck1(e, 'txbCoolingCWCFluidFlowRate');}}
                     />
@@ -6026,6 +6065,7 @@ useEffect(() => {
                       name="txbSummerCoolingSetpointDB"
                       label="Cooling LAT Setpoint (F):"
                       autoComplete="off"
+                      InputProps={{ inputProps: { min: 45, max: 75 } }}
                       // onChange={(e: any) => { setValueWithCheck1(e, 'txbSummerCoolingSetpointDB'); }}
                       onChange={txbSummerCoolingSetpointDBChanged}
                     />
@@ -6346,6 +6386,7 @@ useEffect(() => {
                       size="small"
                       name="txbHeatingHWCFluidEntTemp"
                       label="Heating Fluid Ent Temp (F)"
+                      InputProps={{ inputProps: { min: 80, max: 180 } }}
                       onChange={(e: any) => {setValueWithCheck1(e, 'txbHeatingHWCFluidEntTemp');}}
                     />
                   </Stack>
@@ -6354,6 +6395,7 @@ useEffect(() => {
                       size="small"
                       name="txbHeatingHWCFluidLvgTemp"
                       label="Heating Fluid Lvg Temp (F)"
+                      InputProps={{ inputProps: { min: 40, max: 180 } }}
                       disabled={!isTxbHeatingHWCFluidLvgTempEnabled}
                       onChange={(e: any) => { setValueWithCheck1(e, 'txbHeatingHWCFluidLvgTemp');}}
                     />
@@ -6363,6 +6405,7 @@ useEffect(() => {
                       size="small"
                       name="txbHeatingHWCFluidFlowRate"
                       label="Heating HWC Flow Rate (GPM)"
+                      InputProps={{ inputProps: { min: 0.1, max: 50 } }}
                       disabled={!isTxbHeatingHWCFluidFlowRateEnabled}
                       // sx={getDisplay(customInputs.divHeatingHWC_UseFlowRateVisible)}
                       onChange={(e: any) => {setValueWithCheck1(e, 'txbHeatingHWCFluidFlowRate'); }}
@@ -6631,6 +6674,7 @@ useEffect(() => {
                       size="small"
                       name="txbReheatHWCFluidEntTemp"
                       label="Reheat Fluid Ent Temp (F)"
+                      InputProps={{ inputProps: { min: 80, max: 180 } }}
                       onChange={(e: any) => { setValueWithCheck1(e, 'txbReheatHWCFluidEntTemp'); }}
                     />
                   </Stack>
@@ -6639,6 +6683,7 @@ useEffect(() => {
                       size="small"
                       name="txbReheatHWCFluidLvgTemp"
                       label="Reheat Fluid Lvg Temp (F)"
+                      InputProps={{ inputProps: { min: 40, max: 180 } }}
                       disabled={!isTxbReheatHWCFluidLvgTempEnabled}
                       onChange={(e: any) => { setValueWithCheck1(e, 'txbReheatHWCFluidLvgTemp');}}
                     />
@@ -6648,6 +6693,7 @@ useEffect(() => {
                       size="small"
                       name="txbReheatHWCFluidFlowRate"
                       label="Reheat HWC Flow Rate (GPM)"
+                      InputProps={{ inputProps: { min: 0.1, max: 50 } }}
                       // sx={getDisplay(customInputs.divReheatHWC_UseFlowRateVisible)}
                       disabled={!isTxbReheatHWCFluidFlowRateEnabled}
                       onChange={(e: any) => { setValueWithCheck1(e, 'txbReheatHWCFluidFlowRate'); }}
