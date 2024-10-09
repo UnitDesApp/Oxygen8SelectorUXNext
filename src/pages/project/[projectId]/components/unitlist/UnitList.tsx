@@ -45,7 +45,7 @@ const TABLE_HEAD = [
   { id: 'type', label: 'Type', align: 'left' },
   { id: 'model', label: 'Model', align: 'left' },
   { id: 'airflow', label: 'Airflow', align: 'left' },
-  { id: 'sel_comp', label: 'SELECTION COMPLETE', align: 'center' },
+  { id: 'sel_comp', label: 'Selection Complete', align: 'center' },
   { id: 'actions', label: 'ACTIONS', align: 'left' },
   { id: '' },
 ];
