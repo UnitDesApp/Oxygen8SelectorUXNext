@@ -245,6 +245,7 @@ export default function Project() {
               onFilterRole={handleFilterRole}
               onOpneDialog={handleClickNewProjectDialogOpen}
               optionsRole={ROLE_OPTIONS}
+              selectedRole={filterRole}
             />
             <Scrollbar sx={{ overflow: 'hidden' }}>
               <TableContainer>
