@@ -26,6 +26,7 @@ import SelectionReportDialog from '../../components/dialog/SelectionReportDialog
 // import SelectionWrapper from '../components/Selection/SelectionWrapper';
 import Selection from '../components/Selection/Selection';
 import NewUnit from '../new';
+import { useGetSavedJob } from 'src/hooks/useApi';
 
 // ----------------------------------------------------------------------
 
@@ -85,7 +86,7 @@ export default function EditUnit() {
   //   setCurrentStep(1);
   //   push(PATH_APP.editUnit(projectId?.toString() || '0', unitId?.toString() || '0'));
   // };
-
+  const { data: dbtSavedJob } = useGetSavedJob({intJobId: projectId});
   const onClickNextStep = () => {
     if (currentStep < 2) {
       // if (currentStep === 1 && submitButtonRef?.current) {
@@ -127,9 +128,9 @@ export default function EditUnit() {
               <CustomBreadcrumbs
                 heading={`Unit ${STEP_PAGE_NAME[currentStep]}`}
                 links={[
-                  { name: 'My projects', href: PATH_APP.project },
+                  { name: 'Projects', href: PATH_APP.project },
                   {
-                    name: 'Dashboard',
+                    name: dbtSavedJob?.[0]?.job_name,
                     href: PATH_APP.projectDashboard(projectId?.toString() || '', 'unitlist'),
                   },
                   { 

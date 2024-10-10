@@ -28,6 +28,7 @@ const Item = styled(Paper)(({ theme }) => ({
 
 type ProjectTableToolbarProps = {
   filterName: string;
+  selectedRole: string;
   onFilterName: (value: string) => void;
   onFilterRole: (value: string) => void;
   optionsRole: string[];
@@ -38,6 +39,7 @@ export default function ProjectTableToolbar({
   filterName,
   onFilterName,
   onFilterRole,
+  selectedRole,
   optionsRole,
   onOpneDialog,
 }: ProjectTableToolbarProps) {
@@ -89,20 +91,24 @@ export default function ProjectTableToolbar({
           }}
         >
           {optionsRole?.map((option, key) => (
-            <MenuItem
-              key={key}
-              value={option}
-              sx={{
-                mx: 1,
-                my: 0.5,
-                borderRadius: 0.75,
-                typography: 'body2',
-                textTransform: 'capitalize',
-              }}
-              onClick={(event: any) => handleClose(event.target.attributes.value.value)}
-            >
-              {option}
-            </MenuItem>
+          <MenuItem
+          key={key}
+          value={option}
+          sx={{
+            mx: 1,
+            my: 0.5,
+            borderRadius: 0.75,
+            typography: 'body2',
+            textTransform: 'capitalize',
+            backgroundColor: option === selectedRole ? '#f7f7f7' : 'transparent', 
+            '&:hover': {
+              backgroundColor: option === selectedRole ? '#F4F6F9' : '#F4F6F9',
+            },
+          }}
+          onClick={(event: any) => handleClose(option)} 
+        >
+          {option}
+        </MenuItem>
           ))}
         </Menu>
       </Item>
