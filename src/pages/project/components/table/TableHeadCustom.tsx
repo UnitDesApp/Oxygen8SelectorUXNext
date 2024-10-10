@@ -28,14 +28,16 @@ export const TABLE_HEAD: {
   // { id: 'reference_no', label: 'Ref no.', align: 'left', width: 80 },
   { id: 'revision_no', label: 'Rev no.', align: 'left', width: 50 },
   { id: 'status', label: 'status', align: 'left', width: 50 },
-  { id: 'Customer_Name', label: 'Rep', align: 'left', width: 150 },
+  { id: 'Company_Name', label: 'Rep', align: 'left', width: 175 },
+  { id: 'CompanyContact_Name', label: 'Contact Name', align: 'left', width: 175},
+
   // { id: 'Created_User_Full_Name', label: 'Created By', align: 'left', width: 100 },
-  { id: 'RevisedUserFullName', label: 'Revised By', align: 'left', width: 150 },
+  { id: 'RevisedUserFullName', label: 'Revised By', align: 'left', width: 175 },
   // { id: 'created_date', label: 'Date created', align: 'left', width: 140 },
   { id: 'revised_date', label: 'Date revised', align: 'left', width: 100 },
   // { id: '', label: 'Actions', align: 'center', width: 30 },
-    { id: '', label: 'Actions', align: 'left', width: 30 },
-{ id: '', width: 10 },
+  { id: '', label: 'Actions', align: 'left', width: 30 },
+  // { id: '', width: 5 },
 ];
 
 // ----------------------------------------------------------------------

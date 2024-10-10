@@ -196,8 +196,8 @@ export default function Project() {
     setFilterName(name);
     const lowerCaseName = name.toLowerCase();
     const array = dataFiltered.filter((item: any) =>
-      [item.job_name, item.reference_no, item.created_date, item.CreatedUserFullName]
-        .some(field => field && field.toLowerCase().includes(lowerCaseName))
+      [item.project_internal_id, item.job_name, item.reference_no, item.CreatedUserFullName, item.RevisedUserFullName, item.created_date]
+    .some(field => field && field.toLowerCase().includes(lowerCaseName))
     );
     setFilterArray(array);
     setPage(0);
