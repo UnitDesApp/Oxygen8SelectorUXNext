@@ -71,12 +71,12 @@ export default function AddNewUnit({currentStep, setCurrentStep}:any) {
   const { unitTypeData, setUnitTypeData } = useContext(UnitTypeContext);
 
 
-  const { data: projects, isLoading: isLoadingProjects, refetch } = useGetSavedJobsByUserAndCustomer(
+  const { data: projects,  } = useGetSavedJobsByUserAndCustomer(
     {
-      // oJobs: {
+
       intUserId: typeof window !== 'undefined' && localStorage.getItem('userId'),
       intUAL: typeof window !== 'undefined' && localStorage.getItem('UAL'),
-      // strSearchBy: filterName,
+
     },
     {
       enabled: typeof window !== 'undefined',
@@ -159,7 +159,7 @@ export default function AddNewUnit({currentStep, setCurrentStep}:any) {
         <CustomBreadcrumbs
           heading={`New: ${STEP_PAGE_NAME[currentStep]}`}
           links={[
-            { name: 'My projects', href: PATH_APP.project },
+            { name: 'Projects', href: PATH_APP.project },
             {
               name: filteredData[0]?.job_name,
               href: PATH_APP.projectDashboard(projectId?.toString() || '', 'unitlist'),

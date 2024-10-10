@@ -54,7 +54,7 @@ export default function Project() {
 
   // Table State
   const [filterName, setFilterName] = useState<string>('');
-  const [filterRole, setFilterRole] = useState<string>('All');
+  const [filterRole, setFilterRole] = useState<string>('My Projects');
   const [filterStatus, setFilterStatus] = useState<string>('All');
   const [newProjectDialogOpen, setNewProjectDialog] = useState<boolean>(false);
   const [isOneConfirmDialog, setOneConfirmDialogState] = useState<boolean>(false);
@@ -245,6 +245,7 @@ export default function Project() {
               onFilterRole={handleFilterRole}
               onOpneDialog={handleClickNewProjectDialogOpen}
               optionsRole={ROLE_OPTIONS}
+              selectedRole={filterRole}
             />
             <Scrollbar sx={{ overflow: 'hidden' }}>
               <TableContainer>
@@ -418,7 +419,9 @@ const applySortFilter = ({
   if (filterRole !== 'All') {
     if (filterRole === 'My Projects') {
       tableData = tableData.filter(
-        (item: any) => item.created_user_id.toString() === localStorage.getItem('userId')
+        (item: any) => {
+          item.created_user_id.toString() === localStorage.getItem('userId')
+        }
       );
     } else {
       tableData = tableData.filter(
