@@ -206,7 +206,7 @@ export default function Project() {
         >
           {TABS.map((tabItem) => (
             <Tab
-                        disableRipple
+              disableRipple
               key={tabItem.value}
               label={capitalCase(tabItem.title)}
               value={tabItem.value}

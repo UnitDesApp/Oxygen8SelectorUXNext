@@ -13,7 +13,9 @@ type ProjectTableRowProps = {
     job_name: string;
     reference_no: string;
     revision_no: string;
-    CustomerName: string;
+    JobCompanyName: string;
+    JobCompanyContactName: string;
+    CurrentUserCustomerName: string;
     CreatedUserFullName: string;
     RevisedUserFullName: string;
     CreatedUserCustomerName: string;
@@ -41,7 +43,9 @@ export default function ProjectTableRow({
     job_name,
     reference_no,
     revision_no,
-    CustomerName,
+    JobCompanyName,
+    JobCompanyContactName,
+    CurrentUserCustomerName,
     CreatedUserFullName,
     RevisedUserFullName,
     CreatedUserCustomerName,
@@ -88,13 +92,19 @@ export default function ProjectTableRow({
         {statusValue}
       </TableCell>
 
-      <TableCell align="left" sx={{ cursor: 'pointer' }} onClick={onEditRow}>
+      {/* <TableCell align="left" sx={{ cursor: 'pointer' }} onClick={onEditRow}>
         {CustomerName}
-      </TableCell>
+      </TableCell> */}
       {/* <TableCell align="left" sx={{ cursor: 'pointer' }} onClick={onEditRow}>
         {CreatedUserCustomerName}
       </TableCell> */}
-      
+      <TableCell align="left" sx={{ cursor: 'pointer' }} onClick={onEditRow}>
+        {JobCompanyName}
+      </TableCell>
+      <TableCell align="left" sx={{ cursor: 'pointer' }} onClick={onEditRow}>
+        {JobCompanyContactName}
+      </TableCell>
+
       {/* <TableCell align="left" sx={{ cursor: 'pointer' }} onClick={onEditRow}>
         {CreatedUserFullName}
       </TableCell> */}
@@ -122,7 +132,7 @@ export default function ProjectTableRow({
         </Stack>
       </TableCell>
 
-      <TableCell align="right">
+      {/* <TableCell align="right">
         <TableMoreMenu
           open={openMenu}
           onOpen={handleOpenMenu}
@@ -134,7 +144,7 @@ export default function ProjectTableRow({
             </MenuItem>
           }
         />
-      </TableCell>
+      </TableCell> */}
     </TableRow>
   );
 }
