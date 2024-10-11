@@ -30,12 +30,13 @@ import * as IDs from 'src/utils/ids';
 import { useAuthContext } from 'src/auth/useAuthContext';
 import FormProvider from 'src/components/hook-form/FormProvider';
 import Iconify from 'src/components/iconify';
-import { RHFCheckbox, RHFSelect, RHFTextField } from 'src/components/hook-form';
+import { RHFCheckbox, RHFSelect, RHFTextField,  } from 'src/components/hook-form';
 import { useApiContext } from 'src/contexts/ApiContext';
 import { any, number } from 'prop-types';
 import { filter, flowRight, indexOf } from 'lodash';
 // import { useGetAllUnits } from 'src/hooks/useApi';
 // import Selection from '../Selection/Selection';
+import Image from 'src/components/image';
 
 import {
   // getBypass,
@@ -434,18 +435,22 @@ export default function UnitInfoForm({
         intIsHeatPump: Number(formCurrValues.ckbHeatPump) === 1 ? 1 : 0, // Do not use formValues.ckbHeatPump === true
         intIsDehumidification: Number(formCurrValues.ckbDehumidification) === 1 ? 1 : 0, // Do not use formValues.ckbDehumidification === true
         intIsDaikinVRV: Number(formCurrValues.ckbDaikinVRV) === 1 ? 1 : 0, // Do not use formValues.ckbDaikinVRV === true
-        intElecHeaterVoltageId: Number(formCurrValues.ddlElecHeaterVoltage),
+        intPreheatElecHeaterVoltageId: Number(formCurrValues.ddlPreheatElecHeaterVoltage),
         intPreheatElecHeaterInstallationId: Number(formCurrValues.ddlPreheatElecHeaterInstall),
         intIsPreheatElecHeaterVoltageSPP: Number(formCurrValues.ckbPreheatElecHeaterVoltageSPP) === 1 ? 1 : 0,
-        intHeatingElecHeaterInstallationId:
-          Number(getValues('ddlReheatComp')) === IDs.intCompIdElecHeater
-            ? formCurrValues.ddlReheatElecHeaterInstall
-            : formCurrValues.ddlHeatingElecHeaterInstall,
+        // intHeatingElecHeaterInstallationId:
+        //   Number(getValues('ddlReheatComp')) === IDs.intCompIdElecHeater
+        //     ? formCurrValues.ddlReheatElecHeaterInstall
+        //     : formCurrValues.ddlHeatingElecHeaterInstall,
+        intHeatingElecHeaterVoltageId: Number(formCurrValues.ddlHeatingElecHeaterVoltage),
+        intHeatingElecHeaterInstallationId: formCurrValues.ddlHeatingElecHeaterInstall,
+        intReheatElecHeaterInstallationId: formCurrValues.ddlReheatElecHeaterInstall,    
         intPreheatElecHeaterStdCoilNo: 0,
         intCoolingDX_VRVKitQty: 0,
         dblCoolingDX_VRVKitTonnage: 0,
         intHeatingElecHeaterStdCoilNo: 0,
         intIsHeatingElecHeaterVoltageSPP: Number(formCurrValues.ckbHeatingElecHeaterVoltageSPP) === 1 ? 1 : 0,
+        intReheatElecHeaterVoltageId: Number(formCurrValues.ddlReheatElecHeaterVoltage),
         intReheatElecHeaterStdCoilNo: 0,
         intIsReheatElecHeaterVoltageSPP: Number(formCurrValues.ckbReheatElecHeaterVoltageSPP) === 1 ? 1 : 0,
         intReheatHGRC_VRVKitQty: 0,
@@ -465,18 +470,24 @@ export default function UnitInfoForm({
         dblHeatingSetpointDB: formCurrValues.txbWinterHeatingSetpointDB,
         dblReheatSetpointDB: formCurrValues.txbSummerReheatSetpointDB,
         dblBackupHeatingSetpontDB:  formCurrValues.txbBackupHeatingSetpointDB,
+        intPreheatFluidTypeId: formCurrValues.ddlPreheatFluidType,
+        intPreheatFluidConcentId: formCurrValues.ddlPreheatFluidConcentration,
         dblPreheatFluidEntTemp: formCurrValues.txbPreheatHWCFluidEntTemp,
         dblPreheatFluidLvgTemp: formCurrValues.txbPreheatHWCFluidLvgTemp,
         intCoolingFluidTypeId: Number(formCurrValues.ddlCoolingFluidType),
         intCoolingFluidConcentId: Number(formCurrValues.ddlCoolingFluidConcentration),
         dblCoolingFluidEntTemp: formCurrValues.txbCoolingCWCFluidEntTemp,
         dblCoolingFluidLvgTemp: formCurrValues.txbCoolingCWCFluidLvgTemp,
-        intHeatingFluidTypeId: heatingFluidTypeId,
-        intHeatingFluidConcentId: heatingFluidConcenId,
+        // intHeatingFluidTypeId: heatingFluidTypeId,
+        // intHeatingFluidConcentId: heatingFluidConcenId,
         // dblHeatingFluidEntTemp: heatingFluidEntTemp,
         // dblHeatingFluidLvgTemp: heatingFluidLvgTemp,
+        intHeatingFluidTypeId: formCurrValues.ddlHeatingFluidType,
+        intHeatingFluidConcentId: formCurrValues.ddlHeatingFluidConcentration,
         dblHeatingFluidEntTemp: formCurrValues.txbHeatingHWCFluidEntTemp,
         dblHeatingFluidLvgTemp: formCurrValues.txbHeatingHWCFluidLvgTemp,
+        intReheatFluidTypeId: formCurrValues.ddlReheatFluidType,
+        intReheatFluidConcentId: formCurrValues.ddlReheatFluidConcentration,
         dblReheatFluidEntTemp: formCurrValues.txbReheatHWCFluidEntTemp,
         dblReheatFluidLvgTemp: formCurrValues.txbReheatHWCFluidLvgTemp,
         dblRefrigSuctionTemp: formCurrValues.txbRefrigSuctionTemp,
@@ -574,14 +585,11 @@ export default function UnitInfoForm({
 
 
 
+  // let imgLayoutPathAndFile = "";
 
-
-
-
-
-
-  
   // const [phiInfo, setPHIInfo] = useState<any>([]);
+  // const [isCheckedMixingBox, setIsCheckedMixingBox] = useState<boolean>(false);
+
   const [phiIsVisible, setPHIIsVisible] = useState<boolean>(false);
   const [phiIsEnabled, setPHIIsEnabled] = useState<boolean>(false);
   const [phiIsChecked, setPHIIsChecked] = useState<boolean>(false);
@@ -596,9 +604,17 @@ export default function UnitInfoForm({
   const [filterCondtionOptions, setFilterCondtionOptions] = useState<any>([]);
   const [filterConditionId, setFilterConditionId] = useState<number>(0);
 
-  const [elecHeaterVoltageTable, setElecHeaterVoltageTable] = useState<any>([]);
-  const [elecHeaterVoltageIsVisible, setElecHeaterVoltageIsVisible] = useState<any>([]);
-  const [elecHeaterVoltageIsEnabled, setElecHeaterVoltageIsEnabled] = useState<any>([]);
+  const [preheatElecHeaterVoltageTable, setPreheatElecHeaterVoltageTable] = useState<any>([]);
+  const [isVisibleDdlPreheatElecHeaterVoltage, setIsVisibleDdlPreheatElecHeaterVoltage] = useState<any>([]);
+  const [isEnabledDdlPreheatElecHeaterVoltage, setIsEnabledDdlPreheatElecHeaterVoltage] = useState<any>([]);
+  
+  const [heatingElecHeaterVoltageTable, setHeatingElecHeaterVoltageTable] = useState<any>([]);
+  const [isVisibleDdlHeatingElecHeaterVoltage, setIsVisibleDdlHeatingElecHeaterVoltage] = useState<any>([]);
+  const [isEnabledDdlHeatingElecHeaterVoltage, setIsEnabledDdlHeatingElecHeaterVoltage] = useState<any>([]);
+
+  const [reheatElecHeaterVoltageTable, setReheatElecHeaterVoltageTable] = useState<any>([]);
+  const [isVisibleDdlReheatElecHeaterVoltage, setIsVisibleDdlReheatElecHeaterVoltage] = useState<any>([]);
+  const [isEnabledDdlReheatElecHeaterVoltage, setIsEnabledDdlReheatElecHeaterVoltage] = useState<any>([]);
 
   const [ckbPreheatHWCUseFluidLvgTempValue, setCkbPreheatHWCUseFluidLvgTempValue] = useState<number>(0);
   const [ckbPreheatHWCUseFluidFlowRateValue, setCkbPreheatHWCUseFluidFlowRateValue] = useState<number>(0);
@@ -631,6 +647,7 @@ export default function UnitInfoForm({
   const [isHeatingSectionVisible, setIsHeatingSectionVisible] = useState<any>([]);
   const [isHeatingSetpointVisible, setIsHeatingSetpointVisible] = useState<any>([]);
 
+  const [imgLayoutPathAndFile, setImgLayoutPathAndFile] = useState<any>([]);
 
   const getUMC = () => {
     let umc;
@@ -1407,8 +1424,6 @@ useEffect(() => {
 }, [getValues('ckbReheatHWCUseFluidFlowRate')]);
 
 
-
-
   const [locationInfo, setLocationInfo] = useState<any>([]);
   useMemo(() => {
     const info: { fdtLocation: any; defaultId: number } = { fdtLocation: [], defaultId: 0,};
@@ -1460,7 +1475,6 @@ useEffect(() => {
 
 
 
-// Initialization
   useEffect(() => {
       const supplyCFM = getSupplyAirCFM();
       setValue('txbSummerSupplyAirCFM', supplyCFM);
@@ -1485,6 +1499,137 @@ useEffect(() => {
       }
 
   }, [getValues('ckbPHI')]);
+
+
+  useEffect(() => {
+    switch (Number(getValues('ddlLocation'))) {
+      case IDs.intLocationIdIndoor:
+        setValue('ckbDownshot', 0);
+        break;
+      // case IDs.intLocationIdOutdoor:
+      //   break;
+      default:
+        break;
+    }
+
+}, [getValues('ddlLocation')]);
+
+
+
+
+  useEffect(() => {
+
+    let imgLayout = "layout";
+
+    switch (intProductTypeID) {
+      case IDs.intProdTypeIdNova:
+        imgLayout += '_nova';
+        break;
+      case IDs.intProdTypeIdVentum:
+        imgLayout += '_ventum';
+        break;
+      case IDs.intProdTypeIdVentumLite:
+        imgLayout += '_ventumlite';
+        break;
+      case IDs.intProdTypeIdVentumPlus:
+        imgLayout += '_ventumplus';
+        break;
+      case IDs.intProdTypeIdTerra:
+        imgLayout += '_terra';
+        break;
+      default:
+        break;
+    }
+
+
+    switch (Number(getValues('ddlLocation'))) {
+      case IDs.intLocationIdIndoor:
+        imgLayout += '_in';
+        break;
+      case IDs.intLocationIdOutdoor:
+        imgLayout += '_out';
+      break;
+      default:
+        break;
+    }
+
+
+    switch (intProductTypeID) {
+      case IDs.intProdTypeIdNova:
+      case IDs.intProdTypeIdVentum:
+      case IDs.intProdTypeIdVentumLite:
+      case IDs.intProdTypeIdTerra:
+        switch (Number(getValues('ddlOrientation'))) {
+          case IDs.intOrientationIdHorizontal:
+            imgLayout += '_h';
+            break;
+          case IDs.intOrientationIdVertical:
+            imgLayout += '_v';
+          break;
+          default:
+            break;
+        }     
+        break;
+      case IDs.intProdTypeIdVentumPlus:
+        break;
+       default:
+        break;
+    }
+
+
+    switch (Number(getValues('ddlHanding'))) {
+      case IDs.intFanPlacementIdRightID:
+        imgLayout += '_rh';
+        break;
+      case IDs.intFanPlacementIdLeftID:
+        imgLayout += '_lh';
+        break;
+      default:
+        break;
+    }
+
+
+    if (intProductTypeID === IDs.intProdTypeIdNova && Number(getValues('ckbDownshot')) === 1) {
+      imgLayout += "_ds";
+    }
+
+    // const fdtOrientation = db?.dbtSelOpeningsERV_EA;
+    // filterCondtion = filterCondtion?.filter((item: { id: number }) => item.id !== IDs.intFilterConditionIdNA);
+
+    switch (intProductTypeID) {
+      case IDs.intProdTypeIdVentum:
+      case IDs.intProdTypeIdVentumLite:
+        switch (getValues('ddlSupplyAirOpening')) {
+          case "1":
+          case "1A":
+            imgLayout += "_sa_1";
+            break;
+          case "2":
+          case "2A":
+            imgLayout += "_sa_2";
+            break;
+          default:
+            break;
+        }
+        break;
+      case IDs.intProdTypeIdNova:
+      case IDs.intProdTypeIdVentumPlus:
+      case IDs.intProdTypeIdTerra:
+        if (Number(getValues('ckbMixingBox')) === 1) {
+          imgLayout += "_mix";
+        }
+        break;
+      default:
+        break;
+    }
+
+
+    imgLayout += '.png';
+    imgLayout = `/assets/images/layouts/${imgLayout}`;
+    setImgLayoutPathAndFile(imgLayout);
+
+}, [intProductTypeID, getValues('ddlLocation'), getValues('ddlOrientation'), getValues('ckbMixingBox'), 
+    getValues('ckbDownshot'), getValues('ddlHanding'),  getValues('ddlSupplyAirOpening')]);
 
 
 
@@ -1524,6 +1669,9 @@ useEffect(() => {
     setPHIIsChecked(info.isChecked);
 
   }, []);
+
+
+
 
 
 // // ckbBypass
@@ -2517,10 +2665,13 @@ useEffect(() => {
     //   }
     // }
     setCoolingCompInfo(info);
-    info.defaultId = info.fdtCoolingComp?.[0]?.id;
-    setValue('ddlCoolingComp', info.fdtCoolingComp?.[0]?.id);
+    // info.defaultId = info.fdtCoolingComp?.[0]?.id;
+    // setValue('ddlCoolingComp', info.fdtCoolingComp?.[0]?.id);
+    info.defaultId = formCurrValues.ddlCoolingComp  > 0 ? formCurrValues.ddlCoolingComp : info.fdtCoolingComp?.[0]?.id;
 
-  }, []);
+    setValue('ddlCoolingComp', info.defaultId);
+
+  }, [getValues('ddlUnitModel')]);
   
 
 
@@ -3028,10 +3179,21 @@ useEffect(() => {
     // setElecHeaterVoltageInfo(info);
 
     // info.defaultId = info.fdtElecHeaterVoltage?.[0]?.id;
-    setElecHeaterVoltageTable(info.fdtElecHeaterVoltage);
-    setElecHeaterVoltageIsVisible(info.isVisible);
-    setElecHeaterVoltageIsEnabled(info.isEnabled);
-    setValue('ddlElecHeaterVoltage', info.defaultId);
+    setPreheatElecHeaterVoltageTable(info.fdtElecHeaterVoltage);
+    setIsVisibleDdlPreheatElecHeaterVoltage(info.isVisible);
+    setIsEnabledDdlPreheatElecHeaterVoltage(info.isEnabled);
+   
+    setHeatingElecHeaterVoltageTable(info.fdtElecHeaterVoltage);
+    setIsVisibleDdlHeatingElecHeaterVoltage(info.isVisible);
+    setIsEnabledDdlHeatingElecHeaterVoltage(info.isEnabled);
+    
+    setReheatElecHeaterVoltageTable(info.fdtElecHeaterVoltage);
+    setIsVisibleDdlReheatElecHeaterVoltage(info.isVisible);
+    setIsEnabledDdlReheatElecHeaterVoltage(info.isEnabled);
+
+    setValue('ddlPreheatElecHeaterVoltage', info.defaultId);
+    setValue('ddlHeatingElecHeaterVoltage', info.defaultId);
+    setValue('ddlReheatElecHeaterVoltage', info.defaultId);
 
   }, [db, intProductTypeID, formCurrValues.ddlPreheatComp, formCurrValues.ddlHeatingComp, formCurrValues.ddlReheatComp, 
         formCurrValues.ddlUnitVoltage, ]);
@@ -4210,8 +4372,18 @@ const ddlUnitModelChanged = useCallback((e: any) => {
   );
 
 
-  const ddlElecHeaterVoltageChanged = useCallback(
-    (e: any) => setValue('ddlElecHeaterVoltage', Number(e.target.value)),
+  const ddlPreheatElecHeaterVoltageChanged = useCallback(
+    (e: any) => setValue('ddlPreheatElecHeaterVoltage', Number(e.target.value)),
+    [setValue]
+  );
+
+  const ddlHeatingElecHeaterVoltageChanged = useCallback(
+    (e: any) => setValue('ddlHeatingElecHeaterVoltage', Number(e.target.value)),
+    [setValue]
+  );
+
+  const ddlReheatElecHeaterVoltageChanged = useCallback(
+    (e: any) => setValue('ddlReheatElecHeaterVoltage', Number(e.target.value)),
     [setValue]
   );
 
@@ -4462,22 +4634,51 @@ const ddlUnitModelChanged = useCallback((e: any) => {
 
 // ddlElecHeaterVoltage
 useEffect(() => {
-  if (Number(formCurrValues.ddlPreheatComp) === IDs.intCompIdElecHeater || 
-      Number(formCurrValues.ddlHeatingComp) === IDs.intCompIdElecHeater ||
-      Number(formCurrValues.ddlReheatComp) === IDs.intCompIdElecHeater) {
+  if (Number(formCurrValues.ddlPreheatComp) === IDs.intCompIdElecHeater) {
     switch (Number(getValues('ckbVoltageSPP'))) {
       case 1:
-        setValue('ddlElecHeaterVoltage', formCurrValues?.ddlUnitVoltage)
-        setElecHeaterVoltageIsEnabled(false);
+        setValue('ddlPreheatElecHeaterVoltage', formCurrValues?.ddlUnitVoltage)
+        setIsEnabledDdlPreheatElecHeaterVoltage(false);
         break;
       case 0:
-        setElecHeaterVoltageIsEnabled(true);
+        setIsEnabledDdlPreheatElecHeaterVoltage(true);
         break;
       default:
         break;
     }
-}
+  }
+
+  if (Number(formCurrValues.ddlHeatingComp) === IDs.intCompIdElecHeater) {
+    switch (Number(getValues('ckbVoltageSPP'))) {
+      case 1:
+        setValue('ddlHeatingElecHeaterVoltage', formCurrValues?.ddlUnitVoltage)
+        setIsEnabledDdlHeatingElecHeaterVoltage(false);
+        break;
+      case 0:
+        setIsEnabledDdlHeatingElecHeaterVoltage(true);
+        break;
+      default:
+        break;
+    }
+    }
+
+  if (Number(formCurrValues.ddlReheatComp) === IDs.intCompIdElecHeater) {
+    switch (Number(getValues('ckbVoltageSPP'))) {
+    case 1:
+      setValue('ddlReheatElecHeaterVoltage', formCurrValues?.ddlUnitVoltage)
+      setIsEnabledDdlReheatElecHeaterVoltage(false);
+      break;
+    case 0:
+      setIsEnabledDdlReheatElecHeaterVoltage(true);
+      break;
+    default:
+      break;
+    }
+    }
 }, [getValues('ckbVoltageSPP')]);
+
+
+
 
 
 // ddlEKEXVKitInstallation
@@ -4576,7 +4777,7 @@ useEffect(() => {
       setValue('txbMixWinterRA_RH', Number(unitInfo?.oUnitAirflow?.dblMixWinterReturnAirRH) > 0 ?  unitInfo?.oUnitAirflow?.dblMixWinterReturnAirRH : getValues('txbMixWinterRA_RH'));
 
      
-      setValue('ckbMixingBox', Number(unitInfo?.oUnitCompOpt?.intIsMixingBox) > 0 ?  unitInfo?.oUnitCompOpt?.intIsMixingBox : 0);
+      setValue('ckbMixingBox', Number(unitInfo?.oUnitCompOpt?.intIsMixingBox) > 0 ?  unitInfo?.oUnitCompOpt?.intIsMixingBox : getValues('ckbMixingBox'));
 
       setValue('ddlPreheatComp', unitInfo?.oUnitCompOpt?.intPreheatCompId > 0 ?  unitInfo?.oUnitCompOpt?.intPreheatCompId : getValues('ddlPreheatComp'));
 
@@ -4743,8 +4944,10 @@ useEffect(() => {
 
       setValue('ddlDamperAndActuator', unitInfo?.oUnitCompOpt?.intDamperAndActuatorId > 0 ?  unitInfo?.oUnitCompOpt?.intDamperAndActuatorId : getValues('ddlDamperAndActuator'));
 
-      setValue('ddlElecHeaterVoltage', unitInfo?.oUnitCompOpt?.intElecHeaterVoltageId > 0 ?  unitInfo?.oUnitCompOpt?.intElecHeaterVoltageId : getValues('ddlElecHeaterVoltage'));
-
+      setValue('ddlPreheatElecHeaterVoltage', unitInfo?.oUnitCompOpt?.intPreheatElecHeaterVoltageId > 0 ?  unitInfo?.oUnitCompOpt?.intPreheatElecHeaterVoltageId : getValues('ddlPreheatElecHeaterVoltage'));
+      setValue('ddlHeatingElecHeaterVoltage', unitInfo?.oUnitCompOpt?.intHeatingElecHeaterVoltageId > 0 ?  unitInfo?.oUnitCompOpt?.intHeatingElecHeaterVoltageId : getValues('ddlHeatingElecHeaterVoltage'));
+      setValue('ddlReheatElecHeaterVoltage', unitInfo?.oUnitCompOpt?.intReheatElecHeaterVoltageId > 0 ?  unitInfo?.oUnitCompOpt?.intReheatElecHeaterVoltageId : getValues('ddlReheatElecHeaterVoltage'));
+   
       setValue('ckbValveAndActuator', unitInfo?.oUnitCompOpt?.intIsValveAndActuatorIncluded > 0 ?  unitInfo?.oUnitCompOpt?.intIsValveAndActuatorIncluded : 0);
 
       setValue('ddlValveType', unitInfo?.oUnitCompOpt?.intValveTypeId > 0 ?  unitInfo?.oUnitCompOpt?.intValveTypeId: getValues('ddlValveType'));
@@ -4766,6 +4969,22 @@ useEffect(() => {
     }
   }, []); // <-- empty dependency array - This will only trigger when the component mounts and no-render
 
+// Always keep below loading saved value
+useEffect(() => {
+
+    switch (Number(intProductTypeID)) {
+      case IDs.intProdTypeIdVentum:
+      case IDs.intProdTypeIdVentumPlus:
+      case IDs.intProdTypeIdNova:
+      case IDs.intProdTypeIdVentumLite:
+        setValue('ckbMixingBox', 0);
+        break;
+      case IDs.intProdTypeIdTerra:
+        break;
+      default:
+        break;
+    }
+  }, [intProductTypeID]);
 
 
 
@@ -4940,7 +5159,7 @@ useEffect(() => {
                       sx={{ ...getInlineDisplay(formValues.ddlLocation === IDs.intLocationIdOutdoor) }}
                       label="Downshot"
                       name="ckbDownshot"
-                      checked={formValues.ckbDownshot}
+                      // checked={formValues.ckbDownshot}
                       // onChange={() => setCkbDownshotVal(!formValues.ckbDownshotVal)}
                       onChange={(e: any) => setValue('ckbDownshot', Number(e.target.checked))}
                     />
@@ -5058,7 +5277,7 @@ useEffect(() => {
                     <RHFCheckbox
                       label="Mixing Section"
                       name="ckbMixingBox"
-                      // checked={formValues.ckbVoltageSPP}
+                      // checked={isCheckedMixingBox}
                       onChange={(e: any) => setValue('ckbMixingBox', Number(e.target.checked))}
                       sx={getDisplay(intProductTypeID === IDs.intProdTypeIdTerra)}
                     />
@@ -5559,14 +5778,14 @@ useEffect(() => {
                 <RHFSelect
                     native
                     size="small"
-                    name="ddlElecHeaterVoltage"
+                    name="ddlPreheatElecHeaterVoltage"
                     label="Electric Heater Voltage"
                     placeholder=""
-                    sx={getInlineDisplay(elecHeaterVoltageIsVisible)}
-                    disabled={!elecHeaterVoltageIsEnabled}
-                    onChange={ddlElecHeaterVoltageChanged}
+                    sx={getInlineDisplay(isVisibleDdlPreheatElecHeaterVoltage)}
+                    disabled={!isEnabledDdlPreheatElecHeaterVoltage}
+                    onChange={ddlPreheatElecHeaterVoltageChanged}
                   >
-                    {elecHeaterVoltageTable?.map(
+                    {preheatElecHeaterVoltageTable?.map(
                       (item: any, index: number) => (
                         <option key={index} value={item.id}>
                           {item.items}
@@ -6291,14 +6510,14 @@ useEffect(() => {
                 <RHFSelect
                     native
                     size="small"
-                    name="ddlElecHeaterVoltage"
+                    name="ddlHeatingElecHeaterVoltage"
                     label="Electric Heater Voltage"
                     placeholder=""
-                    sx={getInlineDisplay(elecHeaterVoltageIsVisible)}
-                    disabled={!elecHeaterVoltageIsEnabled}
-                    onChange={ddlElecHeaterVoltageChanged}
+                    sx={getInlineDisplay(isVisibleDdlHeatingElecHeaterVoltage)}
+                    disabled={!isEnabledDdlHeatingElecHeaterVoltage}
+                    onChange={ddlHeatingElecHeaterVoltageChanged}
                   >
-                    {elecHeaterVoltageTable?.map(
+                    {heatingElecHeaterVoltageTable?.map(
                       (item: any, index: number) => (
                         <option key={index} value={item.id}>
                           {item.items}
@@ -6579,14 +6798,14 @@ useEffect(() => {
                 <RHFSelect
                     native
                     size="small"
-                    name="ddlElecHeaterVoltage"
+                    name="ddlReheatElecHeaterVoltage"
                     label="Electric Heater Voltage"
                     placeholder=""
-                    sx={getInlineDisplay(elecHeaterVoltageIsVisible)}
-                    disabled={!elecHeaterVoltageIsEnabled}
-                    onChange={ddlElecHeaterVoltageChanged}
+                    sx={getInlineDisplay(isVisibleDdlReheatElecHeaterVoltage)}
+                    disabled={!isEnabledDdlReheatElecHeaterVoltage}
+                    onChange={ddlReheatElecHeaterVoltageChanged}
                   >
-                    {elecHeaterVoltageTable?.map(
+                    {reheatElecHeaterVoltageTable?.map(
                       (item: any, index: number) => (
                         <option key={index} value={item.id}>
                           {item.items}
@@ -7046,7 +7265,7 @@ useEffect(() => {
           </AccordionSummary>
           <AccordionDetails>
             <Grid container spacing={5}>
-              <Grid item xs={4} md={4}>
+              <Grid item xs={2} md={2}>
                 <Stack spacing={3}>
                   <RHFSelect
                     native
@@ -7121,7 +7340,7 @@ useEffect(() => {
                   </RHFSelect>
                 </Stack>{' '}
               </Grid>
-              <Grid item xs={4} md={4}>
+              <Grid item xs={2} md={2}>
                 <Stack spacing={3}>
                   <RHFSelect
                     native
@@ -7227,15 +7446,21 @@ useEffect(() => {
                   </RHFSelect>
                 </Stack>{' '}
               </Grid>
-
-              {/* <Grid item xs={8} md={8}>
-                  <RHFUpload
-                    name="layoutImage"
-                    accept="image/*"
-                    maxSize={3145728}
-                    onDrop={handleDrop}
+              <Grid item xs={8} md={8}>
+                {/* <RHFUpload
+                  name="layoutImage"
+                  accept="image/*"
+                  maxSize={3145728}
+                  onDrop={handleDrop}
+                  /> */}
+                <Box sx={{ padding: '20px' }}>                        
+                  <Image
+                    src={imgLayoutPathAndFile }
+                    // height="100%" 
+                    width={75}
                   />
-                </Grid> */}
+                </Box>
+              </Grid>  
             </Grid>
           </AccordionDetails>
         </Accordion>
