@@ -416,12 +416,12 @@ const applySortFilter = ({
     tableData = tableData.filter((item: any) => item.status === filterStatus);
   }
 
+
   if (filterRole !== 'All') {
     if (filterRole === 'My Projects') {
       tableData = tableData.filter(
-        (item: any) => {
-          item.created_user_id.toString() === localStorage.getItem('userId')
-        }
+        (item: any) => item.created_user_id.toString() === localStorage.getItem('userId')
+        // }
       );
     } else {
       tableData = tableData.filter(
