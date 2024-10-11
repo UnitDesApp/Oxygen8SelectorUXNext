@@ -5870,35 +5870,60 @@ useEffect(() => {
               <Grid item xs={12} md={12} sx={{ ...getDisplay(formValues.ddlPreheatComp === IDs.intCompIdHWC) }}> */}
                 <Box sx={{ display: 'grid', rowGap: 3, columnGap: 3, gridTemplateColumns: { xs: 'repeat(3, 1fr)' }, }}>
                   <Stack>
-                    <RHFTextField
-                      size="small"
-                      name="txbPreheatHWCFluidEntTemp"
-                      label="Heating Fluid Ent Temp (F)"
-                      // type="number"
-                      InputProps={{ inputProps: { min: 80, max: 180 } }}
-                      onChange={(e: any) => { setValueWithCheck1(e, 'txbPreheatHWCFluidEntTemp'); }}
-                    />
+                  <RHFTextField
+                        size="small"
+                        name="txbPreheatHWCFluidEntTemp"
+                        label="Heating Fluid Ent Temp (F)"
+                        InputProps={{ inputProps: { min: 80, max: 180 } }}
+                        onChange={(e: any) => { 
+                          const value = parseFloat(e.target.value);
+                          if (value >= 80 && value <= 180) {
+                            setValueWithCheck1(e, 'txbPreheatHWCFluidEntTemp'); 
+                          } else if (value < 80) {
+                            setValueWithCheck1({ ...e, target: { value: 80 } }, 'txbPreheatHWCFluidEntTemp'); 
+                          } else if (value > 180) {
+                            setValueWithCheck1({ ...e, target: { value: 180 } }, 'txbPreheatHWCFluidEntTemp');
+                          }
+                        }}
+                      />
                   </Stack>
                   <Stack>
                   <RHFTextField
-                      size="small"
-                      name="txbPreheatHWCFluidLvgTemp"
-                      label="Heating Fluid Lvg Temp (F)"
-                      InputProps={{ inputProps: { min: 40, max: 180 } }}
-                      disabled={!isTxbPreheatHWCFluidLvgTempEnabled}
-                      onChange={(e: any) => { setValueWithCheck1(e, 'txbPreheatHWCFluidLvgTemp'); }}
-                    />
+                    size="small"
+                    name="txbPreheatHWCFluidLvgTemp"
+                    label="Heating Fluid Lvg Temp (F)"
+                    InputProps={{ inputProps: { min: 40, max: 180 } }}
+                    disabled={!isTxbPreheatHWCFluidLvgTempEnabled}
+                    onChange={(e: any) => { 
+                      const value = parseFloat(e.target.value);
+                      if (value >= 40 && value <= 180) {
+                        setValueWithCheck1(e, 'txbPreheatHWCFluidLvgTemp'); 
+                      } else if (value < 40) {
+                        setValueWithCheck1({ ...e, target: { value: 40 } }, 'txbPreheatHWCFluidLvgTemp'); 
+                      } else if (value > 180) {
+                        setValueWithCheck1({ ...e, target: { value: 180 } }, 'txbPreheatHWCFluidLvgTemp'); 
+                      }
+                    }}
+                  />
                   </Stack>
                   <Stack>
-                    <RHFTextField
-                      size="small"
-                      name="txbPreheatHWCFluidFlowRate"
-                      label="Preheat HWC Flow Rate (GPM)"
-                      InputProps={{ inputProps: { min: 0.1, max: 50 } }}
-                      // sx={getDisplay(customInputs.divPreheatHWC_UseFlowRateVisible)}
-                      disabled={!isTxbPreheatHWCFluidFlowRateEnabled}
-                      onChange={(e: any) => {setValueWithCheck1(e, 'txbPreheatHWCFluidFlowRate'); }}
-                    />
+                  <RHFTextField
+                        size="small"
+                        name="txbPreheatHWCFluidFlowRate"
+                        label="Preheat HWC Flow Rate (GPM)"
+                        InputProps={{ inputProps: { min: 0.1, max: 50 } }}
+                        disabled={!isTxbPreheatHWCFluidFlowRateEnabled}
+                        onChange={(e: any) => { 
+                          const value = parseFloat(e.target.value);
+                          if (value >= 0.1 && value <= 50) {
+                            setValueWithCheck1(e, 'txbPreheatHWCFluidFlowRate'); 
+                          } else if (value < 0.1) {
+                            setValueWithCheck1({ ...e, target: { value: 0.1 } }, 'txbPreheatHWCFluidFlowRate');
+                          } else if (value > 50) {
+                            setValueWithCheck1({ ...e, target: { value: 50 } }, 'txbPreheatHWCFluidFlowRate'); 
+                          }
+                        }}
+                      />
                   </Stack>
                 </Box>
               </Grid>
