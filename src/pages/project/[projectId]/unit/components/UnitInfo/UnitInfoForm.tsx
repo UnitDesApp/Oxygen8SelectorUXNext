@@ -1142,6 +1142,7 @@ const ckbCoolingCWCUseFluidFlowRateChanged = useCallback((e: any) => {
 }, []);
 
 
+
 const txbSummerCoolingSetpointDBChanged = useCallback((e: any) => {
   if (setValueWithCheck1(e, 'txbSummerCoolingSetpointDB')) {
     setValue('txbSummerCoolingSetpointDB', parseFloat(e.target.value).toFixed(1));
@@ -1260,6 +1261,23 @@ useEffect(() => {
 
 
 useEffect(() => {
+  switch (Number(getValues('ckbPreheatElecHeaterVoltageSPP'))) {
+    case 1:
+      setValue('ddlPreheatElecHeaterVoltage', getValues('ddlUnitVoltage'));
+      setIsEnabledDdlPreheatElecHeaterVoltage(false);
+      break;
+    case 0:
+      setIsEnabledDdlPreheatElecHeaterVoltage(true);
+      break;
+    default:
+      break;
+  }
+
+}, [getValues('ckbPreheatElecHeaterVoltageSPP')]);
+
+
+
+useEffect(() => {
   switch (Number(getValues('ckbCoolingCWCUseFluidLvgTemp'))) {
     case 1:
       setIsTxbCoolingCWCFluidLvgTempEnabled(true);
@@ -1370,6 +1388,23 @@ useEffect(() => {
 }, [getValues('ckbHeatingHWCUseFluidFlowRate')]);
 
 
+useEffect(() => {
+  switch (Number(getValues('ckbHeatingElecHeaterVoltageSPP'))) {
+    case 1:
+      setValue('ddlHeatingElecHeaterVoltage', getValues('ddlUnitVoltage'));
+      setIsEnabledDdlHeatingElecHeaterVoltage(false);
+      break;
+    case 0:
+      setIsEnabledDdlHeatingElecHeaterVoltage(true);
+      break;
+    default:
+      break;
+  }
+
+  setValue('ckbReheatElecHeaterVoltageSPP', getValues('ckbHeatingElecHeaterVoltageSPP'));
+}, [getValues('ckbHeatingElecHeaterVoltageSPP')]);
+
+
 
 useEffect(() => {
   switch (Number(getValues('ckbReheatHWCUseFluidLvgTemp'))) {
@@ -1422,6 +1457,23 @@ useEffect(() => {
       break;
   }
 }, [getValues('ckbReheatHWCUseFluidFlowRate')]);
+
+
+useEffect(() => {
+  switch (Number(getValues('ckbReheatElecHeaterVoltageSPP'))) {
+    case 1:
+      setValue('ddlReheatElecHeaterVoltage', getValues('ddlUnitVoltage'));
+      setIsEnabledDdlReheatElecHeaterVoltage(false);
+      break;
+    case 0:
+      setIsEnabledDdlReheatElecHeaterVoltage(true);
+      break;
+    default:
+      break;
+  }
+
+  setValue('ckbHeatingElecHeaterVoltageSPP', getValues('ckbReheatElecHeaterVoltageSPP'));
+}, [getValues('ckbReheatElecHeaterVoltageSPP')]);
 
 
   const [locationInfo, setLocationInfo] = useState<any>([]);
@@ -6530,6 +6582,8 @@ useEffect(() => {
                     name="ckbHeatingElecHeaterVoltageSPP"
                     // checked={}
                     onChange={(e: any) => setValue('ckbHeatingElecHeaterVoltageSPP', Number(e.target.value))}
+                    // onChange={ckbHeatingElecHeaterVoltageSPPChanged}
+
                     sx={getDisplay(voltageSPPIsVisible)}
                   />
                 </Box>
@@ -6818,6 +6872,7 @@ useEffect(() => {
                     name="ckbReheatElecHeaterVoltageSPP"
                     // checked={}
                     onChange={(e: any) => setValue('ckbReheatElecHeaterVoltageSPP', Number(e.target.value))}
+                    // onChange={ckbReheatElecHeaterVoltageSPPChanged}
                     sx={getDisplay(voltageSPPIsVisible)}
                   />
                 </Box>
