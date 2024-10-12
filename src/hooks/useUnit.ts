@@ -176,7 +176,7 @@ const {
       intProductTypeID: edit ? intProdTypeId : 0,
       intUnitTypeID: edit ? intUnitTypeId : 0,
       ddlUnitType: edit ? intUnitTypeId : 0,
-      txtTag: edit ? strTag: '',
+      txbTag: edit ? strTag: '',
       txbQty: edit ? intQty: 1,
       ddlUnitVoltage: edit ? intUnitVoltageId : 1,
       ckbVoltageSPP: edit ? intIsVoltageSPP : 0,
@@ -498,7 +498,7 @@ const {
 };
 
 export const unitEditFormSchema = Yup.object().shape({
-  txtTag: Yup.string().required('This field is required!'),
+  txbTag: Yup.string().required('This field is required!'),
   txbQty: Yup.number().required('This field is required!'),
   ddlLocation: Yup.number(),
   ddlOrientation: Yup.number(),
