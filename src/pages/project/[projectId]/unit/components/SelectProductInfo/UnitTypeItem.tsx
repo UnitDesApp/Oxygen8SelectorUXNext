@@ -2,6 +2,8 @@
 import { styled } from '@mui/material/styles';
 import { Box, Typography, IconButton, Button, Divider, Stack } from '@mui/material';
 import Iconify from 'src/components/iconify';
+import * as Ids from 'src/utils/ids';
+
 // components
 // ----------------------------------------------------------------------
 
@@ -19,6 +21,7 @@ type UnitTypeItemProps = {
   onSelectItem: Function;
   id?: number | string;
   active?: boolean;
+  productTypeId: number;
   productTypeValue?: string;
   unitTypeDesc: string;
   SetIsOpenSideDescriptionOfProductType: (value: boolean) => void;
@@ -26,6 +29,7 @@ type UnitTypeItemProps = {
 
 export default function UnitTypeItem({
   label,
+  productTypeId,
   productTypeValue,
   onSelectItem,
   SetIsOpenSideDescriptionOfProductType,
@@ -41,12 +45,14 @@ export default function UnitTypeItem({
   let imageUrl = images[label as keyof typeof images] || '/assets/Images/default_image.png';
 
   if (label === 'ERV') {
-    if (['Ventum', 'Ventum Lite', 'Ventum Plus'].includes(productTypeValue || '')) {
+    // if (['Ventum', 'Ventum Lite', 'Ventum+'].includes(productTypeValue || '')) {
+    if ([Ids.intProdTypeIdVentum, Ids.intProdTypeIdVentumLite, Ids.intProdTypeIdVentumPlus].includes(productTypeId || 0)) {
       imageUrl = '/assets/Images/new_unit_counterflow_erv.png';
     } else {
       imageUrl = '/assets/Images/new_unit_crossflow_erv.png';
     }
   }  
+
   return (
     <Box textAlign="center">
       <BoxStyle

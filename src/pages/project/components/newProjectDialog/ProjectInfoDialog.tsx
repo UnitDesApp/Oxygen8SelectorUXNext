@@ -1331,8 +1331,13 @@ export default function ProjectInfoDialog({
                             ))}
                           </RHFSelect>
                         </Stack>
-                        <Stack>
-                          <RHFTextField size="small" name="txbProjectInternalId" label="Project ID" disabled />
+                        <Stack sx={{display: Number(typeof window !== 'undefined' ? localStorage.getItem('UAL') : 0) === Ids.intUAL_Admin ? 'block' : 'none'}}>
+                          <RHFTextField 
+                            size="small" 
+                            name="txbProjectInternalId" 
+                            label="Project ID" 
+                            disabled 
+                            />
                         </Stack>
                         <Stack>
                           <RHFTextField size="small" name="txbReferenceNo" label="Reference #" />
@@ -1370,7 +1375,7 @@ export default function ProjectInfoDialog({
                             name="ddlCompanyContactName"
                             label="Contact Name"
                             placeholder=""
-                            disabled={UalInfo.isDisabled}
+                            // disabled={UalInfo.isDisabled}
                             onChange={ddlCompanyContactNameChanged}
                           >
                             {/* <option value="" /> */}

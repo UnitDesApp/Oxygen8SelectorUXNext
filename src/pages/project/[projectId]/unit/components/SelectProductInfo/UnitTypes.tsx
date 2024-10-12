@@ -55,14 +55,13 @@ export default function UnitTypes(props: UnitTypesProps) {
       >
         {units.map((ele) => (
           <UnitTypeItem
+          productTypeId={productTypeID}
           productTypeValue={productTypeValue}
           SetIsOpenSideDescriptionOfProductType = {SetIsOpenSideDescriptionOfProductType}
             key={ele.unit_type_id}
             label={ele.unit_type}
             unitTypeDesc={getUnitTypeDesc(ele.unit_type)}
-            onSelectItem={() => {
-              onSelectItem(ele.unit_type, ele.unit_type_id);
-            }}
+            onSelectItem={() => { onSelectItem(ele.unit_type, ele.unit_type_id); }}
           />
         ))}
       </Box>

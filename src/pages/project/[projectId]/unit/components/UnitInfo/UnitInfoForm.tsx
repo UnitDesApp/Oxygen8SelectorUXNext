@@ -344,7 +344,7 @@ export default function UnitInfoForm({
         intUnitNo: edit ? unitId : 0,
         intProdTypeId: intProductTypeID,
         intUnitTypeId: intUnitTypeID,
-        strTag: formCurrValues.txtTag,
+        strTag: formCurrValues.txbTag,
         intQty: formCurrValues.txbQty,
         intUnitVoltageId: Number(formCurrValues.ddlUnitVoltage),
         // intIsVoltageSPP: Number(formCurrValues.ckbVoltageSPP) === 1 ? 1 : 0,
@@ -1112,6 +1112,10 @@ const ddlFilterConditionChanged = useCallback((e: any) => {
 }, []);
 
 
+
+
+
+
 const ckbPreheatHWCUseFluidLvgTempChanged = useCallback((e: any) => {
   setValue('ckbPreheatHWCUseFluidLvgTemp', e.target.value);
   // setCkbPreheatHWCUseFluidLvgTempValue(Number(e.target.checked));
@@ -1122,6 +1126,42 @@ const ckbPreheatHWCUseFluidFlowRateChanged = useCallback((e: any) => {
   setValue('ckbPreheatHWCUseFluidFlowRate', e.target.value);
   // setCkbPreheatHWCUseFluidFlowRateValue(Number(e.target.checked));
   // setCkbPreheatHWCUseFluidFlowRateValue(Number(getValues('ckbPreheatHWCUseFluidFlowRate') === 'true' ? 1 : 0));
+}, []);
+
+
+const txbPreheatHWCFluidEntTempChanged = useCallback((e: any) => {
+  const value = parseFloat(e.target.value);
+  if (value >= 80 && value <= 180) {
+    setValueWithCheck1(e, 'txbPreheatHWCFluidEntTemp'); 
+  } else if (value < 80) {
+    setValueWithCheck1({ ...e, target: { value: 80 } }, 'txbPreheatHWCFluidEntTemp'); 
+  } else if (value > 180) {
+    setValueWithCheck1({ ...e, target: { value: 180 } }, 'txbPreheatHWCFluidEntTemp');
+  }
+}, []);
+
+
+const txbPreheatHWCFluidLvgTempChanged = useCallback((e: any) => {
+  const value = parseFloat(e.target.value);
+  if (value >= 40 && value <= 180) {
+    setValueWithCheck1(e, 'txbPreheatHWCFluidLvgTemp'); 
+  } else if (value < 40) {
+    setValueWithCheck1({ ...e, target: { value: 40 } }, 'txbPreheatHWCFluidLvgTemp'); 
+  } else if (value > 180) {
+    setValueWithCheck1({ ...e, target: { value: 180 } }, 'txbPreheatHWCFluidLvgTemp');
+  }
+}, []);
+
+
+const txbPreheatHWCFluidFlowRateChanged = useCallback((e: any) => {
+  const value = parseFloat(e.target.value);
+  if (value >= 0.1 && value <= 50) {
+    setValueWithCheck1(e, 'txbPreheatHWCFluidFlowRate'); 
+  } else if (value < 0.1) {
+    setValueWithCheck1({ ...e, target: { value: 0.1 } }, 'txbPreheatHWCFluidFlowRate'); 
+  } else if (value > 50) {
+    setValueWithCheck1({ ...e, target: { value: 50 } }, 'txbPreheatHWCFluidFlowRate');
+  }
 }, []);
 
 
@@ -1139,6 +1179,42 @@ const ckbCoolingCWCUseFluidLvgTempChanged = useCallback((e: any) => {
 const ckbCoolingCWCUseFluidFlowRateChanged = useCallback((e: any) => {
   setValue('ckbCoolingCWCUseFluidFlowRate', e.target.value);
   // setCkbCoolingCWCUseFluidFlowRateValue(e.target.value);
+}, []);
+
+
+const txbCoolingCWCFluidEntTempChanged = useCallback((e: any) => {
+  const value = parseFloat(e.target.value);
+  if (value >= 20 && value <= 120) {
+    setValueWithCheck1(e, 'txbCoolingCWCFluidEntTemp'); 
+  } else if (value < 20) {
+    setValueWithCheck1({ ...e, target: { value: 20 } }, 'txbCoolingCWCFluidEntTemp'); 
+  } else if (value > 120) {
+    setValueWithCheck1({ ...e, target: { value: 120 } }, 'txbCoolingCWCFluidEntTemp');
+  }
+}, []);
+
+
+const txbCoolingCWCFluidLvgTempChanged = useCallback((e: any) => {
+  const value = parseFloat(e.target.value);
+  if (value >= 20 && value <= 120) {
+    setValueWithCheck1(e, 'txbCoolingCWCFluidLvgTemp'); 
+  } else if (value < 20) {
+    setValueWithCheck1({ ...e, target: { value: 20 } }, 'txbCoolingCWCFluidLvgTemp'); 
+  } else if (value > 120) {
+    setValueWithCheck1({ ...e, target: { value: 120 } }, 'txbCoolingCWCFluidLvgTemp');
+  }
+}, []);
+
+
+const txbCoolingCWCFluidFlowRateChanged = useCallback((e: any) => {
+  const value = parseFloat(e.target.value);
+  if (value >= 0.1 && value <= 50) {
+    setValueWithCheck1(e, 'txbCoolingCWCFluidFlowRate'); 
+  } else if (value < 0.1) {
+    setValueWithCheck1({ ...e, target: { value: 0.1 } }, 'txbCoolingCWCFluidFlowRate'); 
+  } else if (value > 50) {
+    setValueWithCheck1({ ...e, target: { value: 50 } }, 'txbCoolingCWCFluidFlowRate');
+  }
 }, []);
 
 
@@ -1163,6 +1239,42 @@ const ckbHeatingHWCUseFluidFlowRateChanged = useCallback((e: any) => {
 }, []);
 
 
+const txbHeatingHWCFluidEntTempChanged = useCallback((e: any) => {
+  const value = parseFloat(e.target.value);
+  if (value >= 80 && value <= 180) {
+    setValueWithCheck1(e, 'txbHeatingHWCFluidEntTemp'); 
+  } else if (value < 80) {
+    setValueWithCheck1({ ...e, target: { value: 80 } }, 'txbHeatingHWCFluidEntTemp'); 
+  } else if (value > 180) {
+    setValueWithCheck1({ ...e, target: { value: 180 } }, 'txbHeatingHWCFluidEntTemp');
+  }
+}, []);
+
+
+const txbHeatingHWCFluidLvgTempChanged = useCallback((e: any) => {
+  const value = parseFloat(e.target.value);
+  if (value >= 40 && value <= 180) {
+    setValueWithCheck1(e, 'txbHeatingHWCFluidLvgTemp'); 
+  } else if (value < 40) {
+    setValueWithCheck1({ ...e, target: { value: 40 } }, 'txbHeatingHWCFluidLvgTemp'); 
+  } else if (value > 180) {
+    setValueWithCheck1({ ...e, target: { value: 180 } }, 'txbHeatingHWCFluidLvgTemp');
+  }
+}, []);
+
+
+const txbHeatingHWCFluidFlowRateChanged = useCallback((e: any) => {
+  const value = parseFloat(e.target.value);
+  if (value >= 0.1 && value <= 50) {
+    setValueWithCheck1(e, 'txbHeatingHWCFluidFlowRate'); 
+  } else if (value < 0.1) {
+    setValueWithCheck1({ ...e, target: { value: 0.1 } }, 'txbHeatingHWCFluidFlowRate'); 
+  } else if (value > 50) {
+    setValueWithCheck1({ ...e, target: { value: 50 } }, 'txbHeatingHWCFluidFlowRate');
+  }
+}, []);
+
+
 const ckbReheatHWCUseFluidLvgTempChanged = useCallback((e: any) => {
   setValue('ckbReheatHWCUseFluidLvgTemp', e.target.value);
   // setCkbPreheatHWCUseFluidLvgTempValue(e.target.value);
@@ -1175,6 +1287,42 @@ const ckbReheatHWCUseFluidFlowRateChanged = useCallback((e: any) => {
 }, []);
 
 
+const txbReheatHWCFluidEntTempChanged = useCallback((e: any) => {
+  const value = parseFloat(e.target.value);
+  if (value >= 80 && value <= 180) {
+    setValueWithCheck1(e, 'txbReheatHWCFluidEntTemp'); 
+  } else if (value < 80) {
+    setValueWithCheck1({ ...e, target: { value: 80 } }, 'txbReheatHWCFluidEntTemp'); 
+  } else if (value > 180) {
+    setValueWithCheck1({ ...e, target: { value: 180 } }, 'txbReheatHWCFluidEntTemp');
+  }
+}, []);
+
+
+const txbReheatHWCFluidLvgTempChanged = useCallback((e: any) => {
+  const value = parseFloat(e.target.value);
+  if (value >= 40 && value <= 180) {
+    setValueWithCheck1(e, 'txbReheatHWCFluidLvgTemp'); 
+  } else if (value < 40) {
+    setValueWithCheck1({ ...e, target: { value: 40 } }, 'txbReheatHWCFluidLvgTemp'); 
+  } else if (value > 180) {
+    setValueWithCheck1({ ...e, target: { value: 180 } }, 'txbReheatHWCFluidLvgTemp');
+  }
+}, []);
+
+
+const txbReheatHWCFluidFlowRateChanged = useCallback((e: any) => {
+  const value = parseFloat(e.target.value);
+  if (value >= 0.1 && value <= 50) {
+    setValueWithCheck1(e, 'txbReheatHWCFluidFlowRate'); 
+  } else if (value < 0.1) {
+    setValueWithCheck1({ ...e, target: { value: 0.1 } }, 'txbReheatHWCFluidFlowRate'); 
+  } else if (value > 50) {
+    setValueWithCheck1({ ...e, target: { value: 50 } }, 'txbReheatHWCFluidFlowRate');
+  }
+}, []);
+
+
 
 useEffect(() => {
   let dtFilterCondition = db?.dbtSelFilterCondition;
@@ -1184,6 +1332,22 @@ useEffect(() => {
   setValue('txbOA_FilterPD', parseFloat(filtercondPD).toFixed(2));
   setValue('txbRA_FilterPD', parseFloat(filtercondPD).toFixed(2));
 }, [filterConditionId]);
+
+
+useEffect(() => {
+  switch (Number(getValues('ckbPreheatElecHeaterVoltageSPP'))) {
+    case 1:
+      setValue('ddlPreheatElecHeaterVoltage', getValues('ddlUnitVoltage'));
+      setIsEnabledDdlPreheatElecHeaterVoltage(false);
+      break;
+    case 0:
+      setIsEnabledDdlPreheatElecHeaterVoltage(true);
+      break;
+    default:
+      break;
+  }
+
+}, [getValues('ckbPreheatElecHeaterVoltageSPP')]);
 
 
 useEffect(() => {
@@ -1261,23 +1425,6 @@ useEffect(() => {
 
 
 useEffect(() => {
-  switch (Number(getValues('ckbPreheatElecHeaterVoltageSPP'))) {
-    case 1:
-      setValue('ddlPreheatElecHeaterVoltage', getValues('ddlUnitVoltage'));
-      setIsEnabledDdlPreheatElecHeaterVoltage(false);
-      break;
-    case 0:
-      setIsEnabledDdlPreheatElecHeaterVoltage(true);
-      break;
-    default:
-      break;
-  }
-
-}, [getValues('ckbPreheatElecHeaterVoltageSPP')]);
-
-
-
-useEffect(() => {
   switch (Number(getValues('ckbCoolingCWCUseFluidLvgTemp'))) {
     case 1:
       setIsTxbCoolingCWCFluidLvgTempEnabled(true);
@@ -1332,7 +1479,27 @@ useEffect(() => {
 
 useEffect(() => {
   setValue('ckbHeatPump', getValues('ckbDaikinVRV'));
+  setValue('ckbDehumidification', getValues('ckbDaikinVRV'));
+
 }, [getValues('ckbDaikinVRV')]);
+
+
+
+useEffect(() => {
+  switch (Number(getValues('ckbHeatingElecHeaterVoltageSPP'))) {
+    case 1:
+      setValue('ddlHeatingElecHeaterVoltage', getValues('ddlUnitVoltage'));
+      setIsEnabledDdlHeatingElecHeaterVoltage(false);
+      break;
+    case 0:
+      setIsEnabledDdlHeatingElecHeaterVoltage(true);
+      break;
+    default:
+      break;
+  }
+
+  setValue('ckbReheatElecHeaterVoltageSPP', getValues('ckbHeatingElecHeaterVoltageSPP'));
+}, [getValues('ckbHeatingElecHeaterVoltageSPP')]);
 
 
 
@@ -1389,21 +1556,20 @@ useEffect(() => {
 
 
 useEffect(() => {
-  switch (Number(getValues('ckbHeatingElecHeaterVoltageSPP'))) {
+  switch (Number(getValues('ckbReheatElecHeaterVoltageSPP'))) {
     case 1:
-      setValue('ddlHeatingElecHeaterVoltage', getValues('ddlUnitVoltage'));
-      setIsEnabledDdlHeatingElecHeaterVoltage(false);
+      setValue('ddlReheatElecHeaterVoltage', getValues('ddlUnitVoltage'));
+      setIsEnabledDdlReheatElecHeaterVoltage(false);
       break;
     case 0:
-      setIsEnabledDdlHeatingElecHeaterVoltage(true);
+      setIsEnabledDdlReheatElecHeaterVoltage(true);
       break;
     default:
       break;
   }
 
-  setValue('ckbReheatElecHeaterVoltageSPP', getValues('ckbHeatingElecHeaterVoltageSPP'));
-}, [getValues('ckbHeatingElecHeaterVoltageSPP')]);
-
+  setValue('ckbHeatingElecHeaterVoltageSPP', getValues('ckbReheatElecHeaterVoltageSPP'));
+}, [getValues('ckbReheatElecHeaterVoltageSPP')]);
 
 
 useEffect(() => {
@@ -1459,21 +1625,6 @@ useEffect(() => {
 }, [getValues('ckbReheatHWCUseFluidFlowRate')]);
 
 
-useEffect(() => {
-  switch (Number(getValues('ckbReheatElecHeaterVoltageSPP'))) {
-    case 1:
-      setValue('ddlReheatElecHeaterVoltage', getValues('ddlUnitVoltage'));
-      setIsEnabledDdlReheatElecHeaterVoltage(false);
-      break;
-    case 0:
-      setIsEnabledDdlReheatElecHeaterVoltage(true);
-      break;
-    default:
-      break;
-  }
-
-  setValue('ckbHeatingElecHeaterVoltageSPP', getValues('ckbReheatElecHeaterVoltageSPP'));
-}, [getValues('ckbReheatElecHeaterVoltageSPP')]);
 
 
   const [locationInfo, setLocationInfo] = useState<any>([]);
@@ -1600,7 +1751,7 @@ useEffect(() => {
         break;
       case IDs.intLocationIdOutdoor:
         imgLayout += '_out';
-      break;
+        break;
       default:
         break;
     }
@@ -1617,14 +1768,14 @@ useEffect(() => {
             break;
           case IDs.intOrientationIdVertical:
             imgLayout += '_v';
-          break;
+            break;
           default:
             break;
-        }     
+        }
         break;
       case IDs.intProdTypeIdVentumPlus:
         break;
-       default:
+      default:
         break;
     }
 
@@ -1680,47 +1831,12 @@ useEffect(() => {
     imgLayout = `/assets/images/layouts/${imgLayout}`;
     setImgLayoutPathAndFile(imgLayout);
 
-}, [intProductTypeID, getValues('ddlLocation'), getValues('ddlOrientation'), getValues('ckbMixingBox'), 
-    getValues('ckbDownshot'), getValues('ddlHanding'),  getValues('ddlSupplyAirOpening')]);
+  }, [intProductTypeID, getValues('ddlLocation'), getValues('ddlOrientation'), getValues('ckbMixingBox'),
+    getValues('ckbDownshot'), getValues('ddlHanding'), getValues('ddlSupplyAirOpening')]);
 
 
 
-  useMemo(() => {
-    const info: { isVisible: boolean; isChecked: boolean; isEnabled: boolean; defaultId: number; } = {
-                  isVisible: false,   isChecked: false,   isEnabled: false,   defaultId: 0,      };
 
-    switch (Number(intProductTypeID)) {
-      case IDs.intProdTypeIdVentum:
-      case IDs.intProdTypeIdVentumPlus:
-        switch (intUnitTypeID) {
-          case IDs.intUnitTypeIdERV:
-            info.isVisible = true;
-            info.isChecked = true;
-                break;
-          case IDs.intUnitTypeIdHRV:
-            info.isVisible = false;
-            info.isChecked = false;
-                break;
-          default:
-           break;
-         }
-        break;
-      case IDs.intProdTypeIdNova:
-      case IDs.intProdTypeIdVentumLite:
-      case IDs.intProdTypeIdTerra:
-          info.isVisible = false;
-          info.isChecked = false;
-        break;
-      default:
-        break;
-    }
-
-    // setPHIInfo(info);
-    setPHIIsVisible(info.isVisible);
-    setPHIIsEnabled(info.isEnabled);
-    setPHIIsChecked(info.isChecked);
-
-  }, []);
 
 
 
@@ -2490,18 +2606,18 @@ useEffect(() => {
 
   useEffect(() => {
     if (Number(getValues('ckbMixUseProjectDefault')) === 1) {
-        setValue('txbMixSummerOA_DB', unitInfo?.oJob?.dblSummerOA_DB);
-        setValue('txbMixSummerOA_WB', unitInfo?.oJob?.dblSummerOA_WB);
-        setValue('txbMixSummerOA_RH', unitInfo?.oJob?.dblSummerOA_RH);
-        setValue('txbMixWinterOA_DB', unitInfo?.oJob?.dblWinterOA_DB);
-        setValue('txbMixWinterOA_WB', unitInfo?.oJob?.dblWinterOA_WB);
-        setValue('txbMixWinterOA_RH', unitInfo?.oJob?.dblWinterOA_RH);
-        setValue('txbMixSummerRA_DB', unitInfo?.oJob?.dblSummerRA_DB);
-        setValue('txbMixSummerRA_WB', unitInfo?.oJob?.dblSummerRA_WB);
-        setValue('txbMixSummerRA_RH', unitInfo?.oJob?.dblSummerRA_RH);
-        setValue('txbMixWinterRA_DB', unitInfo?.oJob?.dblWinterRA_DB);
-        setValue('txbMixWinterRA_WB', unitInfo?.oJob?.dblWinterRA_WB);
-        setValue('txbMixWinterRA_RH', unitInfo?.oJob?.dblWinterRA_RH);
+        setValue('txbMixSummerOA_DB', unitInfo?.dbtSavedJob?.[0]?.summer_outdoor_air_db);
+        setValue('txbMixSummerOA_WB', unitInfo?.dbtSavedJob?.[0]?.summer_outdoor_air_wb);
+        setValue('txbMixSummerOA_RH', unitInfo?.dbtSavedJob?.[0]?.summer_outdoor_air_rh);
+        setValue('txbMixWinterOA_DB', unitInfo?.dbtSavedJob?.[0]?.winter_outdoor_air_db);
+        setValue('txbMixWinterOA_WB', unitInfo?.dbtSavedJob?.[0]?.winter_outdoor_air_wb);
+        setValue('txbMixWinterOA_RH', unitInfo?.dbtSavedJob?.[0]?.winter_outdoor_air_rh);
+        setValue('txbMixSummerRA_DB', unitInfo?.dbtSavedJob?.[0]?.summer_return_air_db);
+        setValue('txbMixSummerRA_WB', unitInfo?.dbtSavedJob?.[0]?.summer_return_air_wb);
+        setValue('txbMixSummerRA_RH', unitInfo?.dbtSavedJob?.[0]?.summer_return_air_rh);
+        setValue('txbMixWinterRA_DB', unitInfo?.dbtSavedJob?.[0]?.winter_return_air_db);
+        setValue('txbMixWinterRA_WB', unitInfo?.dbtSavedJob?.[0]?.winter_return_air_wb);
+        setValue('txbMixWinterRA_RH', unitInfo?.dbtSavedJob?.[0]?.winter_return_air_rh);
     }
   }, [getValues('ckbMixUseProjectDefault')]);
 
@@ -2827,7 +2943,8 @@ useEffect(() => {
         break;
     }
 
-    if (Number(getValues('ckbDehumidification'))) {
+    // if (Number(getValues('ckbDehumidification'))) {
+      info.isVisible = true;
 
       switch (Number(getValues('ddlCoolingComp'))) {
         case IDs.intCompIdCWC:
@@ -2845,73 +2962,88 @@ useEffect(() => {
           break;
         default:
           info.defaultId = IDs.intCompIdNA;
+          info.isVisible = false;
           break;
       } 
-  
-      info.isVisible = true;
 
-    } else {
-        // info.ftdReheatComp = info.ftdReheatComp?.filter((item: { id: { toString: () => any } }) =>  item.id.toString() !== IDs.intCompIdNA.toString());
-        info.fdtReheatComp = info.fdtReheatComp?.filter((item: { id: number }) =>  item.id === IDs.intCompIdNA);
-        info.defaultId = IDs.intCompIdNA;
-        info.isVisible = false;
+
+      switch (Number(getValues('ckbDaikinVRV'))) {
+        case 0:
+          info.fdtReheatComp = info.fdtReheatComp?.filter((item: { id: { toString: () => any } }) =>  item.id.toString() !== IDs.intCompIdHGRH.toString());
+          info.defaultId = formCurrValues.ddlReheatComp  > 0 ? formCurrValues.ddlReheatComp : info.fdtReheatComp?.[0]?.id;
+          break;
+        default:
+          break;
       }
+
+  
+      // info.isVisible = true;
+
+    // } else {
+    //     // info.ftdReheatComp = info.ftdReheatComp?.filter((item: { id: { toString: () => any } }) =>  item.id.toString() !== IDs.intCompIdNA.toString());
+    //     info.fdtReheatComp = info.fdtReheatComp?.filter((item: { id: number }) =>  item.id === IDs.intCompIdNA);
+    //     info.defaultId = IDs.intCompIdNA;
+    //     info.isVisible = false;
+    //   }
 
 
     setReheatCompInfo(info);
     setValue('ddlReheatComp', info.defaultId);
 
-  }, [getValues('ckbDehumidification'), getValues('ddlCoolingComp'), getValues('ddlUnitModel')]);
+  }, [getValues('ckbDehumidification'), getValues('ddlCoolingComp'), getValues('ddlUnitModel'), getValues('ckbDaikinVRV'),]);
 
 
-  const [heatPumpInfo, setHeatPumpInfo] = useState<any>([]);
-  useMemo(() => {
-    const info: { isChecked: boolean; isVisible: boolean; defaultId: number } = {
-      isChecked: false,
-      isVisible: false,
-      defaultId: 0,
-    };
+  // const [heatPumpInfo, setHeatPumpInfo] = useState<any>([]);
+  useEffect(() => {
+    // const info: { isChecked: boolean; isVisible: boolean; defaultId: number } = {
+    //   isChecked: false,
+    //   isVisible: false,
+    //   defaultId: 0,
+    // };
 
     if (Number(getValues('ddlCoolingComp')) === IDs.intCompIdDX) {
-      info.isChecked = true;
-      info.isVisible = true;
+      // info.isChecked = true;
+      // info.isVisible = true;
+      setValue('ckbDaikinVRV', 1);
+
     } else {
-      info.isChecked = false;
-      info.isVisible = false;
+      // info.isChecked = false;
+      // info.isVisible = false;
+      setValue('ckbDaikinVRV', 0);
     }
 
-    setHeatPumpInfo(info);
-    setValue('ckbHeatPump', info.isChecked);
+    // setHeatPumpInfo(info);
+    // setValue('ckbHeatPump', info.isChecked);
 
   }, [db, getValues('ddlCoolingComp')]);
 
 
 
-  const [dehumInfo, setDehumInfo] = useState<any>([]);
-  useMemo(() => {
-    const info: { isChecked: boolean; isVisible: boolean; defaultId: number } = {
-      isChecked: false,
-      isVisible: false,
-      defaultId: 0,
-    };
+  // const [dehumInfo, setDehumInfo] = useState<any>([]);
+  // useMemo(() => {
+  //   const info: { isChecked: boolean; isVisible: boolean; defaultId: number } = {
+  //     isChecked: false,
+  //     isVisible: false,
+  //     defaultId: 0,
+  //   };
 
 
-    switch (Number(getValues('ddlCoolingComp'))) {
-      case IDs.intCompIdCWC:
-      case IDs.intCompIdDX:
-        info.isChecked = false;
-        info.isVisible = true;  
-        break;
-      default:
-        info.isChecked = false;
-        info.isVisible = false;
-        break;
-    }
+  //   switch (Number(getValues('ddlCoolingComp'))) {
+  //     case IDs.intCompIdCWC:
+  //     case IDs.intCompIdDX:
+  //       info.isChecked = false;
+  //       info.isVisible = true;  
+  //       break;
+  //     default:
+  //       info.isChecked = false;
+  //       info.isVisible = false;
+  //       break;
+  //   }
 
-    setDehumInfo(info);
-    setValue('ckbDehumidification', info.isChecked);
+  //   setDehumInfo(info);
+  //   setValue('ckbDehumidification', info.isChecked);
 
-  }, [db, getValues('ddlCoolingComp')]);
+  // }, [db, getValues('ddlCoolingComp')]);
 
 
 
@@ -5039,6 +5171,54 @@ useEffect(() => {
   }, [intProductTypeID]);
 
 
+  useEffect(() => {
+    if (user?.UAL === IDs.intUAL_External || user?.UAL === IDs.intUAL_ExternalSpecial) {
+      setPHIIsVisible(false);
+      setValue('ckbPHI', 0);
+    }
+    else {
+      switch (Number(intProductTypeID)) {
+        case IDs.intProdTypeIdVentum:
+        case IDs.intProdTypeIdVentumPlus:
+          switch (intUnitTypeID) {
+            case IDs.intUnitTypeIdERV:
+              // info.isVisible = true;
+              // info.isChecked = true;
+              setPHIIsVisible(true);
+              setValue('ckbPHI', 1);
+              break;
+            case IDs.intUnitTypeIdHRV:
+              // info.isVisible = false;
+              // info.isChecked = false;
+              setPHIIsVisible(false);
+              setValue('ckbPHI', 0);
+              break;
+            default:
+              break;
+          }
+          break;
+        case IDs.intProdTypeIdNova:
+        case IDs.intProdTypeIdVentumLite:
+        case IDs.intProdTypeIdTerra:
+          // info.isVisible = false;
+          // info.isChecked = false;
+          setPHIIsVisible(false);
+          setValue('ckbPHI', 0);
+          break;
+        default:
+          break;
+      }
+    }
+
+    // // setPHIInfo(info);
+    // setPHIIsVisible(info.isVisible);
+    // setPHIIsEnabled(info.isEnabled);
+    // setPHIIsChecked(info.isChecked);
+
+  }, [intProductTypeID, intUnitTypeID]);
+
+
+
 
   const onClickUnitInfo = () => {
     // setCurrentStep(1);
@@ -5096,7 +5276,7 @@ useEffect(() => {
         {Number(unitId) > 0 ? (
          <Box display="flex" justifyContent="center" alignItems="center" width="100%">
             <Typography variant="h3" color="primary.main" sx={{ flexGrow: 1, textAlign: 'center' }}>
-              {getValues('txtTag')}
+              {getValues('txbTag')}
             </Typography>
 
             <Button variant="outlined" color="primary" onClick={() => setNewProjectDialog(!newProjectDialogOpen)}>
@@ -5128,7 +5308,7 @@ useEffect(() => {
               <Grid item xs={12} md={12}>
                 <Box sx={{ display: 'grid', rowGap: 3, columnGap: 3, gridTemplateColumns: { xs: 'repeat(3, 1fr)' }, }}>
                   <Stack>
-                    <RHFTextField size="small" name="txtTag" label="Unit Tag" />
+                    <RHFTextField size="small" name="txbTag" label="Unit Tag" />
                   </Stack>
                   <Stack>
                     <RHFTextField
@@ -5926,17 +6106,8 @@ useEffect(() => {
                         size="small"
                         name="txbPreheatHWCFluidEntTemp"
                         label="Heating Fluid Ent Temp (F)"
-                        InputProps={{ inputProps: { min: 80, max: 180 } }}
-                        onChange={(e: any) => { 
-                          const value = parseFloat(e.target.value);
-                          if (value >= 80 && value <= 180) {
-                            setValueWithCheck1(e, 'txbPreheatHWCFluidEntTemp'); 
-                          } else if (value < 80) {
-                            setValueWithCheck1({ ...e, target: { value: 80 } }, 'txbPreheatHWCFluidEntTemp'); 
-                          } else if (value > 180) {
-                            setValueWithCheck1({ ...e, target: { value: 180 } }, 'txbPreheatHWCFluidEntTemp');
-                          }
-                        }}
+                        // InputProps={{ inputProps: { min: 80, max: 180 } }}
+                        onBlur={txbPreheatHWCFluidEntTempChanged}
                       />
                   </Stack>
                   <Stack>
@@ -5946,16 +6117,7 @@ useEffect(() => {
                     label="Heating Fluid Lvg Temp (F)"
                     InputProps={{ inputProps: { min: 40, max: 180 } }}
                     disabled={!isTxbPreheatHWCFluidLvgTempEnabled}
-                    onChange={(e: any) => { 
-                      const value = parseFloat(e.target.value);
-                      if (value >= 40 && value <= 180) {
-                        setValueWithCheck1(e, 'txbPreheatHWCFluidLvgTemp'); 
-                      } else if (value < 40) {
-                        setValueWithCheck1({ ...e, target: { value: 40 } }, 'txbPreheatHWCFluidLvgTemp'); 
-                      } else if (value > 180) {
-                        setValueWithCheck1({ ...e, target: { value: 180 } }, 'txbPreheatHWCFluidLvgTemp'); 
-                      }
-                    }}
+                    onBlur={txbPreheatHWCFluidLvgTempChanged}
                   />
                   </Stack>
                   <Stack>
@@ -5965,16 +6127,7 @@ useEffect(() => {
                         label="Preheat HWC Flow Rate (GPM)"
                         InputProps={{ inputProps: { min: 0.1, max: 50 } }}
                         disabled={!isTxbPreheatHWCFluidFlowRateEnabled}
-                        onChange={(e: any) => { 
-                          const value = parseFloat(e.target.value);
-                          if (value >= 0.1 && value <= 50) {
-                            setValueWithCheck1(e, 'txbPreheatHWCFluidFlowRate'); 
-                          } else if (value < 0.1) {
-                            setValueWithCheck1({ ...e, target: { value: 0.1 } }, 'txbPreheatHWCFluidFlowRate');
-                          } else if (value > 50) {
-                            setValueWithCheck1({ ...e, target: { value: 50 } }, 'txbPreheatHWCFluidFlowRate'); 
-                          }
-                        }}
+                        onBlur={txbPreheatHWCFluidFlowRateChanged}
                       />
                   </Stack>
                 </Box>
@@ -6113,8 +6266,9 @@ useEffect(() => {
                     <RHFCheckbox
                       label="Dehumidification"
                       name="ckbDehumidification"
-                      sx={getDisplay(dehumInfo?.isVisible)}
-                      checked={dehumInfo?.isChecked}
+                      // sx={getDisplay(dehumInfo?.isVisible)}
+                      sx={{ display: 'none' }}
+                      // checked={dehumInfo?.isChecked}
                       // onChange={(e: any) => setCkbDehumidificationVal(e.target.checked)}
                       onChange={(e: any) => setValue('ckbDehumidification', Number(e.target.checked))}
                     />
@@ -6213,8 +6367,8 @@ useEffect(() => {
                       size="small"
                       name="txbCoolingCWCFluidEntTemp"
                       label="Cooling Fluid Ent Temp (F)"
-                      InputProps={{ inputProps: { min: 20, max: 120 } }}
-                      onChange={(e: any) => {setValueWithCheck1(e, 'txbCoolingCWCFluidEntTemp');}}
+                      // InputProps={{ inputProps: { min: 20, max: 120 } }}
+                      onBlur={txbCoolingCWCFluidEntTempChanged}
                     />
                   </Stack>
                   <Stack>
@@ -6222,9 +6376,9 @@ useEffect(() => {
                       size="small"
                       name="txbCoolingCWCFluidLvgTemp"
                       label="Cooling Fluid Lvg Temp (F)"
-                      InputProps={{ inputProps: { min: 20, max: 120 } }}
+                      // InputProps={{ inputProps: { min: 20, max: 120 } }}
                       disabled={!isTxbCoolingCWCFluidLvgTempEnabled}
-                      onChange={(e: any) => {setValueWithCheck1(e, 'txbCoolingCWCFluidLvgTemp');}}
+                      onBlur={txbCoolingCWCFluidLvgTempChanged}
                     />
                   </Stack>
                   <Stack>
@@ -6232,9 +6386,9 @@ useEffect(() => {
                       size="small"
                       name="txbCoolingCWCFluidFlowRate"
                       label="Cooling CWC Flow Rate (GPM)"
-                      InputProps={{ inputProps: { min: 0.1, max: 50 } }}
+                      // InputProps={{ inputProps: { min: 0.1, max: 50 } }}
                       disabled={!isTxbCoolingCWCFluidFlowRateEnabled}
-                      onChange={(e: any) => {setValueWithCheck1(e, 'txbCoolingCWCFluidFlowRate');}}
+                      onBlur={txbCoolingCWCFluidFlowRateChanged}
                     />
                   </Stack>                
                   </Box>
@@ -6431,7 +6585,7 @@ useEffect(() => {
             id="panel1a-header"
           >
             <Typography color="primary.main" variant="h6">
-              DX - HEATPUMP
+              DX - HEATING
             </Typography>
           </AccordionSummary>
           <AccordionDetails>
@@ -6458,38 +6612,34 @@ useEffect(() => {
               </Grid>
               <Grid item xs={12} md={12}
               sx={getDisplay(Number(formCurrValues.ddlCoolingComp) === IDs.intCompIdDX)}>
-              <Box sx={{ display: 'grid', rowGap: 3, columnGap: 3, gridTemplateColumns: { xs: 'repeat(3, 1fr)' },}}>
-                  <Stack>
+                <Box sx={{ display: 'grid', rowGap: 3, columnGap: 3, gridTemplateColumns: { xs: 'repeat(3, 1fr)' }, }}>
+                  <Stack spacing={1}>
                     <RHFTextField
                       size="small"
-                      name="txbRefrigSuctionTemp"
-                      label="Suction Temp (F)"
-                      disabled
+                      name="txbRefrigCondensingTemp"
+                      label="Condensing Temp (F)"
                       onChange={(e: any) => {
-                        setValueWithCheck1(e, 'txbRefrigSuctionTemp');
+                        setValueWithCheck1(e, 'txbRefrigCondensingTemp');
                       }}
                     />
                   </Stack>
                   <Stack>
                     <RHFTextField
                       size="small"
-                      name="txbRefrigLiquidTemp"
-                      label="Liquid Temp (F)"
-                      disabled
+                      name="txbRefrigVaporTemp"
+                      label="Condensing Temp (F)"
                       onChange={(e: any) => {
-                        setValueWithCheck1(e, 'txbRefrigLiquidTemp');
+                        setValueWithCheck1(e, 'txbRefrigVaporTemp');
                       }}
                     />
-
                   </Stack>
                   <Stack>
                     <RHFTextField
                       size="small"
-                      name="txbRefrigSuperheatTemp"
-                      label="Superheat Temp (F)"
-                      disabled
+                      name="txbRefrigSubcoolingTemp"
+                      label="Subcooling Temp (F)"
                       onChange={(e: any) => {
-                        setValueWithCheck1(e, 'txbRefrigSuperheatTemp');
+                        setValueWithCheck1(e, 'txbRefrigSubcoolingTemp');
                       }}
                     />
                   </Stack>
@@ -6684,19 +6834,19 @@ useEffect(() => {
                       size="small"
                       name="txbHeatingHWCFluidEntTemp"
                       label="Heating Fluid Ent Temp (F)"
-                      InputProps={{ inputProps: { min: 80, max: 180 } }}
-                      onChange={(e: any) => {setValueWithCheck1(e, 'txbHeatingHWCFluidEntTemp');}}
-                    />
+                      // InputProps={{ inputProps: { min: 80, max: 180 } }}
+                      onBlur={txbHeatingHWCFluidEntTempChanged}
+                      />
                   </Stack>
                   <Stack>
                     <RHFTextField
                       size="small"
                       name="txbHeatingHWCFluidLvgTemp"
                       label="Heating Fluid Lvg Temp (F)"
-                      InputProps={{ inputProps: { min: 40, max: 180 } }}
+                      // InputProps={{ inputProps: { min: 40, max: 180 } }}
                       disabled={!isTxbHeatingHWCFluidLvgTempEnabled}
-                      onChange={(e: any) => { setValueWithCheck1(e, 'txbHeatingHWCFluidLvgTemp');}}
-                    />
+                      onBlur={txbHeatingHWCFluidLvgTempChanged}
+                      />
                   </Stack>
                   <Stack>
                     <RHFTextField
@@ -6706,7 +6856,7 @@ useEffect(() => {
                       InputProps={{ inputProps: { min: 0.1, max: 50 } }}
                       disabled={!isTxbHeatingHWCFluidFlowRateEnabled}
                       // sx={getDisplay(customInputs.divHeatingHWC_UseFlowRateVisible)}
-                      onChange={(e: any) => {setValueWithCheck1(e, 'txbHeatingHWCFluidFlowRate'); }}
+                      onBlur={txbHeatingHWCFluidFlowRateChanged}
                     />
                   </Stack>                
                   </Box>
@@ -6733,7 +6883,7 @@ useEffect(() => {
                       onChange={(e: any) => { setValueWithCheck1(e, 'txbHeatingHWCCap'); }}
                     />
                   </Stack>
-                  <Stack>
+                  {/* <Stack>
                     <RHFCheckbox
                       // sx={getInlineDisplay(customInputs.divCoolingCWC_UseFlowRateVisible)}
                       label="Heating HWC Use Flow Rate"
@@ -6741,7 +6891,7 @@ useEffect(() => {
                       checked={formValues.ckbHeatingHWCUseFluidFlowRate}
                       onChange={(e: any) => setValue('ckbHeatingHWCUseFluidFlowRate', Number(e.target.checked))}
                     />
-                  </Stack>
+                  </Stack> */}
 
                 </Box>
               </Grid>
@@ -6817,7 +6967,7 @@ useEffect(() => {
             id="panel1a-header"
           >
             <Typography color="primary.main" variant="h6">
-              REHEAT
+              REHEAT - DEHUMIDIFICATION
             </Typography>
           </AccordionSummary>
           <AccordionDetails>
@@ -6974,7 +7124,7 @@ useEffect(() => {
                       name="txbReheatHWCFluidEntTemp"
                       label="Reheat Fluid Ent Temp (F)"
                       InputProps={{ inputProps: { min: 80, max: 180 } }}
-                      onChange={(e: any) => { setValueWithCheck1(e, 'txbReheatHWCFluidEntTemp'); }}
+                      onBlur={txbReheatHWCFluidEntTempChanged}
                     />
                   </Stack>
                   <Stack>
@@ -6984,7 +7134,7 @@ useEffect(() => {
                       label="Reheat Fluid Lvg Temp (F)"
                       InputProps={{ inputProps: { min: 40, max: 180 } }}
                       disabled={!isTxbReheatHWCFluidLvgTempEnabled}
-                      onChange={(e: any) => { setValueWithCheck1(e, 'txbReheatHWCFluidLvgTemp');}}
+                      onBlur={txbReheatHWCFluidLvgTempChanged}
                     />
                   </Stack>
                   <Stack>
@@ -6995,7 +7145,7 @@ useEffect(() => {
                       InputProps={{ inputProps: { min: 0.1, max: 50 } }}
                       // sx={getDisplay(customInputs.divReheatHWC_UseFlowRateVisible)}
                       disabled={!isTxbReheatHWCFluidFlowRateEnabled}
-                      onChange={(e: any) => { setValueWithCheck1(e, 'txbReheatHWCFluidFlowRate'); }}
+                      onBlur={txbReheatHWCFluidFlowRateChanged}
                     />
                   </Stack>                
                 </Box>
@@ -7559,7 +7709,7 @@ useEffect(() => {
           </AccordionSummary>
           <AccordionDetails>
             <Grid container>
-              <TextField label="Take a note..." variant="standard" fullWidth name='txbConfigNotes' />
+              <RHFTextField label="Take a note..." variant="standard" fullWidth name="txbConfigNotes" />
             </Grid>
           </AccordionDetails>
         </Accordion>
