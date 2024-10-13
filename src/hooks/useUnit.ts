@@ -572,4 +572,5 @@ export const unitEditFormSchema = Yup.object().shape({
   ddlOutdoorAirOpeningText: Yup.string(),
   ddlReturnAirOpening: Yup.number(),
   ddlReturnAirOpeningText: Yup.string(),
+  txbConfigNotes: Yup.string(),
 });

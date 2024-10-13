@@ -358,7 +358,7 @@ export default function UnitInfoForm({
         intOrientationId: Number(formCurrValues.ddlOrientation),
         intControlsPreferenceId: Number(formCurrValues.ddlControlsPref),
         intControlViaId: Number(formCurrValues.ddlControlVia),
-        strConfigNotes: formCurrValues.txbConfigNotes,
+        strConfigNotes: formCurrValues.txbConfigNotes !== null ? formCurrValues.txbConfigNotes : '',
       },
       oUnitAirflow: {
         intJobId: projectId,
@@ -7710,7 +7710,7 @@ useEffect(() => {
           </AccordionSummary>
           <AccordionDetails>
             <Grid container>
-              <RHFTextField label="Take a note..." variant="standard" fullWidth name="txbConfigNotes" />
+              <RHFTextField label="Take a note..." variant="standard" fullWidth name="txbConfigNotes" defaultValue="" />
             </Grid>
           </AccordionDetails>
         </Accordion>
