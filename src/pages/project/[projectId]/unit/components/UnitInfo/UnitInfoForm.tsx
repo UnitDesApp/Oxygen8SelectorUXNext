@@ -1072,7 +1072,8 @@ export default function UnitInfoForm({
 
     switch (intUAL) {
       case IDs.intUAL_Admin:
-        info.isOADesignCondVisible = true;
+      case IDs.intUAL_AdminLvl_1:
+          info.isOADesignCondVisible = true;
         info.isRADesignCondVisible = true;
         info.isCustomCompVisible = true;
         info.isHandingValveVisible = true;

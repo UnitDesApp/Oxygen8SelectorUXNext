@@ -58,7 +58,7 @@ export default function SelectProductInfo(props: SelectProductInfoProps) {
   const onSelectProductTypeValue = useCallback(
     (label: string, id: number) => {
       onSelectProductTypeItem(id, label);
-      setProductTypeValue(label);
+      // setProductTypeValue(label);
       setProductTypeID(id);
       if (label !== 'Terra'){
         setValue(1);
@@ -90,8 +90,10 @@ export default function SelectProductInfo(props: SelectProductInfoProps) {
           variant="fullWidth"
         >
           {/* <Tab label={applicationValue} /> */}
-          <Tab label={productTypeValue} disabled={applicationValue === 'Application'} />
-          <Tab label={unitTypeValue} disabled={productTypeValue === 'Product type'} />
+          <Tab label={productTypeValue} disabled={applicationValue === ''} />
+          <Tab label={unitTypeValue} 
+          disabled={productTypeValue === 'Product type'} 
+          />
         </Tabs>
         <CardContent>
           {/* <TabPanel value={value} index={0}>
@@ -109,7 +111,7 @@ export default function SelectProductInfo(props: SelectProductInfoProps) {
           </TabPanel>
           <TabPanel value={value} index={1}>
             <UnitTypes
-            productTypeValue = {productTypeValue}
+              productTypeValue = {productTypeValue}
               productTypeID={productTypeID}
               SetIsOpenSideDescriptionOfProductType={SetIsOpenSideDescriptionOfProductType}
               // productTypeUnitTypeLinkDataTbl={data?.prodTypeUnitTypeLink}
