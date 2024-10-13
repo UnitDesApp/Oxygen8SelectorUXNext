@@ -167,6 +167,8 @@ export const intUserIdNemi = 1612;
 
 export const intUserAccess = 1; // Access 1:Yes, 2:No
 export const intUAL_Admin = 10; // Access Level
+export const intUAL_AdminLvl_1 = 7; // Access Level
+
 export const intUAL_IntAdmin = 4; // Access Level
 export const intUAL_IntLvl_2 = 3; // Access Level
 export const intUAL_IntLvl_1 = 2; // Access Level
