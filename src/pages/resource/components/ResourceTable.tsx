@@ -19,7 +19,7 @@ const ResourceTable = ({ objResources, title, resourceType, sx }: propTypes) => 
   const onDownload = useCallback(
     (fileName: string) => {
       api.project
-        .downloadResourceFile(
+        .downloadResourcesFile(
           { resourceType, fileName },
           {
             responseType: 'blob',
@@ -63,9 +63,9 @@ const ResourceTable = ({ objResources, title, resourceType, sx }: propTypes) => 
               <TableCell component="th" scope="row">
                 {resourceRow.Name}
               </TableCell>
-              <TableCell component="th" scope="row">
+              {/* <TableCell component="th" scope="row">
                 {convertDate(resourceRow.Date)}
-              </TableCell>
+              </TableCell> */}
               <TableCell component="th" scope="row">
                 {resourceRow.FileType}
               </TableCell>

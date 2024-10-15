@@ -21,7 +21,7 @@ export default function ConfirmDialog({
   const text = useMemo(
     () =>
       isOneRow
-        ? 'Are you sure you want to delete this unit data?'
+        ? 'Are you sure you want to delete this unit?'
         : 'Are you sure you want to delete the selected data?',
     [isOneRow]
   );

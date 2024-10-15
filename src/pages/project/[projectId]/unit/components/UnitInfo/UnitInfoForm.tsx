@@ -6628,7 +6628,7 @@ useEffect(() => {
                     <RHFTextField
                       size="small"
                       name="txbRefrigVaporTemp"
-                      label="Condensing Temp (F)"
+                      label="Vapor Temp (F)"
                       onChange={(e: any) => {
                         setValueWithCheck1(e, 'txbRefrigVaporTemp');
                       }}
