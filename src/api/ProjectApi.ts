@@ -223,9 +223,9 @@ export default class ProjectApi extends AbstractApi {
 
 
   // Resources =================================================================================
-  getResourceFiles = (): Promise<any> =>
-    this.client.post('/api/Resources/GetResourceFiles').then((res: any) => res.data);
+  getResourcesFiles = (): Promise<any> =>
+    this.client.post('/api/Resources/GetResourcesFiles').then((res: any) => res.data);
 
-  downloadResourceFile = (params: any, config: any): Promise<AxiosResponse<any, any>> =>
-    this.client.post('/api/Resources/DownloadResourceFile', params, config);
+  downloadResourcesFile = (params: any, config: any): Promise<AxiosResponse<any, any>> =>
+    this.client.post('/api/Resources/DownloadResourcesFile', params, config);
 }
