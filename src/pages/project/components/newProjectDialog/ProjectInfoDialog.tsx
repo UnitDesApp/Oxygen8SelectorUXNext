@@ -665,7 +665,6 @@ export default function ProjectInfoDialog({
       case Ids.intUAL_IntAdmin:
       case Ids.intUAL_IntLvl_2:
       case Ids.intUAL_IntLvl_1:
-        dtSelCompanyContacts.unshift({first_name: "Select Contact Name"});
         break;
       case Ids.intUAL_External:
       case Ids.intUAL_ExternalSpecial:
