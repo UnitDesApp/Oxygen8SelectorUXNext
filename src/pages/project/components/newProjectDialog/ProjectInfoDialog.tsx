@@ -1331,8 +1331,9 @@ export default function ProjectInfoDialog({
                             ))}
                           </RHFSelect>
                         </Stack>
-                        <Stack sx={{display: Number(typeof window !== 'undefined' ? localStorage.getItem('UAL') : 0) === Ids.intUAL_Admin ? 'block' : 'none'}}>
-                          <RHFTextField 
+                        {/* <Stack sx={{display: Number(typeof window !== 'undefined' ? localStorage.getItem('UAL') : 0) === Ids.intUAL_Admin ? 'block' : 'none'}}> */}
+                        <Stack sx={{display: savedJob?.[0]?.id > 0 ? 'block' : 'none'}}>
+                        <RHFTextField 
                             size="small" 
                             name="txbProjectInternalId" 
                             label="Project ID" 

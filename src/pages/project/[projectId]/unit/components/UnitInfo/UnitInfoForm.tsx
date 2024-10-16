@@ -65,7 +65,8 @@ import {
 import ProjectInfoDialog from 'src/pages/project/components/newProjectDialog/ProjectInfoDialog';
 import { useGetJobSelTables, useGetSavedJob } from 'src/hooks/useApi';
 import CircularProgressLoading from 'src/components/loading';
-import { tr } from 'date-fns/locale';
+// import { tr } from 'date-fns/locale';
+// import { closestIndexTo } from 'date-fns';
 import { getUnitModelCodes } from './getUnitNoteCodes';
 import { UnitTypeContext } from './unitTypeDataContext';
 
@@ -424,78 +425,96 @@ export default function UnitInfoForm({
         dblOAFilterPD: Number(formCurrValues.txbOA_FilterPD),
         dblRAFilterPD: Number(formCurrValues.txbRA_FilterPD),
         intIsMixingBox: Number(formCurrValues.ckbMixingBox) === 1 ? 1 : 0,
+       
         intPreheatCompId: Number(formCurrValues.ddlPreheatComp),
-        intIsPreheatAutoSize: Number(formCurrValues.ckbPreheatAutoSize) === 1 ? 1 : 0,
-        intIsPreheatElecHeatBackupOnly: Number(formCurrValues.ckbMixUseProjectDefault) === 1 ? 1 : 0,
-        intIsBackupHeating: Number(formCurrValues.ckbBackupHeating) === 1 ? 1 : 0,
-        intHeatExchCompId: Number(formCurrValues.ddlHeatExchComp),
-        intCoolingCompId: Number(formCurrValues.ddlCoolingComp),
-        intHeatingCompId: Number(formCurrValues.ddlHeatingComp),
-        intReheatCompId: Number(formCurrValues.ddlReheatComp),
-        intIsHeatPump: Number(formCurrValues.ckbHeatPump) === 1 ? 1 : 0, // Do not use formValues.ckbHeatPump === true
-        intIsDehumidification: Number(formCurrValues.ckbDehumidification) === 1 ? 1 : 0, // Do not use formValues.ckbDehumidification === true
-        intIsDaikinVRV: Number(formCurrValues.ckbDaikinVRV) === 1 ? 1 : 0, // Do not use formValues.ckbDaikinVRV === true
-        intPreheatElecHeaterVoltageId: Number(formCurrValues.ddlPreheatElecHeaterVoltage),
         intPreheatElecHeaterInstallationId: Number(formCurrValues.ddlPreheatElecHeaterInstall),
+        intPreheatElecHeaterVoltageId: Number(formCurrValues.ddlPreheatElecHeaterVoltage),
         intIsPreheatElecHeaterVoltageSPP: Number(formCurrValues.ckbPreheatElecHeaterVoltageSPP) === 1 ? 1 : 0,
-        // intHeatingElecHeaterInstallationId:
-        //   Number(getValues('ddlReheatComp')) === IDs.intCompIdElecHeater
-        //     ? formCurrValues.ddlReheatElecHeaterInstall
-        //     : formCurrValues.ddlHeatingElecHeaterInstall,
-        intHeatingElecHeaterVoltageId: Number(formCurrValues.ddlHeatingElecHeaterVoltage),
-        intHeatingElecHeaterInstallationId: formCurrValues.ddlHeatingElecHeaterInstall,
-        intReheatElecHeaterInstallationId: formCurrValues.ddlReheatElecHeaterInstall,    
-        intPreheatElecHeaterStdCoilNo: 0,
-        intCoolingDX_VRVKitQty: 0,
-        dblCoolingDX_VRVKitTonnage: 0,
-        intHeatingElecHeaterStdCoilNo: 0,
-        intIsHeatingElecHeaterVoltageSPP: Number(formCurrValues.ckbHeatingElecHeaterVoltageSPP) === 1 ? 1 : 0,
-        intReheatElecHeaterVoltageId: Number(formCurrValues.ddlReheatElecHeaterVoltage),
-        intReheatElecHeaterStdCoilNo: 0,
-        intIsReheatElecHeaterVoltageSPP: Number(formCurrValues.ckbReheatElecHeaterVoltageSPP) === 1 ? 1 : 0,
-        intReheatHGRC_VRVKitQty: 0,
-        dblReheatHGRC_VRVKitTonnage: 0,
-        intDamperAndActuatorId: Number(formCurrValues.ddlDamperAndActuator),
-        intisValveAndActuatorIncluded: Number(formCurrValues.ckbValveAndActuator) === 1 ? 1 : 0,
-        intPreheatHWCValveAndActuatorId: 0,
-        intCoolingCWCValveAndActuatorId: 0,
-        intHeatingHWCValveAndActuatorId: 0,
-        intReheatHWCValveAndActuatorId: 0,
-        intIsDrainPan: Number(formCurrValues.ckbDrainPan) === 1 ? 1 : 0,
-        intValveTypeId: Number(formCurrValues.ddlValveType),
-        intEKEXVKitInstallId: 0,
-        dblPreheatSetpointDB: formCurrValues.txbWinterPreheatSetpointDB,
-        dblCoolingSetpointDB: formCurrValues.txbSummerCoolingSetpointDB,
-        dblCoolingSetpointWB: formCurrValues.txbSummerCoolingSetpointWB,
-        dblHeatingSetpointDB: formCurrValues.txbWinterHeatingSetpointDB,
-        dblReheatSetpointDB: formCurrValues.txbSummerReheatSetpointDB,
-        dblBackupHeatingSetpontDB:  formCurrValues.txbBackupHeatingSetpointDB,
         intPreheatFluidTypeId: formCurrValues.ddlPreheatFluidType,
         intPreheatFluidConcentId: formCurrValues.ddlPreheatFluidConcentration,
         dblPreheatFluidEntTemp: formCurrValues.txbPreheatHWCFluidEntTemp,
         dblPreheatFluidLvgTemp: formCurrValues.txbPreheatHWCFluidLvgTemp,
+        dblPreheatSetpointDB: formCurrValues.txbWinterPreheatSetpointDB,
+        intIsPreheatAutoSize: Number(formCurrValues.ckbPreheatAutoSize) === 1 ? 1 : 0,
+        intIsPreheatValveAndActuatorIncluded: Number(formCurrValues.ckbPreheatHWCValveAndActuator) === 1 ? 1 : 0,
+        intPreheatValveTypeId: Number(formCurrValues.ddlPreheatHWCValveType),
+        intPreheatElecHeaterStdCoilNo: 0,
+        intPreheatHWCValveAndActuatorId: 0,
+        intIsPreheatElecHeatBackupOnly: Number(formCurrValues.ckbMixUseProjectDefault) === 1 ? 1 : 0,
+       
+        intHeatExchCompId: Number(formCurrValues.ddlHeatExchComp),
+       
+        intCoolingCompId: Number(formCurrValues.ddlCoolingComp),
+        intIsHeatPump: Number(formCurrValues.ckbHeatPump) === 1 ? 1 : 0, // Do not use formValues.ckbHeatPump === true
+        intIsDehumidification: Number(formCurrValues.ckbDehumidification) === 1 ? 1 : 0, // Do not use formValues.ckbDehumidification === true
         intCoolingFluidTypeId: Number(formCurrValues.ddlCoolingFluidType),
         intCoolingFluidConcentId: Number(formCurrValues.ddlCoolingFluidConcentration),
         dblCoolingFluidEntTemp: formCurrValues.txbCoolingCWCFluidEntTemp,
         dblCoolingFluidLvgTemp: formCurrValues.txbCoolingCWCFluidLvgTemp,
-        // intHeatingFluidTypeId: heatingFluidTypeId,
-        // intHeatingFluidConcentId: heatingFluidConcenId,
-        // dblHeatingFluidEntTemp: heatingFluidEntTemp,
-        // dblHeatingFluidLvgTemp: heatingFluidLvgTemp,
+        intIsDaikinVRV: Number(formCurrValues.ckbDaikinVRV) === 1 ? 1 : 0, // Do not use formValues.ckbDaikinVRV === true
+        intEKEXVKitInstallId: Number(formCurrValues.ddlEKEXVKitInstallation),
+        dblRefrigSuctionTemp: formCurrValues.txbRefrigSuctionTemp,
+        dblRefrigLiquidTemp: formCurrValues.txbRefrigLiquidTemp,
+        dblRefrigSuperheatTemp: formCurrValues.txbRefrigSuperheatTemp,
+        dblCoolingSetpointDB: formCurrValues.txbSummerCoolingSetpointDB,
+        dblCoolingSetpointWB: formCurrValues.txbSummerCoolingSetpointWB,
+        intIsCoolingValveAndActuatorIncluded: Number(formCurrValues.ckbCoolingCWCValveAndActuator) === 1 ? 1 : 0,
+        intCoolingValveTypeId: Number(formCurrValues.ddlCoolingCWCValveType),
+        intCoolingDX_VRVKitQty: 0,
+        dblCoolingDX_VRVKitTonnage: 0,
+
+
+        intHeatingCompId: Number(formCurrValues.ddlHeatingComp),
+        intHeatingElecHeaterInstallationId: formCurrValues.ddlHeatingElecHeaterInstall,
+        intHeatingElecHeaterVoltageId: Number(formCurrValues.ddlHeatingElecHeaterVoltage),
+        intIsHeatingElecHeaterVoltageSPP: Number(formCurrValues.ckbHeatingElecHeaterVoltageSPP) === 1 ? 1 : 0,
         intHeatingFluidTypeId: formCurrValues.ddlHeatingFluidType,
         intHeatingFluidConcentId: formCurrValues.ddlHeatingFluidConcentration,
         dblHeatingFluidEntTemp: formCurrValues.txbHeatingHWCFluidEntTemp,
         dblHeatingFluidLvgTemp: formCurrValues.txbHeatingHWCFluidLvgTemp,
+        dblHeatingSetpointDB: formCurrValues.txbWinterHeatingSetpointDB,
+        intIsHeatingValveAndActuatorIncluded: Number(formCurrValues.ckbHeatingHWCValveAndActuator) === 1 ? 1 : 0,
+        intHeatingValveTypeId: Number(formCurrValues.ddlHeatingHWCValveType),
+        intHeatingElecHeaterStdCoilNo: 0,
+        intHeatingHWCValveAndActuatorId: 0,
+
+        intReheatCompId: Number(formCurrValues.ddlReheatComp),
+        intReheatElecHeaterInstallationId: formCurrValues.ddlReheatElecHeaterInstall,    
+        intReheatElecHeaterVoltageId: Number(formCurrValues.ddlReheatElecHeaterVoltage),
+        intIsReheatElecHeaterVoltageSPP: Number(formCurrValues.ckbReheatElecHeaterVoltageSPP) === 1 ? 1 : 0,
         intReheatFluidTypeId: formCurrValues.ddlReheatFluidType,
         intReheatFluidConcentId: formCurrValues.ddlReheatFluidConcentration,
         dblReheatFluidEntTemp: formCurrValues.txbReheatHWCFluidEntTemp,
         dblReheatFluidLvgTemp: formCurrValues.txbReheatHWCFluidLvgTemp,
-        dblRefrigSuctionTemp: formCurrValues.txbRefrigSuctionTemp,
-        dblRefrigLiquidTemp: formCurrValues.txbRefrigLiquidTemp,
-        dblRefrigSuperheatTemp: formCurrValues.txbRefrigSuperheatTemp,
         dblRefrigCondensingTemp: formCurrValues.txbRefrigCondensingTemp,
         dblRefrigVaporTemp: formCurrValues.txbRefrigVaporTemp,
         dblRefrigSubcoolingTemp: formCurrValues.txbRefrigSubcoolingTemp,
+        dblReheatSetpointDB: formCurrValues.txbSummerReheatSetpointDB,
+        intIsReheatValveAndActuatorIncluded: Number(formCurrValues.ckbReheatHWCValveAndActuator) === 1 ? 1 : 0,
+        intReheatValveTypeId: Number(formCurrValues.ddlReheatHWCValveType),
+        intReheatElecHeaterStdCoilNo: 0,
+        intReheatHWCValveAndActuatorId: 0,
+        intReheatHGRC_VRVKitQty: 0,
+        dblReheatHGRC_VRVKitTonnage: 0,
+
+        intIsBackupHeating: Number(formCurrValues.ckbBackupHeating) === 1 ? 1 : 0,
+        dblBackupHeatingSetpontDB:  formCurrValues.txbBackupHeatingSetpointDB,
+
+
+        // intHeatingElecHeaterInstallationId:
+        //   Number(getValues('ddlReheatComp')) === IDs.intCompIdElecHeater
+        //     ? formCurrValues.ddlReheatElecHeaterInstall
+        //     : formCurrValues.ddlHeatingElecHeaterInstall,
+
+        // intHeatingFluidTypeId: heatingFluidTypeId,
+        // intHeatingFluidConcentId: heatingFluidConcenId,
+        // dblHeatingFluidEntTemp: heatingFluidEntTemp,
+        // dblHeatingFluidLvgTemp: heatingFluidLvgTemp,
+
+        // intIsValveAndActuatorIncluded: Number(formCurrValues.ckbValveAndActuator) === 1 ? 1 : 0,
+        // intValveTypeId: Number(formCurrValues.ddlValveType),
+        intDamperAndActuatorId: Number(formCurrValues.ddlDamperAndActuator),
+        intIsDrainPan: Number(formCurrValues.ckbDrainPan) === 1 ? 1 : 0,
         intIsHeatExchEA_Warning: 0,
         intElecHeaterQty:0,
       },
@@ -2915,14 +2934,31 @@ useEffect(() => {
     }
 
 
+   if (Number(getValues('ddlCoolingComp')) === IDs.intCompIdDX && Number(getValues('ckbDaikinVRV')) === 1) {
+      info.isVisible = false;
+
+      // Heating becomes Backup Heating
+      if (Number(getValues('ddlReheatComp')) !== IDs.intCompIdHGRH && Number(getValues('ddlReheatComp')) !== IDs.intCompIdNA) {
+        info.fdtHeatingComp = info.fdtHeatingComp?.filter((item: { id: number }) => item.id === IDs.intCompIdNA || item.id === Number(getValues('ddlReheatComp')));
+      }
+      // else {
+      //   info.fdtHeatingComp = info.fdtHeatingComp?.filter((item: { id: number }) => item.id === IDs.intCompIdNA || item.id === Number(getValues('ddlReheatComp')));
+      // }
+    }
+
+    // info.defaultId = formCurrValues.ddlHeatingComp  > 0 ? formCurrValues.ddlHeatingComp : info.fdtHeatingComp?.[0]?.id;
+    info.defaultId = info.fdtHeatingComp?.filter((item: { id: number }) => item.id === Number(formCurrValues.ddlHeatingComp)).length > 0 ? formCurrValues.ddlHeatingComp : info.fdtHeatingComp?.[0]?.id;
+    // const test = info.fdtHeatingComp.some((item: { id: number }) => item, { id: formCurrValues.ddlHeatingComp });
+
+
     setHeatingCompInfo(info);
     setValue('ddlHeatingComp', info.defaultId);
 
-  }, [getValues('ddlCoolingComp'), getValues('ddlReheatComp')]);
+  }, [getValues('ddlCoolingComp'), getValues('ddlReheatComp'), getValues('ckbDaikinVRV')]);
 
 
   const [reheatCompInfo, setReheatCompInfo] = useState<any>([]);
-  useMemo(() => {
+  useEffect(() => {
     const info: { fdtReheatComp: any; isVisible: boolean; defaultId: number } = { fdtReheatComp: [], isVisible: false, defaultId: 0,};
     // let controlsPrefProdTypeLink: any = [];
 
@@ -2950,7 +2986,8 @@ useEffect(() => {
       switch (Number(getValues('ddlCoolingComp'))) {
         case IDs.intCompIdCWC:
           info.fdtReheatComp = info.fdtReheatComp?.filter((item: { id: { toString: () => any } }) => item.id.toString() !== IDs.intCompIdHGRH.toString());
-          info.defaultId = formCurrValues.ddlReheatComp  > 0 ? formCurrValues.ddlReheatComp : info.fdtReheatComp?.[0]?.id;
+          // info.defaultId = formCurrValues.ddlReheatComp  > 0 ? formCurrValues.ddlReheatComp : info.fdtReheatComp?.[0]?.id;
+          info.defaultId = info.fdtReheatComp?.filter((item: { id: number }) => item.id === Number(formCurrValues.ddlReheatComp)).length > 0 ? formCurrValues.ddlReheatComp : info.fdtReheatComp?.[0]?.id;
           break;
         case IDs.intCompIdDX:
           if (Number(intUAL) === IDs.intUAL_External && (intUnitTypeID === IDs.intUnitTypeIdERV || intUnitTypeID === IDs.intUnitTypeIdHRV)) {
@@ -2959,7 +2996,8 @@ useEffect(() => {
               (Number(getValues('ddlUnitModel')) === IDs.intVentumUnitModelIdH05IN_ERV || Number(getValues('ddlUnitModel')) === IDs.intVentumUnitModelIdH05IN_HRV)) {
             info.fdtReheatComp = info.fdtReheatComp?.filter((item: { id: { toString: () => any } }) =>  item.id.toString() !== IDs.intCompIdHGRH.toString());
           }
-          info.defaultId = formCurrValues.ddlReheatComp  > 0 ? formCurrValues.ddlReheatComp : info.fdtReheatComp?.[0]?.id;
+          // info.defaultId = formCurrValues.ddlReheatComp  > 0 ? formCurrValues.ddlReheatComp : info.fdtReheatComp?.[0]?.id;
+          info.defaultId = info.fdtReheatComp?.filter((item: { id: number }) => item.id === Number(formCurrValues.ddlReheatComp)).length > 0 ? formCurrValues.ddlReheatComp : info.fdtReheatComp?.[0]?.id;
           break;
         default:
           info.defaultId = IDs.intCompIdNA;
@@ -2968,30 +3006,41 @@ useEffect(() => {
       } 
 
 
-      switch (Number(getValues('ckbDaikinVRV'))) {
-        case 0:
-          info.fdtReheatComp = info.fdtReheatComp?.filter((item: { id: { toString: () => any } }) =>  item.id.toString() !== IDs.intCompIdHGRH.toString());
-          info.defaultId = formCurrValues.ddlReheatComp  > 0 ? formCurrValues.ddlReheatComp : info.fdtReheatComp?.[0]?.id;
-          break;
-        default:
-          break;
-      }
+      if (Number(getValues('ddlCoolingComp')) === IDs.intCompIdCWC) {
+        if (Number(getValues('ddlHeatingComp')) !== IDs.intCompIdNA) {
+          info.fdtReheatComp = info.fdtReheatComp?.filter((item: { id: Number} ) => item.id === IDs.intCompIdNA || item.id === Number(getValues('ddlHeatingComp')));
+        }
+        // else {
+        //   info.fdtReheatComp = info.fdtReheatComp?.filter((item: { id: Number} ) =>  item.id !== IDs.intCompIdHGRH);
+        // }
+                  
+        // info.defaultId = formCurrValues.ddlReheatComp  > 0 ? formCurrValues.ddlReheatComp : info.fdtReheatComp?.[0]?.id;
+        info.defaultId = info.fdtReheatComp?.filter((item: { id: number }) => item.id === Number(formCurrValues.ddlReheatComp)).length > 0 ? formCurrValues.ddlReheatComp : info.fdtReheatComp?.[0]?.id;
+      } 
+      else if (Number(getValues('ddlCoolingComp')) === IDs.intCompIdDX && Number(getValues('ckbDaikinVRV')) === 0) {
+        info.fdtReheatComp = info.fdtReheatComp?.filter((item: { id: Number }) =>  item.id !== IDs.intCompIdHGRH);
+        // info.defaultId = formCurrValues.ddlReheatComp  > 0 ? formCurrValues.ddlReheatComp : info.fdtReheatComp?.[0]?.id;
+        info.defaultId = info.fdtReheatComp?.filter((item: { id: number }) => item.id === Number(formCurrValues.ddlReheatComp)).length > 0 ? formCurrValues.ddlReheatComp : info.fdtReheatComp?.[0]?.id;
+  }
 
-  
-      // info.isVisible = true;
+      // if (Number(getValues('ddlCoolingComp')) === IDs.intCompIdDX && Number(getValues('ckbDaikinVRV')) === 1) {
+      //   info.fdtReheatComp = info.fdtReheatComp?.filter((item: { id: number }) => 
+      //     item.id === IDs.intCompIdNA || 
+      //     item.id === IDs.intCompIdHGRH);
+      //   info.defaultId = formCurrValues.ddlReheatComp  > 0 ? formCurrValues.ddlReheatComp : info.fdtReheatComp?.[0]?.id;
+      // }
+      // else if (Number(getValues('ddlCoolingComp')) === IDs.intCompIdDX && Number(getValues('ckbDaikinVRV')) === 0) {
+      //   info.fdtReheatComp = info.fdtReheatComp?.filter((item: { id: number }) => item.id !== IDs.intCompIdHGRH );
+      //   info.defaultId = formCurrValues.ddlReheatComp  > 0 ? formCurrValues.ddlReheatComp : info.fdtReheatComp?.[0]?.id;
+      // }
 
-    // } else {
-    //     // info.ftdReheatComp = info.ftdReheatComp?.filter((item: { id: { toString: () => any } }) =>  item.id.toString() !== IDs.intCompIdNA.toString());
-    //     info.fdtReheatComp = info.fdtReheatComp?.filter((item: { id: number }) =>  item.id === IDs.intCompIdNA);
-    //     info.defaultId = IDs.intCompIdNA;
-    //     info.isVisible = false;
-    //   }
+
 
 
     setReheatCompInfo(info);
     setValue('ddlReheatComp', info.defaultId);
 
-  }, [getValues('ckbDehumidification'), getValues('ddlCoolingComp'), getValues('ddlUnitModel'), getValues('ckbDaikinVRV'),]);
+  }, [getValues('ckbDehumidification'), getValues('ddlCoolingComp'), getValues('ddlUnitModel'), getValues('ckbDaikinVRV'), getValues('ddlHeatingComp')]);
 
 
   // const [heatPumpInfo, setHeatPumpInfo] = useState<any>([]);
@@ -6201,21 +6250,21 @@ useEffect(() => {
                   <Stack>
                   <RHFCheckbox
                   label="Control Valve"
-                  name="ckbValveAndActuator"
+                  name="ckbPreheatHWCValveAndActuator"
                   // sx={getDisplay(valveAndActuatorInfo.isVisible)}
                   defaultChecked={formValues.ckbValveAndActuator}
                   // onChange={() => setCkbValveAndActuatorVal(!formValues.ckbValveAndActuatorVal)}
-                  onChange={(e: any) => setValue('ckbValveAndActuator', Number(e.target.checked))}
+                  onChange={(e: any) => setValue('ckbPreheatHWCValveAndActuator', Number(e.target.checked))}
                 />
                   </Stack>
                   <Stack spacing={1}>
                 <RHFSelect
                   native
                   size="small"
-                  name="ddlValveType"
+                  name="ddlPreheatHWCValveType"
                   label="Valve Type"
                   sx={getDisplay(valveTypeInfo?.isVisible)}
-                  onChange={ddlValveTypeChanged}
+                  onChange={(e: any) => setValue('ddlPreheatHWCValveType', Number(e.target.value))}
                 >
                   {valveTypeInfo?.fdtValveType?.map((item: any, index: number) => (
                     <option key={index} value={item.id}>
@@ -6240,7 +6289,7 @@ useEffect(() => {
             id="panel1a-header"
           >
             <Typography color="primary.main" variant="h6">
-              COOLING
+              {Number(getValues('ddlCoolingComp')) === IDs.intCompIdDX ? "DX - COOLING" : "COOLING"}
             </Typography>
           </AccordionSummary>
           <AccordionDetails>
@@ -6546,21 +6595,21 @@ useEffect(() => {
                   <Stack>
                   <RHFCheckbox
                   label="Control Valve"
-                  name="ckbValveAndActuator"
+                  name="ckbCoolingCWCValveAndActuator"
                   // sx={getDisplay(valveAndActuatorInfo.isVisible)}
                   defaultChecked={formValues.ckbValveAndActuator}
                   // onChange={() => setCkbValveAndActuatorVal(!formValues.ckbValveAndActuatorVal)}
-                  onChange={(e: any) => setValue('ckbValveAndActuator', Number(e.target.checked))}
+                  onChange={(e: any) => setValue('ckbCoolingCWCValveAndActuator', Number(e.target.checked))}
                 />
                   </Stack>
                   <Stack spacing={1}>
                 <RHFSelect
                   native
                   size="small"
-                  name="ddlValveType"
+                  name="ddlCoolingCWCValveType"
                   label="Valve Type"
                   sx={getDisplay(valveTypeInfo?.isVisible)}
-                  onChange={ddlValveTypeChanged}
+                  onChange={(e: any) => setValue('ddlCoolingCWCValveType', Number(e.target.value))}
                 >
                   {valveTypeInfo?.fdtValveType?.map((item: any, index: number) => (
                     <option key={index} value={item.id}>
@@ -6679,7 +6728,7 @@ useEffect(() => {
             id="panel1a-header"
           >
             <Typography color="primary.main" variant="h6">
-            {(Number(formValues.ddlCoolingComp) === IDs.intCompIdDX && Number(formValues.ckbDaikinVRV) === 1) ? 'BACKUP HEATING' : 'HEATING' } 
+            HEATING
             </Typography>
           </AccordionSummary>
             <AccordionDetails>
@@ -6710,7 +6759,7 @@ useEffect(() => {
                     name="ddlHeatingElecHeaterInstall"
                     size="small"
                     placeholder=""
-                    sx={{ ...getDisplay(Number(formValues.ddlHeatingComp) === IDs.intCompIdElecHeater), }}
+                    sx={{ ...getDisplay(Number(formCurrValues.ddlHeatingComp) === IDs.intCompIdElecHeater), }}
 
                   // onChange={(e: any) => setValue('ddlHeatingElecHeaterInstall', Number(e.target.value)) }
                   >
@@ -6725,12 +6774,12 @@ useEffect(() => {
                   </Stack>
                 </Box>
               </Grid>
-              {/* <Grid item xs={12} md={12} sx={{ ...getDisplay(Number(formValues.ddlHeatingComp) === IDs.intCompIdElecHeater), }}>
+              {/* <Grid item xs={12} md={12} sx={{ ...getDisplay(Number(formCurrValues.ddlHeatingComp) === IDs.intCompIdElecHeater), }}>
                 <Box sx={{ display: 'grid', rowGap: 3, columnGap: 3, gridTemplateColumns: { xs: 'repeat(4, 1fr)' }, }}>
 
                 </Box>
               </Grid> */}
-              <Grid item xs={12} md={12} sx={{ ...getDisplay(Number(formValues.ddlHeatingComp) === IDs.intCompIdElecHeater) }}>
+              <Grid item xs={12} md={12} sx={{ ...getDisplay(Number(formCurrValues.ddlHeatingComp) === IDs.intCompIdElecHeater) }}>
               <Typography  color="primary.main" bgcolor="" variant="subtitle2" marginBottom="10px">
                   Heater Electrical
                 </Typography>
@@ -6765,7 +6814,7 @@ useEffect(() => {
                 </Box>
               </Grid>
 
-              <Grid item xs={12} md={12} sx={{ ...getDisplay(Number(formValues.ddlHeatingComp) === IDs.intCompIdHWC) }}>
+              <Grid item xs={12} md={12} sx={{ ...getDisplay(Number(formCurrValues.ddlHeatingComp) === IDs.intCompIdHWC) }}>
               <Typography  color="primary.main" bgcolor="" variant="subtitle2" marginBottom="10px">
                   Fluid Properties
                 </Typography>
@@ -6870,7 +6919,7 @@ useEffect(() => {
                       // sx={getInlineDisplay(customInputs.divCoolingCWC_UseFlowRateVisible)}
                       label="Heating HWC Use Capacity"
                       name="ckbHeatingHWCUseCap"
-                      checked={formValues.ckbHeatingHWCUseCap}
+                      checked={formCurrValues.ckbHeatingHWCUseCap}
                       onChange={(e: any) => setValue('ckbHeatingHWCUseCap', Number(e.target.checked))}
                     />
                   </Stack>
@@ -6897,8 +6946,8 @@ useEffect(() => {
                 </Box>
               </Grid>
               <Grid item xs={12} md={12}                
-                sx={getDisplay(Number(formValues.ddlHeatingComp) === IDs.intCompIdElecHeater || 
-                               Number(formValues.ddlHeatingComp) === IDs.intCompIdHWC)}
+                sx={getDisplay(Number(formCurrValues.ddlHeatingComp) === IDs.intCompIdElecHeater || 
+                               Number(formCurrValues.ddlHeatingComp) === IDs.intCompIdHWC)}
               >
               <Typography  color="primary.main" bgcolor="" variant="subtitle2" marginBottom="10px">
               Air Properties
@@ -6917,7 +6966,7 @@ useEffect(() => {
                 </Box>
               </Grid>
               <Grid item xs={12} md={12}                
-                sx={getDisplay(Number(formValues.ddlHeatingComp) === IDs.intCompIdHWC)}
+                sx={getDisplay(Number(formCurrValues.ddlHeatingComp) === IDs.intCompIdHWC)}
               >
                 <Typography  color="primary.main" bgcolor="" variant="subtitle2" marginBottom="10px">
                 Accessories
@@ -6926,11 +6975,11 @@ useEffect(() => {
                   <Stack>
                   <RHFCheckbox
                   label="Control Valve"
-                  name="ckbValveAndActuator"
+                  name="ckbHeatingHWCValveAndActuator"
                   // sx={getDisplay(valveAndActuatorInfo.divValveAndActuatorVisible)}
                   defaultChecked={formValues.ckbValveAndActuator}
                   // onChange={() => setCkbValveAndActuatorVal(!formValues.ckbValveAndActuatorVal)}
-                  onChange={(e: any) => setValue('ckbValveAndActuator', Number(e.target.checked))}
+                  onChange={(e: any) => setValue('ckbHeatingHWCValveAndActuator', Number(e.target.checked))}
                 />
                   </Stack>
 
@@ -6938,10 +6987,10 @@ useEffect(() => {
                 <RHFSelect
                   native
                   size="small"
-                  name="ddlValveType"
+                  name="ddlHeatingHWCValveType"
                   label="Valve Type"
                   sx={getDisplay(valveTypeInfo?.isVisible)}
-                  onChange={ddlValveTypeChanged}
+                  onChange={(e: any) => setValue('ddlHeatingHWCValveType', Number(e.target.value))}
                 >
                   {valveTypeInfo?.fdtValveType?.map((item: any, index: number) => (
                     <option key={index} value={item.id}>
@@ -7257,21 +7306,21 @@ useEffect(() => {
                   <Stack>
                   <RHFCheckbox
                   label="Control Valve"
-                  name="ckbValveAndActuator"
+                  name="ckbReheatHWCValveAndActuator"
                   // sx={getDisplay(valveAndActuatorInfo.isVisible)}
-                  defaultChecked={formValues.ckbValveAndActuator}
+                  defaultChecked={formValues.ckbReheatHWCValveAndActuator}
                   // onChange={() => setCkbValveAndActuatorVal(!formValues.ckbValveAndActuatorVal)}
-                  onChange={(e: any) => setValue('ckbValveAndActuator', Number(e.target.checked))}
+                  onChange={(e: any) => setValue('ckbReheatHWCValveAndActuator', Number(e.target.checked))}
                 />
                   </Stack>
                   <Stack spacing={1}>
                 <RHFSelect
                   native
                   size="small"
-                  name="ddlValveType"
+                  name="ddlReheatHWCValveType"
                   label="Valve Type"
                   sx={getDisplay(valveTypeInfo?.isVisible)}
-                  onChange={ddlValveTypeChanged}
+                  onChange={(e: any) => setValue('ddlReheatHWCValveType', Number(e.target.value))}
                 >
                   {valveTypeInfo?.fdtValveType?.map((item: any, index: number) => (
                     <option key={index} value={item.id}>
@@ -7282,6 +7331,296 @@ useEffect(() => {
               </Stack>
                 </Box>
               </Grid>
+            </Grid>
+          </AccordionDetails>
+        </Accordion>
+        <Accordion  // HEATING AS BACKUP HEATING - SHOW IN THIS ORDER WHEN COOLING DX AND HEAT PUMP SELECTED
+          expanded={expanded.panel4}
+          // sx={getDisplay(isHeatingSectionVisible)}
+          onChange={() => setExpanded({ ...expanded, panel4: !expanded.panel4 })}
+          sx={getDisplay(Number(formCurrValues.ddlCoolingComp) === IDs.intCompIdDX && Number(formCurrValues.ckbDaikinVRV) === 1)}
+        >
+          <AccordionSummary
+            expandIcon={<Iconify icon="il:arrow-down" />}
+            aria-controls="panel1a-content"
+            id="panel1a-header"
+          >
+            <Typography color="primary.main" variant="h6">
+              BACKUP HEATING
+            </Typography>
+          </AccordionSummary>
+            <AccordionDetails>
+            <Grid container spacing={2}>
+              <Grid item xs={12} md={12}>
+                <Box sx={{ display: 'grid', rowGap: 3, columnGap: 3, gridTemplateColumns: { xs: 'repeat(3, 1fr)' }, }}>
+                  <Stack>
+                    <RHFSelect
+                      native
+                      size="small"
+                      name="ddlHeatingComp"
+                      label="Heating"
+                      disabled={!heatingCompInfo.isEnabled}
+                      // sx={getDisplay(heatingCompInfo?.isVisible)}
+                    // onChange={ddlHeatingCompChanged}
+                    >
+                      {heatingCompInfo?.fdtHeatingComp?.map((item: any, index: number) => (
+                        <option key={index} value={item.id}>
+                          {item.items}
+                        </option>
+                      ))}
+                    </RHFSelect>
+                    </Stack>
+                    <Stack>
+                    <RHFSelect
+                    native
+                    label="Heating Elec. Heater Installation"
+                    name="ddlHeatingElecHeaterInstall"
+                    size="small"
+                    placeholder=""
+                    sx={{ ...getDisplay(Number(formCurrValues.ddlHeatingComp) === IDs.intCompIdElecHeater), }}
+
+                  // onChange={(e: any) => setValue('ddlHeatingElecHeaterInstall', Number(e.target.value)) }
+                  >
+                    {heatingElecHeaterInstallInfo?.fdtElecHeaterInstall?.map(
+                      (item: any, index: number) => (
+                        <option key={index} value={item.id}>
+                          {item.items}
+                        </option>
+                      )
+                    )}
+                  </RHFSelect>
+                  </Stack>
+                </Box>
+              </Grid>
+              {/* <Grid item xs={12} md={12} sx={{ ...getDisplay(Number(formValues.ddlHeatingComp) === IDs.intCompIdElecHeater), }}>
+                <Box sx={{ display: 'grid', rowGap: 3, columnGap: 3, gridTemplateColumns: { xs: 'repeat(4, 1fr)' }, }}>
+
+                </Box>
+              </Grid> */}
+              <Grid item xs={12} md={12} sx={{ ...getDisplay(Number(formCurrValues.ddlHeatingComp) === IDs.intCompIdElecHeater) }}>
+              <Typography  color="primary.main" bgcolor="" variant="subtitle2" marginBottom="10px">
+                  Heater Electrical
+                </Typography>
+                <Box sx={{ display: 'grid', rowGap: 3, columnGap: 3, gridTemplateColumns: { xs: 'repeat(3, 1fr)' }, }}>
+                <RHFSelect
+                    native
+                    size="small"
+                    name="ddlHeatingElecHeaterVoltage"
+                    label="Electric Heater Voltage"
+                    placeholder=""
+                    sx={getInlineDisplay(isVisibleDdlHeatingElecHeaterVoltage)}
+                    disabled={!isEnabledDdlHeatingElecHeaterVoltage}
+                    onChange={ddlHeatingElecHeaterVoltageChanged}
+                  >
+                    {heatingElecHeaterVoltageTable?.map(
+                      (item: any, index: number) => (
+                        <option key={index} value={item.id}>
+                          {item.items}
+                        </option>
+                      )
+                    )}
+                  </RHFSelect>
+                  <RHFCheckbox
+                    label="Single Point Power Connection"
+                    name="ckbHeatingElecHeaterVoltageSPP"
+                    // checked={}
+                    onChange={(e: any) => setValue('ckbHeatingElecHeaterVoltageSPP', Number(e.target.value))}
+                    // onChange={ckbHeatingElecHeaterVoltageSPPChanged}
+
+                    sx={getDisplay(voltageSPPIsVisible)}
+                  />
+                </Box>
+              </Grid>
+
+              <Grid item xs={12} md={12} sx={{ ...getDisplay(Number(formCurrValues.ddlHeatingComp) === IDs.intCompIdHWC) }}>
+              <Typography  color="primary.main" bgcolor="" variant="subtitle2" marginBottom="10px">
+                  Fluid Properties
+                </Typography>
+                <Box sx={{ display: 'grid', rowGap: 3, columnGap: 3, gridTemplateColumns: { xs: 'repeat(3, 1fr)' }, }}>
+                  <Stack spacing={1}>
+                    <RHFSelect
+                      native
+                      size="small"
+                      name="ddlHeatingFluidType"
+                      label="Heating Fluid Type"
+                    >
+                      {heatingFluidTypeInfo?.fdtFluidType?.map((item: any, index: number) => (
+                        <option key={index} value={item.id}>
+                          {item.items}
+                        </option>
+                      ))}
+                    </RHFSelect>
+                  </Stack>
+                  <Stack>
+                    <RHFSelect
+                      native
+                      size="small"
+                      name="ddlHeatingFluidConcentration"
+                      label="Heating Fluid %"
+                    >
+                      {heatingFluidConcenInfo?.fdtFluidConcen?.map((item: any, index: number) => (
+                        <option key={index} value={item.id}>
+                          {item.items}
+                        </option>
+                      ))}
+                    </RHFSelect>
+                  </Stack>
+                </Box>
+              </Grid>
+              <Grid item xs={12} md={12}
+                sx={getDisplay(Number(formCurrValues.ddlHeatingComp) === IDs.intCompIdHWC && internCompInfo?.isCustomCompVisible)}>
+                <Box sx={{ display: 'grid', rowGap: 3, columnGap: 3, gridTemplateColumns: { xs: 'repeat(3, 1fr)' }, }}>
+                  <Stack spacing={1}>
+                      <></>
+                  </Stack>
+                  <Stack>
+                    <RHFCheckbox
+                      // sx={getInlineDisplay(customInputs.divCoolingCWC_UseFlowRateVisible)}
+                      label="Use Fluid Outlet Temp"
+                      name="ckbHeatingHWCUseFluidLvgTemp"
+                      // checked={formValues.ckbHeatingHWCUseFlowRate}
+                      // onChange={(e: any) => setValue('ckbHeatingHWCUseFluidLvgTemp', Number(e.target.checked))}
+                      onClick={ckbHeatingHWCUseFluidLvgTempChanged}
+                    />
+                  </Stack>
+                  <Stack>
+                    <RHFCheckbox
+                      // sx={getInlineDisplay(customInputs.divCoolingCWC_UseFlowRateVisible)}
+                      label="Use Fluid Flow Rate"
+                      name="ckbHeatingHWCUseFluidFlowRate"
+                      // checked={formValues.ckbHeatingHWCUseFluidFlowRate}
+                      // onChange={(e: any) => setValue('ckbHeatingHWCUseFlowRate', Number(e.target.checked))}
+                      onClick={ckbHeatingHWCUseFluidFlowRateChanged}
+                    />
+                  </Stack>
+                </Box>
+              </Grid>
+              <Grid item xs={12} md={12} sx={{ ...getDisplay(Number(formCurrValues.ddlHeatingComp) === IDs.intCompIdHWC) }}>
+                <Box sx={{ display: 'grid', rowGap: 3, columnGap: 3, gridTemplateColumns: { xs: 'repeat(3, 1fr)' }, }}>
+                  <Stack>
+                    <RHFTextField
+                      size="small"
+                      name="txbHeatingHWCFluidEntTemp"
+                      label="Heating Fluid Ent Temp (F)"
+                      // InputProps={{ inputProps: { min: 80, max: 180 } }}
+                      onBlur={txbHeatingHWCFluidEntTempChanged}
+                      />
+                  </Stack>
+                  <Stack>
+                    <RHFTextField
+                      size="small"
+                      name="txbHeatingHWCFluidLvgTemp"
+                      label="Heating Fluid Lvg Temp (F)"
+                      // InputProps={{ inputProps: { min: 40, max: 180 } }}
+                      disabled={!isTxbHeatingHWCFluidLvgTempEnabled}
+                      onBlur={txbHeatingHWCFluidLvgTempChanged}
+                      />
+                  </Stack>
+                  <Stack>
+                    <RHFTextField
+                      size="small"
+                      name="txbHeatingHWCFluidFlowRate"
+                      label="Heating HWC Flow Rate (GPM)"
+                      InputProps={{ inputProps: { min: 0.1, max: 50 } }}
+                      disabled={!isTxbHeatingHWCFluidFlowRateEnabled}
+                      // sx={getDisplay(customInputs.divHeatingHWC_UseFlowRateVisible)}
+                      onBlur={txbHeatingHWCFluidFlowRateChanged}
+                    />
+                  </Stack>                
+                  </Box>
+              </Grid>
+              <Grid item xs={12} md={12}
+                sx={getDisplay(false)}>
+                <Box sx={{ display: 'grid', rowGap: 3, columnGap: 3, gridTemplateColumns: { xs: 'repeat(3, 1fr)' }, }}>
+                  <Stack spacing={1}>
+                    <RHFCheckbox
+                      // sx={getInlineDisplay(customInputs.divCoolingCWC_UseFlowRateVisible)}
+                      label="Heating HWC Use Capacity"
+                      name="ckbHeatingHWCUseCap"
+                      checked={formCurrValues.ckbHeatingHWCUseCap}
+                      onChange={(e: any) => setValue('ckbHeatingHWCUseCap', Number(e.target.checked))}
+                    />
+                  </Stack>
+                  <Stack>
+                    <RHFTextField
+                      size="small"
+                      name="txbHeatingHWCCap"
+                      label="Heating HWC Capacity (MBH)"
+                      // sx={getDisplay(customInputs.divHeatingHWC_UseCapVisible)}
+                      // disabled={heatingHWCCapInfo.isDisabled}
+                      onChange={(e: any) => { setValueWithCheck1(e, 'txbHeatingHWCCap'); }}
+                    />
+                  </Stack>
+                  {/* <Stack>
+                    <RHFCheckbox
+                      // sx={getInlineDisplay(customInputs.divCoolingCWC_UseFlowRateVisible)}
+                      label="Heating HWC Use Flow Rate"
+                      name="ckbHeatingHWCUseFlowRate"
+                      checked={formCurrValues.ckbHeatingHWCUseFluidFlowRate}
+                      onChange={(e: any) => setValue('ckbHeatingHWCUseFluidFlowRate', Number(e.target.checked))}
+                    />
+                  </Stack> */}
+
+                </Box>
+              </Grid>
+              <Grid item xs={12} md={12}                
+                sx={getDisplay(Number(formCurrValues.ddlHeatingComp) === IDs.intCompIdElecHeater || 
+                               Number(formCurrValues.ddlHeatingComp) === IDs.intCompIdHWC)}
+              >
+              <Typography  color="primary.main" bgcolor="" variant="subtitle2" marginBottom="10px">
+              Air Properties
+            </Typography>
+                <Box sx={{ display: 'grid', rowGap: 3, columnGap: 3, gridTemplateColumns: { xs: 'repeat(3, 1fr)' }, }}>
+                  <Stack>
+                  <RHFTextField
+                      size="small"
+                      name="txbWinterHeatingSetpointDB"
+                      label="Heating LAT Setpoint DB (F):"
+                      autoComplete="off"
+                      sx={getDisplay(isHeatingSetpointVisible)}
+                      onChange={(e: any) => { setValueWithCheck1(e, 'txbWinterHeatingSetpointDB'); }}
+                    /> 
+                  </Stack>
+                </Box>
+              </Grid>
+              <Grid item xs={12} md={12}                
+                sx={getDisplay(Number(formCurrValues.ddlHeatingComp) === IDs.intCompIdHWC)}
+              >
+                <Typography  color="primary.main" bgcolor="" variant="subtitle2" marginBottom="10px">
+                Accessories
+                </Typography>
+                <Box sx={{ display: 'grid', rowGap: 3, columnGap: 3, gridTemplateColumns: { xs: 'repeat(3, 1fr)' }, }}>
+                  <Stack>
+                  <RHFCheckbox
+                  label="Control Valve"
+                  name="ckbHeatingHWCValveAndActuator"
+                  // sx={getDisplay(valveAndActuatorInfo.divValveAndActuatorVisible)}
+                  defaultChecked={formCurrValues.ckbHeatingHWCValveAndActuator}
+                  // onChange={() => setCkbValveAndActuatorVal(!formValues.ckbValveAndActuatorVal)}
+                  onChange={(e: any) => setValue('ckbHeatingHWCValveAndActuator', Number(e.target.checked))}
+                />
+                  </Stack>
+
+                <Stack spacing={1}>
+                <RHFSelect
+                  native
+                  size="small"
+                  name="ddlHeatingHWCValveType"
+                  label="Valve Type"
+                  sx={getDisplay(valveTypeInfo?.isVisible)}
+                  onChange={(e: any) => setValue('ddlHeatingHWCValveType', Number(e.target.value))}
+                >
+                  {valveTypeInfo?.fdtValveType?.map((item: any, index: number) => (
+                    <option key={index} value={item.id}>
+                      {item.items}
+                    </option>
+                  ))}
+                </RHFSelect>
+              </Stack>
+
+                </Box>
+              </Grid>
+
             </Grid>
           </AccordionDetails>
         </Accordion>

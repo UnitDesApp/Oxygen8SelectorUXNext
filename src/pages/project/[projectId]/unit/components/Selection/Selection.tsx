@@ -2054,6 +2054,65 @@ if (fanImgFiles.includes(imgEF)) {
             </Grid>
 
 
+                <Grid item xs={12}>
+                  <AccordionSummary
+                  // expandIcon={<Iconify icon="il:arrow-down" />}
+                  // aria-controls="panel1a-content"
+                  // id="panel1a-header"
+                  >
+                    <Typography color="primary.main" variant="h6">
+                      Configuration Notess
+                    </Typography>
+                  </AccordionSummary>
+                  {/* <Typography color="primary.main" variant="body2">
+                  {selectionData?.strElecReqQty}
+              </Typography>                 */}
+                  <Grid item xs={12} sx={{ margin: '0px 0px !important' }}>
+                    <Grid container spacing={2}>
+                      <Grid item xs={3} sx={{ margin: '0px 0px !important' }}>
+                        <Grid container spacing={2} sx={{ display: selectionData?.dtConfigNotes?.length > 0 ? 'block' : 'none' }}>
+                          {/* <Grid item xs={2} /> */}
+                          <Grid item xs={10}>
+                            <TableContainer component={Paper}>
+                              <Table size="small">
+                                <TableBody>
+                                  {selectionData?.dtConfigNotes?.map((item: any, i: number) => (
+                                    <TableRow key={i} sx={{ '&:last-child td, &:last-child th': { border: 0, }, }}>
+                                      <TableCell component="th" scope="row" align="left" sx={{ width: '100%', fontWeight: 300 }}>
+                                        {item.cValue}
+                                      </TableCell>
+                                    </TableRow>
+                                  ))}
+                                </TableBody>
+                              </Table>
+                            </TableContainer>
+                          </Grid>
+                        </Grid>
+                      </Grid>
+                    </Grid>
+                  </Grid>
+                  {/* <Grid container spacing={2} sx={{ display: selectionData?.dtConfigNotes?.length > 0 ? 'block' : 'none' }}>
+                    <Grid item xs={2} />
+                    <Grid item xs={10}>
+                      <TableContainer component={Paper}>
+                        <Table size="small">
+                          <TableBody>
+                            {selectionData?.dtConfigNotes?.map((item: any, i: number) => (
+                              <TableRow key={i} sx={{ '&:last-child td, &:last-child th': { border: 0, }, }}>
+                                <TableCell component="th" scope="row" align="left" sx={{ width: '100%', fontWeight: 300 }}>
+                                  {item.cValue}
+                                </TableCell>
+                              </TableRow>
+                            ))}
+                          </TableBody>
+                        </Table>
+                      </TableContainer>
+                    </Grid>
+                  </Grid> */}
+                </Grid>
+
+
+
           </Stack>
           <Stack direction="row" justifyContent="center" textAlign="center">
             <Button
