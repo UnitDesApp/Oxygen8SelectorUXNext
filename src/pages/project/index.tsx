@@ -32,6 +32,8 @@ import { PATH_APP } from 'src/routes/paths';
 import Scrollbar from 'src/components/scrollbar/Scrollbar';
 import ConfirmDialog from 'src/components/dialog/ConfirmDialog';
 import { useApiContext } from 'src/contexts/ApiContext';
+import * as IDs from 'src/utils/ids';
+import { isDeepStrictEqual } from 'util';
 import ProjectTableToolbar from './components/table/ProjectTableToolbar';
 import ProjectTableRow from './components/table/ProjectTableRow';
 import { useSettingsContext } from '../../components/settings';
@@ -54,7 +56,8 @@ export default function Project() {
 
   // Table State
   const [filterName, setFilterName] = useState<string>('');
-  const [filterRole, setFilterRole] = useState<string>('My Projects');
+  // const [filterRole, setFilterRole] = useState<string>('My Projects');
+  const [filterRole, setFilterRole] = useState<string>('');
   const [filterStatus, setFilterStatus] = useState<string>('All');
   const [newProjectDialogOpen, setNewProjectDialog] = useState<boolean>(false);
   const [isOneConfirmDialog, setOneConfirmDialogState] = useState<boolean>(false);
@@ -106,6 +109,26 @@ export default function Project() {
   });
 
   const { user } = useAuthContext();
+
+useEffect(() => {
+  switch (Number(user?.UAL)) {
+    case IDs.intUAL_Admin:
+    case IDs.intUAL_AdminLvl_1:
+      setFilterRole('My Projects');
+      break;
+    case IDs.intUAL_IntAdmin:
+    case IDs.intUAL_IntLvl_1:
+    case IDs.intUAL_IntLvl_2:
+      setFilterRole('All');
+      break;
+    case IDs.intUAL_External:
+    case IDs.intUAL_ExternalSpecial:
+      setFilterRole('My Projects');
+      break;
+    default:
+      break;
+  }
+  }, [user?.UAL]);
 
   const handleCloseSuccess = (e: any, reason: string) => {
     if (reason === 'clickaway') {
@@ -216,6 +239,9 @@ export default function Project() {
       setHasMore(false);
     }
   }, [dataFiltered,filteredArray, visibleRows]);
+
+
+  
   return (
     <>
       <Head>

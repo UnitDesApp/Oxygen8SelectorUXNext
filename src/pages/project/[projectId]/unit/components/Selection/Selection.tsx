@@ -183,8 +183,8 @@ export default function Selection({ intJobId, intUnitNo, intProdTypeId, intUnitT
     };
 
   const imgSFUrl = '';
-  const imgSF = selectionData?.dtSF_Graph?.[0]?.cValue.replace(/^.*[\\/]/, '')
-  const imgEF = selectionData?.dtEF_Graph?.[0]?.cValue.replace(/^.*[\\/]/, '')
+  const imgSF = selectionData?.dtSF_Graph?.[0]?.cValue?.replace(/^.*[\\/]/, '')
+  const imgEF = selectionData?.dtEF_Graph?.[0]?.cValue?.replace(/^.*[\\/]/, '')
 
 const fanImgFiles = ["FanCurveH04_GTB025FHC19R.bmp", 
                     "FanCurvePSC_PI2E25080TB2M_IS_SB.png", 
@@ -1837,7 +1837,7 @@ if (fanImgFiles.includes(imgEF)) {
                         </Grid> 
                       </Grid>
                     </Grid>  
-                    <Grid item xs={12} sx={{margin:'30px 0px !important'}}>
+                    <Grid item xs={12} sx={{margin:'30px 0px !important', display:'none' }}>
                         <CustomGroupBox title="Fan Sound Data (Hz)">
                           <TableContainer component={Paper}>
                             <Table size="small">
@@ -1887,8 +1887,7 @@ if (fanImgFiles.includes(imgEF)) {
             </Grid>
 
 
-            <Grid item xs={12} 
-                       sx={{display: (selectionData?.dtEF_Data !== undefined && selectionData?.dtEF_Data?.length > 0) ? 'block' : 'none' }}>
+            <Grid item xs={12} sx={{display: (selectionData?.dtEF_Data !== undefined && selectionData?.dtEF_Data?.length > 0) ? 'block' : 'none' }}>
             <AccordionSummary
                         // expandIcon={<Iconify icon="il:arrow-down" />}
                         // aria-controls="panel1a-content"
@@ -1936,7 +1935,7 @@ if (fanImgFiles.includes(imgEF)) {
                         </Grid> 
                       </Grid>
                       <Grid container spacing={2}>
-                        <Grid item xs={12} sx={{margin:'30px 0px !important'}}>
+                        <Grid item xs={12} sx={{margin:'30px 0px !important', display:'none' }}>
                         <CustomGroupBox title="Fan Sound Data (Hz)">
                           <TableContainer component={Paper}>
                             <Table size="small">
