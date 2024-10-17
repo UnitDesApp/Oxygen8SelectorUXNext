@@ -98,8 +98,8 @@ export default function Resources() {
                   ))
                 } */}
 
-                {/* {!isLoading && literatureCommer && literatureCommer?.[0] && Object.entries(literatureCommer?.[0]?.files)?.map((item: any, i) => */}
-                {!isLoading && literatureCommerAll && Object.entries(literatureCommerAll)?.map((item: any, i) =>
+                {!isLoading && literatureCommer && literatureCommer?.[0] && Object.entries(literatureCommer?.[0]?.files)?.map((item: any, i) =>
+                // {!isLoading && literatureCommerAll && Object.entries(literatureCommerAll)?.map((item: any, i) =>
                   (item[0] === currentTab || currentTab === 'all') && item[1].length > 0 && (
                     <ResourceTable
                       key={i}

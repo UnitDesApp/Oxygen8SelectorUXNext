@@ -130,6 +130,8 @@ export const intElectricVoltageId240V_1Ph_60Hz = 3;
 export const intElectricVoltageId208V_3Ph_60Hz = 4;
 export const intElectricVoltageId460V_3ph_60Hz = 6;
 
+export const intValveTypeIdNA = 4;
+
 export const  intEKEXVKitInstallIdNA = 1;
 export const  intEKEXVKitInstallIdFactory = 2;
 export const  intEKEXVKitInstallIdCustomer = 3;

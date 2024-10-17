@@ -65,7 +65,8 @@ import {
 import ProjectInfoDialog from 'src/pages/project/components/newProjectDialog/ProjectInfoDialog';
 import { useGetJobSelTables, useGetSavedJob } from 'src/hooks/useApi';
 import CircularProgressLoading from 'src/components/loading';
-import { tr } from 'date-fns/locale';
+// import { tr } from 'date-fns/locale';
+// import { closestIndexTo } from 'date-fns';
 import { getUnitModelCodes } from './getUnitNoteCodes';
 import { UnitTypeContext } from './unitTypeDataContext';
 
@@ -424,78 +425,96 @@ export default function UnitInfoForm({
         dblOAFilterPD: Number(formCurrValues.txbOA_FilterPD),
         dblRAFilterPD: Number(formCurrValues.txbRA_FilterPD),
         intIsMixingBox: Number(formCurrValues.ckbMixingBox) === 1 ? 1 : 0,
+       
         intPreheatCompId: Number(formCurrValues.ddlPreheatComp),
-        intIsPreheatAutoSize: Number(formCurrValues.ckbPreheatAutoSize) === 1 ? 1 : 0,
-        intIsPreheatElecHeatBackupOnly: Number(formCurrValues.ckbMixUseProjectDefault) === 1 ? 1 : 0,
-        intIsBackupHeating: Number(formCurrValues.ckbBackupHeating) === 1 ? 1 : 0,
-        intHeatExchCompId: Number(formCurrValues.ddlHeatExchComp),
-        intCoolingCompId: Number(formCurrValues.ddlCoolingComp),
-        intHeatingCompId: Number(formCurrValues.ddlHeatingComp),
-        intReheatCompId: Number(formCurrValues.ddlReheatComp),
-        intIsHeatPump: Number(formCurrValues.ckbHeatPump) === 1 ? 1 : 0, // Do not use formValues.ckbHeatPump === true
-        intIsDehumidification: Number(formCurrValues.ckbDehumidification) === 1 ? 1 : 0, // Do not use formValues.ckbDehumidification === true
-        intIsDaikinVRV: Number(formCurrValues.ckbDaikinVRV) === 1 ? 1 : 0, // Do not use formValues.ckbDaikinVRV === true
-        intPreheatElecHeaterVoltageId: Number(formCurrValues.ddlPreheatElecHeaterVoltage),
         intPreheatElecHeaterInstallationId: Number(formCurrValues.ddlPreheatElecHeaterInstall),
+        intPreheatElecHeaterVoltageId: Number(formCurrValues.ddlPreheatElecHeaterVoltage),
         intIsPreheatElecHeaterVoltageSPP: Number(formCurrValues.ckbPreheatElecHeaterVoltageSPP) === 1 ? 1 : 0,
-        // intHeatingElecHeaterInstallationId:
-        //   Number(getValues('ddlReheatComp')) === IDs.intCompIdElecHeater
-        //     ? formCurrValues.ddlReheatElecHeaterInstall
-        //     : formCurrValues.ddlHeatingElecHeaterInstall,
-        intHeatingElecHeaterVoltageId: Number(formCurrValues.ddlHeatingElecHeaterVoltage),
-        intHeatingElecHeaterInstallationId: formCurrValues.ddlHeatingElecHeaterInstall,
-        intReheatElecHeaterInstallationId: formCurrValues.ddlReheatElecHeaterInstall,    
-        intPreheatElecHeaterStdCoilNo: 0,
-        intCoolingDX_VRVKitQty: 0,
-        dblCoolingDX_VRVKitTonnage: 0,
-        intHeatingElecHeaterStdCoilNo: 0,
-        intIsHeatingElecHeaterVoltageSPP: Number(formCurrValues.ckbHeatingElecHeaterVoltageSPP) === 1 ? 1 : 0,
-        intReheatElecHeaterVoltageId: Number(formCurrValues.ddlReheatElecHeaterVoltage),
-        intReheatElecHeaterStdCoilNo: 0,
-        intIsReheatElecHeaterVoltageSPP: Number(formCurrValues.ckbReheatElecHeaterVoltageSPP) === 1 ? 1 : 0,
-        intReheatHGRC_VRVKitQty: 0,
-        dblReheatHGRC_VRVKitTonnage: 0,
-        intDamperAndActuatorId: Number(formCurrValues.ddlDamperAndActuator),
-        intisValveAndActuatorIncluded: Number(formCurrValues.ckbValveAndActuator) === 1 ? 1 : 0,
-        intPreheatHWCValveAndActuatorId: 0,
-        intCoolingCWCValveAndActuatorId: 0,
-        intHeatingHWCValveAndActuatorId: 0,
-        intReheatHWCValveAndActuatorId: 0,
-        intIsDrainPan: Number(formCurrValues.ckbDrainPan) === 1 ? 1 : 0,
-        intValveTypeId: Number(formCurrValues.ddlValveType),
-        intEKEXVKitInstallId: 0,
-        dblPreheatSetpointDB: formCurrValues.txbWinterPreheatSetpointDB,
-        dblCoolingSetpointDB: formCurrValues.txbSummerCoolingSetpointDB,
-        dblCoolingSetpointWB: formCurrValues.txbSummerCoolingSetpointWB,
-        dblHeatingSetpointDB: formCurrValues.txbWinterHeatingSetpointDB,
-        dblReheatSetpointDB: formCurrValues.txbSummerReheatSetpointDB,
-        dblBackupHeatingSetpontDB:  formCurrValues.txbBackupHeatingSetpointDB,
         intPreheatFluidTypeId: formCurrValues.ddlPreheatFluidType,
         intPreheatFluidConcentId: formCurrValues.ddlPreheatFluidConcentration,
         dblPreheatFluidEntTemp: formCurrValues.txbPreheatHWCFluidEntTemp,
         dblPreheatFluidLvgTemp: formCurrValues.txbPreheatHWCFluidLvgTemp,
+        dblPreheatSetpointDB: formCurrValues.txbWinterPreheatSetpointDB,
+        intIsPreheatAutoSize: Number(formCurrValues.ckbPreheatAutoSize) === 1 ? 1 : 0,
+        intIsPreheatValveAndActuatorIncluded: Number(formCurrValues.ckbPreheatHWCValveAndActuator) === 1 ? 1 : 0,
+        intPreheatValveTypeId: Number(formCurrValues.ddlPreheatHWCValveType),
+        intPreheatElecHeaterStdCoilNo: 0,
+        intPreheatHWCValveAndActuatorId: 0,
+        intIsPreheatElecHeatBackupOnly: Number(formCurrValues.ckbMixUseProjectDefault) === 1 ? 1 : 0,
+       
+        intHeatExchCompId: Number(formCurrValues.ddlHeatExchComp),
+       
+        intCoolingCompId: Number(formCurrValues.ddlCoolingComp),
+        intIsHeatPump: Number(formCurrValues.ckbHeatPump) === 1 ? 1 : 0, // Do not use formValues.ckbHeatPump === true
+        intIsDehumidification: Number(formCurrValues.ckbDehumidification) === 1 ? 1 : 0, // Do not use formValues.ckbDehumidification === true
         intCoolingFluidTypeId: Number(formCurrValues.ddlCoolingFluidType),
         intCoolingFluidConcentId: Number(formCurrValues.ddlCoolingFluidConcentration),
         dblCoolingFluidEntTemp: formCurrValues.txbCoolingCWCFluidEntTemp,
         dblCoolingFluidLvgTemp: formCurrValues.txbCoolingCWCFluidLvgTemp,
-        // intHeatingFluidTypeId: heatingFluidTypeId,
-        // intHeatingFluidConcentId: heatingFluidConcenId,
-        // dblHeatingFluidEntTemp: heatingFluidEntTemp,
-        // dblHeatingFluidLvgTemp: heatingFluidLvgTemp,
+        intIsDaikinVRV: Number(formCurrValues.ckbDaikinVRV) === 1 ? 1 : 0, // Do not use formValues.ckbDaikinVRV === true
+        intEKEXVKitInstallId: Number(formCurrValues.ddlEKEXVKitInstallation),
+        dblRefrigSuctionTemp: formCurrValues.txbRefrigSuctionTemp,
+        dblRefrigLiquidTemp: formCurrValues.txbRefrigLiquidTemp,
+        dblRefrigSuperheatTemp: formCurrValues.txbRefrigSuperheatTemp,
+        dblCoolingSetpointDB: formCurrValues.txbSummerCoolingSetpointDB,
+        dblCoolingSetpointWB: formCurrValues.txbSummerCoolingSetpointWB,
+        intIsCoolingValveAndActuatorIncluded: Number(formCurrValues.ckbCoolingCWCValveAndActuator) === 1 ? 1 : 0,
+        intCoolingValveTypeId: Number(formCurrValues.ddlCoolingCWCValveType),
+        intCoolingDX_VRVKitQty: 0,
+        dblCoolingDX_VRVKitTonnage: 0,
+
+
+        intHeatingCompId: Number(formCurrValues.ddlHeatingComp),
+        intHeatingElecHeaterInstallationId: formCurrValues.ddlHeatingElecHeaterInstall,
+        intHeatingElecHeaterVoltageId: Number(formCurrValues.ddlHeatingElecHeaterVoltage),
+        intIsHeatingElecHeaterVoltageSPP: Number(formCurrValues.ckbHeatingElecHeaterVoltageSPP) === 1 ? 1 : 0,
         intHeatingFluidTypeId: formCurrValues.ddlHeatingFluidType,
         intHeatingFluidConcentId: formCurrValues.ddlHeatingFluidConcentration,
         dblHeatingFluidEntTemp: formCurrValues.txbHeatingHWCFluidEntTemp,
         dblHeatingFluidLvgTemp: formCurrValues.txbHeatingHWCFluidLvgTemp,
+        dblHeatingSetpointDB: formCurrValues.txbWinterHeatingSetpointDB,
+        intIsHeatingValveAndActuatorIncluded: Number(formCurrValues.ckbHeatingHWCValveAndActuator) === 1 ? 1 : 0,
+        intHeatingValveTypeId: Number(formCurrValues.ddlHeatingHWCValveType),
+        intHeatingElecHeaterStdCoilNo: 0,
+        intHeatingHWCValveAndActuatorId: 0,
+
+        intReheatCompId: Number(formCurrValues.ddlReheatComp),
+        intReheatElecHeaterInstallationId: formCurrValues.ddlReheatElecHeaterInstall,    
+        intReheatElecHeaterVoltageId: Number(formCurrValues.ddlReheatElecHeaterVoltage),
+        intIsReheatElecHeaterVoltageSPP: Number(formCurrValues.ckbReheatElecHeaterVoltageSPP) === 1 ? 1 : 0,
         intReheatFluidTypeId: formCurrValues.ddlReheatFluidType,
         intReheatFluidConcentId: formCurrValues.ddlReheatFluidConcentration,
         dblReheatFluidEntTemp: formCurrValues.txbReheatHWCFluidEntTemp,
         dblReheatFluidLvgTemp: formCurrValues.txbReheatHWCFluidLvgTemp,
-        dblRefrigSuctionTemp: formCurrValues.txbRefrigSuctionTemp,
-        dblRefrigLiquidTemp: formCurrValues.txbRefrigLiquidTemp,
-        dblRefrigSuperheatTemp: formCurrValues.txbRefrigSuperheatTemp,
         dblRefrigCondensingTemp: formCurrValues.txbRefrigCondensingTemp,
         dblRefrigVaporTemp: formCurrValues.txbRefrigVaporTemp,
         dblRefrigSubcoolingTemp: formCurrValues.txbRefrigSubcoolingTemp,
+        dblReheatSetpointDB: formCurrValues.txbSummerReheatSetpointDB,
+        intIsReheatValveAndActuatorIncluded: Number(formCurrValues.ckbReheatHWCValveAndActuator) === 1 ? 1 : 0,
+        intReheatValveTypeId: Number(formCurrValues.ddlReheatHWCValveType),
+        intReheatElecHeaterStdCoilNo: 0,
+        intReheatHWCValveAndActuatorId: 0,
+        intReheatHGRC_VRVKitQty: 0,
+        dblReheatHGRC_VRVKitTonnage: 0,
+
+        intIsBackupHeating: Number(formCurrValues.ckbBackupHeating) === 1 ? 1 : 0,
+        dblBackupHeatingSetpointDB:  formCurrValues.txbBackupHeatingSetpointDB,
+
+
+        // intHeatingElecHeaterInstallationId:
+        //   Number(getValues('ddlReheatComp')) === IDs.intCompIdElecHeater
+        //     ? formCurrValues.ddlReheatElecHeaterInstall
+        //     : formCurrValues.ddlHeatingElecHeaterInstall,
+
+        // intHeatingFluidTypeId: heatingFluidTypeId,
+        // intHeatingFluidConcentId: heatingFluidConcenId,
+        // dblHeatingFluidEntTemp: heatingFluidEntTemp,
+        // dblHeatingFluidLvgTemp: heatingFluidLvgTemp,
+
+        // intIsValveAndActuatorIncluded: Number(formCurrValues.ckbValveAndActuator) === 1 ? 1 : 0,
+        // intValveTypeId: Number(formCurrValues.ddlValveType),
+        intDamperAndActuatorId: Number(formCurrValues.ddlDamperAndActuator),
+        intIsDrainPan: Number(formCurrValues.ckbDrainPan) === 1 ? 1 : 0,
         intIsHeatExchEA_Warning: 0,
         intElecHeaterQty:0,
       },
@@ -604,9 +623,20 @@ export default function UnitInfoForm({
   const [filterCondtionOptions, setFilterCondtionOptions] = useState<any>([]);
   const [filterConditionId, setFilterConditionId] = useState<number>(0);
 
+  const [preheatHWCValveTypeOptions, setPreheatHWCValveTypeOptions] = useState<any>([]);
+  const [coolingCWCValveTypeOptions, setCoolingCWCValveTypeOptions] = useState<any>([]);
+  const [heatingHWCValveTypeOptions, setHeatingHWCValveTypeOptions] = useState<any>([]);
+  const [reheatHWCValveTypeOptions, setReheatHWCValveTypeOptions] = useState<any>([]);
+
   const [preheatElecHeaterVoltageTable, setPreheatElecHeaterVoltageTable] = useState<any>([]);
   const [isVisibleDdlPreheatElecHeaterVoltage, setIsVisibleDdlPreheatElecHeaterVoltage] = useState<any>([]);
   const [isEnabledDdlPreheatElecHeaterVoltage, setIsEnabledDdlPreheatElecHeaterVoltage] = useState<any>([]);
+
+  const [isVisibleDdlPreheatHWCValveType, setIsVisibleDdlPreheatHWCValveType] = useState<boolean>(false);
+  const [isVisibleDdlCoolingCWCValveType, setIsVisibleDdlCoolingCWCValveType] = useState<boolean>(false);
+  const [isVisibleDdlHeatingHWCValveType, setIsVisibleDdlHeatingHWCValveType] = useState<boolean>(false);
+  const [isVisibleDdlReheatHWCValveType, setIsVisibleDdlReheatHWCValveType] = useState<boolean>(false);
+
   
   const [heatingElecHeaterVoltageTable, setHeatingElecHeaterVoltageTable] = useState<any>([]);
   const [isVisibleDdlHeatingElecHeaterVoltage, setIsVisibleDdlHeatingElecHeaterVoltage] = useState<any>([]);
@@ -1112,16 +1142,10 @@ const ddlFilterConditionChanged = useCallback((e: any) => {
   setFilterConditionId(Number(e.target.value));
 }, []);
 
-
-
-
-
-
 const ckbPreheatHWCUseFluidLvgTempChanged = useCallback((e: any) => {
   setValue('ckbPreheatHWCUseFluidLvgTemp', e.target.value);
   // setCkbPreheatHWCUseFluidLvgTempValue(Number(e.target.checked));
 }, []);
-
 
 const ckbPreheatHWCUseFluidFlowRateChanged = useCallback((e: any) => {
   setValue('ckbPreheatHWCUseFluidFlowRate', e.target.value);
@@ -1221,10 +1245,21 @@ const txbCoolingCWCFluidFlowRateChanged = useCallback((e: any) => {
 
 
 const txbSummerCoolingSetpointDBChanged = useCallback((e: any) => {
-  if (setValueWithCheck1(e, 'txbSummerCoolingSetpointDB')) {
-    setValue('txbSummerCoolingSetpointDB', parseFloat(e.target.value).toFixed(1));
-    setValue('txbSummerCoolingSetpointWB', parseFloat(e.target.value).toFixed(1));
+
+  const value = parseFloat(e.target.value);
+  if (value >= 45 && value <= 75) {
+    setValueWithCheck1(e, 'txbSummerCoolingSetpointDB'); 
+  } else if (value < 45) {
+    setValueWithCheck1({ ...e, target: { value: 45 } }, 'txbSummerCoolingSetpointDB'); 
+  } else if (value > 75) {
+    setValueWithCheck1({ ...e, target: { value: 75 } }, 'txbSummerCoolingSetpointDB');
   }
+
+  setValue('txbSummerCoolingSetpointWB', value);
+
+  // if (setValueWithCheck1(e, 'txbSummerCoolingSetpointDB')) {
+  //   setValue('txbSummerCoolingSetpointDB', parseFloat(e.target.value).toFixed(1));
+  // }
 }, []);
 
 
@@ -1336,6 +1371,22 @@ useEffect(() => {
 
 
 useEffect(() => {
+  switch (Number(getValues('ddlPreheatComp'))) {
+    case IDs.intCompIdNA:
+    case IDs.intCompIdHWC:
+      setIsEnabledDdlPreheatElecHeaterVoltage(true);
+      setValue('ckbPreheatElecHeaterVoltageSPP', 0);
+      break;
+    case IDs.intCompIdElecHeater:
+      break;
+    default:
+      break;
+  }
+
+}, [getValues('ddlPreheatComp')]);
+
+
+useEffect(() => {
   switch (Number(getValues('ckbPreheatElecHeaterVoltageSPP'))) {
     case 1:
       setValue('ddlPreheatElecHeaterVoltage', getValues('ddlUnitVoltage'));
@@ -1426,6 +1477,28 @@ useEffect(() => {
 
 
 useEffect(() => {
+  let fdtValveType = db?.dbtSelValveType;
+
+  switch (Number(getValues('ckbPreheatHWCValveAndActuator'))) {
+    case 1:
+      setIsVisibleDdlPreheatHWCValveType(true);
+      fdtValveType = fdtValveType?.filter((item: { enabled: number; id: number }) => item.enabled === 1 && item.id !== IDs.intValveTypeIdNA);
+      break;
+    case 0:
+      setIsVisibleDdlPreheatHWCValveType(false);
+      fdtValveType = fdtValveType?.filter((item: { id: number }) => item.id === IDs.intValveTypeIdNA);
+      break;
+    default:
+      break;
+  }
+
+  setPreheatHWCValveTypeOptions(fdtValveType);
+  setValue('ddlPreheatHWCValveType', fdtValveType?.[0]?.id);
+
+}, [getValues('ckbPreheatHWCValveAndActuator')]);
+
+
+useEffect(() => {
   switch (Number(getValues('ckbCoolingCWCUseFluidLvgTemp'))) {
     case 1:
       setIsTxbCoolingCWCFluidLvgTempEnabled(true);
@@ -1484,6 +1557,43 @@ useEffect(() => {
 
 }, [getValues('ckbDaikinVRV')]);
 
+
+useEffect(() => {
+  let fdtValveType = db?.dbtSelValveType;
+
+  switch (Number(getValues('ckbCoolingCWCValveAndActuator'))) {
+    case 1:
+      setIsVisibleDdlCoolingCWCValveType(true);
+      fdtValveType = fdtValveType?.filter((item: { enabled: number; id: number }) => item.enabled === 1 && item.id !== IDs.intValveTypeIdNA);
+      break;
+    case 0:
+      setIsVisibleDdlCoolingCWCValveType(false);
+      fdtValveType = fdtValveType?.filter((item: { id: number }) => item.id === IDs.intValveTypeIdNA);
+      break;
+    default:
+      break;
+  }
+
+  setCoolingCWCValveTypeOptions(fdtValveType);
+  setValue('ddlCoolingCWCValveType', fdtValveType?.[0]?.id);
+
+}, [getValues('ckbCoolingCWCValveAndActuator')]);
+
+
+useEffect(() => {
+  switch (Number(getValues('ddlHeatingComp'))) {
+    case IDs.intCompIdNA:
+    case IDs.intCompIdHWC:
+      setIsEnabledDdlHeatingElecHeaterVoltage(true);
+      setValue('ckbHeatingElecHeaterVoltageSPP', 0);
+      break;
+    case IDs.intCompIdElecHeater:
+      break;
+    default:
+      break;
+  }
+
+}, [getValues('ddlHeatingComp')]);
 
 
 useEffect(() => {
@@ -1574,6 +1684,45 @@ useEffect(() => {
 
 
 useEffect(() => {
+  let fdtValveType = db?.dbtSelValveType;
+
+  switch (Number(getValues('ckbHeatingHWCValveAndActuator'))) {
+    case 1:
+      setIsVisibleDdlHeatingHWCValveType(true);
+      fdtValveType = fdtValveType?.filter((item: { enabled: number; id: number }) => item.enabled === 1 && item.id !== IDs.intValveTypeIdNA);
+      break;
+    case 0:
+      setIsVisibleDdlHeatingHWCValveType(false);
+      fdtValveType = fdtValveType?.filter((item: { id: number }) => item.id === IDs.intValveTypeIdNA);
+      break;
+    default:
+      break;
+  }
+
+  setHeatingHWCValveTypeOptions(fdtValveType);
+  setValue('ddlHeatingHWCValveType', fdtValveType?.[0]?.id);
+
+}, [getValues('ckbHeatingHWCValveAndActuator')]);
+
+
+useEffect(() => {
+  switch (Number(getValues('ddlReheatComp'))) {
+    case IDs.intCompIdNA:
+    case IDs.intCompIdHWC:
+    case IDs.intCompIdHGRH:
+      setIsEnabledDdlReheatElecHeaterVoltage(true);
+      setValue('ckbReheatElecHeaterVoltageSPP', 0);
+      break;
+    case IDs.intCompIdElecHeater:
+      break;
+    default:
+      break;
+  }
+
+}, [getValues('ddlReheatComp')]);
+
+
+useEffect(() => {
   switch (Number(getValues('ckbReheatHWCUseFluidLvgTemp'))) {
     case 1:
       setIsTxbReheatHWCFluidLvgTempEnabled(true);
@@ -1626,6 +1775,26 @@ useEffect(() => {
 }, [getValues('ckbReheatHWCUseFluidFlowRate')]);
 
 
+useEffect(() => {
+  let fdtValveType = db?.dbtSelValveType;
+
+  switch (Number(getValues('ckbReheatHWCValveAndActuator'))) {
+    case 1:
+      setIsVisibleDdlReheatHWCValveType(true);
+      fdtValveType = fdtValveType?.filter((item: { enabled: number; id: number }) => item.enabled === 1 && item.id !== IDs.intValveTypeIdNA);
+      break;
+    case 0:
+      setIsVisibleDdlReheatHWCValveType(false);
+      fdtValveType = fdtValveType?.filter((item: { id: number }) => item.id === IDs.intValveTypeIdNA);
+      break;
+    default:
+      break;
+  }
+
+  setReheatHWCValveTypeOptions(fdtValveType);
+  setValue('ddlReheatHWCValveType', fdtValveType?.[0]?.id);
+
+}, [getValues('ckbReheatHWCValveAndActuator')]);
 
 
   const [locationInfo, setLocationInfo] = useState<any>([]);
@@ -1678,16 +1847,13 @@ useEffect(() => {
   }, [formCurrValues.ddlLocation, formCurrValues.txbSummerSupplyAirCFM]);
 
 
-
   useEffect(() => {
       const supplyCFM = getSupplyAirCFM();
       setValue('txbSummerSupplyAirCFM', supplyCFM);
       setValue('txbSummerReturnAirCFM', supplyCFM);
 
-
       const returnCFM = getReturnAirCFM();
       setValue('txbSummerSupplyAirCFM', returnCFM);  
-
 
       switch (Number(getValues('ckbPHI'))) {
         case 1:
@@ -1834,12 +2000,6 @@ useEffect(() => {
 
   }, [intProductTypeID, getValues('ddlLocation'), getValues('ddlOrientation'), getValues('ckbMixingBox'),
     getValues('ckbDownshot'), getValues('ddlHanding'), getValues('ddlSupplyAirOpening')]);
-
-
-
-
-
-
 
 
 
@@ -2915,14 +3075,31 @@ useEffect(() => {
     }
 
 
+   if (Number(getValues('ddlCoolingComp')) === IDs.intCompIdDX && Number(getValues('ckbDaikinVRV')) === 1) {
+      info.isVisible = false;
+
+      // Heating becomes Backup Heating
+      if (Number(getValues('ddlReheatComp')) !== IDs.intCompIdHGRH && Number(getValues('ddlReheatComp')) !== IDs.intCompIdNA) {
+        info.fdtHeatingComp = info.fdtHeatingComp?.filter((item: { id: number }) => item.id === IDs.intCompIdNA || item.id === Number(getValues('ddlReheatComp')));
+      }
+      // else {
+      //   info.fdtHeatingComp = info.fdtHeatingComp?.filter((item: { id: number }) => item.id === IDs.intCompIdNA || item.id === Number(getValues('ddlReheatComp')));
+      // }
+    }
+
+    // info.defaultId = formCurrValues.ddlHeatingComp  > 0 ? formCurrValues.ddlHeatingComp : info.fdtHeatingComp?.[0]?.id;
+    info.defaultId = info.fdtHeatingComp?.filter((item: { id: number }) => item.id === Number(formCurrValues.ddlHeatingComp)).length > 0 ? formCurrValues.ddlHeatingComp : info.fdtHeatingComp?.[0]?.id;
+    // const test = info.fdtHeatingComp.some((item: { id: number }) => item, { id: formCurrValues.ddlHeatingComp });
+
+
     setHeatingCompInfo(info);
     setValue('ddlHeatingComp', info.defaultId);
 
-  }, [getValues('ddlCoolingComp'), getValues('ddlReheatComp')]);
+  }, [getValues('ddlCoolingComp'), getValues('ddlReheatComp'), getValues('ckbDaikinVRV')]);
 
 
   const [reheatCompInfo, setReheatCompInfo] = useState<any>([]);
-  useMemo(() => {
+  useEffect(() => {
     const info: { fdtReheatComp: any; isVisible: boolean; defaultId: number } = { fdtReheatComp: [], isVisible: false, defaultId: 0,};
     // let controlsPrefProdTypeLink: any = [];
 
@@ -2950,7 +3127,8 @@ useEffect(() => {
       switch (Number(getValues('ddlCoolingComp'))) {
         case IDs.intCompIdCWC:
           info.fdtReheatComp = info.fdtReheatComp?.filter((item: { id: { toString: () => any } }) => item.id.toString() !== IDs.intCompIdHGRH.toString());
-          info.defaultId = formCurrValues.ddlReheatComp  > 0 ? formCurrValues.ddlReheatComp : info.fdtReheatComp?.[0]?.id;
+          // info.defaultId = formCurrValues.ddlReheatComp  > 0 ? formCurrValues.ddlReheatComp : info.fdtReheatComp?.[0]?.id;
+          info.defaultId = info.fdtReheatComp?.filter((item: { id: number }) => item.id === Number(formCurrValues.ddlReheatComp)).length > 0 ? formCurrValues.ddlReheatComp : info.fdtReheatComp?.[0]?.id;
           break;
         case IDs.intCompIdDX:
           if (Number(intUAL) === IDs.intUAL_External && (intUnitTypeID === IDs.intUnitTypeIdERV || intUnitTypeID === IDs.intUnitTypeIdHRV)) {
@@ -2959,7 +3137,8 @@ useEffect(() => {
               (Number(getValues('ddlUnitModel')) === IDs.intVentumUnitModelIdH05IN_ERV || Number(getValues('ddlUnitModel')) === IDs.intVentumUnitModelIdH05IN_HRV)) {
             info.fdtReheatComp = info.fdtReheatComp?.filter((item: { id: { toString: () => any } }) =>  item.id.toString() !== IDs.intCompIdHGRH.toString());
           }
-          info.defaultId = formCurrValues.ddlReheatComp  > 0 ? formCurrValues.ddlReheatComp : info.fdtReheatComp?.[0]?.id;
+          // info.defaultId = formCurrValues.ddlReheatComp  > 0 ? formCurrValues.ddlReheatComp : info.fdtReheatComp?.[0]?.id;
+          info.defaultId = info.fdtReheatComp?.filter((item: { id: number }) => item.id === Number(formCurrValues.ddlReheatComp)).length > 0 ? formCurrValues.ddlReheatComp : info.fdtReheatComp?.[0]?.id;
           break;
         default:
           info.defaultId = IDs.intCompIdNA;
@@ -2968,30 +3147,41 @@ useEffect(() => {
       } 
 
 
-      switch (Number(getValues('ckbDaikinVRV'))) {
-        case 0:
-          info.fdtReheatComp = info.fdtReheatComp?.filter((item: { id: { toString: () => any } }) =>  item.id.toString() !== IDs.intCompIdHGRH.toString());
-          info.defaultId = formCurrValues.ddlReheatComp  > 0 ? formCurrValues.ddlReheatComp : info.fdtReheatComp?.[0]?.id;
-          break;
-        default:
-          break;
-      }
+      if (Number(getValues('ddlCoolingComp')) === IDs.intCompIdCWC) {
+        if (Number(getValues('ddlHeatingComp')) !== IDs.intCompIdNA) {
+          info.fdtReheatComp = info.fdtReheatComp?.filter((item: { id: Number} ) => item.id === IDs.intCompIdNA || item.id === Number(getValues('ddlHeatingComp')));
+        }
+        // else {
+        //   info.fdtReheatComp = info.fdtReheatComp?.filter((item: { id: Number} ) =>  item.id !== IDs.intCompIdHGRH);
+        // }
+                  
+        // info.defaultId = formCurrValues.ddlReheatComp  > 0 ? formCurrValues.ddlReheatComp : info.fdtReheatComp?.[0]?.id;
+        info.defaultId = info.fdtReheatComp?.filter((item: { id: number }) => item.id === Number(formCurrValues.ddlReheatComp)).length > 0 ? formCurrValues.ddlReheatComp : info.fdtReheatComp?.[0]?.id;
+      } 
+      else if (Number(getValues('ddlCoolingComp')) === IDs.intCompIdDX && Number(getValues('ckbDaikinVRV')) === 0) {
+        info.fdtReheatComp = info.fdtReheatComp?.filter((item: { id: Number }) =>  item.id !== IDs.intCompIdHGRH);
+        // info.defaultId = formCurrValues.ddlReheatComp  > 0 ? formCurrValues.ddlReheatComp : info.fdtReheatComp?.[0]?.id;
+        info.defaultId = info.fdtReheatComp?.filter((item: { id: number }) => item.id === Number(formCurrValues.ddlReheatComp)).length > 0 ? formCurrValues.ddlReheatComp : info.fdtReheatComp?.[0]?.id;
+  }
 
-  
-      // info.isVisible = true;
+      // if (Number(getValues('ddlCoolingComp')) === IDs.intCompIdDX && Number(getValues('ckbDaikinVRV')) === 1) {
+      //   info.fdtReheatComp = info.fdtReheatComp?.filter((item: { id: number }) => 
+      //     item.id === IDs.intCompIdNA || 
+      //     item.id === IDs.intCompIdHGRH);
+      //   info.defaultId = formCurrValues.ddlReheatComp  > 0 ? formCurrValues.ddlReheatComp : info.fdtReheatComp?.[0]?.id;
+      // }
+      // else if (Number(getValues('ddlCoolingComp')) === IDs.intCompIdDX && Number(getValues('ckbDaikinVRV')) === 0) {
+      //   info.fdtReheatComp = info.fdtReheatComp?.filter((item: { id: number }) => item.id !== IDs.intCompIdHGRH );
+      //   info.defaultId = formCurrValues.ddlReheatComp  > 0 ? formCurrValues.ddlReheatComp : info.fdtReheatComp?.[0]?.id;
+      // }
 
-    // } else {
-    //     // info.ftdReheatComp = info.ftdReheatComp?.filter((item: { id: { toString: () => any } }) =>  item.id.toString() !== IDs.intCompIdNA.toString());
-    //     info.fdtReheatComp = info.fdtReheatComp?.filter((item: { id: number }) =>  item.id === IDs.intCompIdNA);
-    //     info.defaultId = IDs.intCompIdNA;
-    //     info.isVisible = false;
-    //   }
+
 
 
     setReheatCompInfo(info);
     setValue('ddlReheatComp', info.defaultId);
 
-  }, [getValues('ckbDehumidification'), getValues('ddlCoolingComp'), getValues('ddlUnitModel'), getValues('ckbDaikinVRV'),]);
+  }, [getValues('ckbDehumidification'), getValues('ddlCoolingComp'), getValues('ddlUnitModel'), getValues('ckbDaikinVRV'), getValues('ddlHeatingComp')]);
 
 
   // const [heatPumpInfo, setHeatPumpInfo] = useState<any>([]);
@@ -3211,9 +3401,7 @@ useEffect(() => {
     info.defaultId  = Number(getValues('ddlUnitVoltage'));
     let bol208V_1Ph = false;
 
-    if (Number(formCurrValues.ddlPreheatComp)  === IDs.intCompIdElecHeater ||
-        Number(formCurrValues.ddlHeatingComp) === IDs.intCompIdElecHeater ||
-        Number(formCurrValues.ddlReheatComp) === IDs.intCompIdElecHeater) {
+    if (Number(formCurrValues.ddlPreheatComp)  === IDs.intCompIdElecHeater) {
           info.isVisible = true;
   
       // let bol208V_1Ph = false;
@@ -3230,7 +3418,7 @@ useEffect(() => {
             info.defaultId = Number(getValues('ddlUnitVoltage'));
           }
   
-          info.isEnabled = !formCurrValues.ckbVoltageSPP;
+          info.isEnabled = !formCurrValues.ckbPreheatElecHeaterVoltageSPP;
 
           // dtElecHeaterVoltage = dtElecHeaterVoltage.map((item) => dtLink.filter((el) => el.voltage_id === item.id)?.length > 0);
         // }
@@ -3253,7 +3441,7 @@ useEffect(() => {
         //   info.defaultId = IDs.intElectricVoltageId208V_3Ph_60Hz;
         // }
   
-        if (Number(formCurrValues.ckbVoltageSPP)) {
+        if (Number(formCurrValues.ckbPreheatElecHeaterVoltageSPP)) {
           info.defaultId = Number(formCurrValues.ddlUnitVoltage);
           info.isEnabled = false;
         } else {
@@ -3270,7 +3458,7 @@ useEffect(() => {
       case IDs.intProdTypeIdVentumPlus:
         info.fdtElecHeaterVoltage = info.fdtElecHeaterVoltage?.filter((item: { ventumplus_elec_heater: number; id: any }) => item.ventumplus_elec_heater === 1);
   
-        if (Number(formCurrValues.ckbVoltageSPP)) {
+        if (Number(formCurrValues.ckbPreheatElecHeaterVoltageSPP)) {
           info.defaultId = Number(formCurrValues.ddlUnitVoltage);
           info.isVisible = true;
           info.isEnabled = false;
@@ -3288,7 +3476,7 @@ useEffect(() => {
         // // intProdTypeTerraID
       break;
       case IDs.intProdTypeIdTerra:
-        if (Number(formCurrValues.ckbVoltageSPP)) {
+        if (Number(formCurrValues.ckbPreheatElecHeaterVoltageSPP)) {
           info.fdtElecHeaterVoltage = info.fdtElecHeaterVoltage?.filter((item: { terra_spp: number; id: any }) =>item.terra_spp === 1);
           info.defaultId =Number(formCurrValues.ddlUnitVoltage);
           info.isEnabled = false;
@@ -3330,13 +3518,13 @@ useEffect(() => {
 
         info.isEnabled = false;
 
-      } else if (intProductTypeID === IDs.intProdTypeIdTerra && Number(formCurrValues.ckbVoltageSPP)) {
+      } else if (intProductTypeID === IDs.intProdTypeIdTerra && Number(formCurrValues.ckbPreheatElecHeaterVoltageSPP)) {
         info.fdtElecHeaterVoltage = info.fdtElecHeaterVoltage?.filter((item: { terra_spp: number; id: any }) => item.terra_spp === 1);
         // info.defaultId = Number(formCurrValues.ddlUnitVoltage);
         info.isEnabled = false;
 
       } else if (intProductTypeID === IDs.intProdTypeIdVentumPlus && 
-                (Number(formCurrValues.ckbVoltageSPP) || Number(formCurrValues.ddlPreheatComp) === IDs.intCompIdAuto)) {
+                (Number(formCurrValues.ckbPreheatElecHeaterVoltageSPP) || Number(formCurrValues.ddlPreheatComp) === IDs.intCompIdAuto)) {
         info.fdtElecHeaterVoltage = info.fdtElecHeaterVoltage?.filter((item: { ventumplus_elec_heater: number; id: any }) => item.ventumplus_elec_heater === 1);
 
         // info.defaultId = Number(formCurrValues.ddlUnitVoltage);
@@ -3368,20 +3556,351 @@ useEffect(() => {
     setIsVisibleDdlPreheatElecHeaterVoltage(info.isVisible);
     setIsEnabledDdlPreheatElecHeaterVoltage(info.isEnabled);
    
+    setValue('ddlPreheatElecHeaterVoltage', info.defaultId);
+
+  }, [db, intProductTypeID, formCurrValues.ddlPreheatComp, formCurrValues.ddlHeatingComp, formCurrValues.ddlReheatComp, 
+        formCurrValues.ddlUnitVoltage, ]);
+
+
+
+  useMemo(() => {
+    const info: { fdtElecHeaterVoltage: any; isVisible: boolean; isEnabled: boolean; defaultId: number } =
+      { fdtElecHeaterVoltage: [], isVisible: false, isEnabled: false, defaultId: 0, };
+    // let controlsPrefProdTypeLink: any = [];
+
+    // let dtElecHeaterVoltage = [];
+    const umc = getUMC();
+    let dtLink = db?.dbtSelNovaElecHeatVoltageUnitModelLink;
+    info.fdtElecHeaterVoltage = db?.dbtSelElectricalVoltage;
+    info.defaultId = Number(getValues('ddlUnitVoltage'));
+    let bol208V_1Ph = false;
+
+    if (Number(formCurrValues.ddlHeatingComp) === IDs.intCompIdElecHeater) {
+      info.isVisible = true;
+
+      // let bol208V_1Ph = false;
+      // intProdTypeNovaID
+      switch (intProductTypeID) {
+        case IDs.intProdTypeIdNova:
+          // const dtLink = db?.dbtSelNovaElecHeatVoltageUnitModelLink.filter((x) => x.unit_model_value === strUnitModelValue);
+          dtLink = dtLink?.filter((item: { unit_model_value: any }) => item.unit_model_value === umc?.strUnitModelValue) || [];
+
+          info.fdtElecHeaterVoltage = info.fdtElecHeaterVoltage?.filter((e: { id: any }) =>
+            dtLink?.filter((e_link: { voltage_id: any }) => e.id === e_link.voltage_id)?.length === 1); // 1: Matching items, 0: Not matching items
+
+          if (Number(getValues('ddlUnitVoltage'))) {
+            info.defaultId = Number(getValues('ddlUnitVoltage'));
+          }
+
+          info.isEnabled = !formCurrValues.ckbHeatingElecHeaterVoltageSPP;
+
+          // dtElecHeaterVoltage = dtElecHeaterVoltage.map((item) => dtLink.filter((el) => el.voltage_id === item.id)?.length > 0);
+          // }
+          break;
+        case IDs.intProdTypeIdVentum:
+          if (Number(formCurrValues.ddlUnitModel) === IDs.intVentumUnitModelIdH05IN_ERV ||
+            Number(formCurrValues.ddlUnitModel) === IDs.intVentumUnitModelIdH10IN_ERV ||
+            Number(formCurrValues.ddlUnitModel) === IDs.intVentumUnitModelIdH05IN_HRV ||
+            Number(formCurrValues.ddlUnitModel) === IDs.intVentumUnitModelIdH10IN_HRV) {
+            bol208V_1Ph = true;
+            info.fdtElecHeaterVoltage = info.fdtElecHeaterVoltage?.filter((item: { electric_heater_2: number; id: any }) => item.electric_heater_2 === 1);
+          } else {
+            info.fdtElecHeaterVoltage = info.fdtElecHeaterVoltage?.filter((item: { electric_heater: number; id: any }) => item.electric_heater === 1);
+          }
+
+          // if (bol208V_1Ph) {
+          //   info.defaultId = IDs.intElectricVoltageId208V_1Ph_60Hz;
+          //   info.isEnabled = false;
+          // } else {
+          //   info.defaultId = IDs.intElectricVoltageId208V_3Ph_60Hz;
+          // }
+
+          if (Number(formCurrValues.ckbHeatingElecHeaterVoltageSPP)) {
+            info.defaultId = Number(formCurrValues.ddlUnitVoltage);
+            info.isEnabled = false;
+          } else {
+            info.isEnabled = true;
+          }
+          // intProdTypeVentumLiteID
+          break;
+        case IDs.intProdTypeIdVentumLite:
+          bol208V_1Ph = true;
+          info.fdtElecHeaterVoltage = info.fdtElecHeaterVoltage?.filter((item: { electric_heater_3: number; id: any }) => item.electric_heater_3 === 1);
+          // info.defaultId = formCurrValues.ddlUnitVoltage  > 0 ? formCurrValues.ddlUnitVoltage : info.fdtElecHeaterVoltage?.[0]?.id;
+          info.isEnabled = false;
+          break;
+        case IDs.intProdTypeIdVentumPlus:
+          info.fdtElecHeaterVoltage = info.fdtElecHeaterVoltage?.filter((item: { ventumplus_elec_heater: number; id: any }) => item.ventumplus_elec_heater === 1);
+
+          if (Number(formCurrValues.ckbHeatingElecHeaterVoltageSPP)) {
+            info.defaultId = Number(formCurrValues.ddlUnitVoltage);
+            info.isVisible = true;
+            info.isEnabled = false;
+          } else {
+            info.isEnabled = true;
+          }
+
+          // if (info.fdtElecHeaterVoltage?.length > 0) {
+          //   if (bol208V_1Ph) {
+          //     info.defaultId = IDs.intElectricVoltageId208V_1Ph_60Hz;
+          //   } else {
+          //     info.defaultId = IDs.intElectricVoltageId208V_3Ph_60Hz;
+          //   }
+          // }
+          // // intProdTypeTerraID
+          break;
+        case IDs.intProdTypeIdTerra:
+          if (Number(formCurrValues.ckbHeatingElecHeaterVoltageSPP)) {
+            info.fdtElecHeaterVoltage = info.fdtElecHeaterVoltage?.filter((item: { terra_spp: number; id: any }) => item.terra_spp === 1);
+            info.defaultId = Number(formCurrValues.ddlUnitVoltage);
+            info.isEnabled = false;
+          } else {
+            info.fdtElecHeaterVoltage = info.fdtElecHeaterVoltage?.filter((item: { terra_non_spp: number; id: any }) => item.terra_non_spp === 1);
+            info.isEnabled = true;
+          }
+
+          // if (info.fdtElecHeaterVoltage?.length > 0) {
+          //   if (bol208V_1Ph) {
+          //     info.defaultId = IDs.intElectricVoltageId208V_1Ph_60Hz;
+          //   } else {
+          //     info.defaultId = IDs.intElectricVoltageId208V_3Ph_60Hz;
+          //   }
+          // }
+          break;
+        default:
+          break;
+      }
+
+      // if (formCurrValues.ddlUnitVoltage  > 0) {
+      //   info.defaultId = formCurrValues.ddlUnitVoltage;
+      // } else if (bol208V_1Ph) {
+      //   info.defaultId = IDs.intElectricVoltageId208V_1Ph_60Hz;
+      // } else {
+      //   info.defaultId = IDs.intElectricVoltageId208V_3Ph_60Hz;
+      //   // info.defaultId = info.fdtElecHeaterVoltage?.[0]?.id;
+      // }
+
+      if (Number(formCurrValues.ddlHeatingComp) !== IDs.intCompIdElecHeater) {
+        info.isVisible = false;
+      }
+    } else {
+      if (intProductTypeID === IDs.intProdTypeIdVentumLite) {
+        info.fdtElecHeaterVoltage = info.fdtElecHeaterVoltage?.filter((item: { electric_heater_3: number; id: any }) => item.electric_heater_3 === 1);
+        // info.defaultId = Number(formCurrValues.ddlUnitVoltage);
+
+        info.isEnabled = false;
+
+      } else if (intProductTypeID === IDs.intProdTypeIdTerra && Number(formCurrValues.ckbHeatingElecHeaterVoltageSPP)) {
+        info.fdtElecHeaterVoltage = info.fdtElecHeaterVoltage?.filter((item: { terra_spp: number; id: any }) => item.terra_spp === 1);
+        // info.defaultId = Number(formCurrValues.ddlUnitVoltage);
+        info.isEnabled = false;
+
+      } else if (intProductTypeID === IDs.intProdTypeIdVentumPlus &&
+        (Number(formCurrValues.ckbHeatingElecHeaterVoltageSPP) || Number(formCurrValues.ddlPreheatComp) === IDs.intCompIdAuto)) {
+        info.fdtElecHeaterVoltage = info.fdtElecHeaterVoltage?.filter((item: { ventumplus_elec_heater: number; id: any }) => item.ventumplus_elec_heater === 1);
+
+        // info.defaultId = Number(formCurrValues.ddlUnitVoltage);
+        info.isEnabled = false;
+
+      } else {
+        info.fdtElecHeaterVoltage = info.fdtElecHeaterVoltage?.filter((item: { electric_heater: number; id: any }) => item.electric_heater === 1);
+        // info.defaultId = IDs.intElectricVoltageId208V_3Ph_60Hz;
+        info.isEnabled = true;
+      }
+
+      info.isVisible = false;
+    }
+
+    if (formCurrValues.ddlUnitVoltage > 0) {
+      info.defaultId = formCurrValues.ddlUnitVoltage;
+    } else if (bol208V_1Ph) {
+      info.defaultId = IDs.intElectricVoltageId208V_1Ph_60Hz;
+    } else {
+      info.defaultId = IDs.intElectricVoltageId208V_3Ph_60Hz;
+      // info.defaultId = info.fdtElecHeaterVoltage?.[0]?.id;
+    }
+
+
+    // setElecHeaterVoltageInfo(info);
+
+
     setHeatingElecHeaterVoltageTable(info.fdtElecHeaterVoltage);
     setIsVisibleDdlHeatingElecHeaterVoltage(info.isVisible);
     setIsEnabledDdlHeatingElecHeaterVoltage(info.isEnabled);
-    
+
+    setValue('ddlHeatingElecHeaterVoltage', info.defaultId);
+
+  }, [db, intProductTypeID, formCurrValues.ddlHeatingComp, formCurrValues.ddlUnitVoltage,]);
+
+
+  useMemo(() => {
+    const info: { fdtElecHeaterVoltage: any; isVisible: boolean; isEnabled: boolean; defaultId: number } =
+      { fdtElecHeaterVoltage: [], isVisible: false, isEnabled: false, defaultId: 0, };
+    // let controlsPrefProdTypeLink: any = [];
+
+    // let dtElecHeaterVoltage = [];
+    const umc = getUMC();
+    let dtLink = db?.dbtSelNovaElecHeatVoltageUnitModelLink;
+    info.fdtElecHeaterVoltage = db?.dbtSelElectricalVoltage;
+    info.defaultId = Number(getValues('ddlUnitVoltage'));
+    let bol208V_1Ph = false;
+
+    if (Number(formCurrValues.ddlReheatComp) === IDs.intCompIdElecHeater) {
+      info.isVisible = true;
+
+      // let bol208V_1Ph = false;
+      // intProdTypeNovaID
+      switch (intProductTypeID) {
+        case IDs.intProdTypeIdNova:
+          // const dtLink = db?.dbtSelNovaElecHeatVoltageUnitModelLink.filter((x) => x.unit_model_value === strUnitModelValue);
+          dtLink = dtLink?.filter((item: { unit_model_value: any }) => item.unit_model_value === umc?.strUnitModelValue) || [];
+
+          info.fdtElecHeaterVoltage = info.fdtElecHeaterVoltage?.filter((e: { id: any }) =>
+            dtLink?.filter((e_link: { voltage_id: any }) => e.id === e_link.voltage_id)?.length === 1); // 1: Matching items, 0: Not matching items
+
+          if (Number(getValues('ddlUnitVoltage'))) {
+            info.defaultId = Number(getValues('ddlUnitVoltage'));
+          }
+
+          info.isEnabled = !formCurrValues.ckbReheatElecHeaterVoltageSPP;
+
+          // dtElecHeaterVoltage = dtElecHeaterVoltage.map((item) => dtLink.filter((el) => el.voltage_id === item.id)?.length > 0);
+          // }
+          break;
+        case IDs.intProdTypeIdVentum:
+          if (Number(formCurrValues.ddlUnitModel) === IDs.intVentumUnitModelIdH05IN_ERV ||
+            Number(formCurrValues.ddlUnitModel) === IDs.intVentumUnitModelIdH10IN_ERV ||
+            Number(formCurrValues.ddlUnitModel) === IDs.intVentumUnitModelIdH05IN_HRV ||
+            Number(formCurrValues.ddlUnitModel) === IDs.intVentumUnitModelIdH10IN_HRV) {
+            bol208V_1Ph = true;
+            info.fdtElecHeaterVoltage = info.fdtElecHeaterVoltage?.filter((item: { electric_heater_2: number; id: any }) => item.electric_heater_2 === 1);
+          } else {
+            info.fdtElecHeaterVoltage = info.fdtElecHeaterVoltage?.filter((item: { electric_heater: number; id: any }) => item.electric_heater === 1);
+          }
+
+          // if (bol208V_1Ph) {
+          //   info.defaultId = IDs.intElectricVoltageId208V_1Ph_60Hz;
+          //   info.isEnabled = false;
+          // } else {
+          //   info.defaultId = IDs.intElectricVoltageId208V_3Ph_60Hz;
+          // }
+
+          if (Number(formCurrValues.ckbReheatElecHeaterVoltageSPP)) {
+            info.defaultId = Number(formCurrValues.ddlUnitVoltage);
+            info.isEnabled = false;
+          } else {
+            info.isEnabled = true;
+          }
+          // intProdTypeVentumLiteID
+          break;
+        case IDs.intProdTypeIdVentumLite:
+          bol208V_1Ph = true;
+          info.fdtElecHeaterVoltage = info.fdtElecHeaterVoltage?.filter((item: { electric_heater_3: number; id: any }) => item.electric_heater_3 === 1);
+          // info.defaultId = formCurrValues.ddlUnitVoltage  > 0 ? formCurrValues.ddlUnitVoltage : info.fdtElecHeaterVoltage?.[0]?.id;
+          info.isEnabled = false;
+          break;
+        case IDs.intProdTypeIdVentumPlus:
+          info.fdtElecHeaterVoltage = info.fdtElecHeaterVoltage?.filter((item: { ventumplus_elec_heater: number; id: any }) => item.ventumplus_elec_heater === 1);
+
+          if (Number(formCurrValues.ckbReheatElecHeaterVoltageSPP)) {
+            info.defaultId = Number(formCurrValues.ddlUnitVoltage);
+            info.isVisible = true;
+            info.isEnabled = false;
+          } else {
+            info.isEnabled = true;
+          }
+
+          // if (info.fdtElecHeaterVoltage?.length > 0) {
+          //   if (bol208V_1Ph) {
+          //     info.defaultId = IDs.intElectricVoltageId208V_1Ph_60Hz;
+          //   } else {
+          //     info.defaultId = IDs.intElectricVoltageId208V_3Ph_60Hz;
+          //   }
+          // }
+          // // intProdTypeTerraID
+          break;
+        case IDs.intProdTypeIdTerra:
+          if (Number(formCurrValues.ckbReheatElecHeaterVoltageSPP)) {
+            info.fdtElecHeaterVoltage = info.fdtElecHeaterVoltage?.filter((item: { terra_spp: number; id: any }) => item.terra_spp === 1);
+            info.defaultId = Number(formCurrValues.ddlUnitVoltage);
+            info.isEnabled = false;
+          } else {
+            info.fdtElecHeaterVoltage = info.fdtElecHeaterVoltage?.filter((item: { terra_non_spp: number; id: any }) => item.terra_non_spp === 1);
+            info.isEnabled = true;
+          }
+
+          // if (info.fdtElecHeaterVoltage?.length > 0) {
+          //   if (bol208V_1Ph) {
+          //     info.defaultId = IDs.intElectricVoltageId208V_1Ph_60Hz;
+          //   } else {
+          //     info.defaultId = IDs.intElectricVoltageId208V_3Ph_60Hz;
+          //   }
+          // }
+          break;
+        default:
+          break;
+      }
+
+      // if (formCurrValues.ddlUnitVoltage  > 0) {
+      //   info.defaultId = formCurrValues.ddlUnitVoltage;
+      // } else if (bol208V_1Ph) {
+      //   info.defaultId = IDs.intElectricVoltageId208V_1Ph_60Hz;
+      // } else {
+      //   info.defaultId = IDs.intElectricVoltageId208V_3Ph_60Hz;
+      //   // info.defaultId = info.fdtElecHeaterVoltage?.[0]?.id;
+      // }
+
+      if (Number(formCurrValues.ddlReheatComp) !== IDs.intCompIdElecHeater) {
+        info.isVisible = false;
+      }
+    } else {
+      if (intProductTypeID === IDs.intProdTypeIdVentumLite) {
+        info.fdtElecHeaterVoltage = info.fdtElecHeaterVoltage?.filter((item: { electric_heater_3: number; id: any }) => item.electric_heater_3 === 1);
+        // info.defaultId = Number(formCurrValues.ddlUnitVoltage);
+
+        info.isEnabled = false;
+
+      } else if (intProductTypeID === IDs.intProdTypeIdTerra && Number(formCurrValues.ckbReheatElecHeaterVoltageSPP)) {
+        info.fdtElecHeaterVoltage = info.fdtElecHeaterVoltage?.filter((item: { terra_spp: number; id: any }) => item.terra_spp === 1);
+        // info.defaultId = Number(formCurrValues.ddlUnitVoltage);
+        info.isEnabled = false;
+
+      } else if (intProductTypeID === IDs.intProdTypeIdVentumPlus &&
+        (Number(formCurrValues.ckbReheatElecHeaterVoltageSPP) || Number(formCurrValues.ddlPreheatComp) === IDs.intCompIdAuto)) {
+        info.fdtElecHeaterVoltage = info.fdtElecHeaterVoltage?.filter((item: { ventumplus_elec_heater: number; id: any }) => item.ventumplus_elec_heater === 1);
+
+        // info.defaultId = Number(formCurrValues.ddlUnitVoltage);
+        info.isEnabled = false;
+
+      } else {
+        info.fdtElecHeaterVoltage = info.fdtElecHeaterVoltage?.filter((item: { electric_heater: number; id: any }) => item.electric_heater === 1);
+        // info.defaultId = IDs.intElectricVoltageId208V_3Ph_60Hz;
+        info.isEnabled = true;
+      }
+
+      info.isVisible = false;
+    }
+
+    if (formCurrValues.ddlUnitVoltage > 0) {
+      info.defaultId = formCurrValues.ddlUnitVoltage;
+    } else if (bol208V_1Ph) {
+      info.defaultId = IDs.intElectricVoltageId208V_1Ph_60Hz;
+    } else {
+      info.defaultId = IDs.intElectricVoltageId208V_3Ph_60Hz;
+      // info.defaultId = info.fdtElecHeaterVoltage?.[0]?.id;
+    }
+
+
+    // setElecHeaterVoltageInfo(info);
+
     setReheatElecHeaterVoltageTable(info.fdtElecHeaterVoltage);
     setIsVisibleDdlReheatElecHeaterVoltage(info.isVisible);
     setIsEnabledDdlReheatElecHeaterVoltage(info.isEnabled);
 
-    setValue('ddlPreheatElecHeaterVoltage', info.defaultId);
-    setValue('ddlHeatingElecHeaterVoltage', info.defaultId);
     setValue('ddlReheatElecHeaterVoltage', info.defaultId);
 
-  }, [db, intProductTypeID, formCurrValues.ddlPreheatComp, formCurrValues.ddlHeatingComp, formCurrValues.ddlReheatComp, 
-        formCurrValues.ddlUnitVoltage, ]);
+  }, [db, intProductTypeID, formCurrValues.ddlReheatComp,formCurrValues.ddlUnitVoltage,]);
+
 
 
   // const [heatingElecHeaterInfo, setHeatingElecHeaterInfo] = useState<any>([])
@@ -3919,6 +4438,7 @@ useEffect(() => {
 
 
   const [valveTypeInfo, setValveTypeInfo] = useState<any>([]);
+  
   useMemo(() => {
     const info: { fdtValveType: any; isVisible: boolean } = { fdtValveType: [], isVisible: false };
 
@@ -4800,27 +5320,12 @@ const ddlUnitModelChanged = useCallback((e: any) => {
   if (edit && setFunction) setFunction(handleSubmit(onSubmit));
 
 
-// ckbVoltageSPP
-  useEffect(() => {
-    switch (intProductTypeID) {
-      case IDs.intProdTypeIdNova:
-      case IDs.intProdTypeIdVentum:
-      case IDs.intProdTypeIdVentumPlus:
-      case IDs.intProdTypeIdTerra:
-        setVoltageSPPIsVisible(true);
-        break;
-      default:
-        setValue('ckbVoltageSPP', 0)
-        setVoltageSPPIsVisible(false);
-        break;
-    }
-  }, [intProductTypeID]);
 
 
 // ddlElecHeaterVoltage
 useEffect(() => {
   if (Number(formCurrValues.ddlPreheatComp) === IDs.intCompIdElecHeater) {
-    switch (Number(getValues('ckbVoltageSPP'))) {
+    switch (Number(getValues('ckbPreheatElecHeaterVoltageSPP'))) {
       case 1:
         setValue('ddlPreheatElecHeaterVoltage', formCurrValues?.ddlUnitVoltage)
         setIsEnabledDdlPreheatElecHeaterVoltage(false);
@@ -4832,9 +5337,12 @@ useEffect(() => {
         break;
     }
   }
+}, [getValues('ckbPreheatElecHeaterVoltageSPP')]);
 
+
+useEffect(() => {
   if (Number(formCurrValues.ddlHeatingComp) === IDs.intCompIdElecHeater) {
-    switch (Number(getValues('ckbVoltageSPP'))) {
+    switch (Number(getValues('ckbHeatingElecHeaterVoltageSPP'))) {
       case 1:
         setValue('ddlHeatingElecHeaterVoltage', formCurrValues?.ddlUnitVoltage)
         setIsEnabledDdlHeatingElecHeaterVoltage(false);
@@ -4846,9 +5354,12 @@ useEffect(() => {
         break;
     }
     }
+  }, [getValues('ckbHeatingElecHeaterVoltageSPP')]);
 
-  if (Number(formCurrValues.ddlReheatComp) === IDs.intCompIdElecHeater) {
-    switch (Number(getValues('ckbVoltageSPP'))) {
+
+  useEffect(() => {
+    if (Number(formCurrValues.ddlReheatComp) === IDs.intCompIdElecHeater) {
+    switch (Number(getValues('ckbReheatElecHeaterVoltageSPP'))) {
     case 1:
       setValue('ddlReheatElecHeaterVoltage', formCurrValues?.ddlUnitVoltage)
       setIsEnabledDdlReheatElecHeaterVoltage(false);
@@ -4860,7 +5371,7 @@ useEffect(() => {
       break;
     }
     }
-}, [getValues('ckbVoltageSPP')]);
+}, [getValues('ckbReheatElecHeaterVoltageSPP')]);
 
 
 
@@ -4927,7 +5438,7 @@ useEffect(() => {
 
       setValue('ddlUnitVoltage', unitInfo?.oUnit?.intUnitVoltageId > 0 ?  unitInfo?.oUnit?.intUnitVoltageId : getValues('ddlUnitVoltage'));
 
-      setValue('ckbVoltageSPP', unitInfo?.oUnit?.intIsVoltageSPP > 0 ?  unitInfo?.oUnit?.intIsVoltageSPP : 0);
+      // setValue('ckbVoltageSPP', unitInfo?.oUnit?.intIsVoltageSPP > 0 ?  unitInfo?.oUnit?.intIsVoltageSPP : 0);
       
       setValue('ddlOA_FilterModel', unitInfo?.oUnitCompOpt?.intOAFilterModelId > 0 ?  unitInfo?.oUnitCompOpt?.intOAFilterModelId : getValues('ddlOA_FilterModel'));
 
@@ -4980,6 +5491,7 @@ useEffect(() => {
 
       setValue('ddlPreheatElecHeaterInstall', unitInfo?.oUnitCompOpt?.intPreheatElecHeaterInstallationId > 0 ? unitInfo?.oUnitCompOpt?.intPreheatElecHeaterInstallationId : getValues('ddlPreheatElecHeaterInstall'));
 
+      setValue('ddlPreheatElecHeaterVoltage', unitInfo?.oUnitCompOpt?.intPreheatElecHeaterVoltageId > 0 ?  unitInfo?.oUnitCompOpt?.intPreheatElecHeaterVoltageId : getValues('ddlPreheatElecHeaterVoltage'));
       setValue('ckbPreheatElecHeaterVoltageSPP', unitInfo?.oUnitCompOpt?.intIsPreheatElecHeaterVoltageSPP > 0 ? unitInfo?.oUnitCompOpt?.intIsPreheatElecHeaterVoltageSPP : getValues('ckbPreheatElecHeaterVoltageSPP'));
 
       setValue('ddlPreheatFluidType', unitInfo?.oUnitCompOpt?.intHeatingFluidTypeId > 0 ? unitInfo?.oUnitCompOpt?.intHeatingFluidTypeId : getValues('ddlPreheatFluidType'));
@@ -5007,6 +5519,10 @@ useEffect(() => {
       }
 
       setValue('txbPreheatHWCFluidFlowRate', Number.parseFloat(unitInfo?.oUnitCompOptCust?.dblPreheatHWCFlowRate) > 0.0 ? unitInfo?.oUnitCompOptCust?.dblPreheatHWCFlowRate : '0');
+
+      setValue('ckbPreheatHWCValveAndActuator', unitInfo?.oUnitCompOpt?.intIsPreheatValveAndActuatorIncluded > 0 ? unitInfo?.oUnitCompOpt?.intIsPreheatValveAndActuatorIncluded : 0);
+      setValue('ddlPreheatHWCValveType', unitInfo?.oUnitLayout?.intPreheatValveTypeId > 0 ? unitInfo?.oUnitLayout?.intPreheatValveTypeId : getValues('ddlPreheatHWCValveType'));
+
 
       setValue('ddlCoolingComp', unitInfo?.oUnitCompOpt?.intCoolingCompId > 0 ? unitInfo?.oUnitCompOpt?.intCoolingCompId : getValues('ddlCoolingComp'));
 
@@ -5047,11 +5563,17 @@ useEffect(() => {
 
       setValue('txbCoolingCWCCap', Number.parseFloat(unitInfo?.oUnitCompOpt?.dblCoolingWCCap) > 0.0 ? unitInfo?.oUnitCompOpt?.dblCoolingWCCap : '0');
 
+
       setValue('txbRefrigSuctionTemp', Number.parseFloat(unitInfo?.oUnitCompOpt?.dblRefrigSuctionTemp) > 0.0 ? unitInfo?.oUnitCompOpt?.dblRefrigSuctionTemp: '43');
 
       setValue('txbRefrigLiquidTemp', Number.parseFloat(unitInfo?.oUnitCompOpt?.dblRefrigLiquidTemp) > 0.0 ? unitInfo?.oUnitCompOpt?.dblRefrigLiquidTemp : '77');
 
       setValue('txbRefrigSuperheatTemp', Number.parseFloat(unitInfo?.oUnitCompOpt?.dblRefrigSuperheatTemp) > 0.0 ? unitInfo?.oUnitCompOpt?.dblRefrigSuperheatTemp : '9');
+
+
+      setValue('ckbCoolingCWCValveAndActuator', unitInfo?.oUnitCompOpt?.intIsCoolingValveAndActuatorIncluded > 0 ? unitInfo?.oUnitCompOpt?.intIsCoolingValveAndActuatorIncluded : 0);
+      setValue('ddlCoolingCWCValveType', unitInfo?.oUnitLayout?.intCoolingValveTypeId > 0 ? unitInfo?.oUnitLayout?.intCoolingValveTypeId : getValues('ddlCoolingCWCValveType'));
+
 
       setValue('ddlHeatingComp', unitInfo?.oUnitCompOpt?.intHeatingCompId > 0 ? unitInfo?.oUnitCompOpt?.intHeatingCompId : getValues('ddlHeatingComp'));
 
@@ -5061,6 +5583,7 @@ useEffect(() => {
 
       setValue('ddlHeatingElecHeaterInstall', unitInfo?.oUnitCompOpt?.intHeatingElecHeaterInstallationId > 0 ? unitInfo?.oUnitCompOpt?.intHeatingElecHeaterInstallationId : getValues('ddlHeatingElecHeaterInstall'));
 
+      setValue('ddlHeatingElecHeaterVoltage', unitInfo?.oUnitCompOpt?.intHeatingElecHeaterVoltageId > 0 ?  unitInfo?.oUnitCompOpt?.intHeatingElecHeaterVoltageId : getValues('ddlHeatingElecHeaterVoltage'));
       setValue('ckbHeatingElecHeaterVoltageSPP', unitInfo?.oUnitCompOpt?.intIsHeatingElecHeaterVoltageSPP > 0 ? unitInfo?.oUnitCompOpt?.intIsHeatingElecHeaterVoltageSPP : getValues('ckbHeatingElecHeaterVoltageSPP'));
 
       setValue('ddlHeatingFluidType', unitInfo?.oUnitCompOpt?.intHeatingFluidTypeId > 0 ? unitInfo?.oUnitCompOpt?.intHeatingFluidTypeId : getValues('ddlHeatingFluidType'));
@@ -5087,6 +5610,9 @@ useEffect(() => {
       
       setValue('txbHeatingHWCFluidFlowRate', Number.parseFloat(unitInfo?.oUnitCompOptCust?.dblHeatingHWCFlowRate) > 0.0 ? unitInfo?.oUnitCompOptCust?.dblHeatingHWCFlowRate : '0');
 
+      setValue('ckbHeatingHWCValveAndActuator', unitInfo?.oUnitCompOpt?.intIsHeatingValveAndActuatorIncluded > 0 ? unitInfo?.oUnitCompOpt?.intIsHeatingValveAndActuatorIncluded : 0);
+      setValue('ddlHeatingHWCValveType', unitInfo?.oUnitLayout?.intHeatingValveTypeId > 0 ? unitInfo?.oUnitLayout?.intHeatingValveTypeId : getValues('ddlHeatingHWCValveType'));
+      
       setValue('ddlReheatComp', unitInfo?.oUnitCompOpt?.intReheatCompId > 0 ? unitInfo?.oUnitCompOpt?.intReheatCompId : getValues('ddlReheatComp'));
 
       setValue('txbSummerReheatSetpointDB', Number.parseFloat(unitInfo?.oUnitCompOpt?.dblReheatSetpointDB) > 0.0 ? unitInfo?.oUnitCompOpt?.dblReheatSetpointDB : '70');
@@ -5095,6 +5621,7 @@ useEffect(() => {
 
       setValue('ddlReheatElecHeaterInstall', unitInfo?.oUnitCompOpt?.intHeatingElecHeaterInstallationId > 0 ? unitInfo?.oUnitCompOpt?.intHeatingElecHeaterInstallationId : getValues('ddlReheatElecHeaterInstall'));
 
+      setValue('ddlReheatElecHeaterVoltage', unitInfo?.oUnitCompOpt?.intReheatElecHeaterVoltageId > 0 ?  unitInfo?.oUnitCompOpt?.intReheatElecHeaterVoltageId : getValues('ddlReheatElecHeaterVoltage'));
       setValue('ckbReheatElecHeaterVoltageSPP', unitInfo?.oUnitCompOpt?.intIsReheatElecHeaterVoltageSPP > 0 ? unitInfo?.oUnitCompOpt?.intIsReheatElecHeaterVoltageSPP : getValues('ckbReheatElecHeaterVoltageSPP'));
 
       setValue('ddlReheatFluidType', unitInfo?.oUnitCompOpt?.intHeatingFluidTypeId > 0 ?  unitInfo?.oUnitCompOpt?.intHeatingFluidTypeId : getValues('ddlReheatFluidType'));
@@ -5127,6 +5654,9 @@ useEffect(() => {
 
       setValue('txbRefrigSubcoolingTemp', Number.parseFloat(unitInfo?.oUnitCompOpt?.dblRefrigSubcoolingTemp) > 0.0 ?  unitInfo?.oUnitCompOpt?.dblRefrigSubcoolingTemp : '5.4');
 
+      setValue('ckbReheatHWCValveAndActuator', unitInfo?.oUnitCompOpt?.intIsReheatValveAndActuatorIncluded > 0 ? unitInfo?.oUnitCompOpt?.intIsReheatValveAndActuatorIncluded : 0);
+      setValue('ddlReheatHWCValveType', unitInfo?.oUnitLayout?.intReheatValveTypeId > 0 ? unitInfo?.oUnitLayout?.intReheatValveTypeId : getValues('ddlReheatHWCValveType'));
+
       setValue('ddlDamperAndActuator', unitInfo?.oUnitCompOpt?.intDamperAndActuatorId > 0 ?  unitInfo?.oUnitCompOpt?.intDamperAndActuatorId : getValues('ddlDamperAndActuator'));
 
       setValue('ddlPreheatElecHeaterVoltage', unitInfo?.oUnitCompOpt?.intPreheatElecHeaterVoltageId > 0 ?  unitInfo?.oUnitCompOpt?.intPreheatElecHeaterVoltageId : getValues('ddlPreheatElecHeaterVoltage'));
@@ -5158,18 +5688,55 @@ useEffect(() => {
 useEffect(() => {
 
     switch (Number(intProductTypeID)) {
-      case IDs.intProdTypeIdVentum:
-      case IDs.intProdTypeIdVentumPlus:
       case IDs.intProdTypeIdNova:
+        setValue('ckbMixingBox', 0);
+        setVoltageSPPIsVisible(true);
+        break;
+      case IDs.intProdTypeIdVentum:
+        setValue('ckbMixingBox', 0);
+        setVoltageSPPIsVisible(true);
+        break;
+      case IDs.intProdTypeIdVentumPlus:
+        setValue('ckbMixingBox', 0);
+        setVoltageSPPIsVisible(true);
+        break;
       case IDs.intProdTypeIdVentumLite:
         setValue('ckbMixingBox', 0);
         break;
       case IDs.intProdTypeIdTerra:
+        setVoltageSPPIsVisible(true);
         break;
       default:
+        setValue('ckbPreheatElecHeaterVoltageSPP', 0)
+        setValue('ckbHeatingElecHeaterVoltageSPP', 0)
+        setValue('ckbReheatElecHeaterVoltageSPP', 0)
+        // setVoltageSPPIsVisible(false);
+        setIsVisibleDdlPreheatElecHeaterVoltage(false);
+        setIsVisibleDdlHeatingElecHeaterVoltage(false);
+        setIsVisibleDdlReheatElecHeaterVoltage(false);
         break;
     }
   }, [intProductTypeID]);
+
+
+
+
+// // ckbVoltageSPP
+// useEffect(() => {
+//   switch (intProductTypeID) {
+//     case IDs.intProdTypeIdNova:
+//     case IDs.intProdTypeIdVentum:
+//     case IDs.intProdTypeIdVentumPlus:
+//     case IDs.intProdTypeIdTerra:
+//       setVoltageSPPIsVisible(true);
+//       break;
+//     default:
+//       setValue('ckbVoltageSPP', 0)
+//       setVoltageSPPIsVisible(false);
+//       break;
+//   }
+// }, [intProductTypeID]);
+
 
 
   useEffect(() => {
@@ -6201,23 +6768,23 @@ useEffect(() => {
                   <Stack>
                   <RHFCheckbox
                   label="Control Valve"
-                  name="ckbValveAndActuator"
+                  name="ckbPreheatHWCValveAndActuator"
                   // sx={getDisplay(valveAndActuatorInfo.isVisible)}
-                  defaultChecked={formValues.ckbValveAndActuator}
+                  // defaultChecked={formValues.ckbValveAndActuator}
                   // onChange={() => setCkbValveAndActuatorVal(!formValues.ckbValveAndActuatorVal)}
-                  onChange={(e: any) => setValue('ckbValveAndActuator', Number(e.target.checked))}
+                  onChange={(e: any) => setValue('ckbPreheatHWCValveAndActuator', Number(e.target.checked))}
                 />
                   </Stack>
                   <Stack spacing={1}>
                 <RHFSelect
                   native
                   size="small"
-                  name="ddlValveType"
+                  name="ddlPreheatHWCValveType"
                   label="Valve Type"
-                  sx={getDisplay(valveTypeInfo?.isVisible)}
-                  onChange={ddlValveTypeChanged}
+                  sx={getDisplay(isVisibleDdlPreheatHWCValveType)}
+                  onChange={(e: any) => setValue('ddlPreheatHWCValveType', Number(e.target.value))}
                 >
-                  {valveTypeInfo?.fdtValveType?.map((item: any, index: number) => (
+                  {preheatHWCValveTypeOptions?.map((item: any, index: number) => (
                     <option key={index} value={item.id}>
                       {item.items}
                     </option>
@@ -6240,7 +6807,7 @@ useEffect(() => {
             id="panel1a-header"
           >
             <Typography color="primary.main" variant="h6">
-              COOLING
+              {Number(getValues('ddlCoolingComp')) === IDs.intCompIdDX ? "DX - COOLING" : "COOLING"}
             </Typography>
           </AccordionSummary>
           <AccordionDetails>
@@ -6515,10 +7082,10 @@ useEffect(() => {
                       size="small"
                       name="txbSummerCoolingSetpointDB"
                       label="Cooling LAT Setpoint (F):"
-                      autoComplete="off"
-                      InputProps={{ inputProps: { min: 45, max: 75 } }}
+                      // autoComplete="off"
+                      // InputProps={{ inputProps: { min: 45, max: 75 } }}
                       // onChange={(e: any) => { setValueWithCheck1(e, 'txbSummerCoolingSetpointDB'); }}
-                      onChange={txbSummerCoolingSetpointDBChanged}
+                      onBlur={txbSummerCoolingSetpointDBChanged}
                     />
                   </Stack>
                   <Stack                   
@@ -6528,7 +7095,7 @@ useEffect(() => {
                       size="small"
                       name="txbSummerCoolingSetpointWB"
                       label="Cooling LAT Setpoint WB (F):"
-                      autoComplete="off"
+                      // autoComplete="off"
                       onChange={(e: any) => {
                         setValueWithCheck1(e, 'txbSummerCoolingSetpointWB');
                       }}
@@ -6546,23 +7113,23 @@ useEffect(() => {
                   <Stack>
                   <RHFCheckbox
                   label="Control Valve"
-                  name="ckbValveAndActuator"
+                  name="ckbCoolingCWCValveAndActuator"
                   // sx={getDisplay(valveAndActuatorInfo.isVisible)}
-                  defaultChecked={formValues.ckbValveAndActuator}
+                  // defaultChecked={formValues.ckbValveAndActuator}
                   // onChange={() => setCkbValveAndActuatorVal(!formValues.ckbValveAndActuatorVal)}
-                  onChange={(e: any) => setValue('ckbValveAndActuator', Number(e.target.checked))}
+                  onChange={(e: any) => setValue('ckbCoolingCWCValveAndActuator', Number(e.target.checked))}
                 />
                   </Stack>
                   <Stack spacing={1}>
                 <RHFSelect
                   native
                   size="small"
-                  name="ddlValveType"
+                  name="ddlCoolingCWCValveType"
                   label="Valve Type"
-                  sx={getDisplay(valveTypeInfo?.isVisible)}
-                  onChange={ddlValveTypeChanged}
+                  sx={getDisplay(isVisibleDdlCoolingCWCValveType)}
+                  onChange={(e: any) => setValue('ddlCoolingCWCValveType', Number(e.target.value))}
                 >
-                  {valveTypeInfo?.fdtValveType?.map((item: any, index: number) => (
+                  {coolingCWCValveTypeOptions?.map((item: any, index: number) => (
                     <option key={index} value={item.id}>
                       {item.items}
                     </option>
@@ -6679,7 +7246,7 @@ useEffect(() => {
             id="panel1a-header"
           >
             <Typography color="primary.main" variant="h6">
-            {(Number(formValues.ddlCoolingComp) === IDs.intCompIdDX && Number(formValues.ckbDaikinVRV) === 1) ? 'BACKUP HEATING' : 'HEATING' } 
+            HEATING
             </Typography>
           </AccordionSummary>
             <AccordionDetails>
@@ -6710,7 +7277,7 @@ useEffect(() => {
                     name="ddlHeatingElecHeaterInstall"
                     size="small"
                     placeholder=""
-                    sx={{ ...getDisplay(Number(formValues.ddlHeatingComp) === IDs.intCompIdElecHeater), }}
+                    sx={{ ...getDisplay(Number(formCurrValues.ddlHeatingComp) === IDs.intCompIdElecHeater), }}
 
                   // onChange={(e: any) => setValue('ddlHeatingElecHeaterInstall', Number(e.target.value)) }
                   >
@@ -6725,12 +7292,12 @@ useEffect(() => {
                   </Stack>
                 </Box>
               </Grid>
-              {/* <Grid item xs={12} md={12} sx={{ ...getDisplay(Number(formValues.ddlHeatingComp) === IDs.intCompIdElecHeater), }}>
+              {/* <Grid item xs={12} md={12} sx={{ ...getDisplay(Number(formCurrValues.ddlHeatingComp) === IDs.intCompIdElecHeater), }}>
                 <Box sx={{ display: 'grid', rowGap: 3, columnGap: 3, gridTemplateColumns: { xs: 'repeat(4, 1fr)' }, }}>
 
                 </Box>
               </Grid> */}
-              <Grid item xs={12} md={12} sx={{ ...getDisplay(Number(formValues.ddlHeatingComp) === IDs.intCompIdElecHeater) }}>
+              <Grid item xs={12} md={12} sx={{ ...getDisplay(Number(formCurrValues.ddlHeatingComp) === IDs.intCompIdElecHeater) }}>
               <Typography  color="primary.main" bgcolor="" variant="subtitle2" marginBottom="10px">
                   Heater Electrical
                 </Typography>
@@ -6765,7 +7332,7 @@ useEffect(() => {
                 </Box>
               </Grid>
 
-              <Grid item xs={12} md={12} sx={{ ...getDisplay(Number(formValues.ddlHeatingComp) === IDs.intCompIdHWC) }}>
+              <Grid item xs={12} md={12} sx={{ ...getDisplay(Number(formCurrValues.ddlHeatingComp) === IDs.intCompIdHWC) }}>
               <Typography  color="primary.main" bgcolor="" variant="subtitle2" marginBottom="10px">
                   Fluid Properties
                 </Typography>
@@ -6870,7 +7437,7 @@ useEffect(() => {
                       // sx={getInlineDisplay(customInputs.divCoolingCWC_UseFlowRateVisible)}
                       label="Heating HWC Use Capacity"
                       name="ckbHeatingHWCUseCap"
-                      checked={formValues.ckbHeatingHWCUseCap}
+                      checked={formCurrValues.ckbHeatingHWCUseCap}
                       onChange={(e: any) => setValue('ckbHeatingHWCUseCap', Number(e.target.checked))}
                     />
                   </Stack>
@@ -6897,8 +7464,8 @@ useEffect(() => {
                 </Box>
               </Grid>
               <Grid item xs={12} md={12}                
-                sx={getDisplay(Number(formValues.ddlHeatingComp) === IDs.intCompIdElecHeater || 
-                               Number(formValues.ddlHeatingComp) === IDs.intCompIdHWC)}
+                sx={getDisplay(Number(formCurrValues.ddlHeatingComp) === IDs.intCompIdElecHeater || 
+                               Number(formCurrValues.ddlHeatingComp) === IDs.intCompIdHWC)}
               >
               <Typography  color="primary.main" bgcolor="" variant="subtitle2" marginBottom="10px">
               Air Properties
@@ -6917,7 +7484,7 @@ useEffect(() => {
                 </Box>
               </Grid>
               <Grid item xs={12} md={12}                
-                sx={getDisplay(Number(formValues.ddlHeatingComp) === IDs.intCompIdHWC)}
+                sx={getDisplay(Number(formCurrValues.ddlHeatingComp) === IDs.intCompIdHWC)}
               >
                 <Typography  color="primary.main" bgcolor="" variant="subtitle2" marginBottom="10px">
                 Accessories
@@ -6926,11 +7493,11 @@ useEffect(() => {
                   <Stack>
                   <RHFCheckbox
                   label="Control Valve"
-                  name="ckbValveAndActuator"
+                  name="ckbHeatingHWCValveAndActuator"
                   // sx={getDisplay(valveAndActuatorInfo.divValveAndActuatorVisible)}
-                  defaultChecked={formValues.ckbValveAndActuator}
+                  // defaultChecked={formValues.ckbValveAndActuator}
                   // onChange={() => setCkbValveAndActuatorVal(!formValues.ckbValveAndActuatorVal)}
-                  onChange={(e: any) => setValue('ckbValveAndActuator', Number(e.target.checked))}
+                  onChange={(e: any) => setValue('ckbHeatingHWCValveAndActuator', Number(e.target.checked))}
                 />
                   </Stack>
 
@@ -6938,12 +7505,12 @@ useEffect(() => {
                 <RHFSelect
                   native
                   size="small"
-                  name="ddlValveType"
+                  name="ddlHeatingHWCValveType"
                   label="Valve Type"
-                  sx={getDisplay(valveTypeInfo?.isVisible)}
-                  onChange={ddlValveTypeChanged}
+                  sx={getDisplay(isVisibleDdlHeatingHWCValveType)}
+                  onChange={(e: any) => setValue('ddlHeatingHWCValveType', Number(e.target.value))}
                 >
-                  {valveTypeInfo?.fdtValveType?.map((item: any, index: number) => (
+                  {heatingHWCValveTypeOptions?.map((item: any, index: number) => (
                     <option key={index} value={item.id}>
                       {item.items}
                     </option>
@@ -7124,7 +7691,7 @@ useEffect(() => {
                       size="small"
                       name="txbReheatHWCFluidEntTemp"
                       label="Reheat Fluid Ent Temp (F)"
-                      InputProps={{ inputProps: { min: 80, max: 180 } }}
+                      // InputProps={{ inputProps: { min: 80, max: 180 } }}
                       onBlur={txbReheatHWCFluidEntTempChanged}
                     />
                   </Stack>
@@ -7133,7 +7700,7 @@ useEffect(() => {
                       size="small"
                       name="txbReheatHWCFluidLvgTemp"
                       label="Reheat Fluid Lvg Temp (F)"
-                      InputProps={{ inputProps: { min: 40, max: 180 } }}
+                      // InputProps={{ inputProps: { min: 40, max: 180 } }}
                       disabled={!isTxbReheatHWCFluidLvgTempEnabled}
                       onBlur={txbReheatHWCFluidLvgTempChanged}
                     />
@@ -7143,7 +7710,7 @@ useEffect(() => {
                       size="small"
                       name="txbReheatHWCFluidFlowRate"
                       label="Reheat HWC Flow Rate (GPM)"
-                      InputProps={{ inputProps: { min: 0.1, max: 50 } }}
+                      // InputProps={{ inputProps: { min: 0.1, max: 50 } }}
                       // sx={getDisplay(customInputs.divReheatHWC_UseFlowRateVisible)}
                       disabled={!isTxbReheatHWCFluidFlowRateEnabled}
                       onBlur={txbReheatHWCFluidFlowRateChanged}
@@ -7213,7 +7780,7 @@ useEffect(() => {
                       }}
                     />
                   </Stack>
-                  <Stack>
+                  <Stack sx={ {display:"none"} }>
                     <RHFTextField
                       size="small"
                       name="txbPercentCondensingLoad"
@@ -7257,23 +7824,23 @@ useEffect(() => {
                   <Stack>
                   <RHFCheckbox
                   label="Control Valve"
-                  name="ckbValveAndActuator"
+                  name="ckbReheatHWCValveAndActuator"
                   // sx={getDisplay(valveAndActuatorInfo.isVisible)}
-                  defaultChecked={formValues.ckbValveAndActuator}
+                  defaultChecked={formValues.ckbReheatHWCValveAndActuator}
                   // onChange={() => setCkbValveAndActuatorVal(!formValues.ckbValveAndActuatorVal)}
-                  onChange={(e: any) => setValue('ckbValveAndActuator', Number(e.target.checked))}
+                  onChange={(e: any) => setValue('ckbReheatHWCValveAndActuator', Number(e.target.checked))}
                 />
                   </Stack>
                   <Stack spacing={1}>
                 <RHFSelect
                   native
                   size="small"
-                  name="ddlValveType"
+                  name="ddlReheatHWCValveType"
                   label="Valve Type"
-                  sx={getDisplay(valveTypeInfo?.isVisible)}
-                  onChange={ddlValveTypeChanged}
+                  sx={getDisplay(isVisibleDdlReheatHWCValveType)}
+                  onChange={(e: any) => setValue('ddlReheatHWCValveType', Number(e.target.value))}
                 >
-                  {valveTypeInfo?.fdtValveType?.map((item: any, index: number) => (
+                  {reheatHWCValveTypeOptions?.map((item: any, index: number) => (
                     <option key={index} value={item.id}>
                       {item.items}
                     </option>
@@ -7282,6 +7849,298 @@ useEffect(() => {
               </Stack>
                 </Box>
               </Grid>
+            </Grid>
+          </AccordionDetails>
+        </Accordion>
+        <Accordion  // HEATING AS BACKUP HEATING - SHOW IN THIS ORDER WHEN COOLING DX AND HEAT PUMP SELECTED
+          expanded={expanded.panel4}
+          // sx={getDisplay(isHeatingSectionVisible)}
+          onChange={() => setExpanded({ ...expanded, panel4: !expanded.panel4 })}
+          sx={getDisplay(Number(formCurrValues.ddlCoolingComp) === IDs.intCompIdDX &&
+                         Number(formCurrValues.ckbDaikinVRV) === 1 && 
+                         intProductTypeID !== IDs.intProdTypeIdTerra)}
+        >
+          <AccordionSummary
+            expandIcon={<Iconify icon="il:arrow-down" />}
+            aria-controls="panel1a-content"
+            id="panel1a-header"
+          >
+            <Typography color="primary.main" variant="h6">
+              BACKUP HEATING
+            </Typography>
+          </AccordionSummary>
+            <AccordionDetails>
+            <Grid container spacing={2}>
+              <Grid item xs={12} md={12}>
+                <Box sx={{ display: 'grid', rowGap: 3, columnGap: 3, gridTemplateColumns: { xs: 'repeat(3, 1fr)' }, }}>
+                  <Stack>
+                    <RHFSelect
+                      native
+                      size="small"
+                      name="ddlHeatingComp"
+                      label="Heating"
+                      disabled={!heatingCompInfo.isEnabled}
+                      // sx={getDisplay(heatingCompInfo?.isVisible)}
+                    // onChange={ddlHeatingCompChanged}
+                    >
+                      {heatingCompInfo?.fdtHeatingComp?.map((item: any, index: number) => (
+                        <option key={index} value={item.id}>
+                          {item.items}
+                        </option>
+                      ))}
+                    </RHFSelect>
+                    </Stack>
+                    <Stack>
+                    <RHFSelect
+                    native
+                    label="Heating Elec. Heater Installation"
+                    name="ddlHeatingElecHeaterInstall"
+                    size="small"
+                    placeholder=""
+                    sx={{ ...getDisplay(Number(formCurrValues.ddlHeatingComp) === IDs.intCompIdElecHeater), }}
+
+                  // onChange={(e: any) => setValue('ddlHeatingElecHeaterInstall', Number(e.target.value)) }
+                  >
+                    {heatingElecHeaterInstallInfo?.fdtElecHeaterInstall?.map(
+                      (item: any, index: number) => (
+                        <option key={index} value={item.id}>
+                          {item.items}
+                        </option>
+                      )
+                    )}
+                  </RHFSelect>
+                  </Stack>
+                </Box>
+              </Grid>
+              {/* <Grid item xs={12} md={12} sx={{ ...getDisplay(Number(formValues.ddlHeatingComp) === IDs.intCompIdElecHeater), }}>
+                <Box sx={{ display: 'grid', rowGap: 3, columnGap: 3, gridTemplateColumns: { xs: 'repeat(4, 1fr)' }, }}>
+
+                </Box>
+              </Grid> */}
+              <Grid item xs={12} md={12} sx={{ ...getDisplay(Number(formCurrValues.ddlHeatingComp) === IDs.intCompIdElecHeater) }}>
+              <Typography  color="primary.main" bgcolor="" variant="subtitle2" marginBottom="10px">
+                  Heater Electrical
+                </Typography>
+                <Box sx={{ display: 'grid', rowGap: 3, columnGap: 3, gridTemplateColumns: { xs: 'repeat(3, 1fr)' }, }}>
+                <RHFSelect
+                    native
+                    size="small"
+                    name="ddlHeatingElecHeaterVoltage"
+                    label="Electric Heater Voltage"
+                    placeholder=""
+                    sx={getInlineDisplay(isVisibleDdlHeatingElecHeaterVoltage)}
+                    disabled={!isEnabledDdlHeatingElecHeaterVoltage}
+                    onChange={ddlHeatingElecHeaterVoltageChanged}
+                  >
+                    {heatingElecHeaterVoltageTable?.map(
+                      (item: any, index: number) => (
+                        <option key={index} value={item.id}>
+                          {item.items}
+                        </option>
+                      )
+                    )}
+                  </RHFSelect>
+                  <RHFCheckbox
+                    label="Single Point Power Connection"
+                    name="ckbHeatingElecHeaterVoltageSPP"
+                    // checked={}
+                    onChange={(e: any) => setValue('ckbHeatingElecHeaterVoltageSPP', Number(e.target.value))}
+                    // onChange={ckbHeatingElecHeaterVoltageSPPChanged}
+
+                    sx={getDisplay(voltageSPPIsVisible)}
+                  />
+                </Box>
+              </Grid>
+
+              <Grid item xs={12} md={12} sx={{ ...getDisplay(Number(formCurrValues.ddlHeatingComp) === IDs.intCompIdHWC) }}>
+              <Typography  color="primary.main" bgcolor="" variant="subtitle2" marginBottom="10px">
+                  Fluid Properties
+                </Typography>
+                <Box sx={{ display: 'grid', rowGap: 3, columnGap: 3, gridTemplateColumns: { xs: 'repeat(3, 1fr)' }, }}>
+                  <Stack spacing={1}>
+                    <RHFSelect
+                      native
+                      size="small"
+                      name="ddlHeatingFluidType"
+                      label="Heating Fluid Type"
+                    >
+                      {heatingFluidTypeInfo?.fdtFluidType?.map((item: any, index: number) => (
+                        <option key={index} value={item.id}>
+                          {item.items}
+                        </option>
+                      ))}
+                    </RHFSelect>
+                  </Stack>
+                  <Stack>
+                    <RHFSelect
+                      native
+                      size="small"
+                      name="ddlHeatingFluidConcentration"
+                      label="Heating Fluid %"
+                    >
+                      {heatingFluidConcenInfo?.fdtFluidConcen?.map((item: any, index: number) => (
+                        <option key={index} value={item.id}>
+                          {item.items}
+                        </option>
+                      ))}
+                    </RHFSelect>
+                  </Stack>
+                </Box>
+              </Grid>
+              <Grid item xs={12} md={12}
+                sx={getDisplay(Number(formCurrValues.ddlHeatingComp) === IDs.intCompIdHWC && internCompInfo?.isCustomCompVisible)}>
+                <Box sx={{ display: 'grid', rowGap: 3, columnGap: 3, gridTemplateColumns: { xs: 'repeat(3, 1fr)' }, }}>
+                  <Stack spacing={1}>
+                      <></>
+                  </Stack>
+                  <Stack>
+                    <RHFCheckbox
+                      // sx={getInlineDisplay(customInputs.divCoolingCWC_UseFlowRateVisible)}
+                      label="Use Fluid Outlet Temp"
+                      name="ckbHeatingHWCUseFluidLvgTemp"
+                      // checked={formValues.ckbHeatingHWCUseFlowRate}
+                      // onChange={(e: any) => setValue('ckbHeatingHWCUseFluidLvgTemp', Number(e.target.checked))}
+                      onClick={ckbHeatingHWCUseFluidLvgTempChanged}
+                    />
+                  </Stack>
+                  <Stack>
+                    <RHFCheckbox
+                      // sx={getInlineDisplay(customInputs.divCoolingCWC_UseFlowRateVisible)}
+                      label="Use Fluid Flow Rate"
+                      name="ckbHeatingHWCUseFluidFlowRate"
+                      // checked={formValues.ckbHeatingHWCUseFluidFlowRate}
+                      // onChange={(e: any) => setValue('ckbHeatingHWCUseFlowRate', Number(e.target.checked))}
+                      onClick={ckbHeatingHWCUseFluidFlowRateChanged}
+                    />
+                  </Stack>
+                </Box>
+              </Grid>
+              <Grid item xs={12} md={12} sx={{ ...getDisplay(Number(formCurrValues.ddlHeatingComp) === IDs.intCompIdHWC) }}>
+                <Box sx={{ display: 'grid', rowGap: 3, columnGap: 3, gridTemplateColumns: { xs: 'repeat(3, 1fr)' }, }}>
+                  <Stack>
+                    <RHFTextField
+                      size="small"
+                      name="txbHeatingHWCFluidEntTemp"
+                      label="Heating Fluid Ent Temp (F)"
+                      // InputProps={{ inputProps: { min: 80, max: 180 } }}
+                      onBlur={txbHeatingHWCFluidEntTempChanged}
+                      />
+                  </Stack>
+                  <Stack>
+                    <RHFTextField
+                      size="small"
+                      name="txbHeatingHWCFluidLvgTemp"
+                      label="Heating Fluid Lvg Temp (F)"
+                      // InputProps={{ inputProps: { min: 40, max: 180 } }}
+                      disabled={!isTxbHeatingHWCFluidLvgTempEnabled}
+                      onBlur={txbHeatingHWCFluidLvgTempChanged}
+                      />
+                  </Stack>
+                  <Stack>
+                    <RHFTextField
+                      size="small"
+                      name="txbHeatingHWCFluidFlowRate"
+                      label="Heating HWC Flow Rate (GPM)"
+                      InputProps={{ inputProps: { min: 0.1, max: 50 } }}
+                      disabled={!isTxbHeatingHWCFluidFlowRateEnabled}
+                      // sx={getDisplay(customInputs.divHeatingHWC_UseFlowRateVisible)}
+                      onBlur={txbHeatingHWCFluidFlowRateChanged}
+                    />
+                  </Stack>                
+                  </Box>
+              </Grid>
+              <Grid item xs={12} md={12}
+                sx={getDisplay(false)}>
+                <Box sx={{ display: 'grid', rowGap: 3, columnGap: 3, gridTemplateColumns: { xs: 'repeat(3, 1fr)' }, }}>
+                  <Stack spacing={1}>
+                    <RHFCheckbox
+                      // sx={getInlineDisplay(customInputs.divCoolingCWC_UseFlowRateVisible)}
+                      label="Heating HWC Use Capacity"
+                      name="ckbHeatingHWCUseCap"
+                      checked={formCurrValues.ckbHeatingHWCUseCap}
+                      onChange={(e: any) => setValue('ckbHeatingHWCUseCap', Number(e.target.checked))}
+                    />
+                  </Stack>
+                  <Stack>
+                    <RHFTextField
+                      size="small"
+                      name="txbHeatingHWCCap"
+                      label="Heating HWC Capacity (MBH)"
+                      // sx={getDisplay(customInputs.divHeatingHWC_UseCapVisible)}
+                      // disabled={heatingHWCCapInfo.isDisabled}
+                      onChange={(e: any) => { setValueWithCheck1(e, 'txbHeatingHWCCap'); }}
+                    />
+                  </Stack>
+                  {/* <Stack>
+                    <RHFCheckbox
+                      // sx={getInlineDisplay(customInputs.divCoolingCWC_UseFlowRateVisible)}
+                      label="Heating HWC Use Flow Rate"
+                      name="ckbHeatingHWCUseFlowRate"
+                      checked={formCurrValues.ckbHeatingHWCUseFluidFlowRate}
+                      onChange={(e: any) => setValue('ckbHeatingHWCUseFluidFlowRate', Number(e.target.checked))}
+                    />
+                  </Stack> */}
+
+                </Box>
+              </Grid>
+              <Grid item xs={12} md={12}                
+                sx={getDisplay(Number(formCurrValues.ddlHeatingComp) === IDs.intCompIdElecHeater || 
+                               Number(formCurrValues.ddlHeatingComp) === IDs.intCompIdHWC)}
+              >
+              <Typography  color="primary.main" bgcolor="" variant="subtitle2" marginBottom="10px">
+              Air Properties
+            </Typography>
+                <Box sx={{ display: 'grid', rowGap: 3, columnGap: 3, gridTemplateColumns: { xs: 'repeat(3, 1fr)' }, }}>
+                  <Stack>
+                  <RHFTextField
+                      size="small"
+                      name="txbWinterHeatingSetpointDB"
+                      label="Heating LAT Setpoint DB (F):"
+                      autoComplete="off"
+                      sx={getDisplay(isHeatingSetpointVisible)}
+                      onChange={(e: any) => { setValueWithCheck1(e, 'txbWinterHeatingSetpointDB'); }}
+                    /> 
+                  </Stack>
+                </Box>
+              </Grid>
+              <Grid item xs={12} md={12}                
+                sx={getDisplay(Number(formCurrValues.ddlHeatingComp) === IDs.intCompIdHWC)}
+              >
+                <Typography  color="primary.main" bgcolor="" variant="subtitle2" marginBottom="10px">
+                Accessories
+                </Typography>
+                <Box sx={{ display: 'grid', rowGap: 3, columnGap: 3, gridTemplateColumns: { xs: 'repeat(3, 1fr)' }, }}>
+                  <Stack>
+                  <RHFCheckbox
+                  label="Control Valve"
+                  name="ckbHeatingHWCValveAndActuator"
+                  // sx={getDisplay(valveAndActuatorInfo.divValveAndActuatorVisible)}
+                  defaultChecked={formCurrValues.ckbHeatingHWCValveAndActuator}
+                  // onChange={() => setCkbValveAndActuatorVal(!formValues.ckbValveAndActuatorVal)}
+                  onChange={(e: any) => setValue('ckbHeatingHWCValveAndActuator', Number(e.target.checked))}
+                />
+                  </Stack>
+
+                <Stack spacing={1}>
+                <RHFSelect
+                  native
+                  size="small"
+                  name="ddlHeatingHWCValveType"
+                  label="Valve Type"
+                  sx={getDisplay(valveTypeInfo?.isVisible)}
+                  onChange={(e: any) => setValue('ddlHeatingHWCValveType', Number(e.target.value))}
+                >
+                  {valveTypeInfo?.fdtValveType?.map((item: any, index: number) => (
+                    <option key={index} value={item.id}>
+                      {item.items}
+                    </option>
+                  ))}
+                </RHFSelect>
+              </Stack>
+
+                </Box>
+              </Grid>
+
             </Grid>
           </AccordionDetails>
         </Accordion>
@@ -7677,18 +8536,23 @@ useEffect(() => {
                   </RHFSelect>
                 </Stack>{' '}
               </Grid>
-              <Grid item xs={8} md={8}>
+              <Grid item xs={2} md={2}>
+                <></>
+              </Grid>
+              <Grid item xs={6} md={6}>
                 {/* <RHFUpload
                   name="layoutImage"
                   accept="image/*"
                   maxSize={3145728}
                   onDrop={handleDrop}
                   /> */}
-                <Box sx={{ padding: '20px' }}>                        
+                <Box sx={{ padding: '0px', width:'600px', alignItems:'center' }}>                        
                   <Image
                     src={imgLayoutPathAndFile }
                     // height="100%" 
-                    width={75}
+                    // width={100}
+                    // width={75}
+                    // sizes="(width: 76px) 100vw, 33vw"
                   />
                 </Box>
               </Grid>  

@@ -296,11 +296,11 @@ export default function ProjectInfoDialog({
       setOpenSnackbar(true);
       return;
     }
-    if (!data.txbReferenceNo) {
-      setSnackbarMessage('Reference Number is required');
-      setOpenSnackbar(true);
-      return;
-    }
+    // if (!data.txbReferenceNo) {
+    //   setSnackbarMessage('Reference Number is required');
+    //   setOpenSnackbar(true);
+    //   return;
+    // }
     if (!data.ddlCompanyName || Number(getValues('ddlCompanyName')) === 0) {
       setSnackbarMessage('Please select Company Name');
       setOpenSnackbar(true);
@@ -1331,8 +1331,9 @@ export default function ProjectInfoDialog({
                             ))}
                           </RHFSelect>
                         </Stack>
-                        <Stack sx={{display: Number(typeof window !== 'undefined' ? localStorage.getItem('UAL') : 0) === Ids.intUAL_Admin ? 'block' : 'none'}}>
-                          <RHFTextField 
+                        {/* <Stack sx={{display: Number(typeof window !== 'undefined' ? localStorage.getItem('UAL') : 0) === Ids.intUAL_Admin ? 'block' : 'none'}}> */}
+                        <Stack sx={{display: savedJob?.[0]?.id > 0 ? 'block' : 'none'}}>
+                        <RHFTextField 
                             size="small" 
                             name="txbProjectInternalId" 
                             label="Project ID" 
