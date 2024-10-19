@@ -254,8 +254,8 @@ if (fanImgFiles.includes(imgEF)) {
           <LinearProgress color="info" />
         ) : (
           <>
-        <Stack spacing={5} sx={{ mt: 2, display: isVisiblePricing === true ? 'block' : 'none' }}>
-            <Grid item xs={12}>
+        <Stack spacing={5} sx={{ mt: 2}}>
+            <Grid item xs={12} sx={{display: isVisiblePricing === true ? 'block' : 'none' }}>
               <AccordionSummary
                   // expandIcon={<Iconify icon="il:arrow-down" />}
                   // aria-controls="panel1a-content"
