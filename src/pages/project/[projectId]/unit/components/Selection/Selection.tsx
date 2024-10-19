@@ -130,6 +130,7 @@ export default function Selection({ intJobId, intUnitNo, intProdTypeId, intUnitT
   );
 
   const [error, setError] = useState(null);
+  const [isVisiblePricing, setIsVisiblePricing] = useState<boolean>(false);
   const [expanded, setExpanded] = React.useState<{ [key: string]: boolean }>({
     panel1: true,
     panel2: true,
@@ -169,6 +170,32 @@ export default function Selection({ intJobId, intUnitNo, intProdTypeId, intUnitT
     refetch()
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
+
+
+
+
+  useEffect(() => {
+    const UAL = typeof window !== 'undefined' && localStorage.getItem('UAL');
+    switch (Number(UAL)) {
+      case Ids.intUAL_Admin:
+      case Ids.intUAL_AdminLvl_1:
+        setIsVisiblePricing(true);
+        break;
+      case Ids.intUAL_IntAdmin:
+      case Ids.intUAL_IntLvl_1:
+      case Ids.intUAL_IntLvl_2:
+        setIsVisiblePricing(true);
+        break;
+      case Ids.intUAL_External:
+      case Ids.intUAL_ExternalSpecial:
+        setIsVisiblePricing(false);
+        break;
+      default:
+        setIsVisiblePricing(false);
+        break;
+    }
+  }, []);
+  
 
 
   const onClickUnitInfo = () => {
@@ -227,7 +254,7 @@ if (fanImgFiles.includes(imgEF)) {
           <LinearProgress color="info" />
         ) : (
           <>
-            <Stack spacing={5} sx={{ mt: 2 }}>
+        <Stack spacing={5} sx={{ mt: 2, display: isVisiblePricing === true ? 'block' : 'none' }}>
             <Grid item xs={12}>
               <AccordionSummary
                   // expandIcon={<Iconify icon="il:arrow-down" />}
@@ -2060,7 +2087,7 @@ if (fanImgFiles.includes(imgEF)) {
                   // id="panel1a-header"
                   >
                     <Typography color="primary.main" variant="h6">
-                      Configuration Notess
+                      Configuration Notes
                     </Typography>
                   </AccordionSummary>
                   {/* <Typography color="primary.main" variant="body2">
