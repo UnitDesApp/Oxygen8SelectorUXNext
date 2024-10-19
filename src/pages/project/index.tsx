@@ -130,6 +130,7 @@ useEffect(() => {
   }
   }, [user?.UAL]);
 
+
   const handleCloseSuccess = (e: any, reason: string) => {
     if (reason === 'clickaway') {
       return;

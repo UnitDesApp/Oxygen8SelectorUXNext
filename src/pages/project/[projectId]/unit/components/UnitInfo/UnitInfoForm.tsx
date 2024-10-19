@@ -679,6 +679,16 @@ export default function UnitInfoForm({
   const [isHeatingSectionVisible, setIsHeatingSectionVisible] = useState<any>([]);
   const [isHeatingSetpointVisible, setIsHeatingSetpointVisible] = useState<any>([]);
 
+  const [isVisibleDdlPreheatCoilHanding, setIsVisibleDdlPreheatCoilHanding] = useState<boolean>(false);
+  const [isVisibleDdlCoolingCoilHanding, setIsVisibleDdlCoolingCoilHanding] = useState<boolean>(false);
+  const [isVisibleDdlHeatingCoilHanding, setIsVisibleDdlHeatingCoilHanding] = useState<boolean>(false);
+  const [isVisibleDdlReheatCoilHanding, setIsVisibleDdlReheatCoilHanding] = useState<boolean>(false);
+
+  const [isVisibleDdlSupplyAirOpeningVisible, setIsVisibleDdlSupplyAirOpeningVisible] = useState<boolean>(false);
+  const [isVisibleDdlOutdoorAirOpeningVisible, setIsVisibleDdlOutdoorAirOpeningVisible] = useState<boolean>(false);
+  const [isVisibleDdlReturnAirOpeningVisible, setIsVisibleDdlReturnAirOpeningVisible] = useState<boolean>(false);
+  const [isVisibleDdlExhaustAirOpeningVisible, setIsVisibleDdlExhaustAirOpeningVisible] = useState<boolean>(false);
+
   const [imgLayoutPathAndFile, setImgLayoutPathAndFile] = useState<any>([]);
 
   const getUMC = () => {
@@ -1192,9 +1202,23 @@ const txbPreheatHWCFluidFlowRateChanged = useCallback((e: any) => {
 }, []);
 
 
-// const ckbPreheatAutoSizeChanged = useCallback((e: any) => {
-//   setValue('ckbPreheatAutoSize', e.target.value);
-// }, []);
+const txbWinterPreheatSetpointDBChanged = useCallback((e: any) => {
+  const value = parseFloat(e.target.value);
+
+  if (Number(getValues('ddlCoolingComp')) === IDs.intCompIdDX && Number(getValues('ddlReheatComp')) === IDs.intCompIdHGRH) {
+    if (value < 17) {
+      setValueWithCheck1({ ...e, target: { value: 17 } }, 'txbWinterPreheatSetpointDB'); 
+    }   
+  } else if (Number(getValues('ddlCoolingComp')) === IDs.intCompIdDX) {
+    if (value < 23) {
+      setValueWithCheck1({ ...e, target: { value: 23 } }, 'txbWinterPreheatSetpointDB'); 
+    }   
+  } 
+  else if (value - Number(unitInfo?.dbtSavedJob?.[0]?.winter_outdoor_air_db) > 50) {
+    setValue('txbWinterPreheatSetpointDB', (Number(unitInfo?.dbtSavedJob?.[0]?.winter_outdoor_air_db) + 50));
+  }
+
+}, []);
 
 
 const ckbCoolingCWCUseFluidLvgTempChanged = useCallback((e: any) => {
@@ -1361,6 +1385,21 @@ const txbReheatHWCFluidFlowRateChanged = useCallback((e: any) => {
 }, []);
 
 
+
+useEffect(() => {
+  switch (Number(getValues('ddlLocation'))) {
+    case IDs.intLocationIdIndoor:
+      setValue('ckbDownshot', 0);
+      break;
+    // case IDs.intLocationIdOutdoor:
+    //   break;
+    default:
+      break;
+  }
+  
+}, [getValues('ddlLocation')]);
+  
+
 const [unitVoltageInfo, setUnitVoltageInfo] = useState<any>([]);
 useEffect(() => {
   const info: { fdtUnitVoltage: any; defaultId: number } = { fdtUnitVoltage: [], defaultId: 0,};
@@ -1432,28 +1471,69 @@ useEffect(() => {
 }, [getValues('ckbPHI')]);
 
 
-useEffect(() => {
-switch (Number(getValues('ddlLocation'))) {
-  case IDs.intLocationIdIndoor:
-    setValue('ckbDownshot', 0);
-    break;
-  // case IDs.intLocationIdOutdoor:
-  //   break;
-  default:
-    break;
-}
+// useEffect(() => {
+//   let dtFilterCondition = db?.dbtSelFilterCondition;
+//   dtFilterCondition = dtFilterCondition?.filter((item: { id: number }) => item.id === Number(filterConditionId));
+//   const filtercondPD = dtFilterCondition?.[0]?.pd_value;
 
-}, [getValues('ddlLocation')]);
+//   setValue('txbOA_FilterPD', parseFloat(filtercondPD).toFixed(2));
+//   setValue('txbRA_FilterPD', parseFloat(filtercondPD).toFixed(2));
+// }, [filterConditionId]);
 
 
 useEffect(() => {
   let dtFilterCondition = db?.dbtSelFilterCondition;
-  dtFilterCondition = dtFilterCondition?.filter((item: { id: number }) => item.id === Number(filterConditionId));
+  dtFilterCondition = dtFilterCondition?.filter((item: { id: number }) => item.id === Number(getValues('ddlFilterCondition')));
   const filtercondPD = dtFilterCondition?.[0]?.pd_value;
 
   setValue('txbOA_FilterPD', parseFloat(filtercondPD).toFixed(2));
   setValue('txbRA_FilterPD', parseFloat(filtercondPD).toFixed(2));
-}, [filterConditionId]);
+}, [getValues('ddlFilterCondition')]);
+
+
+useEffect(() => {
+  if (Number(getValues('ckbMixingBox')) === 1) {
+    setValue('txbMixSummerOA_CFM', (Number(getValues('txbSummerSupplyAirCFM')) * Number(getValues('txbMixSummerOA_CFMPct'))) / 100);
+    setValue('txbMixWinterOA_CFM', (Number(getValues('txbSummerSupplyAirCFM')) * Number(getValues('txbMixWinterOA_CFMPct'))) / 100);
+    setValue('txbMixSummerRA_CFMPct', (100 - Number(getValues('txbMixSummerOA_CFMPct'))));
+    setValue('txbMixWinterRA_CFMPct', (100 - Number(getValues('txbMixWinterOA_CFMPct'))));
+    setValue('txbMixSummerRA_CFM', (Number(getValues('txbSummerSupplyAirCFM')) * Number(getValues('txbMixSummerRA_CFMPct'))) / 100);
+    setValue('txbMixWinterRA_CFM', (Number(getValues('txbSummerSupplyAirCFM')) * Number(getValues('txbMixWinterRA_CFMPct'))) / 100);
+    setValue('ckbMixUseProjectDefault', true);
+  }
+}, [getValues('ckbMixingBox'), getValues('txbSummerSupplyAirCFM')]);
+
+
+useEffect(() => {
+    setValue('txbMixSummerOA_CFM', (Number(getValues('txbSummerSupplyAirCFM')) * Number(getValues('txbMixSummerOA_CFMPct'))) / 100);
+    setValue('txbMixSummerRA_CFMPct', (100 - Number(getValues('txbMixSummerOA_CFMPct'))));
+    setValue('txbMixSummerRA_CFM', (Number(getValues('txbSummerSupplyAirCFM')) * Number(getValues('txbMixSummerRA_CFMPct'))) / 100);
+}, [getValues('txbMixSummerOA_CFMPct')]);
+
+
+useEffect(() => {
+    setValue('txbMixWinterOA_CFM', (Number(getValues('txbSummerSupplyAirCFM')) * Number(getValues('txbMixWinterOA_CFMPct'))) / 100);
+    setValue('txbMixWinterRA_CFMPct', (100 - Number(getValues('txbMixWinterOA_CFMPct'))));
+    setValue('txbMixWinterRA_CFM', (Number(getValues('txbSummerSupplyAirCFM')) * Number(getValues('txbMixWinterRA_CFMPct'))) / 100);
+}, [getValues('txbMixWinterOA_CFMPct')]);
+
+
+useEffect(() => {
+  if (Number(getValues('ckbMixUseProjectDefault')) === 1) {
+      setValue('txbMixSummerOA_DB', unitInfo?.dbtSavedJob?.[0]?.summer_outdoor_air_db);
+      setValue('txbMixSummerOA_WB', unitInfo?.dbtSavedJob?.[0]?.summer_outdoor_air_wb);
+      setValue('txbMixSummerOA_RH', unitInfo?.dbtSavedJob?.[0]?.summer_outdoor_air_rh);
+      setValue('txbMixWinterOA_DB', unitInfo?.dbtSavedJob?.[0]?.winter_outdoor_air_db);
+      setValue('txbMixWinterOA_WB', unitInfo?.dbtSavedJob?.[0]?.winter_outdoor_air_wb);
+      setValue('txbMixWinterOA_RH', unitInfo?.dbtSavedJob?.[0]?.winter_outdoor_air_rh);
+      setValue('txbMixSummerRA_DB', unitInfo?.dbtSavedJob?.[0]?.summer_return_air_db);
+      setValue('txbMixSummerRA_WB', unitInfo?.dbtSavedJob?.[0]?.summer_return_air_wb);
+      setValue('txbMixSummerRA_RH', unitInfo?.dbtSavedJob?.[0]?.summer_return_air_rh);
+      setValue('txbMixWinterRA_DB', unitInfo?.dbtSavedJob?.[0]?.winter_return_air_db);
+      setValue('txbMixWinterRA_WB', unitInfo?.dbtSavedJob?.[0]?.winter_return_air_wb);
+      setValue('txbMixWinterRA_RH', unitInfo?.dbtSavedJob?.[0]?.winter_return_air_rh);
+  }
+}, [getValues('ckbMixUseProjectDefault')]);
 
 
 useEffect(() => {
@@ -1598,21 +1678,73 @@ useEffect(() => {
 }, [getValues('ckbPreheatHWCUseFluidFlowRate')]);
 
 
+// useEffect(() => {
+
+// if (Number(getValues('ckbPreheatAutoSize') === 1)) {
+
+//   if (Number(getValues('txbWinterPreheatSetpointDB')) < 17) {
+//     setValue('txbWinterPreheatSetpointDB', '17');
+//   }
+
+//   if (Number(getValues('txbWinterPreheatSetpointDB')) < 23) {
+//     setValue('txbWinterPreheatSetpointDB', '23');
+//   }
+
+
+//   if (Number(getValues('txbWinterPreheatSetpointDB')) - Number(unitInfo?.dbtSavedJob?.[0]?.winter_outdoor_air_db) > 50) {
+//     setValue('txbWinterPreheatSetpointDB', (Number(unitInfo?.dbtSavedJob?.[0]?.winter_outdoor_air_db) + 50));
+//   }
+// }
+
+// }, [getValues('txbWinterPreheatSetpointDB'), getValues('ckbPreheatAutoSize')]);
+
+
 useEffect(() => {
   switch (Number(getValues('ckbPreheatAutoSize'))) {
     case 1:
       setIsTxbPreheatSetpointEnabled(false);
-      setValue('txbWinterPreheatSetpointDB', '0');
+      // if (Number(getValues('ddlCoolingComp')) === IDs.intCompIdDX && Number(getValues('ddlReheatComp')) === IDs.intCompIdHGRH) {
+      //   setValue('txbWinterPreheatSetpointDB', '17');
+      // } else if (Number(getValues('ddlCoolingComp')) === IDs.intCompIdDX) {
+      //   setValue('txbWinterPreheatSetpointDB', '23');
+      // } else {
+      //   setValue('txbWinterPreheatSetpointDB', '0');
+      // }
       break;
     case 0:
       setIsTxbPreheatSetpointEnabled(true);
-      setValue('txbWinterPreheatSetpointDB', '40');
+      // Below code Not working. See txbWinterPreheatSetpointDBChanged
+      // if (Number(getValues('ddlCoolingComp')) === IDs.intCompIdDX && Number(getValues('ddlReheatComp')) === IDs.intCompIdHGRH) {
+      //   if (parseFloat(getValues('txbWinterPreheatSetpointDB')) < 17) {
+      //     setValue('txbWinterPreheatSetpointDB', 17);
+      //   } 
+      // } else if (Number(getValues('ddlCoolingComp')) === IDs.intCompIdDX) {
+      //   if (parseFloat(getValues('txbWinterPreheatSetpointDB')) < 23) {
+      //     setValue('txbWinterPreheatSetpointDB', 23);
+      //   }
+      // } 
+      // else if (parseFloat(getValues('txbWinterPreheatSetpointDB')) - Number(unitInfo?.dbtSavedJob?.[0]?.winter_outdoor_air_db) > 50) {
+      //     setValue('txbWinterPreheatSetpointDB', (Number(unitInfo?.dbtSavedJob?.[0]?.winter_outdoor_air_db) + 50));
+      // }
       break;
     default:
+      setValue('txbWinterPreheatSetpointDB', '0');
       break;
   }
 
 }, [getValues('ckbPreheatAutoSize')]);
+
+
+
+useEffect(() => {
+  if (intProductTypeID === IDs.intProdTypeIdTerra && Number(getValues('ddlCoolingComp')) === IDs.intCompIdDX && Number(getValues('ddlReheatComp')) === IDs.intCompIdHGRH) {
+    setValue('txbWinterPreheatSetpointDB', '17');
+  } else if (intProductTypeID === IDs.intProdTypeIdTerra && Number(getValues('ddlCoolingComp')) === IDs.intCompIdDX) {
+    setValue('txbWinterPreheatSetpointDB', '23');
+  } else if (Number(getValues('txbWinterPreheatSetpointDB')) - Number(unitInfo?.dbtSavedJob?.[0]?.winter_outdoor_air_db) > 50) {
+    setValue('txbWinterPreheatSetpointDB', (Number(unitInfo?.dbtSavedJob?.[0]?.winter_outdoor_air_db) + 50));
+  }
+}, [getValues('ddlCoolingComp'), getValues('ddlReheatComp'), intProductTypeID]);
 
 
 useEffect(() => {
@@ -1750,7 +1882,6 @@ useEffect(() => {
 
   setValue('ckbReheatElecHeaterVoltageSPP', getValues('ckbHeatingElecHeaterVoltageSPP'));
 }, [getValues('ckbHeatingElecHeaterVoltageSPP')]);
-
 
 
 useEffect(() => {
@@ -2793,49 +2924,7 @@ useEffect(() => {
   }, [formCurrValues.ckbMixingBox]);
 
 
-  useEffect(() => {
-    if (Number(getValues('ckbMixingBox')) === 1) {
-      setValue('txbMixSummerOA_CFM', (Number(getValues('txbSummerSupplyAirCFM')) * Number(getValues('txbMixSummerOA_CFMPct'))) / 100);
-      setValue('txbMixWinterOA_CFM', (Number(getValues('txbSummerSupplyAirCFM')) * Number(getValues('txbMixWinterOA_CFMPct'))) / 100);
-      setValue('txbMixSummerRA_CFMPct', (100 - Number(getValues('txbMixSummerOA_CFMPct'))));
-      setValue('txbMixWinterRA_CFMPct', (100 - Number(getValues('txbMixWinterOA_CFMPct'))));
-      setValue('txbMixSummerRA_CFM', (Number(getValues('txbSummerSupplyAirCFM')) * Number(getValues('txbMixSummerRA_CFMPct'))) / 100);
-      setValue('txbMixWinterRA_CFM', (Number(getValues('txbSummerSupplyAirCFM')) * Number(getValues('txbMixWinterRA_CFMPct'))) / 100);
-      setValue('ckbMixUseProjectDefault', true);
-    }
-  }, [getValues('ckbMixingBox'), getValues('txbSummerSupplyAirCFM')]);
 
-
-  useEffect(() => {
-      setValue('txbMixSummerOA_CFM', (Number(getValues('txbSummerSupplyAirCFM')) * Number(getValues('txbMixSummerOA_CFMPct'))) / 100);
-      setValue('txbMixSummerRA_CFMPct', (100 - Number(getValues('txbMixSummerOA_CFMPct'))));
-      setValue('txbMixSummerRA_CFM', (Number(getValues('txbSummerSupplyAirCFM')) * Number(getValues('txbMixSummerRA_CFMPct'))) / 100);
-  }, [getValues('txbMixSummerOA_CFMPct')]);
-
-
-  useEffect(() => {
-      setValue('txbMixWinterOA_CFM', (Number(getValues('txbSummerSupplyAirCFM')) * Number(getValues('txbMixWinterOA_CFMPct'))) / 100);
-      setValue('txbMixWinterRA_CFMPct', (100 - Number(getValues('txbMixWinterOA_CFMPct'))));
-      setValue('txbMixWinterRA_CFM', (Number(getValues('txbSummerSupplyAirCFM')) * Number(getValues('txbMixWinterRA_CFMPct'))) / 100);
-  }, [getValues('txbMixWinterOA_CFMPct')]);
-
-
-  useEffect(() => {
-    if (Number(getValues('ckbMixUseProjectDefault')) === 1) {
-        setValue('txbMixSummerOA_DB', unitInfo?.dbtSavedJob?.[0]?.summer_outdoor_air_db);
-        setValue('txbMixSummerOA_WB', unitInfo?.dbtSavedJob?.[0]?.summer_outdoor_air_wb);
-        setValue('txbMixSummerOA_RH', unitInfo?.dbtSavedJob?.[0]?.summer_outdoor_air_rh);
-        setValue('txbMixWinterOA_DB', unitInfo?.dbtSavedJob?.[0]?.winter_outdoor_air_db);
-        setValue('txbMixWinterOA_WB', unitInfo?.dbtSavedJob?.[0]?.winter_outdoor_air_wb);
-        setValue('txbMixWinterOA_RH', unitInfo?.dbtSavedJob?.[0]?.winter_outdoor_air_rh);
-        setValue('txbMixSummerRA_DB', unitInfo?.dbtSavedJob?.[0]?.summer_return_air_db);
-        setValue('txbMixSummerRA_WB', unitInfo?.dbtSavedJob?.[0]?.summer_return_air_wb);
-        setValue('txbMixSummerRA_RH', unitInfo?.dbtSavedJob?.[0]?.summer_return_air_rh);
-        setValue('txbMixWinterRA_DB', unitInfo?.dbtSavedJob?.[0]?.winter_return_air_db);
-        setValue('txbMixWinterRA_WB', unitInfo?.dbtSavedJob?.[0]?.winter_return_air_wb);
-        setValue('txbMixWinterRA_RH', unitInfo?.dbtSavedJob?.[0]?.winter_return_air_rh);
-    }
-  }, [getValues('ckbMixUseProjectDefault')]);
 
 
   // Use this method since getValues('') for dependencies don't work. Extract all fieled from getValues into a constant first.
@@ -3150,7 +3239,7 @@ useEffect(() => {
     setHeatingCompInfo(info);
     setValue('ddlHeatingComp', info.defaultId);
 
-  }, [getValues('ddlCoolingComp'), getValues('ddlReheatComp'), getValues('ckbDaikinVRV')]);
+  }, [getValues('ddlCoolingComp'), getValues('ckbDaikinVRV'), getValues('ddlReheatComp')]);
 
 
   const [reheatCompInfo, setReheatCompInfo] = useState<any>([]);
@@ -3236,7 +3325,7 @@ useEffect(() => {
     setReheatCompInfo(info);
     setValue('ddlReheatComp', info.defaultId);
 
-  }, [getValues('ckbDehumidification'), getValues('ddlCoolingComp'), getValues('ddlUnitModel'), getValues('ckbDaikinVRV'), getValues('ddlHeatingComp')]);
+  }, [getValues('ddlUnitModel'), getValues('ddlCoolingComp'), getValues('ckbDehumidification'), getValues('ckbDaikinVRV'), getValues('ddlHeatingComp')]);
 
 
   // const [heatPumpInfo, setHeatPumpInfo] = useState<any>([]);
@@ -4599,28 +4688,32 @@ useEffect(() => {
   }, [db]);
 
 
-  const [isVisibleDdlPreheatCoilHanding, setIsVisibleDdlPreheatCoilHanding] = useState<boolean>(false);
-  const [isVisibleDdlCoolingCoilHanding, setIsVisibleDdlCoolingCoilHanding] = useState<boolean>(false);
-  const [isVisibleDdlHeatingCoilHanding, setIsVisibleDdlHeatingCoilHanding] = useState<boolean>(false);
-  const [isVisibleDdlReheatCoilHanding, setIsVisibleDdlReheatCoilHanding] = useState<boolean>(false);
 
   useEffect(() => {
-    if (intProductTypeID === IDs.intProdTypeIdVentumPlus) {
-      setIsVisibleDdlPreheatCoilHanding(false);
-    } else {
-      switch (Number(getValues('ddlPreheatComp'))) {
-        case IDs.intCompIdElecHeater:
-          setIsVisibleDdlPreheatCoilHanding(true);
-          break;
-        case IDs.intCompIdHWC:
-          setIsVisibleDdlPreheatCoilHanding(true);
-          break;
-        case IDs.intCompIdNA:
+    switch (Number(intProductTypeID)) {
+      case IDs.intProdTypeIdNova:
+      case IDs.intProdTypeIdVentumPlus:
+      case IDs.intProdTypeIdVentumLite:
+        switch (Number(getValues('ddlPreheatComp'))) {
+          case IDs.intCompIdElecHeater:
+            setIsVisibleDdlPreheatCoilHanding(true);
+            break;
+          case IDs.intCompIdHWC:
+            setIsVisibleDdlPreheatCoilHanding(true);
+            break;
+          case IDs.intCompIdNA:
+            setIsVisibleDdlPreheatCoilHanding(false);
+            break;
+          default:
+            break;
+        }
+        break;
+        case IDs.intProdTypeIdVentum:
+        case IDs.intProdTypeIdTerra:
           setIsVisibleDdlPreheatCoilHanding(false);
           break;
-        default:
-          break;
-      }
+      default:
+        break;
     }
 
   }, [getValues('ddlPreheatComp'), intProductTypeID]);
@@ -4628,66 +4721,91 @@ useEffect(() => {
 
 
   useEffect(() => {
-    if (intProductTypeID === IDs.intProdTypeIdVentumPlus) {
-      setIsVisibleDdlCoolingCoilHanding(false);
-    } else {
-      switch (Number(getValues('ddlCoolingComp'))) {
-        case IDs.intCompIdElecHeater:
-          setIsVisibleDdlCoolingCoilHanding(true);
-          break;
-        case IDs.intCompIdHWC:
-          setIsVisibleDdlCoolingCoilHanding(true);
-          break;
-        case IDs.intCompIdNA:
+    switch (Number(intProductTypeID)) {
+      case IDs.intProdTypeIdNova:
+      case IDs.intProdTypeIdVentumPlus:
+      case IDs.intProdTypeIdVentumLite:
+        switch (Number(getValues('ddlCoolingComp'))) {
+          case IDs.intCompIdElecHeater:
+            setIsVisibleDdlCoolingCoilHanding(true);
+            break;
+          case IDs.intCompIdHWC:
+            setIsVisibleDdlCoolingCoilHanding(true);
+            break;
+          case IDs.intCompIdNA:
+            setIsVisibleDdlCoolingCoilHanding(false);
+            break;
+          default:
+            break;
+        }
+        break;
+        case IDs.intProdTypeIdVentum:
+        case IDs.intProdTypeIdTerra:
           setIsVisibleDdlCoolingCoilHanding(false);
           break;
-        default:
-          break;
-      }
+      default:
+        break;
     }
+    
 
   }, [getValues('ddlCoolingComp'), intProductTypeID]);
 
 
   useEffect(() => {
-    if (intProductTypeID === IDs.intProdTypeIdVentumPlus) {
-      setIsVisibleDdlHeatingCoilHanding(false);
-    } else {
-      switch (Number(getValues('ddlHeatingComp'))) {
-        case IDs.intCompIdElecHeater:
-          setIsVisibleDdlHeatingCoilHanding(true);
-          break;
-        case IDs.intCompIdHWC:
-          setIsVisibleDdlHeatingCoilHanding(true);
-          break;
-        case IDs.intCompIdNA:
+    switch (Number(intProductTypeID)) {
+      case IDs.intProdTypeIdNova:
+      case IDs.intProdTypeIdVentumPlus:
+      case IDs.intProdTypeIdVentumLite:
+        switch (Number(getValues('ddlHeatingComp'))) {
+          case IDs.intCompIdElecHeater:
+            setIsVisibleDdlHeatingCoilHanding(true);
+            break;
+          case IDs.intCompIdHWC:
+            setIsVisibleDdlHeatingCoilHanding(true);
+            break;
+          case IDs.intCompIdNA:
+            setIsVisibleDdlHeatingCoilHanding(false);
+            break;
+          default:
+            break;
+        }
+        break;
+        case IDs.intProdTypeIdVentum:
+        case IDs.intProdTypeIdTerra:
           setIsVisibleDdlHeatingCoilHanding(false);
           break;
-        default:
-          break;
-      }
+      default:
+        break;
     }
 
   }, [getValues('ddlHeatingComp'), intProductTypeID]);
 
 
   useEffect(() => {
-    if (intProductTypeID === IDs.intProdTypeIdVentumPlus) {
-      setIsVisibleDdlReheatCoilHanding(false);
-    } else {
-      switch (Number(getValues('ddlReheatComp'))) {
-        case IDs.intCompIdElecHeater:
-          setIsVisibleDdlReheatCoilHanding(true);
-          break;
-        case IDs.intCompIdHWC:
-          setIsVisibleDdlReheatCoilHanding(true);
-          break;
-        case IDs.intCompIdNA:
+    switch (Number(intProductTypeID)) {
+      case IDs.intProdTypeIdNova:
+      case IDs.intProdTypeIdVentumPlus:
+      case IDs.intProdTypeIdVentumLite:
+        switch (Number(getValues('ddlReheatComp'))) {
+          case IDs.intCompIdElecHeater:
+            setIsVisibleDdlReheatCoilHanding(true);
+            break;
+          case IDs.intCompIdHWC:
+            setIsVisibleDdlReheatCoilHanding(true);
+            break;
+          case IDs.intCompIdNA:
+            setIsVisibleDdlReheatCoilHanding(false);
+            break;
+          default:
+            break;
+        }
+        break;
+        case IDs.intProdTypeIdVentum:
+        case IDs.intProdTypeIdTerra:
           setIsVisibleDdlReheatCoilHanding(false);
           break;
-        default:
-          break;
-      }
+      default:
+        break;
     }
 
   }, [getValues('ddlReheatComp'), intProductTypeID]);
@@ -4953,20 +5071,20 @@ useEffect(() => {
       info.isReturnAirOpeningVisible = true;
           break;
       case IDs.intUnitTypeIdAHU:
-        info.fdtReturnAirOpening = db?.dbtSelOpeningsFC_OA;
+        info.fdtOutdoorAirOpening = db?.dbtSelOpeningsFC_OA;
         info.outdoorAirOpeningId = info.fdtReturnAirOpening?.[0]?.id;
         info.outdoorAirOpeningText = info.fdtReturnAirOpening?.[0]?.items;
         info.isOutdoorAirOpeningVisible = true;
 
     
-        info.fdtOutdoorAirOpening = dtNoSelectionTable;
+        info.fdtExhaustAirOpening = dtNoSelectionTable;
         info.exhaustAirOpeningId = 0;
         info.exhaustAirOpeningText = 'NA';
         info.isExhaustAirOpeningVisible = false;
     
         info.fdtReturnAirOpening = dtNoSelectionTable;
         info.returnAirOpeningId = 0;
-        info.exhaustAirOpeningText = 'NA';
+        info.returnAirOpeningText = 'NA';
         info.isReturnAirOpeningVisible = false;
             break;
       default:
@@ -5854,6 +5972,26 @@ useEffect(() => {
   }, [intProductTypeID]);
 
 
+  useEffect(() => {
+    switch (intUnitTypeID) {
+      case IDs.intUnitTypeIdERV:
+      case IDs.intUnitTypeIdHRV:
+        setIsVisibleDdlSupplyAirOpeningVisible(true);
+        setIsVisibleDdlOutdoorAirOpeningVisible(true);
+        setIsVisibleDdlReturnAirOpeningVisible(true);
+        setIsVisibleDdlExhaustAirOpeningVisible(true);
+      break;
+      case IDs.intUnitTypeIdAHU:
+        setIsVisibleDdlSupplyAirOpeningVisible(false);
+        setIsVisibleDdlOutdoorAirOpeningVisible(false);
+        setIsVisibleDdlReturnAirOpeningVisible(false);
+        setIsVisibleDdlExhaustAirOpeningVisible(false);
+        break;
+      default:
+        break;
+    }
+
+  }, [intUnitTypeID]);
 
 
 // // ckbVoltageSPP
@@ -5888,7 +6026,7 @@ useEffect(() => {
               // info.isVisible = true;
               // info.isChecked = true;
               setPHIIsVisible(true);
-              setValue('ckbPHI', 1);
+              setValue('ckbPHI', 0);
               break;
             case IDs.intUnitTypeIdHRV:
               // info.isVisible = false;
@@ -6878,7 +7016,8 @@ useEffect(() => {
                       label="Preheat LAT Setpoint DB (F):"
                       disabled={!isTxbPreheatSetpointEnabled}
                       sx={getDisplay(isPreheatSetpointVisible)}
-                      onChange={(e: any) => { setValueWithCheck1(e, 'txbWinterPreheatSetpointDB'); }}
+                      // onBlur={(e: any) => { setValueWithCheck1(e, 'txbWinterPreheatSetpointDB'); }}
+                      onBlur={txbWinterPreheatSetpointDBChanged}
                     /> 
                   </Stack>
                   <Stack>
@@ -8496,7 +8635,7 @@ useEffect(() => {
                     native
                     size="small"
                     name="ddlHanding"
-                    label="Handing"
+                    label="Unit Handing"
                     placeholder=""
                     value={getValues('ddlHanding')}
                     onChange={ddlHandingChanged}
@@ -8573,7 +8712,7 @@ useEffect(() => {
                     name="ddlSupplyAirOpening"
                     label="Supply Air Opening"
                     placeholder=""
-                    // sx={getDisplay(supplyAirOpeningInfo?.isVisible)}
+                    sx={getDisplay(isVisibleDdlSupplyAirOpeningVisible)}
                     onChange={ddlSupplyAirOpeningChanged}
                   >
                     {supplyAirOpeningInfo?.fdtSupplyAirOpening?.map(
@@ -8589,7 +8728,7 @@ useEffect(() => {
                     size="small"
                     name="ddlExhaustAirOpening"
                     label="Exhaust Air Opening"
-                    sx={getDisplay(remainingOpeningsInfo?.isExhaustAirOpeningVisible)}
+                    sx={getDisplay(isVisibleDdlExhaustAirOpeningVisible)}
                     placeholder=""
                     onChange={ddlExhaustAirOpeningChanged}
                   >
@@ -8607,7 +8746,7 @@ useEffect(() => {
                     name="ddlOutdoorAirOpening"
                     label="Outdoor Air Opening"
                     placeholder=""
-                    sx={getDisplay(remainingOpeningsInfo?.isOutdoorAirOpeningVisible)}
+                    sx={getDisplay(isVisibleDdlOutdoorAirOpeningVisible)}
                     onChange={ddlOutdoorAirOpeningChanged}
                   >
                     {remainingOpeningsInfo?.fdtOutdoorAirOpening?.map(
@@ -8623,7 +8762,7 @@ useEffect(() => {
                     size="small"
                     name="ddlReturnAirOpening"
                     label="Return Air Opening"
-                    sx={getDisplay(remainingOpeningsInfo?.isReturnAirOpeningVisible)}
+                    sx={getDisplay(isVisibleDdlReturnAirOpeningVisible)}
                     placeholder=""
                     onChange={ddlReturnAirOpeningChanged}
                   >
@@ -8635,6 +8774,8 @@ useEffect(() => {
                       )
                     )}
                   </RHFSelect>
+                  </Stack>
+                  <Stack spacing={3}>
                   <RHFSelect
                     native
                     size="small"
@@ -8669,7 +8810,7 @@ useEffect(() => {
                       )
                     )}
                   </RHFSelect>
-                </Stack>{' '}
+                </Stack>
               </Grid>
               <Grid item xs={2} md={2}>
                 <></>
