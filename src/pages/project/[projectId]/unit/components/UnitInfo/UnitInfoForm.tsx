@@ -2792,18 +2792,21 @@ useEffect(() => {
       case IDs.intProdTypeIdVentumLite:
         info.fdtReturnAirFilter =
           info.fdtReturnAirFilter?.filter((e: { depth: any }) => e.depth === 2) || [];
-        info.isVisible = true;
+          info.defaultId = IDs.intFilterModelId2in_85_MERV_8;
+          info.isVisible = true;
         break;
       case IDs.intProdTypeIdTerra:
         info.fdtReturnAirFilter = info.fdtReturnAirFilter?.filter(
           (item: { id: number }) => item.id === IDs.intFilterModelIdNA
         );
+        info.defaultId = IDs.intFilterModelIdNA;
         info.isVisible = false;
         break;
       case IDs.intProdTypeIdVentumPlus:
         info.fdtReturnAirFilter =
           info.fdtReturnAirFilter?.filter((item: { depth: number }) => item.depth === 4) || [];
-        info.isVisible = true;
+          info.defaultId = IDs.intFilterModelId4in_85_MERV_8
+          info.isVisible = true;
         break;
       default:
         break;
@@ -2811,7 +2814,7 @@ useEffect(() => {
 
     setReturnAirFilterInfo(info);
 
-    setValue('ddlRA_FilterModel', info.fdtReturnAirFilter?.[0]?.id);
+    setValue('ddlRA_FilterModel', info.defaultId);
   }, []);
 
 
@@ -3101,15 +3104,17 @@ useEffect(() => {
             break;
         }        
 
-        if (intProductTypeID === IDs.intProdTypeIdVentum && Number(formCurrValues.ddlUnitModel)  === IDs.intVentumUnitModelIdH05IN_ERV)
+        if (intProductTypeID === IDs.intProdTypeIdVentum &&  
+          (Number(formCurrValues.ddlUnitModel)  === IDs.intVentumUnitModelIdH05IN_ERV_HRV || Number(formCurrValues.ddlUnitModel)  === IDs.intVentumUnitModelIdH05IN_ERV_HRV_BP))
         {
           info.fdtCoolingComp  = info.fdtCoolingComp .filter((item: { id: number }) =>  item.id !== IDs.intCompIdDX);
         }        
       break;
 
       case IDs.intProdTypeIdTerra: 
-        info.fdtCoolingComp = info.fdtCoolingComp ?.filter((e: { fc_cooling: number }) => Number(e.fc_cooling) === 1) || [];
-      break;
+        // info.fdtCoolingComp = info.fdtCoolingComp ?.filter((e: { fc_cooling: number }) => Number(e.fc_cooling) === 1) || [];
+        info.fdtCoolingComp = info.fdtCoolingComp ?.filter((e: { id: number }) => Number(e.id) === IDs.intCompIdDX) || [];
+        break;
       default:
         // code block
         break;
@@ -3278,7 +3283,7 @@ useEffect(() => {
           if (Number(intUAL) === IDs.intUAL_External && (intUnitTypeID === IDs.intUnitTypeIdERV || intUnitTypeID === IDs.intUnitTypeIdHRV)) {
             info.fdtReheatComp = info.fdtReheatComp?.filter((item: { id: { toString: () => any } }) => item.id.toString() !== IDs.intCompIdHGRH.toString());
           } else if (intProductTypeID === IDs.intProdTypeIdVentum && 
-              (Number(getValues('ddlUnitModel')) === IDs.intVentumUnitModelIdH05IN_ERV || Number(getValues('ddlUnitModel')) === IDs.intVentumUnitModelIdH05IN_HRV)) {
+              (Number(getValues('ddlUnitModel')) === IDs.intVentumUnitModelIdH05IN_ERV_HRV || Number(getValues('ddlUnitModel')) === IDs.intVentumUnitModelIdH05IN_ERV_HRV_BP)) {
             info.fdtReheatComp = info.fdtReheatComp?.filter((item: { id: { toString: () => any } }) =>  item.id.toString() !== IDs.intCompIdHGRH.toString());
           }
           // info.defaultId = formCurrValues.ddlReheatComp  > 0 ? formCurrValues.ddlReheatComp : info.fdtReheatComp?.[0]?.id;
@@ -3568,10 +3573,10 @@ useEffect(() => {
         // }
       break;
       case IDs.intProdTypeIdVentum:
-        if (Number(formCurrValues.ddlUnitModel) === IDs.intVentumUnitModelIdH05IN_ERV ||
-            Number(formCurrValues.ddlUnitModel) === IDs.intVentumUnitModelIdH10IN_ERV ||
-            Number(formCurrValues.ddlUnitModel) === IDs.intVentumUnitModelIdH05IN_HRV ||
-            Number(formCurrValues.ddlUnitModel) === IDs.intVentumUnitModelIdH10IN_HRV) {
+        if (Number(formCurrValues.ddlUnitModel) === IDs.intVentumUnitModelIdH05IN_ERV_HRV ||
+            Number(formCurrValues.ddlUnitModel) === IDs.intVentumUnitModelIdH10IN_ERV_HRV ||
+            Number(formCurrValues.ddlUnitModel) === IDs.intVentumUnitModelIdH05IN_ERV_HRV_BP ||
+            Number(formCurrValues.ddlUnitModel) === IDs.intVentumUnitModelIdH10IN_ERV_HRV_BP) {
           bol208V_1Ph = true;
           info.fdtElecHeaterVoltage = info.fdtElecHeaterVoltage?.filter((item: { electric_heater_2: number; id: any }) => item.electric_heater_2 === 1);
         } else {
@@ -3742,10 +3747,10 @@ useEffect(() => {
           // }
           break;
         case IDs.intProdTypeIdVentum:
-          if (Number(formCurrValues.ddlUnitModel) === IDs.intVentumUnitModelIdH05IN_ERV ||
-            Number(formCurrValues.ddlUnitModel) === IDs.intVentumUnitModelIdH10IN_ERV ||
-            Number(formCurrValues.ddlUnitModel) === IDs.intVentumUnitModelIdH05IN_HRV ||
-            Number(formCurrValues.ddlUnitModel) === IDs.intVentumUnitModelIdH10IN_HRV) {
+          if (Number(formCurrValues.ddlUnitModel) === IDs.intVentumUnitModelIdH05IN_ERV_HRV ||
+            Number(formCurrValues.ddlUnitModel) === IDs.intVentumUnitModelIdH10IN_ERV_HRV ||
+            Number(formCurrValues.ddlUnitModel) === IDs.intVentumUnitModelIdH05IN_ERV_HRV_BP ||
+            Number(formCurrValues.ddlUnitModel) === IDs.intVentumUnitModelIdH10IN_ERV_HRV_BP) {
             bol208V_1Ph = true;
             info.fdtElecHeaterVoltage = info.fdtElecHeaterVoltage?.filter((item: { electric_heater_2: number; id: any }) => item.electric_heater_2 === 1);
           } else {
@@ -3912,10 +3917,10 @@ useEffect(() => {
           // }
           break;
         case IDs.intProdTypeIdVentum:
-          if (Number(formCurrValues.ddlUnitModel) === IDs.intVentumUnitModelIdH05IN_ERV ||
-            Number(formCurrValues.ddlUnitModel) === IDs.intVentumUnitModelIdH10IN_ERV ||
-            Number(formCurrValues.ddlUnitModel) === IDs.intVentumUnitModelIdH05IN_HRV ||
-            Number(formCurrValues.ddlUnitModel) === IDs.intVentumUnitModelIdH10IN_HRV) {
+          if (Number(formCurrValues.ddlUnitModel) === IDs.intVentumUnitModelIdH05IN_ERV_HRV ||
+            Number(formCurrValues.ddlUnitModel) === IDs.intVentumUnitModelIdH10IN_ERV_HRV ||
+            Number(formCurrValues.ddlUnitModel) === IDs.intVentumUnitModelIdH05IN_ERV_HRV_BP ||
+            Number(formCurrValues.ddlUnitModel) === IDs.intVentumUnitModelIdH10IN_ERV_HRV_BP) {
             bol208V_1Ph = true;
             info.fdtElecHeaterVoltage = info.fdtElecHeaterVoltage?.filter((item: { electric_heater_2: number; id: any }) => item.electric_heater_2 === 1);
           } else {
