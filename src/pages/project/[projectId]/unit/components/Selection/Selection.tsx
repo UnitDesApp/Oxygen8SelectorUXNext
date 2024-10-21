@@ -55,7 +55,7 @@ const CustomGroupBoxBorder = styled(Box)(() => ({
 const CustomGroupBoxTitle = styled(Typography)(() => ({
   lineHeight: '1.4375em',
   fontSize: '20px',
-  fontFamily: '"Public Sans", sans-serif',
+  fontFamily: '__Public_Sans_e50a27, __Public_Sans_Fallback_e50a27, Helvetica, Arial, sans-serif',
   fontWeight: 400,
   display: 'block',
   transformOrigin: 'left top',

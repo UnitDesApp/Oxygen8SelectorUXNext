@@ -24,12 +24,18 @@ export default function Resources() {
 
   // const fdtUnitModel = fileList.dbtSelNovaUnitModel;
   const literatureCommer = fileList?.filter((item: {folder: string}) => item.folder === 'LiteratureCommercial');
-  const literatureCommerAll = {...literatureCommer?.[0]?.files?.LiteratureCommercial, 
-                                    ...literatureCommer?.[0]?.files?.Nova, 
-                                    ...literatureCommer?.[0]?.files?.Ventum, 
-                                    ...literatureCommer?.[0]?.files?.VentumLite, 
-                                    ...literatureCommer?.[0]?.files?.VentumPlus, 
-                                    ...literatureCommer?.[0]?.files?.Terra};
+
+const literatureCommerAll = {
+  ...literatureCommer?.[0]?.files?.LiteratureCommercial,
+  ...literatureCommer?.[0]?.files?.Nova,
+  ...[
+    ...(literatureCommer?.[0]?.files?.Ventum || []),
+    ...(literatureCommer?.[0]?.files?.VentumLite || []),
+    ...(literatureCommer?.[0]?.files?.VentumPlus || []),
+    ...(literatureCommer?.[0]?.files?.Terra || [])
+  ]
+};
+
   const literatureResid = fileList?.filter((item: {folder: string}) => item.folder === 'LiteratureResidential');
   const manualCommer = fileList?.filter((item: {folder: string}) => item.folder === 'ManualCommercial');
   const manualResid = fileList?.filter((item: {folder: string}) => item.folder === 'ManualResidential');
@@ -44,8 +50,12 @@ export default function Resources() {
   // fdtUnitModel = db.dbtSelNovaUnitModel;
 
 
+  let arrliteratureCommerAll :any= []; 
+  if (typeof literatureCommerAll === 'object' && literatureCommerAll !== null) {
+    arrliteratureCommerAll.push(...Object.values(literatureCommerAll));
+  }
 
-  return (
+return (
     <>
       <Head>
         <title> Resources | Oxygen8 </title>
@@ -98,18 +108,20 @@ export default function Resources() {
                   ))
                 } */}
 
-                {!isLoading && literatureCommer && literatureCommer?.[0] && Object.entries(literatureCommer?.[0]?.files)?.map((item: any, i) =>
-                // {!isLoading && literatureCommerAll && Object.entries(literatureCommerAll)?.map((item: any, i) =>
-                  (item[0] === currentTab || currentTab === 'all') && item[1].length > 0 && (
-                    <ResourceTable
-                      key={i}
-                      resourceType={item[0]}
-                      objResources={item[1]}
-                      title="Literature & Brochures Commercial"
-                      sx={{ width: '100%' }}
-                    />
-                  ))
-                }
+                {/* {!isLoading && literatureCommer && literatureCommer?.[0] && Object.entries(literatureCommer?.[0]?.files)?.map((item: any, i) => */}
+                {!isLoading && arrliteratureCommerAll && Object.entries([arrliteratureCommerAll])?.map((item: any, i) =>
+                  (item[0] === currentTab || currentTab === 'all') && arrliteratureCommerAll.length > 0 && (
+              
+                <ResourceTable
+                  key={i}
+                  resourceType={item[0]}
+                  objResources={arrliteratureCommerAll}
+                  title="Literature & Brochures Commercial"
+                  sx={{ width: '100%' }}
+                />
+              )
+            )
+            }
                 <Stack sx={{display: literatureCommer?.[0]?.length === 0 ? 'grid' : 'none' }}>
                   <></>
                 </Stack>

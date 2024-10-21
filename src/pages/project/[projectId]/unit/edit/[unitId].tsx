@@ -126,7 +126,7 @@ export default function EditUnit() {
           ) : (
             <Container maxWidth="xl">
               <CustomBreadcrumbs
-                heading={`Unit ${STEP_PAGE_NAME[currentStep]}`}
+                heading={dbtSavedJob?.[0]?.job_name}
                 links={[
                   { name: 'Projects', href: PATH_APP.project },
                   {

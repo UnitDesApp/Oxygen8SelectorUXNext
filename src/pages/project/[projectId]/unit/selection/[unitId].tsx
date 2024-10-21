@@ -21,6 +21,7 @@ import DashboardLayout from 'src/layouts/dashboard/DashboardLayout';
 import SelectionReportDialog from '../../components/dialog/SelectionReportDialog';
 import Selection from '../components/Selection/Selection';
 import NewUnit from '../new';
+import { useGetSavedJob } from 'src/hooks/useApi';
 
 // ----------------------------------------------------------------------
 
@@ -59,7 +60,8 @@ export default function EditSelection() {
   const [isProcessingData, setIsProcessingData] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const isNewUnitSelected = localStorage?.getItem('isNewUnitSelected') || 0;
-
+  const { data: dbtSavedJob } = useGetSavedJob({intJobId: projectId});
+  
   const openDialog = useCallback(() => {
     setOpenRPDialog(true);
   }, []);
@@ -79,7 +81,7 @@ export default function EditSelection() {
           ) : (
             <Container maxWidth="xl">
               <CustomBreadcrumbs
-                heading={`Unit ${STEP_PAGE_NAME[currentStep]}`}
+                 heading={dbtSavedJob?.[0]?.job_name}
                 links={[
                   { name: 'My projects', href: PATH_APP.project },
                   {
