@@ -296,11 +296,11 @@ export default function ProjectInfoDialog({
       setOpenSnackbar(true);
       return;
     }
-    if (!data.txbReferenceNo) {
-      setSnackbarMessage('Reference Number is required');
-      setOpenSnackbar(true);
-      return;
-    }
+    // if (!data.txbReferenceNo) {
+    //   setSnackbarMessage('Reference Number is required');
+    //   setOpenSnackbar(true);
+    //   return;
+    // }
     if (!data.ddlCompanyName || Number(getValues('ddlCompanyName')) === 0) {
       setSnackbarMessage('Please select Company Name');
       setOpenSnackbar(true);

@@ -130,6 +130,7 @@ export default function Selection({ intJobId, intUnitNo, intProdTypeId, intUnitT
   );
 
   const [error, setError] = useState(null);
+  const [isVisiblePricing, setIsVisiblePricing] = useState<boolean>(false);
   const [expanded, setExpanded] = React.useState<{ [key: string]: boolean }>({
     panel1: true,
     panel2: true,
@@ -171,6 +172,32 @@ export default function Selection({ intJobId, intUnitNo, intProdTypeId, intUnitT
   }, [])
 
 
+
+
+  useEffect(() => {
+    const UAL = typeof window !== 'undefined' && localStorage.getItem('UAL');
+    switch (Number(UAL)) {
+      case Ids.intUAL_Admin:
+      case Ids.intUAL_AdminLvl_1:
+        setIsVisiblePricing(true);
+        break;
+      case Ids.intUAL_IntAdmin:
+      case Ids.intUAL_IntLvl_1:
+      case Ids.intUAL_IntLvl_2:
+        setIsVisiblePricing(true);
+        break;
+      case Ids.intUAL_External:
+      case Ids.intUAL_ExternalSpecial:
+        setIsVisiblePricing(false);
+        break;
+      default:
+        setIsVisiblePricing(false);
+        break;
+    }
+  }, []);
+  
+
+
   const onClickUnitInfo = () => {
    setCurrentStep(1)
     // setCurrentStep(1);
@@ -183,8 +210,8 @@ export default function Selection({ intJobId, intUnitNo, intProdTypeId, intUnitT
     };
 
   const imgSFUrl = '';
-  const imgSF = selectionData?.dtSF_Graph?.[0]?.cValue.replace(/^.*[\\/]/, '')
-  const imgEF = selectionData?.dtEF_Graph?.[0]?.cValue.replace(/^.*[\\/]/, '')
+  const imgSF = selectionData?.dtSF_Graph?.[0]?.cValue?.replace(/^.*[\\/]/, '')
+  const imgEF = selectionData?.dtEF_Graph?.[0]?.cValue?.replace(/^.*[\\/]/, '')
 
 const fanImgFiles = ["FanCurveH04_GTB025FHC19R.bmp", 
                     "FanCurvePSC_PI2E25080TB2M_IS_SB.png", 
@@ -227,15 +254,15 @@ if (fanImgFiles.includes(imgEF)) {
           <LinearProgress color="info" />
         ) : (
           <>
-            <Stack spacing={5} sx={{ mt: 2 }}>
-            <Grid item xs={12}>
+        <Stack spacing={5} sx={{ mt: 2}}>
+            <Grid item xs={12} sx={{display: isVisiblePricing === true ? 'block' : 'none' }}>
               <AccordionSummary
                   // expandIcon={<Iconify icon="il:arrow-down" />}
                   // aria-controls="panel1a-content"
                   // id="panel1a-header"
               >
               <Typography color="primary.main" variant="h6">
-                Pricing Details
+                PRICING BREAKDOWN
               </Typography>
             </AccordionSummary>
             <Grid item xs={12} sx={{margin:'10px 0px !important'}}>
@@ -276,7 +303,7 @@ if (fanImgFiles.includes(imgEF)) {
                   // id="panel1a-header"
             >
               <Typography color="primary.main" variant="h6">
-                Unit Details
+                UNIT SUMMARY
               </Typography>
             </AccordionSummary>
             <Grid item xs={12} sx={{margin:'10px 0px !important'}}>
@@ -331,7 +358,7 @@ if (fanImgFiles.includes(imgEF)) {
               // id="panel1a-header"
               >
               <Typography color="primary.main" variant="h6">
-                Electrical Requirements
+                ELECTRICAL REQUIREMENTS
               </Typography>
               </AccordionSummary>
               <Typography color="primary.main" variant="body2">
@@ -493,7 +520,7 @@ if (fanImgFiles.includes(imgEF)) {
                       // id="panel1a-header"
                 >
                   <Typography color="primary.main" variant="h6">
-                  Mixing Section
+                    MIXING SECTION
                   </Typography>
                 </AccordionSummary>
               <Grid container spacing={2}>
@@ -567,7 +594,7 @@ if (fanImgFiles.includes(imgEF)) {
                         // id="panel1a-header"
               >
               <Typography color="primary.main" variant="h6">
-                Preheat Electric Heater
+                PRE-HEAT: EC
               </Typography>
               </AccordionSummary>
               <Grid item xs={12} sx={{margin:'15px 0px !important'}}>
@@ -608,7 +635,7 @@ if (fanImgFiles.includes(imgEF)) {
                       // id="panel1a-header"
                 >
                   <Typography color="primary.main" variant="h6">
-                    Preheat HWC
+                    PRE-HEAT: HWC
                   </Typography>
                 </AccordionSummary>
                 <Grid item xs={12} sx={{margin:'15px 0px !important'}}>
@@ -711,7 +738,7 @@ if (fanImgFiles.includes(imgEF)) {
                       // id="panel1a-header"
                 >
                   <Typography color="primary.main" variant="h6">
-                  Heat Exchanger
+                    HEAT EXCHANGER: ERV
                   </Typography>
                 </AccordionSummary>
               <Grid container spacing={2}>
@@ -822,87 +849,6 @@ if (fanImgFiles.includes(imgEF)) {
             </Grid>
 
 
-            <Grid item xs={12} sx={{display: selectionData?.dtHX_FP_RECUTECH_EntAir?.length > 0 ? 'block' : 'none' }}>
-            <AccordionSummary
-                      // expandIcon={<Iconify icon="il:arrow-down" />}
-                      // aria-controls="panel1a-content"
-                      // id="panel1a-header"
-                >
-                  <Typography color="primary.main" variant="h6">
-                  Heat Exchanger              
-                  </Typography>
-                </AccordionSummary>
-              <Grid container spacing={2}>
-                <Grid item xs={10}>
-                <CustomGroupBox title="Design Conditions"  bordersx={{ width: '100%', m: '50px !important', padding: '0px',}}>
-                  <TableContainer component={Paper}>
-                    <Table size="small">
-                    <TableBody>
-                      {selectionData?.dtHX_FP_RECUTECH_EntAir?.map((item: any, i: number) => (
-                        <TableRow key={i} sx={{'&:last-child td, &:last-child th': {border: 0,}, }}>
-                          <TableCell component="th" scope="row" align="left" sx={{fontWeight: 300}}>
-                            {item.cLabel}
-                          </TableCell>
-                          <TableCell component="th" scope="row" align="left" sx={{fontWeight: 300}}>
-                            {item.cValue_1}
-                          </TableCell>
-                          <TableCell component="th" scope="row" align="left" sx={{fontWeight: 300}}>
-                            {item.cValue_2}
-                          </TableCell>
-                        </TableRow>
-                      ))}
-                    </TableBody>
-                    </Table>
-                  </TableContainer>
-                </CustomGroupBox>
-                <CustomGroupBox title="Performance Leaving Air" bordersx={{ width: '100%', m: '10px !important', padding: '0px',}}>
-                  <TableContainer component={Paper}>
-                    <Table size="small">
-                    <TableBody>
-                      {selectionData?.dtHX_FP_RECUTECH_LvgAir?.map((item: any, i: number) => (
-                        <TableRow key={i} sx={{'&:last-child td, &:last-child th': {border: 0,}, }}>
-                          <TableCell component="th" scope="row" align="left" sx={{fontWeight: 300}}>
-                            {item.cLabel}
-                          </TableCell>
-                          <TableCell component="th" scope="row" align="left" sx={{fontWeight: 300}}>
-                            {item.cValue_1}
-                          </TableCell>
-                          <TableCell component="th" scope="row" align="left" sx={{fontWeight: 300}}>
-                            {item.cValue_2}
-                          </TableCell>
-                        </TableRow>
-                      ))}
-                    </TableBody>
-                    </Table>
-                  </TableContainer>
-                </CustomGroupBox>
-                <CustomGroupBox title="Performance" 
-                                      bordersx={{ width: '100%', m: '10px !important', padding: '0px',}}>
-                  <TableContainer component={Paper}>
-                    <Table size="small">
-                    <TableBody>
-                      {selectionData?.dtHX_FP_RECUTECH_Perf?.map((item: any, i: number) => (
-                        <TableRow key={i} sx={{'&:last-child td, &:last-child th': {border: 0,}, }}>
-                          <TableCell component="th" scope="row" align="left" sx={{fontWeight: 300}}>
-                            {item.cLabel}
-                          </TableCell>
-                          <TableCell component="th" scope="row" align="left" sx={{fontWeight: 300}}>
-                            {item.cValue_1}
-                          </TableCell>
-                          <TableCell component="th" scope="row" align="left" sx={{fontWeight: 300}}>
-                            {item.cValue_2}
-                          </TableCell>
-                        </TableRow>
-                      ))}
-                    </TableBody>
-                    </Table>
-                  </TableContainer>
-                </CustomGroupBox>
-                </Grid>  
-              </Grid>
-            </Grid>
-
-
             <Grid item xs={12} sx={{display: selectionData?.dtHX_FP_POLYBLOC_EntAir?.length > 0 ? 'block' : 'none' }}>
             <AccordionSummary
                       // expandIcon={<Iconify icon="il:arrow-down" />}
@@ -910,7 +856,7 @@ if (fanImgFiles.includes(imgEF)) {
                       // id="panel1a-header"
                 >
                   <Typography color="primary.main" variant="h6">
-                  Heat Exchanger
+                    HEAT EXCHANGER: ERV
                   </Typography>
                 </AccordionSummary>
               <Grid container spacing={2}>
@@ -986,6 +932,87 @@ if (fanImgFiles.includes(imgEF)) {
             </Grid>
 
 
+            <Grid item xs={12} sx={{display: selectionData?.dtHX_FP_RECUTECH_EntAir?.length > 0 ? 'block' : 'none' }}>
+            <AccordionSummary
+                      // expandIcon={<Iconify icon="il:arrow-down" />}
+                      // aria-controls="panel1a-content"
+                      // id="panel1a-header"
+                >
+                  <Typography color="primary.main" variant="h6">
+                  HEAT EXCHANGER: HRV              
+                  </Typography>
+                </AccordionSummary>
+              <Grid container spacing={2}>
+                <Grid item xs={10}>
+                <CustomGroupBox title="Design Conditions"  bordersx={{ width: '100%', m: '50px !important', padding: '0px',}}>
+                  <TableContainer component={Paper}>
+                    <Table size="small">
+                    <TableBody>
+                      {selectionData?.dtHX_FP_RECUTECH_EntAir?.map((item: any, i: number) => (
+                        <TableRow key={i} sx={{'&:last-child td, &:last-child th': {border: 0,}, }}>
+                          <TableCell component="th" scope="row" align="left" sx={{fontWeight: 300}}>
+                            {item.cLabel}
+                          </TableCell>
+                          <TableCell component="th" scope="row" align="left" sx={{fontWeight: 300}}>
+                            {item.cValue_1}
+                          </TableCell>
+                          <TableCell component="th" scope="row" align="left" sx={{fontWeight: 300}}>
+                            {item.cValue_2}
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                    </Table>
+                  </TableContainer>
+                </CustomGroupBox>
+                <CustomGroupBox title="Performance Leaving Air" bordersx={{ width: '100%', m: '10px !important', padding: '0px',}}>
+                  <TableContainer component={Paper}>
+                    <Table size="small">
+                    <TableBody>
+                      {selectionData?.dtHX_FP_RECUTECH_LvgAir?.map((item: any, i: number) => (
+                        <TableRow key={i} sx={{'&:last-child td, &:last-child th': {border: 0,}, }}>
+                          <TableCell component="th" scope="row" align="left" sx={{fontWeight: 300}}>
+                            {item.cLabel}
+                          </TableCell>
+                          <TableCell component="th" scope="row" align="left" sx={{fontWeight: 300}}>
+                            {item.cValue_1}
+                          </TableCell>
+                          <TableCell component="th" scope="row" align="left" sx={{fontWeight: 300}}>
+                            {item.cValue_2}
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                    </Table>
+                  </TableContainer>
+                </CustomGroupBox>
+                <CustomGroupBox title="Performance" 
+                                      bordersx={{ width: '100%', m: '10px !important', padding: '0px',}}>
+                  <TableContainer component={Paper}>
+                    <Table size="small">
+                    <TableBody>
+                      {selectionData?.dtHX_FP_RECUTECH_Perf?.map((item: any, i: number) => (
+                        <TableRow key={i} sx={{'&:last-child td, &:last-child th': {border: 0,}, }}>
+                          <TableCell component="th" scope="row" align="left" sx={{fontWeight: 300}}>
+                            {item.cLabel}
+                          </TableCell>
+                          <TableCell component="th" scope="row" align="left" sx={{fontWeight: 300}}>
+                            {item.cValue_1}
+                          </TableCell>
+                          <TableCell component="th" scope="row" align="left" sx={{fontWeight: 300}}>
+                            {item.cValue_2}
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                    </Table>
+                  </TableContainer>
+                </CustomGroupBox>
+                </Grid>  
+              </Grid>
+            </Grid>
+
+
             <Grid item xs={12} sx={{display: selectionData?.dtCoolingCWC_Data?.length > 0 ? 'block' : 'none' }}>
             <AccordionSummary
                       // expandIcon={<Iconify icon="il:arrow-down" />}
@@ -993,7 +1020,7 @@ if (fanImgFiles.includes(imgEF)) {
                       // id="panel1a-header"
                 >
                   <Typography color="primary.main" variant="h6">
-                  Cooling CWC
+                  COOLING: CWC
                   </Typography>
                 </AccordionSummary>
                   <Grid item xs={12} sx={{margin:'15px 0px !important'}}>
@@ -1099,7 +1126,7 @@ if (fanImgFiles.includes(imgEF)) {
                       // id="panel1a-header"
                 >
                   <Typography color="primary.main" variant="h6">
-                  Cooling DXC
+                  COOLING: DX
                   </Typography>
                 </AccordionSummary>
                 <Grid item xs={12} sx={{margin:'15px 0px !important'}}>
@@ -1240,7 +1267,7 @@ if (fanImgFiles.includes(imgEF)) {
                         // id="panel1a-header"
               >
               <Typography color="primary.main" variant="h6">
-                Heating Electric Heater
+                HEATING: EC
               </Typography>
               </AccordionSummary>
               <Grid item xs={12} sx={{margin:'15px 0px !important'}}>
@@ -1281,7 +1308,7 @@ if (fanImgFiles.includes(imgEF)) {
                         // id="panel1a-header"
                   >
                     <Typography color="primary.main" variant="h6">
-                    Heating HWC
+                    HEATING: HW
                     </Typography>
                   </AccordionSummary>
                     <Grid item xs={12} sx={{margin:'15px 0px !important'}}>
@@ -1389,7 +1416,7 @@ if (fanImgFiles.includes(imgEF)) {
                         // id="panel1a-header"
                   >
                     <Typography color="primary.main" variant="h6">
-                    Heating Mode DX Coil
+                    HEATING: DX
                     </Typography>
                   </AccordionSummary>
                     <Grid item xs={12} sx={{margin:'15px 0px !important'}}>
@@ -1466,7 +1493,7 @@ if (fanImgFiles.includes(imgEF)) {
                           // id="panel1a-header"
                 >
                 <Typography color="primary.main" variant="h6">
-                  Reheat Electric Heater
+                  REHEAT: EC
                 </Typography>
                 </AccordionSummary>
                 <Grid item xs={12} sx={{margin:'15px 0px !important'}}>
@@ -1507,7 +1534,7 @@ if (fanImgFiles.includes(imgEF)) {
                         // id="panel1a-header"
                   >
                     <Typography color="primary.main" variant="h6">
-                    Reheat HWC
+                    REHEAT: HW
                     </Typography>
                   </AccordionSummary>
                   <Grid item xs={12} 
@@ -1615,8 +1642,8 @@ if (fanImgFiles.includes(imgEF)) {
               // id="panel1a-header"
             >
             <Typography color="primary.main" variant="h6">
-                    Reheat HGRH
-                    </Typography>
+              REHEAT: HGRH
+            </Typography>
                   </AccordionSummary>
                     <Grid item xs={12} sx={{margin:'10px 0px !important'}}>
                       <Grid container spacing={2}>
@@ -1755,7 +1782,7 @@ if (fanImgFiles.includes(imgEF)) {
                           // id="panel1a-header"
                 >
                 <Typography color="primary.main" variant="h6">
-                  Backup Electric Heater
+                  BACKUP HEAT: EC
                 </Typography>
                 </AccordionSummary>
                 <Grid item xs={12} sx={{margin:'15px 0px !important'}}>
@@ -1796,7 +1823,7 @@ if (fanImgFiles.includes(imgEF)) {
                         // id="panel1a-header"
                   >
                     <Typography color="primary.main" variant="h6">
-                    Supply Fan
+                    SUPPLY FAN
                     </Typography>
                   </AccordionSummary>
                     <Grid item xs={12} sx={{margin:'10px 0px !important'}}>
@@ -1837,7 +1864,7 @@ if (fanImgFiles.includes(imgEF)) {
                         </Grid> 
                       </Grid>
                     </Grid>  
-                    <Grid item xs={12} sx={{margin:'30px 0px !important'}}>
+                    <Grid item xs={12} sx={{margin:'30px 0px !important', display:'none' }}>
                         <CustomGroupBox title="Fan Sound Data (Hz)">
                           <TableContainer component={Paper}>
                             <Table size="small">
@@ -1887,15 +1914,14 @@ if (fanImgFiles.includes(imgEF)) {
             </Grid>
 
 
-            <Grid item xs={12} 
-                       sx={{display: (selectionData?.dtEF_Data !== undefined && selectionData?.dtEF_Data?.length > 0) ? 'block' : 'none' }}>
+            <Grid item xs={12} sx={{display: (selectionData?.dtEF_Data !== undefined && selectionData?.dtEF_Data?.length > 0) ? 'block' : 'none' }}>
             <AccordionSummary
                         // expandIcon={<Iconify icon="il:arrow-down" />}
                         // aria-controls="panel1a-content"
                         // id="panel1a-header"
                   >
                     <Typography color="primary.main" variant="h6">
-                    Exhaust Fan
+                    EXHAUST FAN
                     </Typography>
                   </AccordionSummary>
                     <Grid item xs={12} sx={{margin:'10px 0px !important'}}>
@@ -1936,7 +1962,7 @@ if (fanImgFiles.includes(imgEF)) {
                         </Grid> 
                       </Grid>
                       <Grid container spacing={2}>
-                        <Grid item xs={12} sx={{margin:'30px 0px !important'}}>
+                        <Grid item xs={12} sx={{margin:'30px 0px !important', display:'none' }}>
                         <CustomGroupBox title="Fan Sound Data (Hz)">
                           <TableContainer component={Paper}>
                             <Table size="small">
@@ -1996,7 +2022,8 @@ if (fanImgFiles.includes(imgEF)) {
                         // id="panel1a-header"
                   >
                     <Typography color="primary.main" variant="h6">
-                    Unit Sound Data (Hz)
+                    {/* Unit Sound Data (Hz) */}
+                    SOUND DATA
                     </Typography>
                   </AccordionSummary>
                     <Grid item xs={12} sx={{margin:'10px 0px !important'}}>
@@ -2052,6 +2079,65 @@ if (fanImgFiles.includes(imgEF)) {
 
                     </Grid>
             </Grid>
+
+
+                <Grid item xs={12}>
+                  <AccordionSummary
+                  // expandIcon={<Iconify icon="il:arrow-down" />}
+                  // aria-controls="panel1a-content"
+                  // id="panel1a-header"
+                  >
+                    <Typography color="primary.main" variant="h6">
+                      CONFIGURATION NOTES 
+                    </Typography>
+                  </AccordionSummary>
+                  {/* <Typography color="primary.main" variant="body2">
+                  {selectionData?.strElecReqQty}
+              </Typography>                 */}
+                  <Grid item xs={12} sx={{ margin: '0px 0px !important' }}>
+                    <Grid container spacing={2}>
+                      <Grid item xs={3} sx={{ margin: '0px 0px !important' }}>
+                        <Grid container spacing={2} sx={{ display: selectionData?.dtConfigNotes?.length > 0 ? 'block' : 'none' }}>
+                          {/* <Grid item xs={2} /> */}
+                          <Grid item xs={10}>
+                            <TableContainer component={Paper}>
+                              <Table size="small">
+                                <TableBody>
+                                  {selectionData?.dtConfigNotes?.map((item: any, i: number) => (
+                                    <TableRow key={i} sx={{ '&:last-child td, &:last-child th': { border: 0, }, }}>
+                                      <TableCell component="th" scope="row" align="left" sx={{ width: '100%', fontWeight: 300 }}>
+                                        {item.cValue}
+                                      </TableCell>
+                                    </TableRow>
+                                  ))}
+                                </TableBody>
+                              </Table>
+                            </TableContainer>
+                          </Grid>
+                        </Grid>
+                      </Grid>
+                    </Grid>
+                  </Grid>
+                  {/* <Grid container spacing={2} sx={{ display: selectionData?.dtConfigNotes?.length > 0 ? 'block' : 'none' }}>
+                    <Grid item xs={2} />
+                    <Grid item xs={10}>
+                      <TableContainer component={Paper}>
+                        <Table size="small">
+                          <TableBody>
+                            {selectionData?.dtConfigNotes?.map((item: any, i: number) => (
+                              <TableRow key={i} sx={{ '&:last-child td, &:last-child th': { border: 0, }, }}>
+                                <TableCell component="th" scope="row" align="left" sx={{ width: '100%', fontWeight: 300 }}>
+                                  {item.cValue}
+                                </TableCell>
+                              </TableRow>
+                            ))}
+                          </TableBody>
+                        </Table>
+                      </TableContainer>
+                    </Grid>
+                  </Grid> */}
+                </Grid>
+
 
 
           </Stack>

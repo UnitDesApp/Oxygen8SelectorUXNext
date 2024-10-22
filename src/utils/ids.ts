@@ -63,6 +63,8 @@ export const intFilterLocationIdFinalFilter = 3;
 export const intFilterLocationIdReturnAirFilter = 4;
 
 export const intFilterModelIdNA = 1;
+export const intFilterModelId2in_85_MERV_8 = 3;
+export const intFilterModelId4in_85_MERV_8 = 4;
 export const intFilterModelId2in_85_MERV_13 = 9;
 export const intFilterModelId4in_85_MERV_13 = 10;
 
@@ -107,10 +109,10 @@ export const intNovaUnitModelIdB22OU = 7;
 export const  intNovaUnitModelIdC70IN = 14;
 export const  intNovaUnitModelIdC70OU = 18;
 
-export const intVentumUnitModelIdH05IN_ERV = 1;
-export const intVentumUnitModelIdH10IN_ERV = 2;
-export const intVentumUnitModelIdH05IN_HRV = 7;
-export const intVentumUnitModelIdH10IN_HRV = 8;
+export const intVentumUnitModelIdH05IN_ERV_HRV = 1;
+export const intVentumUnitModelIdH10IN_ERV_HRV = 2;
+export const intVentumUnitModelIdH05IN_ERV_HRV_BP= 7;
+export const intVentumUnitModelIdH10IN_ERV_HRV_BP = 8;
 
 export const intVentumLiteUnitModelIdH04IN_ERV = 1;
 
@@ -129,6 +131,8 @@ export const intElectricVoltageId208V_1Ph_60Hz = 2;
 export const intElectricVoltageId240V_1Ph_60Hz = 3;
 export const intElectricVoltageId208V_3Ph_60Hz = 4;
 export const intElectricVoltageId460V_3ph_60Hz = 6;
+
+export const intValveTypeIdNA = 4;
 
 export const  intEKEXVKitInstallIdNA = 1;
 export const  intEKEXVKitInstallIdFactory = 2;

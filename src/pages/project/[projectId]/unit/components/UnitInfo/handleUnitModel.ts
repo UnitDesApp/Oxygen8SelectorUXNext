@@ -1391,8 +1391,8 @@ export const getReheatInfo = (
           );
         } else if (
           intProductTypeID === ClsID.intProdTypeIdVentum &&
-          (intUnitModelID === ClsID.intVentumUnitModelIdH05IN_ERV ||
-            intUnitModelID === ClsID.intVentumUnitModelIdH05IN_HRV)
+          (intUnitModelID === ClsID.intVentumUnitModelIdH05IN_ERV_HRV ||
+            intUnitModelID === ClsID.intVentumUnitModelIdH05IN_ERV_HRV_BP)
         ) {
           dtReheatComp = dtReheatComp?.filter(
             (item: { id: { toString: () => any } }) =>  item.id.toString() !== ClsID.intCompIdHGRH.toString()
@@ -1655,10 +1655,10 @@ export const getElecHeaterVoltageInfo = (
       // intProdTypeVentumID
     } else if (intProductTypeID === ClsID.intProdTypeIdVentum) {
       if (
-        intUnitModelID === ClsID.intVentumUnitModelIdH05IN_ERV ||
-        intUnitModelID === ClsID.intVentumUnitModelIdH10IN_ERV ||
-        intUnitModelID === ClsID.intVentumUnitModelIdH05IN_HRV ||
-        intUnitModelID === ClsID.intVentumUnitModelIdH10IN_HRV
+        intUnitModelID === ClsID.intVentumUnitModelIdH05IN_ERV_HRV ||
+        intUnitModelID === ClsID.intVentumUnitModelIdH10IN_ERV_HRV ||
+        intUnitModelID === ClsID.intVentumUnitModelIdH05IN_ERV_HRV_BP ||
+        intUnitModelID === ClsID.intVentumUnitModelIdH10IN_ERV_HRV_BP
       ) {
         bol208V_1Ph = true;
         dtElecHeaterVoltage = db?.dbtSelElectricalVoltage?.filter(
