@@ -277,6 +277,7 @@ export default function AddNewUnit({currentStep, setCurrentStep}:any) {
         onClose={() => setOpenRPDialog(false)}
         intProjectID={projectId?.toString() || ''}
         intUnitNo={intUnitNo.toString()}
+        dtSavedJob={filteredData[0]}
       />
     </>
   );

@@ -665,7 +665,6 @@ export default function ProjectInfoDialog({
       case Ids.intUAL_IntAdmin:
       case Ids.intUAL_IntLvl_2:
       case Ids.intUAL_IntLvl_1:
-        dtSelCompanyContacts.unshift({first_name: "Select Contact Name"});
         break;
       case Ids.intUAL_External:
       case Ids.intUAL_ExternalSpecial:
@@ -1331,9 +1330,8 @@ export default function ProjectInfoDialog({
                             ))}
                           </RHFSelect>
                         </Stack>
-                        {/* <Stack sx={{display: Number(typeof window !== 'undefined' ? localStorage.getItem('UAL') : 0) === Ids.intUAL_Admin ? 'block' : 'none'}}> */}
-                        <Stack sx={{display: savedJob?.[0]?.id > 0 ? 'block' : 'none'}}>
-                        <RHFTextField 
+                        <Stack sx={{display: Number(typeof window !== 'undefined' ? localStorage.getItem('UAL') : 0) === Ids.intUAL_Admin ? 'block' : 'none'}}>
+                          <RHFTextField 
                             size="small" 
                             name="txbProjectInternalId" 
                             label="Project ID" 

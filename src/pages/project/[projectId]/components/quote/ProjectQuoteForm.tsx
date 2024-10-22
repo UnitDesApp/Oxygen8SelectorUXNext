@@ -268,7 +268,9 @@ export default function ProjectQuoteForm({ projectId, quoteInfo, refetch }: Proj
 
   useMemo(() => {
     setValue('txbProjectName', db?.dbtSavJob?.[0]?.job_name);
-  }, [db?.dbtSavJob, setValue]);
+    setValue('txbShippingFactor', db?.dbtSavCustomer?.[0]?.shipping_factor_percent);
+
+  }, [db?.dbtSavCustomer, db?.dbtSavJob, setValue]);
 
 
   function getQuoteInputs() {
@@ -367,7 +369,7 @@ export default function ProjectQuoteForm({ projectId, quoteInfo, refetch }: Proj
   useEffect(() => {
     const info: { fdtMisc: any } = { fdtMisc: [] };
 
-    info.fdtMisc = currQuoteInfo?.dtMisc;
+    info.fdtMisc = currQuoteInfo?.dtSavedMisc;
     setMiscListInfo(info);
   }, [currQuoteInfo]);
 
@@ -406,10 +408,13 @@ export default function ProjectQuoteForm({ projectId, quoteInfo, refetch }: Proj
     };
 
     info.fdtQuoteStage = db?.dbtSelQuoteStage;
+    const selectMsgData = {id: 0, items: "Select Stage", enabled:1}
+    info.fdtQuoteStage?.unshift(selectMsgData);
+
 
     setQuoteStageInfo(info);
     info.defaultId = info.fdtQuoteStage?.[0]?.id;
-    // setValue('ddlQuoteStage', info.fdtQuoteStage?.[0]?.id);
+    setValue('ddlQuoteStage', info.defaultId);
   }, [db, setValue]);
 
 
@@ -452,6 +457,12 @@ export default function ProjectQuoteForm({ projectId, quoteInfo, refetch }: Proj
   // submmit function
   const onQuoteSubmit = async (data: any) => {
     try {
+      if (Number(getValues('ddlQuoteStage')) === 0) {
+        setSnackbarMessage('Select a quote stage.');
+        setOpenSnackbar(true);
+        return;
+      }
+
       setIsProcessingData(true);
 
       // const requestData = {
@@ -695,8 +706,12 @@ export default function ProjectQuoteForm({ projectId, quoteInfo, refetch }: Proj
         currQuoteInfo?.oQuoteSaveInputs?.intQuoteId > 0
       ) {
 
-        if (currQuoteInfo?.oQuoteSaveInputs?.intQuoteId > 0) {
-          setValue('txbQuoteNo', currQuoteInfo?.oQuoteSaveInputs?.intQuoteId);
+        // if (currQuoteInfo?.oQuoteSaveInputs?.intQuoteId > 0) {
+        //   setValue('txbQuoteNo', currQuoteInfo?.oQuoteSaveInputs?.intQuoteId);
+        // }
+
+        if (currQuoteInfo?.dtSavedQuote?.[0]?.quote_id > 0) {
+          setValue('txbQuoteNo', currQuoteInfo?.dtSavedQuote?.[0]?.quote_id);
         }
 
         if (currQuoteInfo?.oQuoteSaveInputs?.intRevisionNo > 0) {
@@ -978,9 +993,9 @@ export default function ProjectQuoteForm({ projectId, quoteInfo, refetch }: Proj
                         label="Stage"
                         placeholder=""
                       >
-                        <option value="" selected>
+                        {/* <option value="" selected>
                           Select a Stage
-                        </option>
+                        </option> */}
                         {quoteStageInfo?.fdtQuoteStage?.map((e: any, index: number) => (
                           <option key={index} value={e.id}>
                             {e.items}

@@ -32,9 +32,12 @@ interface ReportDialogProps {
   isOpen: boolean;
   onClose: Function;
   intProjectID: string;
+  dtSavedJob: any;
+  oQuote: any;
+  oSubmittal: any;
 }
 
-export default function ReportDialog({ isOpen, onClose, intProjectID }: ReportDialogProps) {
+export default function ReportDialog({ isOpen, onClose, intProjectID, dtSavedJob, oQuote, oSubmittal }: ReportDialogProps) {
   const [methods, setMethods] = useState<{ [name: string]: any }>({
     quote: false,
     selection: false,
@@ -44,6 +47,8 @@ export default function ReportDialog({ isOpen, onClose, intProjectID }: ReportDi
   });
 
   const [isLoading, setIsLoading] = useState(false);
+  const [openSnackbar, setOpenSnackbar] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState('');
   const [openSuccessNotify, setOpenSuccessNotify] = useState<boolean>(false);
   const [successNotifyText, setSuccessNotifyText] = useState<string>('');
   const [openFailNotify, setOpenFailNotify] = useState<boolean>(false);
@@ -68,7 +73,13 @@ export default function ReportDialog({ isOpen, onClose, intProjectID }: ReportDi
     setIsLoading(true);
 
     if (methods.quote) {
-      const result = await ExportQuotePdf(Number(intProjectID));
+      if (oQuote?.oQuoteSaveInputs?.intQuoteId === 0) {
+        setSnackbarMessage('Quote not available. Quote not saved.');
+        setOpenSnackbar(true);
+        setIsLoading(false);
+        return;
+      }
+      const result = await ExportQuotePdf(Number(intProjectID), dtSavedJob);
       // if (result === 'server_error') {
       //   setFailNotifyText('Server Error!');
       //   setOpenFailNotify(true);
@@ -82,22 +93,28 @@ export default function ReportDialog({ isOpen, onClose, intProjectID }: ReportDi
     const storedArray = storedArrayString ? JSON.parse(storedArrayString) : [];
 
     if (methods.selection) {
-      await ExportAllUnitsSelectionPdf(Number(intProjectID));
+      await ExportAllUnitsSelectionPdf(Number(intProjectID), dtSavedJob);
     }
 
 
     if (methods.mech_schedule) {
-      await ExportMechanicalScheduleExcel(Number(intProjectID));
+      await ExportMechanicalScheduleExcel(Number(intProjectID), dtSavedJob);
     }
 
 
     if (methods.revit_files) {
-      await ExportAllUnitsSelectionRevit(Number(intProjectID));
+      await ExportAllUnitsSelectionRevit(Number(intProjectID), dtSavedJob);
     }
 
 
     if (methods.submittal) {
-      const isSubmittalSuccess = await ExportSubmittalPdf(Number(intProjectID));
+      if (oSubmittal?.dtSumittal === null) {
+        setSnackbarMessage('Submittal not available. Submittal must be saved.');
+        setOpenSnackbar(true);
+        setIsLoading(false);
+        return;
+      }
+      const isSubmittalSuccess = await ExportSubmittalPdf(Number(intProjectID), dtSavedJob, oSubmittal);
 
       // if (isSubmittalSuccess) {
       //   setSuccessNotifyText('Success export report for Submitall!');
@@ -120,6 +137,9 @@ export default function ReportDialog({ isOpen, onClose, intProjectID }: ReportDi
     setIsLoading(false);
   }, [
     intProjectID,
+    dtSavedJob,
+    oQuote,
+    oSubmittal,
     methods.quote,
     methods.selection,
     methods.mech_schedule,
@@ -229,6 +249,20 @@ export default function ReportDialog({ isOpen, onClose, intProjectID }: ReportDi
           </Alert>
         </Snackbar>
       </Box>
+      <Snackbar
+        open={openSnackbar}
+        autoHideDuration={3000}
+        onClose={() => setOpenSnackbar(false)}
+      >
+        <Alert
+          onClose={() => setOpenSnackbar(false)}
+          severity="error"
+          sx={{ width: '100%' }}
+        >
+          {snackbarMessage}
+        </Alert>
+      </Snackbar>
+
     </Dialog>
   );
 }
