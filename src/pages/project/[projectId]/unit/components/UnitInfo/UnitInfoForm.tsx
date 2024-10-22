@@ -5942,7 +5942,7 @@ useEffect(() => {
     }
   }, []); // <-- empty dependency array - This will only trigger when the component mounts and no-render
 
-// Always keep below loading saved value
+// Always keep below loading saved value - This section is required to fix incorrectly saved values during testing.
 useEffect(() => {
 
     switch (Number(intProductTypeID)) {
@@ -5957,6 +5957,8 @@ useEffect(() => {
       case IDs.intProdTypeIdVentumPlus:
         setValue('ckbMixingBox', 0);
         setVoltageSPPIsVisible(true);
+        setValue('ddlOA_FilterModel', IDs.intFilterModelId4in_85_MERV_13);
+        setValue('ddlRA_FilterModel', IDs.intFilterModelId4in_85_MERV_8);
         break;
       case IDs.intProdTypeIdVentumLite:
         setValue('ckbMixingBox', 0);

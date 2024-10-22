@@ -107,14 +107,20 @@ export const useGetSavedQuote = (params: any, config?: UseQueryOptions<any, any,
   return useQuery<any>(`get-saved-quote`, () => api.project.getSavedQuote(params), config);
 };
 
+export const useGetSavedQuoteInfo = (params: any, config?: UseQueryOptions<any, any, any, any>) => {
+  const api = useApiContext();
+  return useQuery<any>(`get-saved-quote-info`, () => api.project.getSavedQuoteInfo(params), config);
+};
+
 // Submittal =============================================================================
+export const useGetSubmittal = (params: any, config?: UseQueryOptions<any, any, any, any>) => {
+  const api = useApiContext();
+  return useQuery<any>([`get-saved-submittal`, params], () => api.project.getSavedSubmittal(params), config);
+};
+
 export const useGetSubmittalInfo = (params: any, config?: UseQueryOptions<any, any, any, any>) => {
   const api = useApiContext();
-  return useQuery<any>(
-    [`get-saved-submittal`, params],
-    () => api.project.getSavedSubmittal(params),
-    config
-  );
+  return useQuery<any>([`get-saved-submittal-info`, params], () => api.project.getSavedSubmittalInfo(params), config);
 };
 
 // Resources =================================================================================

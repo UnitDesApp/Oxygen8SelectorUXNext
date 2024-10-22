@@ -12,7 +12,7 @@ import useTabs from 'src/hooks/useTabs';
 import { capitalCase } from 'change-case';
 import CustomBreadcrumbs from 'src/components/custom-breadcrumbs';
 import Iconify from 'src/components/iconify';
-import { useGetSavedJob, useGetSavedJobsByUserAndCustomer, useGetSavedQuote, useGetSubmittalInfo } from 'src/hooks/useApi';
+import { useGetSavedJob, useGetSavedJobsByUserAndCustomer, useGetSavedQuote, useGetSubmittal } from 'src/hooks/useApi';
 import { useSettingsContext } from '../../../components/settings';
 import DashboardLayout from '../../../layouts/dashboard';
 // import sub components
@@ -84,14 +84,14 @@ export default function Project() {
 
   const { data: dbtSavedJob } = useGetSavedJob({intJobId: projectId}); // useGetSavedJob api call returns data and stores in dbtSavedJob
   
-  const { data: oQuote } = useGetSavedQuote({
+  const { data: dtSavedQuote } = useGetSavedQuote({
     intUserId: typeof window !== 'undefined' && localStorage.getItem('userId'),
     intUAL: typeof window !== 'undefined' && localStorage.getItem('UAL'),
     intJobId: Number(projectId),
     // intUnitNo: 1,
   });
  
-  const { data: oSubmittal } = useGetSubmittalInfo({
+  const { data: dtSavedSubmittal } = useGetSubmittal({
     intUserId: typeof window !== 'undefined' && localStorage.getItem('userId'),
     intUAL: typeof window !== 'undefined' && localStorage.getItem('UAL'),
     intJobId: projectId,
@@ -236,8 +236,8 @@ export default function Project() {
         onClose={() => setOpenExportDialog(false)}
         intProjectID={projectId?.toString() || ''}
         dtSavedJob={dbtSavedJob}
-        oQuote ={oQuote}
-        oSubmittal={oSubmittal}
+        dtSavedQuote ={dtSavedQuote}
+        dtSavedSubmittal={dtSavedSubmittal}
       />
     </>
   );

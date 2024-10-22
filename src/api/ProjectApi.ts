@@ -105,7 +105,9 @@ export default class ProjectApi extends AbstractApi {
 
   getSavedSubmittal = (params: any): Promise<any> =>
     this.client.post(`/api/Submittal/GetSavedSubmittal`, params).then((res: any) => JSON.parse(res.data));
-  // this.client.post(`/api/Submittals/getAllData`, params).then((res: any) => res.data);
+
+  getSavedSubmittalInfo = (params: any): Promise<any> =>
+    this.client.post(`/api/Submittal/GetSavedSubmittalInfo`, params).then((res: any) => JSON.parse(res.data));
 
 
   // Quote =================================================================================
@@ -115,8 +117,11 @@ export default class ProjectApi extends AbstractApi {
   saveQuote = async (params: JSON): Promise<any> =>
     this.client.post(`/api/Quote/SaveQuote`, params).then((res: any) => JSON.parse(res.data));
 
-  getSavedQuote = async (params: JSON): Promise<any> =>
+  getSavedQuote = async (params: any): Promise<any> =>
     this.client.post(`/api/Quote/GetSavedQuote`, params).then((res: any) => JSON.parse(res.data));
+
+  getSavedQuoteInfo = async (params: JSON): Promise<any> =>
+    this.client.post(`/api/Quote/GetSavedQuoteInfo`, params).then((res: any) => JSON.parse(res.data));
 
   saveQuoteMisc = async (params: JSON): Promise<any> =>
     this.client.post(`/api/Quote/SaveQuoteMisc`, params).then((res: any) => JSON.parse(res.data));
