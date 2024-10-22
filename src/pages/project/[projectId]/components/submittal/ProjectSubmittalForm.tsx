@@ -142,30 +142,31 @@ export default function ProjectSubmittalForm({
   // default values for form depend on redux
   const defaultValues = useMemo(
     () => ({
-      txbJobName: submittalInfo?.strProjectName ? submittalInfo?.strProjectName : '',
-      txbRepName: submittalInfo?.strRepName ? submittalInfo?.strRepName : '',
-      txbSalesEngineer: submittalInfo?.strSalesEngineer ? submittalInfo?.strSalesEngineer : '',
-      txbLeadTime: submittalInfo?.strLeadTime ? submittalInfo?.strLeadTime : '8-10 Weeks',
-      txbRevisionNo: submittalInfo?.intRevisionNo ? submittalInfo?.intRevisionNo : '0',
-      txbPONumber: submittalInfo?.strPO_Number ? submittalInfo?.strPO_Number : '0',
-      txbShippingName: submittalInfo?.strShippingName ? submittalInfo?.strShippingName : '',
-      txbShippingStreetAddress: submittalInfo?.strShippingStreetAddress ? submittalInfo?.strShippingStreetAddress : '',
-      txbShippingCity: submittalInfo?.strShippingCity ? submittalInfo?.strShippingCity : '',
-      txbShippingProvince: submittalInfo?.strShippingProvince ? submittalInfo?.strShippingProvince : '',
-      txbShippingPostalCode: submittalInfo?.strShippingPostalCode ? submittalInfo?.strShippingPostalCode : '',
-      ddlShippingCountry: submittalInfo?.intShippingCountryId ? submittalInfo?.intShippingCountryId : 0,
-      ddlDockType: submittalInfo?.intDockTypeId ? submittalInfo?.intDockTypeId : 0,
-      ckbVoltageTable: submittalInfo?.intIsVoltageTable ? submittalInfo?.intIsVoltageTable: 0,
-      ckbBACNetPointList: submittalInfo?.intIsBACNetPoints ? submittalInfo?.intIsBACNetPoints : 0,
-      ckbOJHMISpec: submittalInfo?.intIsOJ_HMI_Spec ? submittalInfo?.intIsOJ_HMI_Spec : 0,
-      ckbTerminalWiring: submittalInfo?.intIsTerminalWiringDiagram ? submittalInfo?.intIsTerminalWiringDiagram : 0,
-      ckbFireAlarm: submittalInfo?.intIsFireAlarm ? submittalInfo?.intIsFireAlarm : 0,
-      ckbBackdraftDamper: submittalInfo?.intIsBackdraftDampers ? submittalInfo?.intIsBackdraftDampers : 0,
-      ckbBypassDefrost: submittalInfo?.intIsBypassDefrost ? submittalInfo?.intIsBypassDefrost : 0,
-      ckbConstantVolume: submittalInfo?.intIsConstantVolume  ? submittalInfo?.intIsConstantVolume : 0,
-      ckbHydronicPreheat: submittalInfo?.intIsHydronicPreheat ? submittalInfo?.intIsHydronicPreheat : 0,
-      ckbHumidification: submittalInfo?.intIsHumidification  ? submittalInfo?.intIsHumidification : 0,
-      ckbTemControl: submittalInfo?.intIsTempControl ? submittalInfo?.intIsTempControl : 0,
+      txbJobName: submittalInfo?.oSubm?.strProjectName ? submittalInfo?.oSubm?.strProjectName : '',
+      txbRepName: submittalInfo?.oSubm?.strRepName ? submittalInfo?.oSubm?.strRepName : '',
+      txbSalesEngineer: submittalInfo?.oSubm?.strSalesEngineer ? submittalInfo?.oSubm?.strSalesEngineer : '',
+      txbLeadTime: submittalInfo?.oSubm?.strLeadTime ? submittalInfo?.oSubm?.strLeadTime : '8-10 Weeks',
+      txbRevisionNo: submittalInfo?.oSubm?.intRevisionNo ? submittalInfo?.oSubm?.intRevisionNo : '0',
+      txbPONumber: submittalInfo?.oSubm?.strPO_Number ? submittalInfo?.oSubm?.strPO_Number : '0',
+      txbProjectNumber: submittalInfo?.oSubm?.strProjectNumber ? submittalInfo?.oSubm?.strProjectNumber : '',
+      txbShippingName: submittalInfo?.oSubm?.strShippingName ? submittalInfo?.oSubm?.strShippingName : '',
+      txbShippingStreetAddress: submittalInfo?.oSubm?.strShippingStreetAddress ? submittalInfo?.oSubm?.strShippingStreetAddress : '',
+      txbShippingCity: submittalInfo?.oSubm?.strShippingCity ? submittalInfo?.oSubm?.strShippingCity : '',
+      txbShippingProvince: submittalInfo?.oSubm?.strShippingProvince ? submittalInfo?.oSubm?.strShippingProvince : '',
+      txbShippingPostalCode: submittalInfo?.oSubm?.strShippingPostalCode ? submittalInfo?.oSubm?.strShippingPostalCode : '',
+      ddlShippingCountry: submittalInfo?.oSubm?.intShippingCountryId ? submittalInfo?.oSubm?.intShippingCountryId : 0,
+      ddlDockType: submittalInfo?.oSubm?.intDockTypeId ? submittalInfo?.oSubm?.intDockTypeId : 0,
+      ckbVoltageTable: submittalInfo?.oSubm?.intIsVoltageTable ? submittalInfo?.oSubm?.intIsVoltageTable: 0,
+      ckbBACNetPointList: submittalInfo?.oSubm?.intIsBACNetPoints ? submittalInfo?.oSubm?.intIsBACNetPoints : 0,
+      ckbOJHMISpec: submittalInfo?.oSubm?.intIsOJ_HMI_Spec ? submittalInfo?.oSubm?.intIsOJ_HMI_Spec : 0,
+      ckbTerminalWiring: submittalInfo?.oSubm?.intIsTerminalWiringDiagram ? submittalInfo?.oSubm?.intIsTerminalWiringDiagram : 0,
+      ckbFireAlarm: submittalInfo?.oSubm?.intIsFireAlarm ? submittalInfo?.oSubm?.intIsFireAlarm : 0,
+      ckbBackdraftDamper: submittalInfo?.oSubm?.intIsBackdraftDampers ? submittalInfo?.oSubm?.intIsBackdraftDampers : 0,
+      ckbBypassDefrost: submittalInfo?.oSubm?.intIsBypassDefrost ? submittalInfo?.oSubm?.intIsBypassDefrost : 0,
+      ckbConstantVolume: submittalInfo?.oSubm?.ntIsConstantVolume  ? submittalInfo?.oSubm?.intIsConstantVolume : 0,
+      ckbHydronicPreheat: submittalInfo?.oSubm?.intIsHydronicPreheat ? submittalInfo?.oSubm?.intIsHydronicPreheat : 0,
+      ckbHumidification: submittalInfo?.oSubm?.intIsHumidification  ? submittalInfo?.oSubm?.intIsHumidification : 0,
+      ckbTemControl: submittalInfo?.oSubm?.intIsTempControl ? submittalInfo?.oSubm?.intIsTempControl : 0,
       txbNotes: '',
       txbShippingNotes: '',
       }),
@@ -214,6 +215,7 @@ export default function ProjectSubmittalForm({
       "strLeadTime" : formCurrValues.txbLeadTime,
       "intRevisionNo" : formCurrValues.txbRevisionNo,
       "strPO_Number" :  formCurrValues.txbPONumber,
+      "strProjectNumber" :  formCurrValues.txbProjectNumber,
       "strShippingName" : formCurrValues.txbShippingName,
       "strShippingStreetAddress" : formCurrValues.txbShippingStreetAddress,
       "strShippingCity" : formCurrValues.txbShippingCity,
@@ -320,7 +322,7 @@ export default function ProjectSubmittalForm({
           const oSubm: any = getSubmittalInputs(); // JC: Job Container
 
           const returnValue = await api.project.saveSubmittal(oSubm);
-          if (returnValue) {
+          if (returnValue === '') {
             setSuccess(true);
             // if (refetch) refetch();
 
@@ -566,6 +568,7 @@ export default function ProjectSubmittalForm({
                   <RHFTextField size="small" name="txbLeadTime" label="Lead Time" />
                   <RHFTextField size="small" name="txbRevisionNo" label="revisionNo" value={0} />
                   <RHFTextField size="small" name="txbPONumber" label="PO Number" />
+                  <RHFTextField size="small" name="txbProjectNumber" label="Project Number" />
                 </BoxStyles>
               </AccordionDetails>
             </Accordion>

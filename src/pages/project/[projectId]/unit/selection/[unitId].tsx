@@ -18,10 +18,10 @@ import { PATH_APP } from 'src/routes/paths';
 import Iconify from 'src/components/iconify';
 import Head from 'next/head';
 import DashboardLayout from 'src/layouts/dashboard/DashboardLayout';
+import { useGetSavedJob } from 'src/hooks/useApi';
 import SelectionReportDialog from '../../components/dialog/SelectionReportDialog';
 import Selection from '../components/Selection/Selection';
 import NewUnit from '../new';
-import { useGetSavedJob } from 'src/hooks/useApi';
 
 // ----------------------------------------------------------------------
 
@@ -179,6 +179,7 @@ export default function EditSelection() {
         onClose={() => setOpenRPDialog(false)}
         intProjectID={projectId?.toString() || ''}
         intUnitNo={unitId?.toString() || ''}
+        dtSavedJob={dbtSavedJob}
       />
     </>
   );

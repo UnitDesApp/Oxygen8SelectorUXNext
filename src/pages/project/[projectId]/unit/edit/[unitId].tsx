@@ -296,6 +296,7 @@ export default function EditUnit() {
         onClose={() => setOpenRPDialog(false)}
         intProjectID={projectId?.toString() || ''}
         intUnitNo={unitId?.toString() || ''}
+        dtSavedJob={dbtSavedJob}
       />
     </>
   );

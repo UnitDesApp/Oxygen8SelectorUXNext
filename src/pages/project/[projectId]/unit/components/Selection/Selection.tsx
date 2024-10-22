@@ -2137,10 +2137,8 @@ if (fanImgFiles.includes(imgEF)) {
                     </Grid>
                   </Grid> */}
                 </Grid>
-
-
-
           </Stack>
+          
           <Stack direction="row" justifyContent="center" textAlign="center">
             <Button
                 variant="contained"
