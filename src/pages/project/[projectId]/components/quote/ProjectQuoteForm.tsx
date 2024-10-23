@@ -367,6 +367,11 @@ export default function ProjectQuoteForm({ projectId, quoteInfo, refetch }: Proj
 
 
   useEffect(() => {
+    setValue('txbQuoteNo', currQuoteInfo?.dtSavedQuote?.[0]?.quote_id);
+  }, [currQuoteInfo?.dtSavedQuote, setValue]);
+
+
+  useEffect(() => {
     const info: { fdtMisc: any } = { fdtMisc: [] };
 
     info.fdtMisc = currQuoteInfo?.dtSavedMisc;
