@@ -33,11 +33,11 @@ interface ReportDialogProps {
   onClose: Function;
   intProjectID: string;
   dtSavedJob: any;
-  oQuote: any;
-  oSubmittal: any;
+  dtSavedQuote: any;
+  dtSavedSubmittal: any;
 }
 
-export default function ReportDialog({ isOpen, onClose, intProjectID, dtSavedJob, oQuote, oSubmittal }: ReportDialogProps) {
+export default function ReportDialog({ isOpen, onClose, intProjectID, dtSavedJob, dtSavedQuote, dtSavedSubmittal }: ReportDialogProps) {
   const [methods, setMethods] = useState<{ [name: string]: any }>({
     quote: false,
     selection: false,
@@ -73,7 +73,7 @@ export default function ReportDialog({ isOpen, onClose, intProjectID, dtSavedJob
     setIsLoading(true);
 
     if (methods.quote) {
-      if (oQuote?.oQuoteSaveInputs?.intQuoteId === 0) {
+      if (Number(dtSavedQuote?.[0]?.quote_id) < 1) {
         setSnackbarMessage('Quote not available. Quote not saved.');
         setOpenSnackbar(true);
         setIsLoading(false);
@@ -108,13 +108,13 @@ export default function ReportDialog({ isOpen, onClose, intProjectID, dtSavedJob
 
 
     if (methods.submittal) {
-      if (oSubmittal?.dtSumittal === null) {
+      if (dtSavedSubmittal.length === 0) {
         setSnackbarMessage('Submittal not available. Submittal must be saved.');
         setOpenSnackbar(true);
         setIsLoading(false);
         return;
       }
-      const isSubmittalSuccess = await ExportSubmittalPdf(Number(intProjectID), dtSavedJob, oSubmittal);
+      const isSubmittalSuccess = await ExportSubmittalPdf(Number(intProjectID), dtSavedJob, dtSavedSubmittal);
 
       // if (isSubmittalSuccess) {
       //   setSuccessNotifyText('Success export report for Submitall!');
@@ -138,8 +138,8 @@ export default function ReportDialog({ isOpen, onClose, intProjectID, dtSavedJob
   }, [
     intProjectID,
     dtSavedJob,
-    oQuote,
-    oSubmittal,
+    dtSavedQuote,
+    dtSavedSubmittal,
     methods.quote,
     methods.selection,
     methods.mech_schedule,
@@ -262,7 +262,6 @@ export default function ReportDialog({ isOpen, onClose, intProjectID, dtSavedJob
           {snackbarMessage}
         </Alert>
       </Snackbar>
-
     </Dialog>
   );
 }

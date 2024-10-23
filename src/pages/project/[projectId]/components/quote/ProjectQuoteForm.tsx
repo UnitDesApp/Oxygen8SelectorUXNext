@@ -32,7 +32,7 @@ import Scrollbar from 'src/components/scrollbar/Scrollbar';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useApiContext } from 'src/contexts/ApiContext';
 import { LoadingButton } from '@mui/lab';
-import { useGetQuoteSelTables, useGetSavedQuote } from 'src/hooks/useApi';
+import { useGetQuoteSelTables, useGetSavedQuoteInfo } from 'src/hooks/useApi';
 import * as Ids from 'src/utils/ids';
 import CircularProgressLoading from 'src/components/loading/CircularProgressLoading';
 
@@ -865,7 +865,7 @@ export default function ProjectQuoteForm({ projectId, quoteInfo, refetch }: Proj
       };
 
       if (oQuoteInputs !== undefined && oQuoteInputs !== null) {
-        const returnValue = await api.project.getSavedQuote(oQuoteInputs);
+        const returnValue = await api.project.getSavedQuoteInfo(oQuoteInputs);
         setCurrQuoteInfo(returnValue);
 
         //   if (returnValue?.oQuote?.intQuoteId > 0) {
@@ -992,6 +992,9 @@ export default function ProjectQuoteForm({ projectId, quoteInfo, refetch }: Proj
                         name="ddlQuoteStage"
                         label="Stage"
                         placeholder=""
+                        onChange={(e: any) => {
+                          setValue('ddlQuoteStage', Number(e.target.value));
+                        }}
                       >
                         {/* <option value="" selected>
                           Select a Stage
@@ -1011,6 +1014,9 @@ export default function ProjectQuoteForm({ projectId, quoteInfo, refetch }: Proj
                         name="ddlFOBPoint"
                         label="F.O.B. Point"
                         placeholder=""
+                        onChange={(e: any) => {
+                          setValue('ddlFOBPoint', Number(e.target.value));
+                        }}
                       >
                         {fobPointInfo?.fdtFOBPoint?.map((e: any, index: number) => (
                           <option key={index} value={e.id}>
@@ -1044,6 +1050,9 @@ export default function ProjectQuoteForm({ projectId, quoteInfo, refetch }: Proj
                         name="ddlCountry"
                         label="Country"
                         placeholder=""
+                        onChange={(e: any) => {
+                          setValue('ddlCountry', Number(e.target.value));
+                        }}
                       >
                         {countryInfo?.fdtCountry?.map((e: any, index: number) => (
                           <option key={index} value={e.id}>

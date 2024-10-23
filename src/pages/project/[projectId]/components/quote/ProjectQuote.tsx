@@ -13,7 +13,7 @@ import {
 import { useRouter } from 'next/router';
 import { useState } from 'react';
 import Iconify from 'src/components/iconify';
-import { useGetSavedQuote } from 'src/hooks/useApi';
+import { useGetSavedQuoteInfo } from 'src/hooks/useApi';
 import ProjectQuoteForm from './ProjectQuoteForm';
 
 // --------------------------------------------------------------
@@ -80,7 +80,7 @@ export default function ProjectQuote() {
     data: quoteInfo,
     isLoading: isLoadingQuoteInfo,
     refetch,
-  } = useGetSavedQuote({
+  } = useGetSavedQuoteInfo({
     intUserId: typeof window !== 'undefined' && localStorage.getItem('userId'),
     intUAL: typeof window !== 'undefined' && localStorage.getItem('UAL'),
     intJobId: Number(projectId),

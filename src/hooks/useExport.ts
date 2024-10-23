@@ -180,7 +180,7 @@ export const useExport = () => {
   };
 
 
-  const ExportSubmittalPdf = async (jobId: number, dtSavedJob: any, oSubmittal: any) => {
+  const ExportSubmittalPdf = async (jobId: number, dtSavedJob: any, dtSavedSubmittal: any) => {
     const data : any = {
       intUserId: localStorage.getItem('userId'),
       intUAL: localStorage.getItem('UAL'),
@@ -217,7 +217,7 @@ export const useExport = () => {
       // const regex = /filename="(.+)"/;
       // const matches = regex.exec(disposition);
       // const fileName = matches && matches[1] ? matches[1] : 'submittal.pdf';
-      const fileName = `${oSubmittal?.dtSubmittal[0]?.project_number} - Oxygen8 Submittal - ${dtSavedJob?.[0]?.CompanyCustomerName} - ${dtSavedJob?.[0]?.job_name} - Rev${dtSavedJob?.[0]?.revision_no}.pdf`;
+      const fileName = `${dtSavedSubmittal[0]?.project_number} - Oxygen8 Submittal - ${dtSavedJob?.[0]?.CompanyCustomerName} - ${dtSavedJob?.[0]?.job_name} - Rev${dtSavedJob?.[0]?.revision_no}.pdf`;
 
       // Create a temporary URL for the downloaded file
       const url = URL.createObjectURL(new Blob([response.data]));
