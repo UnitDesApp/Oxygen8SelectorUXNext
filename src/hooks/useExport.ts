@@ -9,6 +9,8 @@ export const useExport = () => {
   const selectedUnitList = selectedUnits.map((item:string|Number) => Number(item));
   
 
+  
+
   const ExportUnitSelectionPdf = async (jobId: string, unitInfo: any, dtSavedJob: any) => {
     const data = {
       intJobId: jobId,
@@ -388,7 +390,7 @@ export const useExport = () => {
       // const regex = /filename="(.+)"/;
       // const matches = regex.exec(disposition);
       // const fileName = matches && matches[1] ? matches[1] : 'quote.pdf';
-      const fileName = `Oxygen8 Selection - ${dtSavedJob?.[0]?.CompanyCustomerName} - ${dtSavedJob?.[0]?.job_name} - Rev${dtSavedJob?.[0]?.revision_no}.pdf`;
+      const fileName = `Oxygen8 Quote - ${dtSavedJob?.[0]?.CompanyCustomerName} - ${dtSavedJob?.[0]?.job_name} - Rev${dtSavedJob?.[0]?.revision_no}.pdf`;
 
       // Create a temporary URL for the downloaded file
       const url = URL.createObjectURL(new Blob([response.data]));

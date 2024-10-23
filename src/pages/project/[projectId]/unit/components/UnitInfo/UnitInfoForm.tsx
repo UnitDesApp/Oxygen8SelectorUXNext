@@ -1213,9 +1213,10 @@ const txbWinterPreheatSetpointDBChanged = useCallback((e: any) => {
     if (value < 23) {
       setValueWithCheck1({ ...e, target: { value: 23 } }, 'txbWinterPreheatSetpointDB'); 
     }   
-  } 
-  else if (value - Number(unitInfo?.dbtSavedJob?.[0]?.winter_outdoor_air_db) > 50) {
-    setValue('txbWinterPreheatSetpointDB', (Number(unitInfo?.dbtSavedJob?.[0]?.winter_outdoor_air_db) + 50));
+  }  else if (Number(getValues('ddlPreheatComp') === IDs.intCompIdElecHeater)) { 
+    if (value - Number(unitInfo?.dbtSavedJob?.[0]?.winter_outdoor_air_db) > 50) {
+      setValue('txbWinterPreheatSetpointDB', (Number(unitInfo?.dbtSavedJob?.[0]?.winter_outdoor_air_db) + 50));
+    }
   }
 
 }, []);
@@ -7293,6 +7294,7 @@ useEffect(() => {
                       label="Daikin VRV"
                       name="ckbDaikinVRV"
                       checked
+                      disabled
                       onChange={(e: any) => setValue('ckbDaikinVRV', Number(e.target.checked))}
                     />
                   </Stack>

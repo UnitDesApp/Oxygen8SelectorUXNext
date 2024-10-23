@@ -19,6 +19,7 @@ import {
 } from '@mui/material';
 import { LoadingButton } from '@mui/lab';
 import { useExport } from 'src/hooks/useExport';
+import { useGetSavedJob, useGetSavedQuote, useGetSubmittal } from 'src/hooks/useApi';
 
 const EXPORT_METHODS = [
   { label: 'Quote', id: 'quote' },
@@ -32,12 +33,13 @@ interface ReportDialogProps {
   isOpen: boolean;
   onClose: Function;
   intProjectID: string;
-  dtSavedJob: any;
-  dtSavedQuote: any;
-  dtSavedSubmittal: any;
+  // dtSavedJob: any;
+  // dtSavedQuote: any;
+  // dtSavedSubmittal: any;
 }
 
-export default function ReportDialog({ isOpen, onClose, intProjectID, dtSavedJob, dtSavedQuote, dtSavedSubmittal }: ReportDialogProps) {
+// export default function ReportDialog({ isOpen, onClose, intProjectID, dtSavedJob, dtSavedQuote, dtSavedSubmittal }: ReportDialogProps) {
+export default function ReportDialog({ isOpen, onClose, intProjectID }: ReportDialogProps) {
   const [methods, setMethods] = useState<{ [name: string]: any }>({
     quote: false,
     selection: false,
@@ -62,6 +64,24 @@ export default function ReportDialog({ isOpen, onClose, intProjectID, dtSavedJob
     ExportSubmittalEpicorExcel,
   } = useExport();
 
+
+
+  const { data: dtSavedJob } = useGetSavedJob({intJobId: intProjectID}); // useGetSavedJob api call returns data and stores in dbtSavedJob
+  
+  const { data: dtSavedQuote } = useGetSavedQuote({
+    intUserId: typeof window !== 'undefined' && localStorage.getItem('userId'),
+    intUAL: typeof window !== 'undefined' && localStorage.getItem('UAL'),
+    intJobId: Number(intProjectID),
+    // intUnitNo: 1,
+  });
+ 
+  const { data: dtSavedSubmittal } = useGetSubmittal({
+    intUserId: typeof window !== 'undefined' && localStorage.getItem('userId'),
+    intUAL: typeof window !== 'undefined' && localStorage.getItem('UAL'),
+    intJobId: intProjectID,
+  });
+
+
   const onChangeMethods = useCallback(
     (label: string, value: any) => {
       setMethods({ ...methods, [label]: !value });
@@ -73,7 +93,7 @@ export default function ReportDialog({ isOpen, onClose, intProjectID, dtSavedJob
     setIsLoading(true);
 
     if (methods.quote) {
-      if (Number(dtSavedQuote?.[0]?.quote_id) < 1) {
+      if (dtSavedQuote.length === 0 ||Number(dtSavedQuote?.[0]?.quote_id) < 1) {
         setSnackbarMessage('Quote not available. Quote not saved.');
         setOpenSnackbar(true);
         setIsLoading(false);

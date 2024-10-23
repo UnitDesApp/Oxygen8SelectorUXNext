@@ -84,18 +84,18 @@ export default function Project() {
 
   const { data: dbtSavedJob } = useGetSavedJob({intJobId: projectId}); // useGetSavedJob api call returns data and stores in dbtSavedJob
   
-  const { data: dtSavedQuote } = useGetSavedQuote({
-    intUserId: typeof window !== 'undefined' && localStorage.getItem('userId'),
-    intUAL: typeof window !== 'undefined' && localStorage.getItem('UAL'),
-    intJobId: Number(projectId),
-    // intUnitNo: 1,
-  });
+  // const { data: dtSavedQuote } = useGetSavedQuote({
+  //   intUserId: typeof window !== 'undefined' && localStorage.getItem('userId'),
+  //   intUAL: typeof window !== 'undefined' && localStorage.getItem('UAL'),
+  //   intJobId: Number(projectId),
+  //   // intUnitNo: 1,
+  // });
  
-  const { data: dtSavedSubmittal } = useGetSubmittal({
-    intUserId: typeof window !== 'undefined' && localStorage.getItem('userId'),
-    intUAL: typeof window !== 'undefined' && localStorage.getItem('UAL'),
-    intJobId: projectId,
-  }); 
+  // const { data: dtSavedSubmittal } = useGetSubmittal({
+  //   intUserId: typeof window !== 'undefined' && localStorage.getItem('userId'),
+  //   intUAL: typeof window !== 'undefined' && localStorage.getItem('UAL'),
+  //   intJobId: projectId,
+  // }); 
   
   // useGetSavedJob api call returns data and stores in dbtSavedJob
 
@@ -235,9 +235,9 @@ export default function Project() {
         isOpen={openExportDialog}
         onClose={() => setOpenExportDialog(false)}
         intProjectID={projectId?.toString() || ''}
-        dtSavedJob={dbtSavedJob}
-        dtSavedQuote ={dtSavedQuote}
-        dtSavedSubmittal={dtSavedSubmittal}
+        // dtSavedJob={dbtSavedJob}
+        // dtSavedQuote ={dtSavedQuote}
+        // dtSavedSubmittal={dtSavedSubmittal}
       />
     </>
   );
