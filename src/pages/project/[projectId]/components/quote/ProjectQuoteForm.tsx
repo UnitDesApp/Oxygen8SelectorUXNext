@@ -24,7 +24,7 @@ import {
   IconButton,
 } from '@mui/material';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { useForm } from 'react-hook-form';
+import { useForm, useFormState  } from 'react-hook-form';
 import { RHFSelect, RHFTextField } from 'src/components/hook-form';
 import FormProvider from 'src/components/hook-form/FormProvider';
 import Iconify from 'src/components/iconify/Iconify';
@@ -222,7 +222,7 @@ export default function ProjectQuoteForm({ projectId, quoteInfo, refetch }: Proj
       txbCreatedDate: '',
       txbRevisedDate: '',
       txbValidDate: '',
-      ddlCountry: 1,
+      ddlCountry: 0,
       txbCurrencyRate: '1.00',
       txbShippingFactor: '9.8',
       ddlShippingType: 1,
@@ -450,11 +450,40 @@ export default function ProjectQuoteForm({ projectId, quoteInfo, refetch }: Proj
     setValue('ddlCountry', info.defaultId);
   }, [db, setValue]);
 
+
+
+  // const [countryInfo, setCountryInfo] = useState<any>([]);
+  // useEffect(() => {
+
+  //   const currencyRate = db?.dbtSelCountry?.filter((item: {id: number}) => item.id === Number(formCurrValues.ddlCountry))?.[0]?.currency_rate;
+
+  //   setValue('txbCurrencyRate', currencyRate);
+
+  // }, [db?.dbtSelCountry, formCurrValues?.ddlCountry, setValue]);
+
+
+
+  // const ddlCountryChanged = useCallback(async () => {
+  //   const currencyRate = db?.dbtSelCountry?.filter((item: {id: number}) => item.id === Number(formCurrValues.ddlCountry))?.[0]?.currency_rate;
+
+  //   setValue('txbCurrencyRate', currencyRate);
+
+  // }, [db?.dbtSelCountry, formCurrValues.ddlCountry, setValue]);
+
+
+  const ddlCountryChanged = useCallback((e: any) => {
+    setValue('ddlCountry', e.target.value);
+    const currencyRate = db?.dbtSelCountry?.filter((item: {id: number}) => item.id === Number(e.target.value))?.[0]?.currency_rate;
+
+    setValue('txbCurrencyRate', currencyRate);
+  }, [db?.dbtSelCountry, setValue]);
+
+
   // // Event handler for addding misc
 
 
   // submmit function
-  const onQuoteSubmit = async (data: any) => {
+  async function onQuoteSubmit(data: any) {
     try {
       if (Number(getValues('ddlQuoteStage')) === 0) {
         setSnackbarMessage('Select a quote stage.');
@@ -487,7 +516,7 @@ export default function ProjectQuoteForm({ projectId, quoteInfo, refetch }: Proj
     } finally {
       setIsProcessingData(false);
     }
-  };
+  }
 
 
   // event handler for adding shipping note
@@ -1057,9 +1086,8 @@ export default function ProjectQuoteForm({ projectId, quoteInfo, refetch }: Proj
                         name="ddlCountry"
                         label="Country"
                         placeholder=""
-                        onChange={(e: any) => {
-                          setValue('ddlCountry', Number(e.target.value));
-                        }}
+                        // onChange={(e: any) => {setValue('ddlCountry', Number(e.target.value)); }}
+                        onChange={ddlCountryChanged}
                       >
                         {countryInfo?.fdtCountry?.map((e: any, index: number) => (
                           <option key={index} value={e.id}>

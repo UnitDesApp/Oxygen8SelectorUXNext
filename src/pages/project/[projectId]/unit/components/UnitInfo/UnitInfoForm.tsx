@@ -2702,7 +2702,6 @@ useEffect(() => {
       case IDs.intProdTypeIdVentum:
       case IDs.intProdTypeIdVentumLite:
       case IDs.intProdTypeIdVentumPlus:
-      case IDs.intProdTypeIdTerra:
         if (Number(getValues('ddlControlsPref')) === IDs.intContPrefIdDCV_CO2) {
           info.fdtControlVia = info.fdtControlVia?.filter((item: { id: number }) => item.id === IDs.intContViaIdShipLooseCO2Sensor);
           info.isVisible = true;
@@ -2711,10 +2710,15 @@ useEffect(() => {
           info.isVisible = false;
         }
         break;
-      // case IDs.intProdTypeIdTerra:
-      //   info.fdtControlVia = info.fdtControlVia?.filter((item: { id: number }) => item.id !== IDs.intContViaIdNA);
-      //   info.isVisible = false;
-      //   break;
+      case IDs.intProdTypeIdTerra:
+        if (Number(getValues('ddlControlsPref')) === IDs.intContPrefIdDCV_CO2) {
+          info.fdtControlVia = info.fdtControlVia?.filter((item: { id: number }) => item.id !== IDs.intContViaIdNA);
+          info.isVisible = true;
+        } else {
+          info.fdtControlVia = info.fdtControlVia?.filter((item: { id: number }) => item.id === IDs.intContViaIdNA);
+          info.isVisible = false;
+        }
+        break;
       default:
         break;
     }
