@@ -126,7 +126,8 @@ export default function EditUnit() {
           ) : (
             <Container maxWidth="xl">
               <CustomBreadcrumbs
-                heading={dbtSavedJob?.[0]?.job_name}
+                // heading={dbtSavedJob?.[0]?.job_name}
+                heading={<Typography sx={{fontSize:'24px', mt: '0px' }}>{dbtSavedJob?.[0]?.job_name || ''}</Typography>}
                 links={[
                   { name: 'Projects', href: PATH_APP.project },
                   {

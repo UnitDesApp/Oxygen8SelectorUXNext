@@ -239,7 +239,7 @@ if (fanImgFiles.includes(imgEF)) {
   return (
     <RootStyle>
       <Typography color="primary.main" variant="h3" sx={{display:'flex',justifyContent:'center'}}>
-           {savedJob?.[0]?.job_name}
+           {/* {savedJob?.[0]?.job_name} */}
       </Typography>
       <Typography color="primary.main" variant="h3" sx={{display:'flex',justifyContent:'center',mt:'10px'}}>
            {selectionData?.dtUnitDetails_1?.[0]?.cValue}

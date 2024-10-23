@@ -157,8 +157,8 @@ export default function AddNewUnit({currentStep, setCurrentStep}:any) {
       </Head>
       <Container maxWidth="xl">
         <CustomBreadcrumbs
-          heading={`New: ${STEP_PAGE_NAME[currentStep]}`}
-          links={[
+          // heading={`New: ${STEP_PAGE_NAME[currentStep]}`}
+          heading={<Typography sx={{fontSize:'24px', mt: '0px' }}>{filteredData[0]?.job_name || ''}</Typography>}links={[
             { name: 'Projects', href: PATH_APP.project },
             {
               name: filteredData[0]?.job_name,

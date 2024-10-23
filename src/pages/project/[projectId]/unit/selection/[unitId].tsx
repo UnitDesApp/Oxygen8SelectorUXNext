@@ -81,11 +81,12 @@ export default function EditSelection() {
           ) : (
             <Container maxWidth="xl">
               <CustomBreadcrumbs
-                 heading={dbtSavedJob?.[0]?.job_name}
-                links={[
+                //  heading={dbtSavedJob?.[0]?.job_name}
+                 heading={<Typography sx={{fontSize:'24px', mt: '0px' }}>{dbtSavedJob?.[0]?.job_name || ''}</Typography>}
+                 links={[
                   { name: 'My projects', href: PATH_APP.project },
                   {
-                    name: 'Dashboard',
+                    name: dbtSavedJob?.[0]?.job_name,
                     href: PATH_APP.projectDashboard(projectId?.toString() || '', 'unitlist'),
                   },
                   { 
