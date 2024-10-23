@@ -103,6 +103,7 @@ export default function UnitList() {
   const { project } = useApiContext();
   
   useEffect(() => {
+    localStorage.setItem('unitlist', '');
     localStorage.setItem('isNewUnitSelected', '0');
   }, []);
 

@@ -32,6 +32,7 @@ interface SelectionReportDialogProps {
   onClose: Function;
   intProjectID: string;
   intUnitNo: string;
+  dtSavedJob: [];
 }
 
 export default function SelectionReportDialog({
@@ -39,6 +40,7 @@ export default function SelectionReportDialog({
   onClose,
   intProjectID,
   intUnitNo,
+  dtSavedJob,
 }: SelectionReportDialogProps) {
   const [methods, setMethods] = useState<{ [name: string]: any }>({
     pdfSelection: false,
@@ -63,15 +65,15 @@ export default function SelectionReportDialog({
   const onClickExports = useCallback(async () => {
     setIsLoading(true);
     if (methods.pdfSelection) {
-      const isSubmittalSuccess = await ExportUnitSelectionPdf(intProjectID, intUnitNo);
+      const isSubmittalSuccess = await ExportUnitSelectionPdf(intProjectID, intUnitNo, dtSavedJob);
     }
 
     if (methods.excelSelection) {
-      const isSubmittalSuccess = await ExportUnitSelectionExcel(Number(intProjectID), intUnitNo);
+      const isSubmittalSuccess = await ExportUnitSelectionExcel(Number(intProjectID), intUnitNo, dtSavedJob);
     }
 
     if (methods.revit_files) {
-      const isSubmittalSuccess = await ExportUnitSelectionRevit(Number(intProjectID), intUnitNo);
+      const isSubmittalSuccess = await ExportUnitSelectionRevit(Number(intProjectID), intUnitNo, dtSavedJob);
     }
 
     setIsLoading(false);
@@ -80,7 +82,8 @@ export default function SelectionReportDialog({
     ExportUnitSelectionExcel,
     ExportUnitSelectionRevit,
     intProjectID,
-    intUnitNo,
+    intUnitNo, 
+    dtSavedJob,
     methods.excelSelection,
     methods.pdfSelection,
     methods.revit_files,

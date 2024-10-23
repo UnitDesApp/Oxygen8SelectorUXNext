@@ -7,8 +7,11 @@ export const useExport = () => {
   const unitListArray = typeof window !== 'undefined' &&  localStorage?.getItem('unitlist');
   const selectedUnits = unitListArray ? JSON.parse(unitListArray) : [];
   const selectedUnitList = selectedUnits.map((item:string|Number) => Number(item));
+  
 
-  const ExportUnitSelectionPdf = async (jobId: string, unitInfo: any) => {
+  
+
+  const ExportUnitSelectionPdf = async (jobId: string, unitInfo: any, dtSavedJob: any) => {
     const data = {
       intJobId: jobId,
       intUnitNo: unitInfo,
@@ -37,10 +40,11 @@ export const useExport = () => {
 
     await api.project.downloadUnitSelectionPdf(data).then((response) => {
       // Extract the filename from the response headers
-      const disposition = response.headers['content-disposition'];
-      const regex = /filename="(.+)"/;
-      const matches = regex.exec(disposition);
-      const fileName = matches && matches[1] ? matches[1] : 'selection.pdf';
+      // const disposition = response.headers['content-disposition'];
+      // const regex = /filename="(.+)"/;
+      // const matches = regex.exec(disposition);
+      // const fileName = matches && matches[1] ? matches[1] : 'selection.pdf';
+      const fileName = `Oxygen8 Selection - ${dtSavedJob?.[0]?.CompanyCustomerName} - ${dtSavedJob?.[0]?.job_name} - Rev${dtSavedJob?.[0]?.revision_no}.pdf`;
 
       // Create a temporary URL for the downloaded file
       const url = URL.createObjectURL(new Blob([response.data]));
@@ -58,7 +62,7 @@ export const useExport = () => {
   };
 
 
-  const ExportUnitSelectionExcel = async (jobId: number, unitInfo: any) => {
+  const ExportUnitSelectionExcel = async (jobId: number, unitInfo: any, dtSavedJob: any) => {
     const data = {
       intJobId: jobId,
       intUnitNo: unitInfo,
@@ -67,11 +71,12 @@ export const useExport = () => {
     };
 
     await api.project.downloadUnitSelectionExcel(data).then((response) => {
-      // Extract the filename from the response headers
-      const disposition = response.headers['content-disposition'];
-      const regex = /filename="(.+)"/;
-      const matches = regex.exec(disposition);
-      const fileName = matches && matches[1] ? matches[1] : 'selection.xlsx';
+      // // Extract the filename from the response headers
+      // const disposition = response.headers['content-disposition'];
+      // const regex = /filename="(.+)"/;
+      // const matches = regex.exec(disposition);
+      // const fileName = matches && matches[1] ? matches[1] : 'selection.xlsx';
+      const fileName = `Oxygen8 Selection - ${dtSavedJob?.[0]?.CompanyCustomerName} - ${dtSavedJob?.[0]?.job_name} - Rev${dtSavedJob?.[0]?.revision_no}.xlsx`;
 
       // Create a temporary URL for the downloaded file
       const url = URL.createObjectURL(new Blob([response.data]));
@@ -89,7 +94,7 @@ export const useExport = () => {
   };
 
 
-  const ExportUnitSelectionRevit = async (jobId: number, unitInfo: any) => {
+  const ExportUnitSelectionRevit = async (jobId: number, unitInfo: any, dtSavedJob: any) => {
     const data = {
       intJobId: jobId,
       intUnitNo: unitInfo,
@@ -98,11 +103,12 @@ export const useExport = () => {
     };
 
     await api.project.downloadUnitSelectionRevit(data).then((response) => {
-      // Extract the filename from the response headers
-      const disposition = response.headers['content-disposition'];
-      const regex = /filename="(.+)"/;
-      const matches = regex.exec(disposition);
-      const fileName = matches && matches[1] ? matches[1] : 'selection_revit.zip';
+      // // Extract the filename from the response headers
+      // const disposition = response.headers['content-disposition'];
+      // const regex = /filename="(.+)"/;
+      // const matches = regex.exec(disposition);
+      // const fileName = matches && matches[1] ? matches[1] : 'selection_revit.zip';
+      const fileName = `Oxygen8 Revit - ${dtSavedJob?.[0]?.CompanyCustomerName} - ${dtSavedJob?.[0]?.job_name} - Rev${dtSavedJob?.[0]?.revision_no}.zip`;
 
       // Create a temporary URL for the downloaded file
       const url = URL.createObjectURL(new Blob([response.data]));
@@ -120,7 +126,7 @@ export const useExport = () => {
   };
 
 
-  const ExportAllUnitsSelectionPdf = async (jobId: number) => {
+  const ExportAllUnitsSelectionPdf = async (jobId: number, dtSavedJob: any) => {
     const data : any = {
       intUserId: localStorage.getItem('userId'),
       intUAL: localStorage.getItem('UAL'),
@@ -154,10 +160,11 @@ export const useExport = () => {
 
     await api.project.downloadAllUnitsSelectionPdf(data).then((response) => {
       // Extract the filename from the response headers
-      const disposition = response.headers['content-disposition'];
-      const regex = /filename="(.+)"/;
-      const matches = regex.exec(disposition);
-      const fileName = matches && matches[1] ? matches[1] : 'selection_all.pdf';
+      // const disposition = response.headers['content-disposition'];
+      // const regex = /filename="(.+)"/;
+      // const matches = regex.exec(disposition);
+      // const fileName = matches && matches[1] ? matches[1] : 'selection_all.pdf';
+      const fileName = `Oxygen8 Selection All - ${dtSavedJob?.[0]?.CompanyCustomerName} - ${dtSavedJob?.[0]?.job_name} - Rev${dtSavedJob?.[0]?.revision_no}.pdf`;
 
       // Create a temporary URL for the downloaded file
       const url = URL.createObjectURL(new Blob([response.data]));
@@ -175,7 +182,7 @@ export const useExport = () => {
   };
 
 
-  const ExportSubmittalPdf = async (jobId: number) => {
+  const ExportSubmittalPdf = async (jobId: number, dtSavedJob: any, dtSavedSubmittal: any) => {
     const data : any = {
       intUserId: localStorage.getItem('userId'),
       intUAL: localStorage.getItem('UAL'),
@@ -208,10 +215,11 @@ export const useExport = () => {
 
     await api.project.downloadSubmittalPdf(data).then((response) => {
       // Extract the filename from the response headers
-      const disposition = response.headers['content-disposition'];
-      const regex = /filename="(.+)"/;
-      const matches = regex.exec(disposition);
-      const fileName = matches && matches[1] ? matches[1] : 'submittal.pdf';
+      // const disposition = response.headers['content-disposition'];
+      // const regex = /filename="(.+)"/;
+      // const matches = regex.exec(disposition);
+      // const fileName = matches && matches[1] ? matches[1] : 'submittal.pdf';
+      const fileName = `${dtSavedSubmittal[0]?.project_number} - Oxygen8 Submittal - ${dtSavedJob?.[0]?.CompanyCustomerName} - ${dtSavedJob?.[0]?.job_name} - Rev${dtSavedJob?.[0]?.revision_no}.pdf`;
 
       // Create a temporary URL for the downloaded file
       const url = URL.createObjectURL(new Blob([response.data]));
@@ -230,7 +238,7 @@ export const useExport = () => {
 
 
   // export pdf of form data
-  const ExportSubmittalEpicorExcel = async (jobId: number) => {
+  const ExportSubmittalEpicorExcel = async (jobId: number, dtSavedJob: any) => {
     const data : any = {
       intUserId: localStorage.getItem('userId'),
       intUAL: localStorage.getItem('UAL'),
@@ -260,10 +268,11 @@ export const useExport = () => {
 
     await api.project.downloadSubmittalEpicorExcel(data).then((response) => {
       // Extract the filename from the response headers
-      const disposition = response.headers['content-disposition'];
-      const regex = /filename="(.+)"/;
-      const matches = regex.exec(disposition);
-      const fileName = matches && matches[1] ? matches[1] : 'submittal_epicor.xlsx';
+      // const disposition = response.headers['content-disposition'];
+      // const regex = /filename="(.+)"/;
+      // const matches = regex.exec(disposition);
+      // const fileName = matches && matches[1] ? matches[1] : 'submittal_epicor.xlsx';
+      const fileName = `Oxygen8 Submittal Epicor - ${dtSavedJob?.[0]?.CompanyCustomerName} - ${dtSavedJob?.[0]?.job_name} - Rev${dtSavedJob?.[0]?.revision_no}.xlsx`;
 
       // Create a temporary URL for the downloaded file
       const url = URL.createObjectURL(new Blob([response.data]));
@@ -281,7 +290,7 @@ export const useExport = () => {
   };
 
 
-  const ExportMechanicalScheduleExcel = async (jobId: number) => {
+  const ExportMechanicalScheduleExcel = async (jobId: number, dtSavedJob: any) => {
     const data : any = {
       intUserId: localStorage.getItem('userId'),
       intUAL: localStorage.getItem('UAL'),
@@ -291,10 +300,11 @@ export const useExport = () => {
 
     await api.project.downloadMechanicalScheduleExcel(data).then((response) => {
       // Extract the filename from the response headers
-      const disposition = response.headers['content-disposition'];
-      const regex = /filename="(.+)"/;
-      const matches = regex.exec(disposition);
-      const fileName = matches && matches[1] ? matches[1] : 'schedule.xlsx';
+      // const disposition = response.headers['content-disposition'];
+      // const regex = /filename="(.+)"/;
+      // const matches = regex.exec(disposition);
+      // const fileName = matches && matches[1] ? matches[1] : 'schedule.xlsx';
+      const fileName = `Oxygen8 Mechanical Schedule - ${dtSavedJob?.[0]?.CompanyCustomerName} - ${dtSavedJob?.[0]?.job_name} - Rev${dtSavedJob?.[0]?.revision_no}.xlsx`;
 
       // Create a temporary URL for the downloaded file
       const url = URL.createObjectURL(new Blob([response.data]));
@@ -312,7 +322,7 @@ export const useExport = () => {
   };
 
 
-  const ExportAllUnitsSelectionRevit = async (jobId: number) => {
+  const ExportAllUnitsSelectionRevit = async (jobId: number, dtSavedJob: any) => {
     const data : any = {
       intUserId: localStorage.getItem('userId'),
       intUAL: localStorage.getItem('UAL'),
@@ -322,10 +332,11 @@ export const useExport = () => {
 
     await api.project.downloadAllUnitsSelectionRevit(data).then((response) => {
       // Extract the filename from the response headers
-      const disposition = response.headers['content-disposition'];
-      const regex = /filename="(.+)"/;
-      const matches = regex.exec(disposition);
-      const fileName = matches && matches[1] ? matches[1] : 'selection_all_revit.zip';
+      // const disposition = response.headers['content-disposition'];
+      // const regex = /filename="(.+)"/;
+      // const matches = regex.exec(disposition);
+      // const fileName = matches && matches[1] ? matches[1] : 'selection_all_revit.zip';
+      const fileName = `Oxygen8 Revit - ${dtSavedJob?.[0]?.CompanyCustomerName} - ${dtSavedJob?.[0]?.job_name} - Rev${dtSavedJob?.[0]?.revision_no}.zip`;
 
       // Create a temporary URL for the downloaded file
       const url = URL.createObjectURL(new Blob([response.data]));
@@ -343,7 +354,7 @@ export const useExport = () => {
   };
 
 
-  const ExportQuotePdf = async (jobId: number) => {
+  const ExportQuotePdf = async (jobId: number, dtSavedJob: any) => {
     const data : any = {
       intUserId: localStorage.getItem('userId'),
       intUAL: localStorage.getItem('UAL'),
@@ -375,10 +386,11 @@ export const useExport = () => {
 
     await api.project.downloadQuotePdf(data).then((response) => {
       // Extract the filename from the response headers
-      const disposition = response.headers['content-disposition'];
-      const regex = /filename="(.+)"/;
-      const matches = regex.exec(disposition);
-      const fileName = matches && matches[1] ? matches[1] : 'quote.pdf';
+      // const disposition = response.headers['content-disposition'];
+      // const regex = /filename="(.+)"/;
+      // const matches = regex.exec(disposition);
+      // const fileName = matches && matches[1] ? matches[1] : 'quote.pdf';
+      const fileName = `Oxygen8 Quote - ${dtSavedJob?.[0]?.CompanyCustomerName} - ${dtSavedJob?.[0]?.job_name} - Rev${dtSavedJob?.[0]?.revision_no}.pdf`;
 
       // Create a temporary URL for the downloaded file
       const url = URL.createObjectURL(new Blob([response.data]));

@@ -19,6 +19,7 @@ import {
 } from '@mui/material';
 import { LoadingButton } from '@mui/lab';
 import { useExport } from 'src/hooks/useExport';
+import { useGetSavedJob, useGetSavedQuote, useGetSubmittal } from 'src/hooks/useApi';
 
 const EXPORT_METHODS = [
   { label: 'Quote', id: 'quote' },
@@ -32,8 +33,12 @@ interface ReportDialogProps {
   isOpen: boolean;
   onClose: Function;
   intProjectID: string;
+  // dtSavedJob: any;
+  // dtSavedQuote: any;
+  // dtSavedSubmittal: any;
 }
 
+// export default function ReportDialog({ isOpen, onClose, intProjectID, dtSavedJob, dtSavedQuote, dtSavedSubmittal }: ReportDialogProps) {
 export default function ReportDialog({ isOpen, onClose, intProjectID }: ReportDialogProps) {
   const [methods, setMethods] = useState<{ [name: string]: any }>({
     quote: false,
@@ -44,6 +49,8 @@ export default function ReportDialog({ isOpen, onClose, intProjectID }: ReportDi
   });
 
   const [isLoading, setIsLoading] = useState(false);
+  const [openSnackbar, setOpenSnackbar] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState('');
   const [openSuccessNotify, setOpenSuccessNotify] = useState<boolean>(false);
   const [successNotifyText, setSuccessNotifyText] = useState<string>('');
   const [openFailNotify, setOpenFailNotify] = useState<boolean>(false);
@@ -57,6 +64,24 @@ export default function ReportDialog({ isOpen, onClose, intProjectID }: ReportDi
     ExportSubmittalEpicorExcel,
   } = useExport();
 
+
+
+  const { data: dtSavedJob } = useGetSavedJob({intJobId: intProjectID}); // useGetSavedJob api call returns data and stores in dbtSavedJob
+  
+  const { data: dtSavedQuote } = useGetSavedQuote({
+    intUserId: typeof window !== 'undefined' && localStorage.getItem('userId'),
+    intUAL: typeof window !== 'undefined' && localStorage.getItem('UAL'),
+    intJobId: Number(intProjectID),
+    // intUnitNo: 1,
+  });
+ 
+  const { data: dtSavedSubmittal } = useGetSubmittal({
+    intUserId: typeof window !== 'undefined' && localStorage.getItem('userId'),
+    intUAL: typeof window !== 'undefined' && localStorage.getItem('UAL'),
+    intJobId: intProjectID,
+  });
+
+
   const onChangeMethods = useCallback(
     (label: string, value: any) => {
       setMethods({ ...methods, [label]: !value });
@@ -68,7 +93,13 @@ export default function ReportDialog({ isOpen, onClose, intProjectID }: ReportDi
     setIsLoading(true);
 
     if (methods.quote) {
-      const result = await ExportQuotePdf(Number(intProjectID));
+      if (dtSavedQuote.length === 0 ||Number(dtSavedQuote?.[0]?.quote_id) < 1) {
+        setSnackbarMessage('Quote not available. Quote not saved.');
+        setOpenSnackbar(true);
+        setIsLoading(false);
+        return;
+      }
+      const result = await ExportQuotePdf(Number(intProjectID), dtSavedJob);
       // if (result === 'server_error') {
       //   setFailNotifyText('Server Error!');
       //   setOpenFailNotify(true);
@@ -82,22 +113,28 @@ export default function ReportDialog({ isOpen, onClose, intProjectID }: ReportDi
     const storedArray = storedArrayString ? JSON.parse(storedArrayString) : [];
 
     if (methods.selection) {
-      await ExportAllUnitsSelectionPdf(Number(intProjectID));
+      await ExportAllUnitsSelectionPdf(Number(intProjectID), dtSavedJob);
     }
 
 
     if (methods.mech_schedule) {
-      await ExportMechanicalScheduleExcel(Number(intProjectID));
+      await ExportMechanicalScheduleExcel(Number(intProjectID), dtSavedJob);
     }
 
 
     if (methods.revit_files) {
-      await ExportAllUnitsSelectionRevit(Number(intProjectID));
+      await ExportAllUnitsSelectionRevit(Number(intProjectID), dtSavedJob);
     }
 
 
     if (methods.submittal) {
-      const isSubmittalSuccess = await ExportSubmittalPdf(Number(intProjectID));
+      if (dtSavedSubmittal.length === 0) {
+        setSnackbarMessage('Submittal not available. Submittal must be saved.');
+        setOpenSnackbar(true);
+        setIsLoading(false);
+        return;
+      }
+      const isSubmittalSuccess = await ExportSubmittalPdf(Number(intProjectID), dtSavedJob, dtSavedSubmittal);
 
       // if (isSubmittalSuccess) {
       //   setSuccessNotifyText('Success export report for Submitall!');
@@ -120,6 +157,9 @@ export default function ReportDialog({ isOpen, onClose, intProjectID }: ReportDi
     setIsLoading(false);
   }, [
     intProjectID,
+    dtSavedJob,
+    dtSavedQuote,
+    dtSavedSubmittal,
     methods.quote,
     methods.selection,
     methods.mech_schedule,
@@ -229,6 +269,19 @@ export default function ReportDialog({ isOpen, onClose, intProjectID }: ReportDi
           </Alert>
         </Snackbar>
       </Box>
+      <Snackbar
+        open={openSnackbar}
+        autoHideDuration={3000}
+        onClose={() => setOpenSnackbar(false)}
+      >
+        <Alert
+          onClose={() => setOpenSnackbar(false)}
+          severity="error"
+          sx={{ width: '100%' }}
+        >
+          {snackbarMessage}
+        </Alert>
+      </Snackbar>
     </Dialog>
   );
 }

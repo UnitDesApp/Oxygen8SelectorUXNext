@@ -12,7 +12,7 @@ import useTabs from 'src/hooks/useTabs';
 import { capitalCase } from 'change-case';
 import CustomBreadcrumbs from 'src/components/custom-breadcrumbs';
 import Iconify from 'src/components/iconify';
-import { useGetSavedJob, useGetSavedJobsByUserAndCustomer } from 'src/hooks/useApi';
+import { useGetSavedJob, useGetSavedJobsByUserAndCustomer, useGetSavedQuote, useGetSubmittal } from 'src/hooks/useApi';
 import { useSettingsContext } from '../../../components/settings';
 import DashboardLayout from '../../../layouts/dashboard';
 // import sub components
@@ -83,6 +83,21 @@ export default function Project() {
   // };
 
   const { data: dbtSavedJob } = useGetSavedJob({intJobId: projectId}); // useGetSavedJob api call returns data and stores in dbtSavedJob
+  
+  // const { data: dtSavedQuote } = useGetSavedQuote({
+  //   intUserId: typeof window !== 'undefined' && localStorage.getItem('userId'),
+  //   intUAL: typeof window !== 'undefined' && localStorage.getItem('UAL'),
+  //   intJobId: Number(projectId),
+  //   // intUnitNo: 1,
+  // });
+ 
+  // const { data: dtSavedSubmittal } = useGetSubmittal({
+  //   intUserId: typeof window !== 'undefined' && localStorage.getItem('userId'),
+  //   intUAL: typeof window !== 'undefined' && localStorage.getItem('UAL'),
+  //   intJobId: projectId,
+  // }); 
+  
+  // useGetSavedJob api call returns data and stores in dbtSavedJob
 
 
   // useTab
@@ -112,6 +127,7 @@ export default function Project() {
       {
         value: PROJECT_DASHBOARD_TABS.UNITLIST,
         title: 'Unit list',
+        // title: dbtSavedJob?.[0]?.job_name,
         component: <UnitList />,
       },
       {
@@ -208,7 +224,7 @@ export default function Project() {
             <Tab
               disableRipple
               key={tabItem.value}
-              label={capitalCase(tabItem.title)}
+              label={capitalCase(tabItem?.title)}
               value={tabItem.value}
             />
           ))}
@@ -219,6 +235,9 @@ export default function Project() {
         isOpen={openExportDialog}
         onClose={() => setOpenExportDialog(false)}
         intProjectID={projectId?.toString() || ''}
+        // dtSavedJob={dbtSavedJob}
+        // dtSavedQuote ={dtSavedQuote}
+        // dtSavedSubmittal={dtSavedSubmittal}
       />
     </>
   );

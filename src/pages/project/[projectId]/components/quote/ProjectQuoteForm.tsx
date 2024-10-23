@@ -32,7 +32,7 @@ import Scrollbar from 'src/components/scrollbar/Scrollbar';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useApiContext } from 'src/contexts/ApiContext';
 import { LoadingButton } from '@mui/lab';
-import { useGetQuoteSelTables, useGetSavedQuote } from 'src/hooks/useApi';
+import { useGetQuoteSelTables, useGetSavedQuoteInfo } from 'src/hooks/useApi';
 import * as Ids from 'src/utils/ids';
 import CircularProgressLoading from 'src/components/loading/CircularProgressLoading';
 
@@ -268,7 +268,9 @@ export default function ProjectQuoteForm({ projectId, quoteInfo, refetch }: Proj
 
   useMemo(() => {
     setValue('txbProjectName', db?.dbtSavJob?.[0]?.job_name);
-  }, [db?.dbtSavJob, setValue]);
+    setValue('txbShippingFactor', db?.dbtSavCustomer?.[0]?.shipping_factor_percent);
+
+  }, [db?.dbtSavCustomer, db?.dbtSavJob, setValue]);
 
 
   function getQuoteInputs() {
@@ -365,9 +367,14 @@ export default function ProjectQuoteForm({ projectId, quoteInfo, refetch }: Proj
 
 
   useEffect(() => {
+    setValue('txbQuoteNo', currQuoteInfo?.dtSavedQuote?.[0]?.quote_id);
+  }, [currQuoteInfo?.dtSavedQuote, setValue]);
+
+
+  useEffect(() => {
     const info: { fdtMisc: any } = { fdtMisc: [] };
 
-    info.fdtMisc = currQuoteInfo?.dtMisc;
+    info.fdtMisc = currQuoteInfo?.dtSavedMisc;
     setMiscListInfo(info);
   }, [currQuoteInfo]);
 
@@ -406,10 +413,13 @@ export default function ProjectQuoteForm({ projectId, quoteInfo, refetch }: Proj
     };
 
     info.fdtQuoteStage = db?.dbtSelQuoteStage;
+    const selectMsgData = {id: 0, items: "Select Stage", enabled:1}
+    info.fdtQuoteStage?.unshift(selectMsgData);
+
 
     setQuoteStageInfo(info);
     info.defaultId = info.fdtQuoteStage?.[0]?.id;
-    // setValue('ddlQuoteStage', info.fdtQuoteStage?.[0]?.id);
+    setValue('ddlQuoteStage', info.defaultId);
   }, [db, setValue]);
 
 
@@ -452,6 +462,12 @@ export default function ProjectQuoteForm({ projectId, quoteInfo, refetch }: Proj
   // submmit function
   const onQuoteSubmit = async (data: any) => {
     try {
+      if (Number(getValues('ddlQuoteStage')) === 0) {
+        setSnackbarMessage('Select a quote stage.');
+        setOpenSnackbar(true);
+        return;
+      }
+
       setIsProcessingData(true);
 
       // const requestData = {
@@ -695,8 +711,12 @@ export default function ProjectQuoteForm({ projectId, quoteInfo, refetch }: Proj
         currQuoteInfo?.oQuoteSaveInputs?.intQuoteId > 0
       ) {
 
-        if (currQuoteInfo?.oQuoteSaveInputs?.intQuoteId > 0) {
-          setValue('txbQuoteNo', currQuoteInfo?.oQuoteSaveInputs?.intQuoteId);
+        // if (currQuoteInfo?.oQuoteSaveInputs?.intQuoteId > 0) {
+        //   setValue('txbQuoteNo', currQuoteInfo?.oQuoteSaveInputs?.intQuoteId);
+        // }
+
+        if (currQuoteInfo?.dtSavedQuote?.[0]?.quote_id > 0) {
+          setValue('txbQuoteNo', currQuoteInfo?.dtSavedQuote?.[0]?.quote_id);
         }
 
         if (currQuoteInfo?.oQuoteSaveInputs?.intRevisionNo > 0) {
@@ -850,7 +870,7 @@ export default function ProjectQuoteForm({ projectId, quoteInfo, refetch }: Proj
       };
 
       if (oQuoteInputs !== undefined && oQuoteInputs !== null) {
-        const returnValue = await api.project.getSavedQuote(oQuoteInputs);
+        const returnValue = await api.project.getSavedQuoteInfo(oQuoteInputs);
         setCurrQuoteInfo(returnValue);
 
         //   if (returnValue?.oQuote?.intQuoteId > 0) {
@@ -977,10 +997,13 @@ export default function ProjectQuoteForm({ projectId, quoteInfo, refetch }: Proj
                         name="ddlQuoteStage"
                         label="Stage"
                         placeholder=""
+                        onChange={(e: any) => {
+                          setValue('ddlQuoteStage', Number(e.target.value));
+                        }}
                       >
-                        <option value="" selected>
+                        {/* <option value="" selected>
                           Select a Stage
-                        </option>
+                        </option> */}
                         {quoteStageInfo?.fdtQuoteStage?.map((e: any, index: number) => (
                           <option key={index} value={e.id}>
                             {e.items}
@@ -996,6 +1019,9 @@ export default function ProjectQuoteForm({ projectId, quoteInfo, refetch }: Proj
                         name="ddlFOBPoint"
                         label="F.O.B. Point"
                         placeholder=""
+                        onChange={(e: any) => {
+                          setValue('ddlFOBPoint', Number(e.target.value));
+                        }}
                       >
                         {fobPointInfo?.fdtFOBPoint?.map((e: any, index: number) => (
                           <option key={index} value={e.id}>
@@ -1029,6 +1055,9 @@ export default function ProjectQuoteForm({ projectId, quoteInfo, refetch }: Proj
                         name="ddlCountry"
                         label="Country"
                         placeholder=""
+                        onChange={(e: any) => {
+                          setValue('ddlCountry', Number(e.target.value));
+                        }}
                       >
                         {countryInfo?.fdtCountry?.map((e: any, index: number) => (
                           <option key={index} value={e.id}>
