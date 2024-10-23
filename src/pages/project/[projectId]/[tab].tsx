@@ -186,10 +186,11 @@ export default function Project() {
       {/* <Container maxWidth={themeStretch ? false : 'xl'}> */}
       <Container style={{maxWidth:"100%"}} >
         <Typography sx={{ textAlign: 'center', fontSize: '28px', mt: '4px' }}>
-          {projectName && projectName}
+          {/* {projectName && projectName} */}
         </Typography>
         <CustomBreadcrumbs
-          heading={<Typography sx={{fontSize:'14px', color: 'rgb(99, 115, 129)' }}>{projectName || ''}</Typography>}
+          // heading={<Typography sx={{fontSize:'28px', color: 'rgb(99, 115, 129)' }}>{projectName || ''}</Typography>}
+          heading={<Typography sx={{fontSize:'24px', mt: '0px' }}>{projectName || ''}</Typography>}
           links={[{ name: 'Projects', href: PATH_APP.project }, { name: tabData?.title || '' }]}
           action={
             <Stack spacing={2} direction="row" alignItems="flex-end" sx={{ mt: 3 }}>

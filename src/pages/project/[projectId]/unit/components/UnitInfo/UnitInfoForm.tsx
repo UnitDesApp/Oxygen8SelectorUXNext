@@ -1213,7 +1213,9 @@ const txbWinterPreheatSetpointDBChanged = useCallback((e: any) => {
     if (value < 23) {
       setValueWithCheck1({ ...e, target: { value: 23 } }, 'txbWinterPreheatSetpointDB'); 
     }   
-  }  else if (Number(getValues('ddlPreheatComp') === IDs.intCompIdElecHeater)) { 
+  }  
+  
+  if (Number(getValues('ddlPreheatComp') === IDs.intCompIdElecHeater)) { 
     if (value - Number(unitInfo?.dbtSavedJob?.[0]?.winter_outdoor_air_db) > 50) {
       setValue('txbWinterPreheatSetpointDB', (Number(unitInfo?.dbtSavedJob?.[0]?.winter_outdoor_air_db) + 50));
     }
@@ -1704,13 +1706,13 @@ useEffect(() => {
   switch (Number(getValues('ckbPreheatAutoSize'))) {
     case 1:
       setIsTxbPreheatSetpointEnabled(false);
-      // if (Number(getValues('ddlCoolingComp')) === IDs.intCompIdDX && Number(getValues('ddlReheatComp')) === IDs.intCompIdHGRH) {
-      //   setValue('txbWinterPreheatSetpointDB', '17');
-      // } else if (Number(getValues('ddlCoolingComp')) === IDs.intCompIdDX) {
-      //   setValue('txbWinterPreheatSetpointDB', '23');
-      // } else {
-      //   setValue('txbWinterPreheatSetpointDB', '0');
-      // }
+      if (intProductTypeID === IDs.intProdTypeIdTerra && Number(getValues('ddlCoolingComp')) === IDs.intCompIdDX && Number(getValues('ddlReheatComp')) === IDs.intCompIdHGRH) {
+        setValue('txbWinterPreheatSetpointDB', '17');
+      } else if (intProductTypeID === IDs.intProdTypeIdTerra && Number(getValues('ddlCoolingComp')) === IDs.intCompIdDX) {
+        setValue('txbWinterPreheatSetpointDB', '23');
+      } else {
+        setValue('txbWinterPreheatSetpointDB', '0');
+      }
       break;
     case 0:
       setIsTxbPreheatSetpointEnabled(true);
@@ -2700,27 +2702,19 @@ useEffect(() => {
       case IDs.intProdTypeIdVentum:
       case IDs.intProdTypeIdVentumLite:
       case IDs.intProdTypeIdVentumPlus:
+      case IDs.intProdTypeIdTerra:
         if (Number(getValues('ddlControlsPref')) === IDs.intContPrefIdDCV_CO2) {
-          info.fdtControlVia = info.fdtControlVia?.filter(
-            (item: { id: number }) => item.id === IDs.intContViaIdShipLooseCO2Sensor
-          );
-
+          info.fdtControlVia = info.fdtControlVia?.filter((item: { id: number }) => item.id === IDs.intContViaIdShipLooseCO2Sensor);
           info.isVisible = true;
         } else {
-          info.fdtControlVia = info.fdtControlVia?.filter(
-            (item: { id: number }) => item.id === IDs.intContViaIdNA
-          );
-
+          info.fdtControlVia = info.fdtControlVia?.filter((item: { id: number }) => item.id === IDs.intContViaIdNA);
           info.isVisible = false;
         }
         break;
-      case IDs.intProdTypeIdTerra:
-        info.fdtControlVia = info.fdtControlVia?.filter(
-          (item: { id: number }) => item.id !== IDs.intContViaIdNA
-        );
-
-        info.isVisible = false;
-        break;
+      // case IDs.intProdTypeIdTerra:
+      //   info.fdtControlVia = info.fdtControlVia?.filter((item: { id: number }) => item.id !== IDs.intContViaIdNA);
+      //   info.isVisible = false;
+      //   break;
       default:
         break;
     }
@@ -4698,12 +4692,9 @@ useEffect(() => {
   useEffect(() => {
     switch (Number(intProductTypeID)) {
       case IDs.intProdTypeIdNova:
-      case IDs.intProdTypeIdVentumPlus:
-      case IDs.intProdTypeIdVentumLite:
+      case IDs.intProdTypeIdVentum:
         switch (Number(getValues('ddlPreheatComp'))) {
           case IDs.intCompIdElecHeater:
-            setIsVisibleDdlPreheatCoilHanding(true);
-            break;
           case IDs.intCompIdHWC:
             setIsVisibleDdlPreheatCoilHanding(true);
             break;
@@ -4714,13 +4705,15 @@ useEffect(() => {
             break;
         }
         break;
-        case IDs.intProdTypeIdVentum:
+        case IDs.intProdTypeIdVentumLite:
+        case IDs.intProdTypeIdVentumPlus:
         case IDs.intProdTypeIdTerra:
           setIsVisibleDdlPreheatCoilHanding(false);
           break;
       default:
         break;
-    }
+    }          
+
 
   }, [getValues('ddlPreheatComp'), intProductTypeID]);
 
@@ -4729,12 +4722,9 @@ useEffect(() => {
   useEffect(() => {
     switch (Number(intProductTypeID)) {
       case IDs.intProdTypeIdNova:
-      case IDs.intProdTypeIdVentumPlus:
-      case IDs.intProdTypeIdVentumLite:
+      case IDs.intProdTypeIdVentum:
         switch (Number(getValues('ddlCoolingComp'))) {
           case IDs.intCompIdElecHeater:
-            setIsVisibleDdlCoolingCoilHanding(true);
-            break;
           case IDs.intCompIdHWC:
             setIsVisibleDdlCoolingCoilHanding(true);
             break;
@@ -4745,10 +4735,11 @@ useEffect(() => {
             break;
         }
         break;
-        case IDs.intProdTypeIdVentum:
-        case IDs.intProdTypeIdTerra:
-          setIsVisibleDdlCoolingCoilHanding(false);
-          break;
+      case IDs.intProdTypeIdVentumLite:
+      case IDs.intProdTypeIdVentumPlus:
+      case IDs.intProdTypeIdTerra:
+        setIsVisibleDdlCoolingCoilHanding(false);
+        break;
       default:
         break;
     }
@@ -4760,12 +4751,9 @@ useEffect(() => {
   useEffect(() => {
     switch (Number(intProductTypeID)) {
       case IDs.intProdTypeIdNova:
-      case IDs.intProdTypeIdVentumPlus:
-      case IDs.intProdTypeIdVentumLite:
+        case IDs.intProdTypeIdVentum:
         switch (Number(getValues('ddlHeatingComp'))) {
           case IDs.intCompIdElecHeater:
-            setIsVisibleDdlHeatingCoilHanding(true);
-            break;
           case IDs.intCompIdHWC:
             setIsVisibleDdlHeatingCoilHanding(true);
             break;
@@ -4776,10 +4764,11 @@ useEffect(() => {
             break;
         }
         break;
-        case IDs.intProdTypeIdVentum:
-        case IDs.intProdTypeIdTerra:
-          setIsVisibleDdlHeatingCoilHanding(false);
-          break;
+      case IDs.intProdTypeIdVentumLite:
+      case IDs.intProdTypeIdVentumPlus:
+      case IDs.intProdTypeIdTerra:
+        setIsVisibleDdlHeatingCoilHanding(false);
+        break;
       default:
         break;
     }
@@ -4790,12 +4779,9 @@ useEffect(() => {
   useEffect(() => {
     switch (Number(intProductTypeID)) {
       case IDs.intProdTypeIdNova:
-      case IDs.intProdTypeIdVentumPlus:
-      case IDs.intProdTypeIdVentumLite:
+      case IDs.intProdTypeIdVentum:
         switch (Number(getValues('ddlReheatComp'))) {
           case IDs.intCompIdElecHeater:
-            setIsVisibleDdlReheatCoilHanding(true);
-            break;
           case IDs.intCompIdHWC:
             setIsVisibleDdlReheatCoilHanding(true);
             break;
@@ -4806,7 +4792,8 @@ useEffect(() => {
             break;
         }
         break;
-        case IDs.intProdTypeIdVentum:
+        case IDs.intProdTypeIdVentumLite:
+        case IDs.intProdTypeIdVentumPlus:
         case IDs.intProdTypeIdTerra:
           setIsVisibleDdlReheatCoilHanding(false);
           break;
@@ -5981,15 +5968,17 @@ useEffect(() => {
 
 
   useEffect(() => {
-    switch (intUnitTypeID) {
-      case IDs.intUnitTypeIdERV:
-      case IDs.intUnitTypeIdHRV:
+    switch (Number(intProductTypeID)) {
+      case IDs.intProdTypeIdVentum:
+      case IDs.intProdTypeIdNova:
+      case IDs.intProdTypeIdVentumLite:
         setIsVisibleDdlSupplyAirOpeningVisible(true);
         setIsVisibleDdlOutdoorAirOpeningVisible(true);
         setIsVisibleDdlReturnAirOpeningVisible(true);
         setIsVisibleDdlExhaustAirOpeningVisible(true);
-      break;
-      case IDs.intUnitTypeIdAHU:
+        break;
+      case IDs.intProdTypeIdVentumPlus:
+      case IDs.intProdTypeIdTerra:
         setIsVisibleDdlSupplyAirOpeningVisible(false);
         setIsVisibleDdlOutdoorAirOpeningVisible(false);
         setIsVisibleDdlReturnAirOpeningVisible(false);
@@ -5999,7 +5988,25 @@ useEffect(() => {
         break;
     }
 
-  }, [intUnitTypeID]);
+    // switch (intUnitTypeID) {
+    //   case IDs.intUnitTypeIdERV:
+    //   case IDs.intUnitTypeIdHRV:
+    //     setIsVisibleDdlSupplyAirOpeningVisible(true);
+    //     setIsVisibleDdlOutdoorAirOpeningVisible(true);
+    //     setIsVisibleDdlReturnAirOpeningVisible(true);
+    //     setIsVisibleDdlExhaustAirOpeningVisible(true);
+    //   break;
+    //   case IDs.intUnitTypeIdAHU:
+    //     setIsVisibleDdlSupplyAirOpeningVisible(false);
+    //     setIsVisibleDdlOutdoorAirOpeningVisible(false);
+    //     setIsVisibleDdlReturnAirOpeningVisible(false);
+    //     setIsVisibleDdlExhaustAirOpeningVisible(false);
+    //     break;
+    //   default:
+    //     break;
+    // }
+
+  }, [intProductTypeID]);
 
 
 // // ckbVoltageSPP
@@ -8497,7 +8504,7 @@ useEffect(() => {
             <Grid container spacing={5}>
               <Grid item xs={12} md={12}>
               <Box sx={{ display: 'grid', rowGap: 3, columnGap: 3, gridTemplateColumns: { xs: 'repeat(3, 1fr)' }, }}>
-              <RHFSelect
+              {/* <RHFSelect
                     native
                     size="small"
                     name="ddlTempControl"
@@ -8507,14 +8514,13 @@ useEffect(() => {
                     disabled
                     onChange={(e: any) => { setValue('ddlTempControl', Number(e.target.value)); }}
                   >                    
-                    {/* {controlsPrefInfo?.fdtControlsPref?.map((item: any, index: number) => (
+                    {controlsPrefInfo?.fdtControlsPref?.map((item: any, index: number) => (
                       <option key={index} value={item.id}>
                         {item.items}
                       </option>
-                    ))} */}
+                    ))}
                     <option>TBA</option>
-                  </RHFSelect>
-
+                  </RHFSelect> */}
                   <RHFSelect
                     native
                     size="small"
@@ -8534,7 +8540,7 @@ useEffect(() => {
                     native
                     size="small"
                     name="ddlControlVia"
-                    label="Control Via"
+                    label="Temperature Control"
                     placeholder=""
                     sx={getDisplay(controlViaInfo?.isVisible)}
                     onChange={(e: any) => { setValue('ddlControlVia', Number(e.target.value)); }}

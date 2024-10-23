@@ -155,26 +155,26 @@ export default function ProjectQuoteForm({ projectId, quoteInfo, refetch }: Proj
   // Form Schemar
   const QuoteFormSchema = Yup.object().shape({
     txbRevisionNo: Yup.string().required('This field is required!'),
-    ddlQuoteStage: Yup.number().required('This field is required!'),
+    ddlQuoteStage: Yup.number(),
     txbProjectName: Yup.string(),
-    txbQuoteNo: Yup.string().required('This field is required!'),
+    txbQuoteNo: Yup.string(),
     ddlFOBPoint: Yup.number(),
     txbTerms: Yup.string(),
     txbCreatedDate: Yup.string(),
     txbRevisedDate: Yup.string(),
     txbValidDate: Yup.string(),
     ddlCountry: Yup.number(),
-    txbCurrencyRate: Yup.number().required('This field is required!'),
-    txbShippingFactor: Yup.number().required('This field is required!'),
+    txbCurrencyRate: Yup.number(),
+    txbShippingFactor: Yup.number(),
     ddlShippingType: Yup.number(),
-    txbDiscountFactor: Yup.number().required('This field is required!'),
+    txbDiscountFactor: Yup.number(),
     ddlDiscountType: Yup.number(),
-    txbPriceAllUnits: Yup.number().required('This field is required!'),
-    txbPriceMisc: Yup.number().required('This field is required!'),
-    txbPriceShipping: Yup.number().required('This field is required!'),
-    txbPriceSubtotal: Yup.number().required('This field is required!'),
-    txbPriceDiscount: Yup.number().required('This field is required!'),
-    txbPriceFinalTotal: Yup.number().required('This field is required!'),
+    txbPriceAllUnits: Yup.number(),
+    txbPriceMisc: Yup.number(),
+    txbPriceShipping: Yup.number(),
+    txbPriceSubtotal: Yup.number(),
+    txbPriceDiscount: Yup.number(),
+    txbPriceFinalTotal: Yup.number(),
   });
 
   // // default values for form depend on redux
@@ -266,11 +266,7 @@ export default function ProjectQuoteForm({ projectId, quoteInfo, refetch }: Proj
   // const setQV = useCallback(() => {
 
 
-  useMemo(() => {
-    setValue('txbProjectName', db?.dbtSavJob?.[0]?.job_name);
-    setValue('txbShippingFactor', db?.dbtSavCustomer?.[0]?.shipping_factor_percent);
 
-  }, [db?.dbtSavCustomer, db?.dbtSavJob, setValue]);
 
 
   function getQuoteInputs() {
@@ -395,10 +391,7 @@ export default function ProjectQuoteForm({ projectId, quoteInfo, refetch }: Proj
 
     setValue('txbCreatedDate', `${today.getFullYear()}-${today.getMonth() + 1}-${today.getDate()}`);
     setValue('txbRevisedDate', `${today.getFullYear()}-${today.getMonth() + 1}-${today.getDate()}`);
-    setValue(
-      'txbValidDate',
-      `${newValidDate.getFullYear()}-${newValidDate.getMonth() + 1}-${newValidDate.getDate()}`
-    );
+    setValue('txbValidDate',`${newValidDate.getFullYear()}-${newValidDate.getMonth() + 1}-${newValidDate.getDate()}`);
     setValue('ddlShippingType', 1);
     setValue('ddlDiscountType', 2);
   }, [setValue]);
@@ -452,8 +445,9 @@ export default function ProjectQuoteForm({ projectId, quoteInfo, refetch }: Proj
 
     setCountryInfo(info);
     info.defaultId = Ids.intCountryIdUSA;
+
     // setValue('ddlCountry', info.fdtCountry?.[0]?.id);
-    setValue('ddlCountry', Ids.intCountryIdUSA);
+    setValue('ddlCountry', info.defaultId);
   }, [db, setValue]);
 
   // // Event handler for addding misc
@@ -701,7 +695,15 @@ export default function ProjectQuoteForm({ projectId, quoteInfo, refetch }: Proj
     [api.project, projectId, setValue]
   );
 
+  useEffect(() => {
+    setValue('txbProjectName', db?.dbtSavJob?.[0]?.job_name);
+    setValue('ddlCountry', db?.dbtSavCustomer?.[0]?.country_id);
+    setValue('txbCurrencyRate', db?.dbtSavCustomer?.[0]?.currency_rate);
+    setValue('txbShippingFactor', db?.dbtSavCustomer?.[0]?.shipping_factor_percent);
 
+  }, [db?.dbtSavCustomer, db?.dbtSavJob, db?.dbtSelCountry, setValue]);
+
+ 
   // Load saved Values
   useEffect(() => {
     if (currQuoteInfo !== undefined && currQuoteInfo !== null) {
