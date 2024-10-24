@@ -69,7 +69,7 @@ export default function ProjectTableToolbar({
       <Item sx={{ width: { md: '20%', xs: '100%' } }}>
         <Button
           id="role"
-          sx={{ fontSize: '16px' }}
+          sx={{ fontSize: '25px', fontFamily: '"Public Sans", sans-serif',lineHeight:'36px',color:'#212B36',fontWeight:"600" }}
           onClick={handleClick}
           startIcon={<Iconify icon="codicon:filter-filled" />}
         >

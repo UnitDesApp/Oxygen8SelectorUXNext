@@ -52,7 +52,7 @@ interface GroupBoxProps {
 export default function GroupBox({ title, children, bordersx, titlesx }: GroupBoxProps) {
   return (
     <CustomGroupBoxBorder sx={{ ...bordersx }}>
-      <CustomGroupBoxTitle sx={{ ...titlesx }}>{title}</CustomGroupBoxTitle>
+      <CustomGroupBoxTitle sx={{ ...titlesx, }}>{title}</CustomGroupBoxTitle>
       {children}
     </CustomGroupBoxBorder>
   );

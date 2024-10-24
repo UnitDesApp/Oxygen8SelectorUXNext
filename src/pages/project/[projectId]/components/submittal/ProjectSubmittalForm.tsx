@@ -63,6 +63,15 @@ const BoxStyles = styled(Box)(() => ({
   marginTop: 20,
 }));
 
+const BoxStyles2 = styled(Box)(() => ({
+  display: 'grid',
+  gridTemplateColumns: 'repeat(2, 2fr)',
+  rowGap: 10,
+  columnGap: 10,
+  margin: 10,
+  marginTop: 20,
+}));
+
 const TableHeaderCellStyled = styled(TableCell)(({ theme }) => ({
   backgroundColor: theme.palette.primary.main,
   color: 'white',
@@ -546,7 +555,7 @@ export default function ProjectSubmittalForm({
               </LoadingButton>
             </Stack>
           </Grid>
-          <Grid item xs={12}>
+          <Grid item xs={12} sm={6} md={6}>
             <Accordion
               expanded={expanded.panel1}
               onChange={() => setExpanded({ ...expanded, panel1: !expanded.panel1 })}
@@ -561,7 +570,7 @@ export default function ProjectSubmittalForm({
                 </Typography>
               </AccordionSummary>
               <AccordionDetails>
-                <BoxStyles>
+                <BoxStyles2>
                   <RHFTextField size="small" name="txbJobName" label="Project Name" disabled />
                   <RHFTextField size="small" name="txbRepName" label="Rep Name" disabled />
                   <RHFTextField size="small" name="txbSalesEngineer" label="Sales Engineer" disabled />
@@ -569,11 +578,11 @@ export default function ProjectSubmittalForm({
                   <RHFTextField size="small" name="txbRevisionNo" label="revisionNo" value={0} />
                   <RHFTextField size="small" name="txbPONumber" label="PO Number" />
                   <RHFTextField size="small" name="txbProjectNumber" label="Project Number" />
-                </BoxStyles>
+                </BoxStyles2>
               </AccordionDetails>
             </Accordion>
           </Grid>
-          <Grid item xs={12}>
+          <Grid item xs={12} sm={6} md={6}>
             <Accordion
               expanded={expanded.panel2}
               onChange={() => setExpanded({ ...expanded, panel2: !expanded.panel2 })}
@@ -588,7 +597,8 @@ export default function ProjectSubmittalForm({
                 </Typography>
               </AccordionSummary>
               <AccordionDetails>
-                <BoxStyles>
+              <BoxStyles>
+              {/* <Box sx={{ display: 'grid', rowGap: 1, columnGap: 1 }}> */}
                   <RHFTextField size="small" name="txbShippingName" label="Name" />
                   <RHFTextField size="small" name="txbShippingStreetAddress" label="Street Address"/>
                   <RHFTextField size="small" name="txbShippingCity" label="City" />
