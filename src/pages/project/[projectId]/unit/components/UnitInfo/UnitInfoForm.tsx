@@ -3279,9 +3279,11 @@ useEffect(() => {
           info.defaultId = info.fdtReheatComp?.filter((item: { id: number }) => item.id === Number(formCurrValues.ddlReheatComp)).length > 0 ? formCurrValues.ddlReheatComp : info.fdtReheatComp?.[0]?.id;
           break;
         case IDs.intCompIdDX:
-          if (Number(intUAL) === IDs.intUAL_External && (intUnitTypeID === IDs.intUnitTypeIdERV || intUnitTypeID === IDs.intUnitTypeIdHRV)) {
-            info.fdtReheatComp = info.fdtReheatComp?.filter((item: { id: { toString: () => any } }) => item.id.toString() !== IDs.intCompIdHGRH.toString());
-          } else if (intProductTypeID === IDs.intProdTypeIdVentum && 
+          // if (Number(intUAL) === IDs.intUAL_External && (intUnitTypeID === IDs.intUnitTypeIdERV || intUnitTypeID === IDs.intUnitTypeIdHRV)) {
+          //   info.fdtReheatComp = info.fdtReheatComp?.filter((item: { id: { toString: () => any } }) => item.id.toString() !== IDs.intCompIdHGRH.toString());
+          // } else 
+          
+          if (intProductTypeID === IDs.intProdTypeIdVentum && 
               (Number(getValues('ddlUnitModel')) === IDs.intVentumUnitModelIdH05IN_ERV_HRV || Number(getValues('ddlUnitModel')) === IDs.intVentumUnitModelIdH05IN_ERV_HRV_BP)) {
             info.fdtReheatComp = info.fdtReheatComp?.filter((item: { id: { toString: () => any } }) =>  item.id.toString() !== IDs.intCompIdHGRH.toString());
           }
@@ -5742,6 +5744,7 @@ useEffect(() => {
       setValue('ddlPreheatElecHeaterInstall', unitInfo?.oUnitCompOpt?.intPreheatElecHeaterInstallationId > 0 ? unitInfo?.oUnitCompOpt?.intPreheatElecHeaterInstallationId : getValues('ddlPreheatElecHeaterInstall'));
 
       setValue('ddlPreheatElecHeaterVoltage', unitInfo?.oUnitCompOpt?.intPreheatElecHeaterVoltageId > 0 ?  unitInfo?.oUnitCompOpt?.intPreheatElecHeaterVoltageId : getValues('ddlPreheatElecHeaterVoltage'));
+     
       setValue('ckbPreheatElecHeaterVoltageSPP', unitInfo?.oUnitCompOpt?.intIsPreheatElecHeaterVoltageSPP > 0 ? unitInfo?.oUnitCompOpt?.intIsPreheatElecHeaterVoltageSPP : getValues('ckbPreheatElecHeaterVoltageSPP'));
 
       setValue('ddlPreheatFluidType', unitInfo?.oUnitCompOpt?.intHeatingFluidTypeId > 0 ? unitInfo?.oUnitCompOpt?.intHeatingFluidTypeId : getValues('ddlPreheatFluidType'));
@@ -5752,11 +5755,10 @@ useEffect(() => {
 
       // setValue('ckbPreheatHWCUseFluidLvgTemp', getValues('ckbPreheatHWCUseFluidLvgTemp'));
       
+      setValue('ckbPreheatHWCUseFluidLvgTemp', 1);  // Default - This value is not saved to database and It is required on first page load.
+
       setValue('txbPreheatHWCFluidLvgTemp', Number.parseFloat(unitInfo?.oUnitCompOpt?.dblPreheatFluidLvgTemp) > 0.0 ? unitInfo?.oUnitCompOpt?.dblPreheatFluidLvgTemp : '120');
 
-      setValue('ckbPreheatHWCUseCap', unitInfo?.oUnitCompOpt?.intIsPreheatHWCUseCap > 0 ? unitInfo?.oUnitCompOpt?.intIsPreheatHWCUseCap : 0);
-
-      setValue('txbPreheatHWCCap', Number.parseFloat(unitInfo?.oUnitCompOpt?.dblPreheatHWCCap) > 0.0 ? unitInfo?.oUnitCompOpt?.dblPreheatHWCCap : '0');
 
       // setValue('ckbPreheatHWCUseFlowRate', unitInfo?.oUnitCompOpt?.intIsPreheatHWCUseFlowRate != null ? unitInfo?.oUnitCompOpt?.intIsPreheatHWCUseFlowRate : 0);
       
@@ -5770,6 +5772,10 @@ useEffect(() => {
 
       setValue('txbPreheatHWCFluidFlowRate', Number.parseFloat(unitInfo?.oUnitCompOptCust?.dblPreheatHWCFlowRate) > 0.0 ? unitInfo?.oUnitCompOptCust?.dblPreheatHWCFlowRate : '0');
 
+      setValue('ckbPreheatHWCUseCap', unitInfo?.oUnitCompOpt?.intIsPreheatHWCUseCap > 0 ? unitInfo?.oUnitCompOpt?.intIsPreheatHWCUseCap : 0);
+
+      setValue('txbPreheatHWCCap', Number.parseFloat(unitInfo?.oUnitCompOpt?.dblPreheatHWCCap) > 0.0 ? unitInfo?.oUnitCompOpt?.dblPreheatHWCCap : '0');
+      
       setValue('ckbPreheatHWCValveAndActuator', unitInfo?.oUnitCompOpt?.intIsPreheatValveAndActuatorIncluded > 0 ? unitInfo?.oUnitCompOpt?.intIsPreheatValveAndActuatorIncluded : 0);
       setValue('ddlPreheatHWCValveType', unitInfo?.oUnitLayout?.intPreheatValveTypeId > 0 ? unitInfo?.oUnitLayout?.intPreheatValveTypeId : getValues('ddlPreheatHWCValveType'));
 
@@ -5794,8 +5800,10 @@ useEffect(() => {
 
       setValue('txbCoolingCWCFluidEntTemp', Number.parseFloat(unitInfo?.oUnitCompOpt?.dblCoolingFluidEntTemp) > 0.0 ? unitInfo?.oUnitCompOpt?.dblCoolingFluidEntTemp : '45');
 
-      setValue('txbCoolingCWCFluidLvgTemp', Number.parseFloat(unitInfo?.oUnitCompOpt?.dblCoolingFluidLvgTemp) > 0.0 ? unitInfo?.oUnitCompOpt?.dblCoolingFluidLvgTemp : '55');
+      setValue('ckbCoolingCWCUseFluidLvgTemp', 1);  // Default - This value is not saved to database and It is required on first page load.
 
+      setValue('txbCoolingCWCFluidLvgTemp', Number.parseFloat(unitInfo?.oUnitCompOpt?.dblCoolingFluidLvgTemp) > 0.0 ? unitInfo?.oUnitCompOpt?.dblCoolingFluidLvgTemp : '55');
+      
 
       if (unitInfo?.oUnitCompOptCust?.intIsCoolingCWCUseFlowRate > 0) {
         setValue('ckbCoolingCWCUseFluidFlowRate', unitInfo?.oUnitCompOptCust?.intIsCoolingCWCUseFlowRate);
@@ -5804,7 +5812,8 @@ useEffect(() => {
         setValue('txbCoolingCWCFluidLvgTemp', '0');
         // setCkbCoolingCWCUseFluidFlowRateValue(unitInfo?.oUnitCompOpt?.intIsCoolingCWCUseFlowRate);
         setIsTxbCoolingCWCFluidLvgTempEnabled(false);
-  }
+      }
+
       setValue('txbCoolingCWCFluidFlowRate', Number.parseFloat(unitInfo?.oUnitCompOptCust?.dblCoolingCWCFlowRate) > 0.0 ? unitInfo?.oUnitCompOptCust?.dblCoolingCWCFlowRate : '0');
 
       // setValue('ckbCoolingCWCUseFluidFlowRate', unitInfo?.oUnitCompOptCust?.intIsCoolingCWCUseFlowRate != null ? unitInfo?.oUnitCompOptCust?.intIsCoolingCWCUseFlowRate : 0);
@@ -5842,11 +5851,9 @@ useEffect(() => {
 
       setValue('txbHeatingHWCFluidEntTemp', Number.parseFloat(unitInfo?.oUnitCompOpt?.dblHeatingFluidEntTemp) > 0.0 ? unitInfo?.oUnitCompOpt?.dblHeatingFluidEntTemp : '140');
 
+      setValue('ckbHeatingHWCUseFluidLvgTemp', 1);  // Default - This value is not saved to database and It is required on first page load.
+
       setValue('txbHeatingHWCFluidLvgTemp', Number.parseFloat(unitInfo?.oUnitCompOpt?.dblHeatingFluidLvgTemp) > 0.0 ? unitInfo?.oUnitCompOpt?.dblHeatingFluidLvgTemp : '120');
-
-      setValue('ckbHeatingHWCUseCap', unitInfo?.oUnitCompOpt?.intIsHeatingHWCUseCap != null ? unitInfo?.oUnitCompOpt?.intIsHeatingHWCUseCap : 0);
-
-      setValue('txbHeatingHWCCap', Number.parseFloat(unitInfo?.oUnitCompOpt?.dblHeatingHWCCap) > 0.0 ? unitInfo?.oUnitCompOpt?.dblHeatingHWCCap : '0');
 
       if (unitInfo?.oUnitCompOptCust?.intIsHeatingHWCUseFlowRate > 0) {
         setValue('ckbHeatingHWCUseFluidFlowRate', unitInfo?.oUnitCompOptCust?.intIsHeatingHWCUseFlowRate);
@@ -5859,6 +5866,11 @@ useEffect(() => {
       // setValue('ckbHeatingHWCUseFluidFlowRate', unitInfo?.oUnitCompOptCust?.intIsHeatingHWCUseFlowRate != null ? unitInfo?.oUnitCompOptCust?.intIsHeatingHWCUseFlowRate : 0);
       
       setValue('txbHeatingHWCFluidFlowRate', Number.parseFloat(unitInfo?.oUnitCompOptCust?.dblHeatingHWCFlowRate) > 0.0 ? unitInfo?.oUnitCompOptCust?.dblHeatingHWCFlowRate : '0');
+
+      setValue('ckbHeatingHWCUseCap', unitInfo?.oUnitCompOpt?.intIsHeatingHWCUseCap != null ? unitInfo?.oUnitCompOpt?.intIsHeatingHWCUseCap : 0);
+
+      setValue('txbHeatingHWCCap', Number.parseFloat(unitInfo?.oUnitCompOpt?.dblHeatingHWCCap) > 0.0 ? unitInfo?.oUnitCompOpt?.dblHeatingHWCCap : '0');
+
 
       setValue('ckbHeatingHWCValveAndActuator', unitInfo?.oUnitCompOpt?.intIsHeatingValveAndActuatorIncluded > 0 ? unitInfo?.oUnitCompOpt?.intIsHeatingValveAndActuatorIncluded : 0);
       setValue('ddlHeatingHWCValveType', unitInfo?.oUnitLayout?.intHeatingValveTypeId > 0 ? unitInfo?.oUnitLayout?.intHeatingValveTypeId : getValues('ddlHeatingHWCValveType'));
@@ -5879,6 +5891,8 @@ useEffect(() => {
       setValue('ddlReheatFluidConcentration', unitInfo?.oUnitCompOpt?.intHeatingFluidConcentId > 0 ?  unitInfo?.oUnitCompOpt?.intHeatingFluidConcentId : getValues('ddlReheatFluidConcentration'));
 
       setValue('txbReheatHWCFluidEntTemp', Number.parseFloat(unitInfo?.oUnitCompOpt?.dblReheatFluidEntTemp) > 0.0 ?  unitInfo?.oUnitCompOpt?.dblReheatFluidEntTemp : '140');
+
+      setValue('ckbReheatHWCUseFluidLvgTemp', 1);  // Default - This value is not saved to database and It is required on first page load.
 
       setValue('txbReheatHWCFluidLvgTemp', Number.parseFloat(unitInfo?.oUnitCompOpt?.dblReheatFluidLvgTemp) > 0.0 ?  unitInfo?.oUnitCompOpt?.dblReheatFluidLvgTemp : '120');
 
