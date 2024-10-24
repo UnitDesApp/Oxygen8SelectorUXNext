@@ -1287,7 +1287,7 @@ export default function ProjectQuoteForm({ projectId, quoteInfo, refetch }: Proj
                               {item.unit_price}
                             </TableCell>
                             <TableCell component="th" scope="row" align="right">
-                              {item.unit_price}
+                              {item.total_price}
                             </TableCell>
                           </TableRow>
                         ))}
@@ -1320,7 +1320,7 @@ export default function ProjectQuoteForm({ projectId, quoteInfo, refetch }: Proj
                               {item.unit_price}
                             </TableCell>
                             <TableCell component="th" scope="row" align="right">
-                              {item.unit_price}
+                              {item.total_price}
                             </TableCell>
                           </TableRow>
                         ))}
@@ -1361,7 +1361,7 @@ export default function ProjectQuoteForm({ projectId, quoteInfo, refetch }: Proj
                               {item.unit_price}
                             </TableCell>
                             <TableCell component="th" scope="row" align="right">
-                              {item.unit_price}
+                              {item.total_price}
                             </TableCell>
                           </TableRow>
                         ))}

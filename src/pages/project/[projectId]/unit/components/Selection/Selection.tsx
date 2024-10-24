@@ -18,6 +18,7 @@ import {
   TableRow,
   TableCell,
   Button,
+  colors,
 } from '@mui/material';
 // lodash
 import { isEmpty } from 'lodash';
@@ -56,7 +57,7 @@ const CustomGroupBoxTitle = styled(Typography)(() => ({
   lineHeight: '1.4375em',
   fontSize: '20px',
   fontFamily: '__Public_Sans_e50a27, __Public_Sans_Fallback_e50a27, Helvetica, Arial, sans-serif',
-  fontWeight: 400,
+  fontWeight: 600,
   display: 'block',
   transformOrigin: 'left top',
   whiteSpace: 'nowrap',
@@ -102,7 +103,7 @@ type CustomGroupBoxProps = {
 function CustomGroupBox({ title, children, bordersx, titlesx }: CustomGroupBoxProps) {
   return (
     <CustomGroupBoxBorder sx={{ ...bordersx }}>
-      <CustomGroupBoxTitle sx={{ ...titlesx }}>{title}</CustomGroupBoxTitle>
+      <CustomGroupBoxTitle sx={{ ...titlesx}  }>{title}</CustomGroupBoxTitle>
       <Box sx={{ padding: '20px' }}>{children}</Box>
     </CustomGroupBoxBorder>
   );
